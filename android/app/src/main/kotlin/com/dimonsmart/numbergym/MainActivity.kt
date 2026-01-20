@@ -1,0 +1,5 @@
+package com.dimonsmart.numbergym
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
