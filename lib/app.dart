@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
 import 'features/training/data/card_progress.dart';
@@ -28,7 +27,7 @@ class NumbersTrainerApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,
-        textTheme: GoogleFonts.spaceGroteskTextTheme(),
+        fontFamily: 'SpaceGrotesk',
         scaffoldBackgroundColor: colorScheme.surface,
       ),
       home: TrainingScreen(

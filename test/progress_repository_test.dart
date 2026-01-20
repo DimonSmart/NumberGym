@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 
-import 'package:hello_label/features/training/data/card_progress.dart';
-import 'package:hello_label/features/training/data/progress_repository.dart';
+import 'package:number_gym/features/training/data/card_progress.dart';
+import 'package:number_gym/features/training/data/progress_repository.dart';
 
 void main() {
   late Directory tempDir;

@@ -1,9 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../data/card_progress.dart';
+import '../../data/progress_repository.dart';
+import '../../data/settings_repository.dart';
 import '../../domain/training_controller.dart';
 import '../widgets/sound_waveform.dart';
 import '../widgets/training_background.dart';
@@ -26,17 +26,15 @@ class TrainingScreen extends StatefulWidget {
   State<TrainingScreen> createState() => _TrainingScreenState();
 }
 
-class _TrainingScreenState extends State<TrainingScreen>
-    with SingleTickerProviderStateMixin {
+class _TrainingScreenState extends State<TrainingScreen> {
   late final TrainingController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TrainingController(
-      settingsBox: widget.settingsBox,
-      progressBox: widget.progressBox,
-      vsync: this,
+      settingsRepository: SettingsRepository(widget.settingsBox),
+      progressRepository: ProgressRepository(widget.progressBox),
     );
     _controller.initialize();
   }
@@ -87,6 +85,11 @@ class _TrainingScreenState extends State<TrainingScreen>
         final statusMessage = _buildStatusMessage();
         final isRunning = _controller.status == TrainerStatus.running;
         final controlEnabled = isRunning || _controller.hasRemainingCards;
+        final feedback = _controller.feedback;
+        final feedbackText = feedback?.text;
+        final feedbackColor = feedback == null
+            ? null
+            : _resolveFeedbackColor(theme, feedback.type);
 
         return Scaffold(
           body: TrainingBackground(
@@ -163,12 +166,12 @@ class _TrainingScreenState extends State<TrainingScreen>
                           _buildPrompt(theme),
                           const SizedBox(height: 12),
                           AnimatedOpacity(
-                            opacity: _controller.feedbackText == null ? 0 : 1,
+                            opacity: feedbackText == null ? 0 : 1,
                             duration: const Duration(milliseconds: 200),
                             child: Text(
-                              _controller.feedbackText ?? '',
+                              feedbackText ?? '',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: _controller.feedbackColor,
+                                color: feedbackColor,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -176,9 +179,15 @@ class _TrainingScreenState extends State<TrainingScreen>
                           const SizedBox(height: 18),
                           _buildTimerBar(theme),
                           const SizedBox(height: 12),
-                          SoundWaveform(
-                            values: _controller.soundHistory,
-                            visible: isRunning,
+                          StreamBuilder<List<double>>(
+                            stream: _controller.soundStream,
+                            initialData: const [],
+                            builder: (context, snapshot) {
+                              return SoundWaveform(
+                                values: snapshot.data ?? [],
+                                visible: isRunning,
+                              );
+                            },
                           ),
                           const SizedBox(height: 12),
                           Text(
@@ -262,27 +271,26 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   Widget _buildTimerBar(ThemeData theme) {
-    return AnimatedBuilder(
-      animation: _controller.timerController,
-      builder: (context, child) {
-        final isActive = _controller.status == TrainerStatus.running;
-        final value = isActive ? 1 - _controller.timerController.value : 0.0;
-        final total = _controller.timerController.duration ?? Duration.zero;
-        final maxSeconds = total.inSeconds;
-        final secondsRemaining = isActive
-            ? max(
-                0,
-                (maxSeconds - (_controller.timerController.value * maxSeconds))
-                    .ceil(),
-              )
-            : maxSeconds;
+    final isActive = _controller.status == TrainerStatus.running;
+    final duration = _controller.currentCardDuration;
+    
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(_controller.currentCard?.id ?? -1),
+      tween: Tween<double>(begin: 1.0, end: 0.0),
+      duration: isActive ? duration : Duration.zero,
+      builder: (context, value, child) {
+        final displayValue = isActive ? value : 0.0;
+        final maxSeconds = duration.inSeconds;
+        final secondsRemaining = isActive 
+            ? (maxSeconds * displayValue).ceil() 
+            : maxSeconds; 
 
         return Column(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
-                value: value,
+                value: displayValue,
                 minHeight: 12,
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -317,6 +325,19 @@ class _TrainingScreenState extends State<TrainingScreen>
       return 'Listening...';
     }
     return 'Tap Start to begin.';
+  }
+
+  Color _resolveFeedbackColor(
+    ThemeData theme,
+    TrainingFeedbackType type,
+  ) {
+    switch (type) {
+      case TrainingFeedbackType.correct:
+        return Colors.green.shade700;
+      case TrainingFeedbackType.wrong:
+      case TrainingFeedbackType.timeout:
+        return Colors.red.shade700;
+    }
   }
 
   Widget _buildPrompt(ThemeData theme) {

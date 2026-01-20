@@ -27,10 +27,10 @@ class SoundWaveform extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final barColor = theme.colorScheme.onSurface.withOpacity(0.82);
+    final barColor = theme.colorScheme.onSurface.withValues(alpha: 0.82);
     final trackColor =
-        theme.colorScheme.surfaceContainerHighest.withOpacity(0.7);
-    final borderColor = theme.colorScheme.onSurface.withOpacity(0.12);
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.7);
+    final borderColor = theme.colorScheme.onSurface.withValues(alpha: 0.12);
     final barRadius = BorderRadius.circular(barWidth / 2);
     final minBarHeight = 8.0;
 

@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../domain/learning_language.dart';
+import '../domain/repositories.dart';
 
 const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
@@ -10,19 +11,22 @@ const int answerDurationMaxSeconds = 15;
 const int answerDurationStepSeconds = 5;
 const int answerDurationDefaultSeconds = answerDurationMinSeconds;
 
-class SettingsRepository {
+class SettingsRepository implements SettingsRepositoryBase {
   final Box<String> settingsBox;
 
   SettingsRepository(this.settingsBox);
 
+  @override
   LearningLanguage readLearningLanguage() {
     return LearningLanguageX.fromCode(settingsBox.get(learningLanguageKey));
   }
 
+  @override
   Future<void> setLearningLanguage(LearningLanguage language) async {
     await settingsBox.put(learningLanguageKey, language.code);
   }
 
+  @override
   int readAnswerDurationSeconds() {
     final rawValue = settingsBox.get(answerDurationSecondsKey);
     final parsed = int.tryParse(rawValue ?? '');
@@ -32,6 +36,7 @@ class SettingsRepository {
     return _normalizeAnswerDurationSeconds(parsed);
   }
 
+  @override
   Future<void> setAnswerDurationSeconds(int seconds) async {
     final normalized = _normalizeAnswerDurationSeconds(seconds);
     await settingsBox.put(answerDurationSecondsKey, normalized.toString());
