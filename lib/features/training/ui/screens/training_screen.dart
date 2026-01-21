@@ -90,6 +90,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
         final feedbackColor = feedback == null
             ? null
             : _resolveFeedbackColor(theme, feedback.type);
+        final hintText = _controller.hintText;
 
         return Scaffold(
           body: TrainingBackground(
@@ -164,6 +165,17 @@ class _TrainingScreenState extends State<TrainingScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildPrompt(theme),
+                          if (hintText != null && hintText.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              hintText,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                           const SizedBox(height: 12),
                           AnimatedOpacity(
                             opacity: feedbackText == null ? 0 : 1,

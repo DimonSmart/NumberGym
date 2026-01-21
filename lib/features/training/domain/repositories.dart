@@ -12,4 +12,6 @@ abstract class SettingsRepositoryBase {
   Future<void> setLearningLanguage(LearningLanguage language);
   int readAnswerDurationSeconds();
   Future<void> setAnswerDurationSeconds(int seconds);
+  int readHintStreakCount();
+  Future<void> setHintStreakCount(int count);
 }

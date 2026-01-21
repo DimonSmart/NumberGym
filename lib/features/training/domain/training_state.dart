@@ -20,6 +20,7 @@ class TrainingState {
   final String? errorMessage;
   final TrainingFeedback? feedback;
   final NumberCard? currentCard;
+  final String? hintText;
   final List<String> expectedTokens;
   final List<bool> matchedTokens;
   final Duration cardDuration;
@@ -31,6 +32,7 @@ class TrainingState {
     required this.errorMessage,
     required this.feedback,
     required this.currentCard,
+    required this.hintText,
     required this.expectedTokens,
     required this.matchedTokens,
     required this.cardDuration,
@@ -44,6 +46,7 @@ class TrainingState {
       errorMessage: null,
       feedback: null,
       currentCard: null,
+      hintText: null,
       expectedTokens: <String>[],
       matchedTokens: <bool>[],
       cardDuration: Duration.zero,

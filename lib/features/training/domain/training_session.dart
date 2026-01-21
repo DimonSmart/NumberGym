@@ -72,6 +72,7 @@ class TrainingSession {
   NumberCard? _currentCard;
   int _consecutiveSilentCards = 0;
   int _consecutiveClientErrors = 0;
+  int _consecutiveCorrectAnswers = 0;
   bool _cardActive = false;
   bool _heardSpeechThisCard = false;
 
@@ -128,6 +129,7 @@ class TrainingSession {
     _status = TrainerStatus.running;
     _consecutiveSilentCards = 0;
     _consecutiveClientErrors = 0;
+    _consecutiveCorrectAnswers = 0;
     _forceDefaultLocale = false;
     _suppressNextClientError = false;
     _syncState();
@@ -148,6 +150,7 @@ class TrainingSession {
     _currentPoolIndex = null;
     _consecutiveSilentCards = 0;
     _consecutiveClientErrors = 0;
+    _consecutiveCorrectAnswers = 0;
     _heardSpeechThisCard = false;
     _answerMatcher.clear();
     _feedback = null;
@@ -185,6 +188,7 @@ class TrainingSession {
       errorMessage: _errorMessage,
       feedback: _feedback,
       currentCard: _currentCard,
+      hintText: _resolveHintText(),
       expectedTokens: List.unmodifiable(_answerMatcher.expectedTokens),
       matchedTokens: List.unmodifiable(_answerMatcher.matchedTokens),
       cardDuration: _cardTimer.duration,
@@ -344,6 +348,30 @@ class TrainingSession {
   Duration _resolveCardDuration(String prompt) {
     final seconds = _settingsRepository.readAnswerDurationSeconds();
     return Duration(seconds: seconds);
+  }
+
+  String? _resolveHintText() {
+    if (!_cardActive || _currentCard == null) return null;
+    final maxStreak = _settingsRepository.readHintStreakCount();
+    if (maxStreak <= 0 || _consecutiveCorrectAnswers >= maxStreak) {
+      return null;
+    }
+    final language = _currentLanguage();
+    final answers = _currentCard?.answersFor(language) ?? const <String>[];
+    if (answers.isEmpty) return null;
+
+    final prompt = (_currentCard?.prompt ?? '').trim().toLowerCase();
+    for (final answer in answers) {
+      final trimmed = answer.trim();
+      if (trimmed.isEmpty) continue;
+      if (prompt.isNotEmpty && trimmed.toLowerCase() == prompt) {
+        continue;
+      }
+      return trimmed;
+    }
+
+    final fallback = answers.first.trim();
+    return fallback.isEmpty ? null : fallback;
   }
 
   stt.ListenMode _resolveListenMode() {
@@ -519,6 +547,12 @@ class TrainingSession {
 
     _soundWaveService.stop();
     await _speechService.stop();
+
+    if (isCorrect) {
+      _consecutiveCorrectAnswers += 1;
+    } else {
+      _consecutiveCorrectAnswers = 0;
+    }
 
     await _updateProgress(isCorrect: isCorrect);
     _showFeedback(isCorrect, timeout: timeout);

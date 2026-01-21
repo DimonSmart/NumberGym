@@ -48,6 +48,7 @@ class TrainingController extends ChangeNotifier {
   String? get feedbackText => _session.state.feedback?.text;
   TrainingFeedbackType? get feedbackType => _session.state.feedback?.type;
   NumberCard? get currentCard => _session.state.currentCard;
+  String? get hintText => _session.state.hintText;
   List<String> get expectedTokens => _session.state.expectedTokens;
   List<bool> get matchedTokens => _session.state.matchedTokens;
 

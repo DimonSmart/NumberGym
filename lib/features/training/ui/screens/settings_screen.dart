@@ -25,6 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final ProgressRepository _progressRepository;
   late LearningLanguage _language;
   late int _answerSeconds;
+  late int _hintStreakCount;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _progressRepository = ProgressRepository(widget.progressBox);
     _language = _settingsRepository.readLearningLanguage();
     _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
+    _hintStreakCount = _settingsRepository.readHintStreakCount();
   }
 
   Future<void> _confirmReset() async {
@@ -78,8 +80,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setAnswerDurationSeconds(seconds);
   }
 
+  Future<void> _updateHintStreakCount(int count) async {
+    setState(() {
+      _hintStreakCount = count;
+    });
+    await _settingsRepository.setHintStreakCount(count);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
@@ -131,6 +141,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onChanged: (value) {
               final seconds = value.round();
               _updateAnswerSeconds(seconds);
+            },
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Hint streak',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Text('$_hintStreakCount'),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Show hint for the first N correct answers in a row.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Slider(
+            value: _hintStreakCount.toDouble(),
+            min: hintStreakMinCount.toDouble(),
+            max: hintStreakMaxCount.toDouble(),
+            divisions: hintStreakMaxCount - hintStreakMinCount,
+            label: '$_hintStreakCount',
+            onChanged: (value) {
+              final count = value.round();
+              _updateHintStreakCount(count);
             },
           ),
           const SizedBox(height: 28),
