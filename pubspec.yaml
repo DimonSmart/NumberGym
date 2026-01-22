@@ -36,6 +36,12 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   wakelock_plus: ^1.2.8
+  http: ^1.1.2
+  record: ^5.2.1
+
+dependency_overrides:
+  # Use newer linux implementation that supports startStream from platform interface.
+  record_linux: ^1.2.1
 
 dev_dependencies:
   flutter_test:

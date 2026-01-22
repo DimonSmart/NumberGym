@@ -6,6 +6,7 @@ import '../domain/repositories.dart';
 const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
+const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 
 const int answerDurationMinSeconds = 5;
 const int answerDurationMaxSeconds = 15;
@@ -15,6 +16,7 @@ const int answerDurationDefaultSeconds = answerDurationMinSeconds;
 const int hintStreakMinCount = 0;
 const int hintStreakMaxCount = 6;
 const int hintStreakDefaultCount = 3;
+const bool premiumPronunciationDefault = false;
 
 class SettingsRepository implements SettingsRepositoryBase {
   final Box<String> settingsBox;
@@ -61,6 +63,20 @@ class SettingsRepository implements SettingsRepositoryBase {
   Future<void> setHintStreakCount(int count) async {
     final normalized = _normalizeHintStreakCount(count);
     await settingsBox.put(hintStreakCountKey, normalized.toString());
+  }
+
+  @override
+  bool readPremiumPronunciationEnabled() {
+    final rawValue = settingsBox.get(premiumPronunciationKey);
+    if (rawValue == null) return premiumPronunciationDefault;
+    if (rawValue == 'true') return true;
+    if (rawValue == 'false') return false;
+    return premiumPronunciationDefault;
+  }
+
+  @override
+  Future<void> setPremiumPronunciationEnabled(bool enabled) async {
+    await settingsBox.put(premiumPronunciationKey, enabled.toString());
   }
 
   int _normalizeAnswerDurationSeconds(int seconds) {

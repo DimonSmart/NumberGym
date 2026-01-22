@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -9,14 +10,24 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../data/card_progress.dart';
 import '../data/number_card.dart';
 import '../data/number_cards.dart';
+import '../data/number_words.dart';
+import '../data/phrase_templates.dart';
 import 'learning_language.dart';
+import 'pronunciation_models.dart';
+import 'pronunciation_task.dart';
+import 'number_words_task.dart';
 import 'repositories.dart';
 import 'services/answer_matcher.dart';
+import 'services/audio_recorder_service.dart';
+import 'services/azure_speech_service.dart';
 import 'services/card_timer.dart';
 import 'services/keep_awake_service.dart';
 import 'services/sound_wave_service.dart';
 import 'services/speech_service.dart';
 import 'training_state.dart';
+import 'training_task.dart';
+
+enum TrainingOutcome { success, fail, timeout, ignore }
 
 class TrainingSession {
   TrainingSession({
@@ -28,6 +39,9 @@ class TrainingSession {
     AnswerMatcher? answerMatcher,
     CardTimerBase? cardTimer,
     KeepAwakeServiceBase? keepAwakeService,
+    AudioRecorderServiceBase? audioRecorder,
+    AzureSpeechService? azureSpeechService,
+    PhraseTemplates? phraseTemplates,
     void Function()? onStateChanged,
   })  : _settingsRepository = settingsRepository,
         _progressRepository = progressRepository,
@@ -36,10 +50,15 @@ class TrainingSession {
         _answerMatcher = answerMatcher ?? AnswerMatcher(),
         _cardTimer = cardTimer ?? CardTimer(),
         _keepAwakeService = keepAwakeService ?? KeepAwakeService(),
+      _audioRecorder = audioRecorder ?? AudioRecorderService(),
+        _azureSpeechService = azureSpeechService ?? AzureSpeechService(),
+        _phraseTemplates = phraseTemplates ?? PhraseTemplates(Random()),
         _onStateChanged = onStateChanged ?? _noop {
     final cards = buildNumberCards();
     _cardsById = {for (final card in cards) card.id: card};
     _cardIds = _cardsById.keys.toList()..sort();
+      _premiumPronunciationEnabled =
+        _settingsRepository.readPremiumPronunciationEnabled();
     _syncState();
   }
 
@@ -51,15 +70,25 @@ class TrainingSession {
   final AnswerMatcher _answerMatcher;
   final CardTimerBase _cardTimer;
   final KeepAwakeServiceBase _keepAwakeService;
+  final AudioRecorderServiceBase _audioRecorder;
   final ProgressRepositoryBase _progressRepository;
   final SettingsRepositoryBase _settingsRepository;
+  final AzureSpeechService _azureSpeechService;
+  final PhraseTemplates _phraseTemplates;
   final void Function() _onStateChanged;
 
-  late final Map<int, SpeakNumberTask> _cardsById;
+  late final Map<int, NumberPronunciationTask> _cardsById;
   late final List<int> _cardIds;
 
   Map<int, CardProgress> _progressById = {};
   List<int> _pool = [];
+
+  TrainingTask? _currentTask;
+  PhrasePronunciationTask? _currentPhraseTask;
+  PronunciationAnalysisResult? _pronunciationResult;
+  bool _premiumPronunciationEnabled = false;
+  bool _isRecording = false;
+  File? _recordingFile;
 
   TrainerStatus _status = TrainerStatus.idle;
   bool _speechReady = false;
@@ -69,7 +98,7 @@ class TrainingSession {
   int? _activeAttemptId;
   int? _currentCardId;
   int? _currentPoolIndex;
-  SpeakNumberTask? _currentCard;
+  NumberPronunciationTask? _currentCard;
   int _consecutiveSilentCards = 0;
   int _consecutiveClientErrors = 0;
   int _consecutiveCorrectAnswers = 0;
@@ -79,6 +108,9 @@ class TrainingSession {
   String _lastPartialResult = '';
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
   static const int _maxConsecutiveClientErrors = 3;
+  static const int _numberPronunciationWeight = 70;
+  static const int _numberReadingWeight = 25;
+  static const int _phrasePronunciationWeight = 5;
 
   TrainingFeedback? _feedback;
   Timer? _feedbackTimer;
@@ -98,6 +130,16 @@ class TrainingSession {
   int get remainingCount => totalCards - learnedCount;
   bool get hasRemainingCards => _pool.isNotEmpty;
 
+  bool get premiumPronunciationEnabled => _premiumPronunciationEnabled;
+  Future<void> setPremiumPronunciationEnabled(bool enabled) async {
+    _premiumPronunciationEnabled = enabled;
+    await _settingsRepository.setPremiumPronunciationEnabled(enabled);
+    _syncState();
+  }
+
+  PhrasePronunciationTask? get currentPhraseTask => _currentPhraseTask;
+  PronunciationAnalysisResult? get pronunciationResult => _pronunciationResult;
+
   Future<void> initialize() async {
     await _loadProgress();
     _syncState();
@@ -109,13 +151,9 @@ class TrainingSession {
   }
 
   Future<void> startTraining() async {
-    if (_status == TrainerStatus.running) return;
-    if (!_speechReady) {
-      await _initSpeech();
-      if (!_speechReady) {
-        _syncState();
-        return;
-      }
+    if (_status == TrainerStatus.running ||
+        _status == TrainerStatus.waitingRecording) {
+      return;
     }
 
     if (_pool.isEmpty) {
@@ -146,8 +184,15 @@ class TrainingSession {
     _status = TrainerStatus.idle;
     _errorMessage = null;
     _currentCard = null;
+    _currentTask = null;
     _currentCardId = null;
     _currentPoolIndex = null;
+    _currentPhraseTask = null;
+    _pronunciationResult = null;
+    _recordingFile = null;
+    _isRecording = false;
+    _premiumPronunciationEnabled =
+      _settingsRepository.readPremiumPronunciationEnabled();
     _consecutiveSilentCards = 0;
     _consecutiveClientErrors = 0;
     _consecutiveCorrectAnswers = 0;
@@ -169,8 +214,13 @@ class TrainingSession {
   Future<void> restoreAfterOverlay() async {
     await _loadProgress();
     _currentCard = null;
+    _currentTask = null;
     _currentCardId = null;
     _currentPoolIndex = null;
+    _currentPhraseTask = null;
+    _pronunciationResult = null;
+    _recordingFile = null;
+    _isRecording = false;
     _consecutiveSilentCards = 0;
     _heardSpeechThisCard = false;
     _forceDefaultLocale = false;
@@ -180,19 +230,123 @@ class TrainingSession {
     _syncState();
   }
 
+  Future<PronunciationAnalysisResult> analyzePronunciationRecording(
+    File audioFile,
+  ) async {
+    if (_currentPhraseTask == null) {
+      throw StateError('No active pronunciation task');
+    }
+    _heardSpeechThisCard = true;
+    final result = await _azureSpeechService.analyzePronunciation(
+      audioFile: audioFile,
+      expectedText: _currentPhraseTask!.text,
+    );
+    _pronunciationResult = result;
+    _syncState();
+    return result;
+  }
+
+  Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) async {
+    if (!_cardActive || _currentTask == null) return;
+    await _completeCard(outcome: outcome);
+  }
+
+  Future<void> startPronunciationRecording() async {
+    if (_currentTask is! PhrasePronunciationTask) return;
+    if (_status != TrainerStatus.waitingRecording) return;
+    if (_isRecording) return;
+    _recordingFile = null;
+    _pronunciationResult = null;
+    try {
+      await _audioRecorder.start();
+      _isRecording = true;
+    } catch (error) {
+      _errorMessage = 'Cannot start recording: $error';
+    }
+    _syncState();
+  }
+
+  Future<File?> stopPronunciationRecording() async {
+    if (_currentTask is! PhrasePronunciationTask) return _recordingFile;
+    if (!_isRecording) return _recordingFile;
+    try {
+      final file = await _audioRecorder.stop();
+      _isRecording = false;
+      _recordingFile = file;
+      _syncState();
+      return file;
+    } catch (error) {
+      _isRecording = false;
+      _errorMessage = 'Recording failed: $error';
+      _syncState();
+      return null;
+    }
+  }
+
+  Future<void> cancelPronunciationRecording() async {
+    if (_isRecording) {
+      await _audioRecorder.cancel();
+      _isRecording = false;
+    }
+    _recordingFile = null;
+    _pronunciationResult = null;
+    _syncState();
+  }
+
+  Future<PronunciationAnalysisResult> sendPronunciationRecording({File? file}) async {
+    final resolved = file ?? _recordingFile;
+    if (resolved == null) {
+      throw StateError('No recording to send');
+    }
+    final result = await analyzePronunciationRecording(resolved);
+    // Pronunciation tasks do not affect progress; advance with ignore.
+    await _completeCard(outcome: TrainingOutcome.ignore);
+    return result;
+  }
+
+  Future<void> answerNumberReading(String selectedOption) async {
+    if (_currentTask is! NumberReadingTask) return;
+    if (!_cardActive) return;
+    final task = _currentTask as NumberReadingTask;
+    final normalized = selectedOption.trim().toLowerCase();
+    final correct = task.correctOption.trim().toLowerCase();
+    _heardSpeechThisCard = true;
+    await _completeCard(
+      outcome: normalized == correct
+          ? TrainingOutcome.success
+          : TrainingOutcome.fail,
+    );
+  }
+
   void _syncState() {
     if (_disposed) return;
+    final taskKind = _currentTask?.kind;
+    final isNumberPronunciation =
+        taskKind == TrainingTaskKind.numberPronunciation;
+    final List<String> expectedTokens = isNumberPronunciation
+        ? List<String>.unmodifiable(_answerMatcher.expectedTokens)
+        : const <String>[];
+    final List<bool> matchedTokens = isNumberPronunciation
+        ? List<bool>.unmodifiable(_answerMatcher.matchedTokens)
+        : const <bool>[];
     _state = TrainingState(
       status: _status,
       speechReady: _speechReady,
       errorMessage: _errorMessage,
       feedback: _feedback,
+      currentTask: _currentTask,
       currentCard: _currentCard,
+      displayText: _resolveDisplayText(),
       hintText: _resolveHintText(),
-      expectedTokens: List.unmodifiable(_answerMatcher.expectedTokens),
-      matchedTokens: List.unmodifiable(_answerMatcher.matchedTokens),
-      cardDuration: _cardTimer.duration,
+      expectedTokens: expectedTokens,
+      matchedTokens: matchedTokens,
+      cardDuration:
+          isNumberPronunciation ? _cardTimer.duration : Duration.zero,
       isTimerRunning: _cardTimer.isRunning,
+      isAwaitingRecording: _status == TrainerStatus.waitingRecording,
+      isRecording: _isRecording,
+      hasRecording: _recordingFile != null,
+      pronunciationResult: _pronunciationResult,
     );
     _onStateChanged();
   }
@@ -210,6 +364,7 @@ class TrainingSession {
     _cardTimer.dispose();
     _speechService.dispose();
     _keepAwakeService.dispose();
+    _audioRecorder.dispose();
   }
 
   Future<void> _loadProgress() async {
@@ -355,6 +510,9 @@ class TrainingSession {
     if (maxStreak <= 0 || _consecutiveCorrectAnswers >= maxStreak) {
       return null;
     }
+    if (_currentTask?.kind != TrainingTaskKind.numberPronunciation) {
+      return null;
+    }
     final language = _currentLanguage();
     final answers = _currentCard?.answersFor(language) ?? const <String>[];
     if (answers.isEmpty) return null;
@@ -373,6 +531,14 @@ class TrainingSession {
     return fallback.isEmpty ? null : fallback;
   }
 
+  String _resolveDisplayText() {
+    final task = _currentTask;
+    if (task != null) {
+      return task.displayText;
+    }
+    return _currentCard?.displayText ?? '--';
+  }
+
   stt.ListenMode _resolveListenMode() {
     if (_answerMatcher.expectedTokens.length <= 2) {
       return stt.ListenMode.search;
@@ -380,7 +546,12 @@ class TrainingSession {
     return stt.ListenMode.dictation;
   }
 
-  void _resetCardProgress(SpeakNumberTask? card) {
+  int _generatePhraseTaskId(int numberValue, int templateId) {
+    // Keep IDs unique while keeping progress keyed to [numberValue].
+    return numberValue * 1000 + templateId;
+  }
+
+  void _resetCardProgress(NumberPronunciationTask? card) {
     final prompt = card?.prompt ?? '';
     final language = _currentLanguage();
     final answers = card?.answersFor(language) ?? const <String>[];
@@ -397,8 +568,46 @@ class TrainingSession {
 
   Duration _remainingCardDuration() => _cardTimer.remaining();
 
+  TrainingTaskKind _pickTaskKind({required bool canUsePhrase}) {
+    final weightedKinds = <MapEntry<TrainingTaskKind, int>>[
+      const MapEntry(
+        TrainingTaskKind.numberPronunciation,
+        _numberPronunciationWeight,
+      ),
+      const MapEntry(
+        TrainingTaskKind.numberReading,
+        _numberReadingWeight,
+      ),
+      if (canUsePhrase)
+        const MapEntry(
+          TrainingTaskKind.phrasePronunciation,
+          _phrasePronunciationWeight,
+        ),
+    ];
+    final totalWeight =
+        weightedKinds.fold(0, (sum, entry) => sum + entry.value);
+    final roll = _random.nextInt(totalWeight);
+    var cursor = 0;
+    for (final entry in weightedKinds) {
+      cursor += entry.value;
+      if (roll < cursor) {
+        return entry.key;
+      }
+    }
+    return weightedKinds.last.key;
+  }
+
+  bool _hasPhraseTemplate(LearningLanguage language, int numberValue) {
+    return _phraseTemplates
+        .forLanguage(language)
+        .any((template) => template.supports(numberValue));
+  }
+
   Future<void> _startNextCard() async {
-    if (_status != TrainerStatus.running) return;
+    if (_status != TrainerStatus.running &&
+        _status != TrainerStatus.waitingRecording) {
+      return;
+    }
     if (_pool.isEmpty) {
       _status = TrainerStatus.finished;
       unawaited(_setKeepAwake(false));
@@ -407,24 +616,128 @@ class TrainingSession {
     }
 
     final poolIndex = _random.nextInt(_pool.length);
+    final cardId = _pool[poolIndex];
+    final card = _cardsById[cardId];
+    if (card == null) return;
+
+    final language = _currentLanguage();
+    final canUsePhrase = _premiumPronunciationEnabled &&
+        _hasPhraseTemplate(language, card.id);
+    final taskKind = _pickTaskKind(canUsePhrase: canUsePhrase);
+
+    if (taskKind == TrainingTaskKind.numberPronunciation && !_speechReady) {
+      await _initSpeech();
+      if (!_speechReady) {
+        _status = TrainerStatus.paused;
+        _cardActive = false;
+        _currentTask = null;
+        _currentCard = null;
+        _currentCardId = null;
+        _currentPoolIndex = null;
+        _syncState();
+        unawaited(_setKeepAwake(false));
+        return;
+      }
+    }
+
     _currentPoolIndex = poolIndex;
-    _currentCardId = _pool[poolIndex];
-    _currentCard = _cardsById[_currentCardId];
+    _currentCardId = cardId;
+    _currentCard = card;
+    _currentTask = null;
+    _currentPhraseTask = null;
+    _pronunciationResult = null;
+    _recordingFile = null;
+    _isRecording = false;
+
     _cardActive = true;
-    _heardSpeechThisCard = false;
-    _resetCardProgress(_currentCard);
+    _heardSpeechThisCard = taskKind != TrainingTaskKind.numberPronunciation;
     _soundWaveService.reset();
     _suppressNextClientError = false;
 
-    final prompt = _currentCard?.prompt ?? '';
-    final duration = _resolveCardDuration(prompt);
+    switch (taskKind) {
+      case TrainingTaskKind.numberReading:
+        _currentTask = _buildNumberReadingTask(card);
+        _status = TrainerStatus.running;
+        _cardTimer.stop();
+        _syncState();
+        return;
+      case TrainingTaskKind.phrasePronunciation:
+        final template = _phraseTemplates.pick(language, card.id);
+        if (template == null) {
+          _currentTask = card;
+          _resetCardProgress(card);
+          _status = TrainerStatus.running;
+          final duration = _resolveCardDuration(card.prompt);
+          _cardTimer.start(duration, _onTimerTimeout);
+          _syncState();
+          await _startListening();
+          return;
+        }
+        _currentPhraseTask = template.toTask(
+          value: card.id,
+          taskId: _generatePhraseTaskId(card.id, template.id),
+        );
+        _currentTask = _currentPhraseTask;
+        _status = TrainerStatus.waitingRecording;
+        _cardTimer.stop();
+        _syncState();
+        return;
+      case TrainingTaskKind.numberPronunciation:
+        _currentTask = card;
+        _resetCardProgress(card);
+        _status = TrainerStatus.running;
+        final duration = _resolveCardDuration(card.prompt);
+        _cardTimer.start(duration, _onTimerTimeout);
+        _syncState();
+        await _startListening();
+        return;
+    }
+  }
 
-    _cardTimer.start(duration, _onTimerTimeout);
-    _syncState();
-    await _startListening();
+  NumberReadingTask _buildNumberReadingTask(NumberPronunciationTask card) {
+    final language = _currentLanguage();
+    final toWords = _numberWordsConverter(language);
+    final correct = toWords(card.id);
+    final options = <String>{correct};
+
+    while (options.length < numberReadingOptionCount) {
+      final candidateId = _cardIds[_random.nextInt(_cardIds.length)];
+      if (candidateId == card.id) continue;
+      try {
+        final option = toWords(candidateId);
+        options.add(option);
+      } catch (_) {
+        // Skip invalid conversions and try another number.
+      }
+    }
+
+    final shuffled = options.toList()..shuffle(_random);
+    return NumberReadingTask(
+      id: _generateNumberReadingTaskId(card.id),
+      numberValue: card.id,
+      prompt: card.prompt,
+      correctOption: correct,
+      options: shuffled,
+    );
+  }
+
+  int _generateNumberReadingTaskId(int numberValue) {
+    return numberValue * 1000 + 500;
+  }
+
+  String Function(int) _numberWordsConverter(LearningLanguage language) {
+    switch (language) {
+      case LearningLanguage.spanish:
+        return numberToSpanish;
+      case LearningLanguage.english:
+        return numberToEnglish;
+    }
   }
 
   Future<void> _startListening() async {
+    if (_currentTask?.kind != TrainingTaskKind.numberPronunciation) {
+      return;
+    }
     if (_currentCardId == null ||
         _status != TrainerStatus.running ||
         !_cardActive) {
@@ -432,7 +745,7 @@ class TrainingSession {
     }
     final remaining = _remainingCardDuration();
     if (remaining < const Duration(milliseconds: 500)) {
-      unawaited(_completeCard(isCorrect: false, timeout: true));
+      unawaited(_completeCard(outcome: TrainingOutcome.timeout));
       return;
     }
     final attemptId = ++_attemptCounter;
@@ -494,7 +807,7 @@ class TrainingSession {
 
   void _onTimerTimeout() {
     if (_status != TrainerStatus.running || !_cardActive) return;
-    unawaited(_completeCard(isCorrect: false, timeout: true));
+    unawaited(_completeCard(outcome: TrainingOutcome.timeout));
   }
 
   Future<void> _handleAttemptResult({
@@ -522,13 +835,13 @@ class TrainingSession {
     }
 
     if (_isCardComplete) {
-      await _completeCard(isCorrect: true, timeout: false);
+      await _completeCard(outcome: TrainingOutcome.success);
       return;
     }
 
     if (_status != TrainerStatus.running || !_cardActive) return;
     if (_remainingCardDuration() <= Duration.zero) {
-      await _completeCard(isCorrect: false, timeout: true);
+      await _completeCard(outcome: TrainingOutcome.timeout);
       return;
     }
     await Future.delayed(_listenRestartDelay);
@@ -536,8 +849,7 @@ class TrainingSession {
   }
 
   Future<void> _completeCard({
-    required bool isCorrect,
-    required bool timeout,
+    required TrainingOutcome outcome,
   }) async {
     if (!_cardActive || _currentCardId == null) return;
     _cardActive = false;
@@ -547,19 +859,29 @@ class TrainingSession {
     _soundWaveService.stop();
     await _speechService.stop();
 
-    if (isCorrect) {
-      _consecutiveCorrectAnswers += 1;
-    } else {
-      _consecutiveCorrectAnswers = 0;
+    final isCorrect = outcome == TrainingOutcome.success;
+    final isPhrasePronunciation =
+        _currentTask?.kind == TrainingTaskKind.phrasePronunciation;
+    // Phrase pronunciation tasks are informational only and must not affect learning progress.
+    final shouldUpdateProgress =
+        !isPhrasePronunciation && outcome != TrainingOutcome.ignore;
+
+    if (shouldUpdateProgress) {
+      if (isCorrect) {
+        _consecutiveCorrectAnswers += 1;
+      } else {
+        _consecutiveCorrectAnswers = 0;
+      }
+
+      await _updateProgress(isCorrect: isCorrect);
     }
 
-    await _updateProgress(isCorrect: isCorrect);
-    _showFeedback(isCorrect, timeout: timeout);
+    _showFeedback(outcome: outcome);
 
     if (_status == TrainerStatus.running) {
       if (_heardSpeechThisCard) {
         _consecutiveSilentCards = 0;
-      } else {
+      } else if (shouldUpdateProgress) {
         _consecutiveSilentCards += 1;
       }
       if (_consecutiveSilentCards >= 3) {
@@ -568,13 +890,17 @@ class TrainingSession {
       }
     }
 
+    if (_status == TrainerStatus.waitingRecording) {
+      _status = TrainerStatus.running;
+    }
+
     await _startNextCard();
   }
 
   Future<void> _updateProgress({required bool isCorrect}) async {
-    final cardId = _currentCardId;
-    if (cardId == null) return;
-    final progress = _progressById[cardId] ?? CardProgress.empty;
+    final progressKey = _currentTask?.progressId ?? _currentCardId;
+    if (progressKey == null) return;
+    final progress = _progressById[progressKey] ?? CardProgress.empty;
     final attempts = List<bool>.from(progress.lastAttempts)..add(isCorrect);
     if (attempts.length > 10) {
       attempts.removeRange(0, attempts.length - 10);
@@ -586,8 +912,8 @@ class TrainingSession {
       totalAttempts: progress.totalAttempts + 1,
       totalCorrect: progress.totalCorrect + (isCorrect ? 1 : 0),
     );
-    _progressById[cardId] = updated;
-    await _progressRepository.save(cardId, updated);
+    _progressById[progressKey] = updated;
+    await _progressRepository.save(progressKey, updated);
     if (learned) {
       _removeFromPool();
     }
@@ -607,21 +933,30 @@ class TrainingSession {
     }
   }
 
-  void _showFeedback(
-    bool isCorrect, {
-    required bool timeout,
-  }) {
+  void _showFeedback({required TrainingOutcome outcome}) {
     _feedbackTimer?.cancel();
-    final text = isCorrect
-        ? 'Correct'
-        : timeout
-            ? 'Timeout'
-            : 'Wrong';
-    final type = isCorrect
-        ? TrainingFeedbackType.correct
-        : timeout
-            ? TrainingFeedbackType.timeout
-            : TrainingFeedbackType.wrong;
+    late final TrainingFeedbackType type;
+    late final String text;
+
+    switch (outcome) {
+      case TrainingOutcome.success:
+        type = TrainingFeedbackType.correct;
+        text = 'Correct';
+        break;
+      case TrainingOutcome.fail:
+        type = TrainingFeedbackType.wrong;
+        text = 'Wrong';
+        break;
+      case TrainingOutcome.timeout:
+        type = TrainingFeedbackType.timeout;
+        text = 'Timeout';
+        break;
+      case TrainingOutcome.ignore:
+        type = TrainingFeedbackType.skipped;
+        text = 'Skipped';
+        break;
+    }
+
     _feedback = TrainingFeedback(type: type, text: text);
     _syncState();
 
@@ -643,6 +978,11 @@ class TrainingSession {
     _cardActive = false;
     _soundWaveService.stop();
     _cardTimer.stop();
+
+    if (_isRecording) {
+      await _audioRecorder.cancel();
+      _isRecording = false;
+    }
 
     if (_speechService.isListening) {
       await _speechService.stop();

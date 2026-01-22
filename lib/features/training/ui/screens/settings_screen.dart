@@ -26,6 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late LearningLanguage _language;
   late int _answerSeconds;
   late int _hintStreakCount;
+  late bool _premiumPronunciation;
 
   @override
   void initState() {
@@ -35,6 +36,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _language = _settingsRepository.readLearningLanguage();
     _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
     _hintStreakCount = _settingsRepository.readHintStreakCount();
+    _premiumPronunciation =
+      _settingsRepository.readPremiumPronunciationEnabled();
   }
 
   Future<void> _confirmReset() async {
@@ -87,6 +90,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setHintStreakCount(count);
   }
 
+  Future<void> _updatePremiumPronunciation(bool enabled) async {
+    setState(() {
+      _premiumPronunciation = enabled;
+    });
+    await _settingsRepository.setPremiumPronunciationEnabled(enabled);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -120,6 +130,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
+          SwitchListTile(
+            value: _premiumPronunciation,
+            onChanged: _updatePremiumPronunciation,
+            title: const Text(
+              'Premium pronunciation phrases',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: const Text(
+              'Include phrase-based pronunciation tasks in training flow.',
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

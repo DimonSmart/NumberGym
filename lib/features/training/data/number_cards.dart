@@ -2,7 +2,7 @@ import '../domain/learning_language.dart';
 import 'number_card.dart';
 import 'number_words.dart';
 
-List<SpeakNumberTask> buildNumberCards() {
+List<NumberPronunciationTask> buildNumberCards() {
   final ids = <int>[];
   // 0 - 100
   for (var i = 0; i <= 100; i++) {
@@ -32,7 +32,7 @@ List<SpeakNumberTask> buildNumberCards() {
     // Original code: [numberToEnglish(id), prompt]
     // So "100" string is a valid answer.
     
-    return SpeakNumberTask(
+    return NumberPronunciationTask(
       id: id,
       prompt: prompt,
       answersByLanguage: <LearningLanguage, List<String>>{

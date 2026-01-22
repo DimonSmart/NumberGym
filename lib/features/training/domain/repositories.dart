@@ -14,4 +14,6 @@ abstract class SettingsRepositoryBase {
   Future<void> setAnswerDurationSeconds(int seconds);
   int readHintStreakCount();
   Future<void> setHintStreakCount(int count);
+  bool readPremiumPronunciationEnabled();
+  Future<void> setPremiumPronunciationEnabled(bool enabled);
 }
