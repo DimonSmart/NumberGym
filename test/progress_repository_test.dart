@@ -32,12 +32,13 @@ void main() {
     await tempDir.delete(recursive: true);
   });
 
-  test('loadAll returns entries through max id', () async {
+  test('loadAll returns entries for provided ids', () async {
     final repo = ProgressRepository(box);
-    final results = await repo.loadAll(maxCardId: 2);
+    final ids = <int>[0, 1, 2];
+    final results = await repo.loadAll(ids);
 
-    expect(results.length, 3);
-    expect(results.keys, containsAll(<int>[0, 1, 2]));
+    expect(results.length, ids.length);
+    expect(results.keys, containsAll(ids));
     expect(results[0]!.totalAttempts, 0);
     expect(results[0]!.totalCorrect, 0);
   });
@@ -52,7 +53,7 @@ void main() {
     );
 
     await repo.save(2, progress);
-    final results = await repo.loadAll(maxCardId: 2);
+    final results = await repo.loadAll(<int>[0, 1, 2]);
     final stored = results[2]!;
 
     expect(stored.learned, true);
@@ -72,7 +73,7 @@ void main() {
 
     await repo.save(1, progress);
     await repo.reset();
-    final results = await repo.loadAll(maxCardId: 1);
+    final results = await repo.loadAll(<int>[0, 1]);
     final stored = results[1]!;
 
     expect(stored.learned, false);

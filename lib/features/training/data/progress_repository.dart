@@ -9,9 +9,9 @@ class ProgressRepository implements ProgressRepositoryBase {
   ProgressRepository(this.progressBox);
 
   @override
-  Future<Map<int, CardProgress>> loadAll({required int maxCardId}) async {
+  Future<Map<int, CardProgress>> loadAll(List<int> cardIds) async {
     final results = <int, CardProgress>{};
-    for (var id = 0; id <= maxCardId; id++) {
+    for (final id in cardIds) {
       final key = _cardKey(id);
       final progress = progressBox.get(key) ?? CardProgress.empty;
       results[id] = progress;

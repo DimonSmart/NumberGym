@@ -19,7 +19,7 @@ class TrainingState {
   final bool speechReady;
   final String? errorMessage;
   final TrainingFeedback? feedback;
-  final NumberCard? currentCard;
+  final SpeakNumberTask? currentCard;
   final String? hintText;
   final List<String> expectedTokens;
   final List<bool> matchedTokens;

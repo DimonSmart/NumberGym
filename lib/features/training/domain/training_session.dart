@@ -55,7 +55,7 @@ class TrainingSession {
   final SettingsRepositoryBase _settingsRepository;
   final void Function() _onStateChanged;
 
-  late final Map<int, NumberCard> _cardsById;
+  late final Map<int, SpeakNumberTask> _cardsById;
   late final List<int> _cardIds;
 
   Map<int, CardProgress> _progressById = {};
@@ -69,7 +69,7 @@ class TrainingSession {
   int? _activeAttemptId;
   int? _currentCardId;
   int? _currentPoolIndex;
-  NumberCard? _currentCard;
+  SpeakNumberTask? _currentCard;
   int _consecutiveSilentCards = 0;
   int _consecutiveClientErrors = 0;
   int _consecutiveCorrectAnswers = 0;
@@ -218,8 +218,7 @@ class TrainingSession {
       _pool = [];
       return;
     }
-    final maxCardId = _cardIds.last;
-    final progress = await _progressRepository.loadAll(maxCardId: maxCardId);
+    final progress = await _progressRepository.loadAll(_cardIds);
     _progressById = {
       for (final id in _cardIds) id: progress[id] ?? CardProgress.empty,
     };
@@ -381,7 +380,7 @@ class TrainingSession {
     return stt.ListenMode.dictation;
   }
 
-  void _resetCardProgress(NumberCard? card) {
+  void _resetCardProgress(SpeakNumberTask? card) {
     final prompt = card?.prompt ?? '';
     final language = _currentLanguage();
     final answers = card?.answersFor(language) ?? const <String>[];

@@ -1,12 +1,12 @@
 import '../domain/learning_language.dart';
+import '../domain/training_task.dart';
 
-class NumberCard {
-  final int id;
+class SpeakNumberTask extends TrainingTask {
   final String prompt;
   final Map<LearningLanguage, List<String>> answersByLanguage;
 
-  const NumberCard({
-    required this.id,
+  const SpeakNumberTask({
+    required super.id,
     required this.prompt,
     required this.answersByLanguage,
   });

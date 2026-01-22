@@ -21,6 +21,7 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   late final ProgressRepository _progressRepository;
   Map<int, CardProgress> _progressById = {};
+  List<int> _gridIds = [];
   bool _loading = true;
 
   @override
@@ -31,10 +32,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Future<void> _load() async {
-    final progress =
-        await _progressRepository.loadAll(maxCardId: numberCardMaxId);
+    final cards = buildNumberCards();
+    final ids = cards.map((c) => c.id).toList();
+    final progress = await _progressRepository.loadAll(ids);
+    
     if (!mounted) return;
     setState(() {
+      _gridIds = ids;
       _progressById = progress;
       _loading = false;
     });
@@ -66,7 +70,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      '$numberCardMinId-$numberCardMaxId',
+                      '${_gridIds.isNotEmpty ? _gridIds.length : 0} items',
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -88,12 +92,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
-    final gridIds = List<int>.generate(
-      numberCardCount,
-      (index) => numberCardMinId + index,
-    );
     final gridProgress = {
-      for (final id in gridIds) id: _progressById[id] ?? CardProgress.empty,
+      for (final id in _gridIds) id: _progressById[id] ?? CardProgress.empty,
     };
 
     final totalAttempts = _progressById.values.fold<int>(
@@ -139,7 +139,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const SizedBox(height: 12),
           _buildLegend(theme, maxAttempts),
           const SizedBox(height: 14),
-          _buildGrid(theme, gridIds, gridProgress, maxAttempts, hotIds),
+          _buildGrid(theme, _gridIds, gridProgress, maxAttempts, hotIds),
         ],
       ),
     );
