@@ -1,46 +1,49 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'pronunciation_models.dart';
 import 'repositories.dart';
-import 'tasks/number_pronunciation_task.dart';
-import 'tasks/number_to_word_task.dart';
-import 'tasks/word_to_number_task.dart';
+import 'task_runtime.dart';
+import 'task_state.dart';
+import 'training_outcome.dart';
+import 'training_services.dart';
 import 'training_session.dart';
-import 'training_task.dart';
-import 'services/answer_matcher.dart';
-import 'services/card_timer.dart';
-import 'services/keep_awake_service.dart';
-import 'services/sound_wave_service.dart';
-import 'services/speech_service.dart';
 import 'training_state.dart';
+import 'training_task.dart';
 
+export 'task_runtime.dart'
+    show
+        TaskAction,
+        SelectOptionAction,
+        RetrySpeechInitAction,
+        StartRecordingAction,
+        StopRecordingAction,
+        CancelRecordingAction,
+        SendRecordingAction,
+        CompleteReviewAction;
+export 'task_state.dart'
+    show
+        TaskState,
+        NumberPronunciationState,
+        MultipleChoiceState,
+        PhrasePronunciationState,
+        PhraseFlow,
+        TimerState;
+export 'training_outcome.dart' show TrainingOutcome;
 export 'training_state.dart';
-export 'training_session.dart' show TrainingOutcome;
 export 'training_task.dart' show TrainingTaskKind;
 
 class TrainingController extends ChangeNotifier {
   TrainingController({
     required SettingsRepositoryBase settingsRepository,
     required ProgressRepositoryBase progressRepository,
+    TrainingServices? services,
     stt.SpeechToText? speech,
-    SpeechServiceBase? speechService,
-    SoundWaveServiceBase? soundWaveService,
-    AnswerMatcher? answerMatcher,
-    CardTimerBase? cardTimer,
-    KeepAwakeServiceBase? keepAwakeService,
   }) {
     _session = TrainingSession(
       settingsRepository: settingsRepository,
       progressRepository: progressRepository,
-      speech: speech,
-      speechService: speechService,
-      soundWaveService: soundWaveService,
-      answerMatcher: answerMatcher,
-      cardTimer: cardTimer,
-      keepAwakeService: keepAwakeService,
+      services: services ?? TrainingServices.defaults(speech: speech),
       onStateChanged: _notify,
     );
   }
@@ -55,33 +58,47 @@ class TrainingController extends ChangeNotifier {
   TrainingFeedback? get feedback => _session.state.feedback;
   String? get feedbackText => _session.state.feedback?.text;
   TrainingFeedbackType? get feedbackType => _session.state.feedback?.type;
-  TrainingTask? get currentTask => _session.state.currentTask;
+  TaskState? get currentTask => _session.state.currentTask;
   TrainingTaskKind? get currentTaskKind => _session.state.currentTask?.kind;
-  NumberPronunciationTask? get currentCard => _session.state.currentCard;
-  NumberToWordTask? get currentNumberToWordTask {
+
+  NumberPronunciationState? get numberPronunciationState {
     final task = _session.state.currentTask;
-    return task is NumberToWordTask ? task : null;
+    return task is NumberPronunciationState ? task : null;
   }
-  WordToNumberTask? get currentWordToNumberTask {
+
+  MultipleChoiceState? get multipleChoiceState {
     final task = _session.state.currentTask;
-    return task is WordToNumberTask ? task : null;
+    return task is MultipleChoiceState ? task : null;
   }
-  String get displayText => _session.state.displayText;
-  bool get isAwaitingRecording => _session.state.isAwaitingRecording;
-  bool get isRecording => _session.state.isRecording;
-  bool get hasRecording => _session.state.hasRecording;
+
+  PhrasePronunciationState? get phrasePronunciationState {
+    final task = _session.state.currentTask;
+    return task is PhrasePronunciationState ? task : null;
+  }
+
+  String get displayText => _session.state.currentTask?.displayText ?? '--';
+  String? get hintText => numberPronunciationState?.hintText;
+  List<String> get expectedTokens =>
+      numberPronunciationState?.expectedTokens ?? const <String>[];
+  List<bool> get matchedTokens =>
+      numberPronunciationState?.matchedTokens ?? const <bool>[];
+
+  bool get isAwaitingRecording =>
+      _session.state.status == TrainerStatus.waitingRecording;
+  bool get isRecording =>
+      phrasePronunciationState?.flow == PhraseFlow.recording;
+  bool get hasRecording => phrasePronunciationState?.hasRecording ?? false;
   bool get isAwaitingPronunciationReview =>
-      _session.state.isAwaitingPronunciationReview;
+      phrasePronunciationState?.flow == PhraseFlow.reviewing;
   PronunciationAnalysisResult? get pronunciationResult =>
-      _session.state.pronunciationResult;
-  String? get hintText => _session.state.hintText;
-  List<String> get expectedTokens => _session.state.expectedTokens;
-  List<bool> get matchedTokens => _session.state.matchedTokens;
+      phrasePronunciationState?.result;
 
   Stream<List<double>> get soundStream => _session.soundStream;
 
-  Duration get currentCardDuration => _session.state.cardDuration;
-  bool get isTimerRunning => _session.state.isTimerRunning;
+  Duration get currentCardDuration =>
+      _session.state.currentTask?.timer.duration ?? Duration.zero;
+  bool get isTimerRunning =>
+      _session.state.currentTask?.timer.isRunning ?? false;
 
   int get totalCards => _session.totalCards;
   int get learnedCount => _session.learnedCount;
@@ -98,31 +115,25 @@ class TrainingController extends ChangeNotifier {
   Future<void> setPremiumPronunciationEnabled(bool enabled) =>
       _session.setPremiumPronunciationEnabled(enabled);
 
-  Future<PronunciationAnalysisResult> analyzePronunciationRecording(
-    File audioFile,
-  ) =>
-      _session.analyzePronunciationRecording(audioFile);
+  Future<void> handleAction(TaskAction action) => _session.handleAction(action);
 
-  Future<void> answerNumberToWord(String option) =>
-      _session.answerNumberToWord(option);
-
-  Future<void> answerWordToNumber(String option) =>
-      _session.answerWordToNumber(option);
+  Future<void> selectOption(String option) =>
+      _session.handleAction(SelectOptionAction(option));
 
   Future<void> startPronunciationRecording() =>
-      _session.startPronunciationRecording();
+      _session.handleAction(const StartRecordingAction());
 
   Future<void> stopPronunciationRecording() =>
-      _session.stopPronunciationRecording();
+      _session.handleAction(const StopRecordingAction());
 
   Future<void> cancelPronunciationRecording() =>
-      _session.cancelPronunciationRecording();
+      _session.handleAction(const CancelRecordingAction());
 
-  Future<PronunciationAnalysisResult> sendPronunciationRecording({File? file}) =>
-      _session.sendPronunciationRecording(file: file);
+  Future<void> sendPronunciationRecording() =>
+      _session.handleAction(const SendRecordingAction());
 
   Future<void> completePronunciationReview() =>
-      _session.completePronunciationReview();
+      _session.handleAction(const CompleteReviewAction());
 
   Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) =>
       _session.completeCurrentTaskWithOutcome(outcome);

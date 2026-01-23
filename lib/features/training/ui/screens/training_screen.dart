@@ -5,8 +5,6 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/pronunciation_models.dart';
-import '../../domain/tasks/number_to_word_task.dart';
-import '../../domain/tasks/word_to_number_task.dart';
 import '../../domain/training_controller.dart';
 import '../widgets/sound_wave_indicator.dart';
 import '../widgets/training_background.dart';
@@ -257,23 +255,34 @@ class _TrainingScreenState extends State<TrainingScreen> {
         feedbackColor,
       );
     }
-    if (task.kind == TrainingTaskKind.numberToWord) {
+    if (task is MultipleChoiceState &&
+        task.kind == TrainingTaskKind.numberToWord) {
       return _buildNumberToWordContent(
         theme,
-        task as NumberToWordTask,
+        task,
         feedbackText,
         feedbackColor,
       );
     }
-    if (task.kind == TrainingTaskKind.wordToNumber) {
+    if (task is MultipleChoiceState &&
+        task.kind == TrainingTaskKind.wordToNumber) {
       return _buildWordToNumberContent(
         theme,
-        task as WordToNumberTask,
+        task,
         feedbackText,
         feedbackColor,
       );
     }
-    return _buildPhrasePronunciationContent(theme);
+    if (task is PhrasePronunciationState) {
+      return _buildPhrasePronunciationContent(theme, task);
+    }
+    return _buildNumberPronunciationContent(
+      theme,
+      status,
+      hintText,
+      feedbackText,
+      feedbackColor,
+    );
   }
 
   Widget _buildNumberPronunciationContent(
@@ -323,7 +332,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Widget _buildNumberToWordContent(
     ThemeData theme,
-    NumberToWordTask task,
+    MultipleChoiceState task,
     String? feedbackText,
     Color? feedbackColor,
   ) {
@@ -356,7 +365,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
             return SizedBox(
               width: 220,
               child: FilledButton.tonal(
-                onPressed: () => _controller.answerNumberToWord(option),
+                onPressed: () => _controller.selectOption(option),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
@@ -390,7 +399,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Widget _buildWordToNumberContent(
     ThemeData theme,
-    WordToNumberTask task,
+    MultipleChoiceState task,
     String? feedbackText,
     Color? feedbackColor,
   ) {
@@ -424,7 +433,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
             return SizedBox(
               width: 100, // Smaller width for digits
               child: FilledButton.tonal(
-                onPressed: () => _controller.answerWordToNumber(option),
+                onPressed: () => _controller.selectOption(option),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
@@ -456,13 +465,18 @@ class _TrainingScreenState extends State<TrainingScreen> {
     );
   }
 
-  Widget _buildPhrasePronunciationContent(ThemeData theme) {
-    final displayText = _controller.displayText;
-    final isRecording = _controller.isRecording;
-    final hasRecording = _controller.hasRecording;
-    final waiting = _controller.isAwaitingRecording;
-    final isReviewing = _controller.isAwaitingPronunciationReview;
-    final result = _controller.pronunciationResult;
+  Widget _buildPhrasePronunciationContent(
+    ThemeData theme,
+    PhrasePronunciationState task,
+  ) {
+    final displayText = task.displayText;
+    final flow = task.flow;
+    final isRecording = flow == PhraseFlow.recording;
+    final hasRecording = task.hasRecording;
+    final waiting = flow == PhraseFlow.waiting;
+    final isReviewing = flow == PhraseFlow.reviewing;
+    final result = task.result;
+    final isSending = _sendingPronunciation || flow == PhraseFlow.sending;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -545,6 +559,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
             isRecording,
             hasRecording,
             isReviewing,
+            isSending,
           ),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
@@ -565,6 +580,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     bool isRecording,
     bool hasRecording,
     bool isReviewing,
+    bool isSending,
   ) {
     if (isRecording) {
       return 'Recording... tap Stop when done.';
@@ -573,7 +589,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return 'Review your pronunciation and tap Next to continue.';
     }
     if (hasRecording) {
-      return _sendingPronunciation
+      return isSending
           ? 'Uploading for scoring...'
           : 'Review or send your recording for scoring.';
     }
@@ -936,10 +952,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     final isActive = _controller.status == TrainerStatus.running;
     final duration = _controller.currentCardDuration;
 
-    final taskKeyValue =
-        _controller.currentTask?.numberValue ??
-        _controller.currentCard?.id ??
-        -1;
+    final taskKeyValue = _controller.currentTask?.numberValue ?? -1;
     return TweenAnimationBuilder<double>(
       key: ValueKey(taskKeyValue),
       tween: Tween<double>(begin: 1.0, end: 0.0),
