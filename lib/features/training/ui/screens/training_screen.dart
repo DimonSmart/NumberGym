@@ -382,6 +382,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
             textAlign: TextAlign.center,
           ),
         ),
+        const SizedBox(height: 16),
+        _buildTimerBar(theme),
       ],
     );
   }
@@ -448,6 +450,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
             textAlign: TextAlign.center,
           ),
         ),
+        const SizedBox(height: 16),
+        _buildTimerBar(theme),
       ],
     );
   }

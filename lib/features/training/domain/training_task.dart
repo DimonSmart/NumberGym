@@ -18,6 +18,17 @@ extension TrainingTaskKindX on TrainingTaskKind {
         return 'Phrase pronunciation';
     }
   }
+
+  bool get usesTimer {
+    switch (this) {
+      case TrainingTaskKind.phrasePronunciation:
+        return false;
+      case TrainingTaskKind.numberPronunciation:
+      case TrainingTaskKind.numberToWord:
+      case TrainingTaskKind.wordToNumber:
+        return true;
+    }
+  }
 }
 
 abstract class TrainingTask {

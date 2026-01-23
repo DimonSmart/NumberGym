@@ -415,6 +415,7 @@ class TrainingSession {
   void _syncState() {
     if (_disposed) return;
     final taskKind = _currentTask?.kind;
+    final isTimedTask = taskKind?.usesTimer ?? false;
     final isNumberPronunciation =
         taskKind == TrainingTaskKind.numberPronunciation;
     final List<String> expectedTokens = isNumberPronunciation
@@ -434,9 +435,8 @@ class TrainingSession {
       hintText: _resolveHintText(),
       expectedTokens: expectedTokens,
       matchedTokens: matchedTokens,
-      cardDuration:
-          isNumberPronunciation ? _cardTimer.duration : Duration.zero,
-      isTimerRunning: _cardTimer.isRunning,
+      cardDuration: isTimedTask ? _cardTimer.duration : Duration.zero,
+      isTimerRunning: isTimedTask && _cardTimer.isRunning,
       isAwaitingRecording: _status == TrainerStatus.waitingRecording,
       isRecording: _isRecording,
       hasRecording: _recordingFile != null,
@@ -623,6 +623,11 @@ class TrainingSession {
   Duration _resolveCardDuration(String prompt) {
     final seconds = _settingsRepository.readAnswerDurationSeconds();
     return Duration(seconds: seconds);
+  }
+
+  void _startCardTimer(String prompt) {
+    final duration = _resolveCardDuration(prompt);
+    _cardTimer.start(duration, _onTimerTimeout);
   }
 
   String? _resolveHintText() {
@@ -835,15 +840,17 @@ class TrainingSession {
 
     switch (taskKind) {
       case TrainingTaskKind.numberToWord:
-        _currentTask = _buildNumberToWordTask(card);
+        final task = _buildNumberToWordTask(card);
+        _currentTask = task;
         _status = TrainerStatus.running;
-        _cardTimer.stop();
+        _startCardTimer(task.prompt);
         _syncState();
         return;
       case TrainingTaskKind.wordToNumber:
-        _currentTask = _buildWordToNumberTask(card);
+        final task = _buildWordToNumberTask(card);
+        _currentTask = task;
         _status = TrainerStatus.running;
-        _cardTimer.stop();
+        _startCardTimer(task.prompt);
         _syncState();
         return;
       case TrainingTaskKind.phrasePronunciation:
@@ -855,8 +862,7 @@ class TrainingSession {
           _currentTask = card;
           _resetCardProgress(card);
           _status = TrainerStatus.running;
-          final duration = _resolveCardDuration(card.prompt);
-          _cardTimer.start(duration, _onTimerTimeout);
+          _startCardTimer(card.prompt);
           _syncState();
           await _startListening();
           return;
@@ -874,8 +880,7 @@ class TrainingSession {
         _currentTask = card;
         _resetCardProgress(card);
         _status = TrainerStatus.running;
-        final duration = _resolveCardDuration(card.prompt);
-        _cardTimer.start(duration, _onTimerTimeout);
+        _startCardTimer(card.prompt);
         _syncState();
         await _startListening();
         return;
