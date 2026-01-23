@@ -7,7 +7,7 @@ import '../../data/settings_repository.dart';
 import '../../domain/pronunciation_models.dart';
 import '../../domain/number_words_task.dart';
 import '../../domain/training_controller.dart';
-import '../widgets/sound_waveform.dart';
+import '../widgets/sound_wave_indicator.dart';
 import '../widgets/training_background.dart';
 import 'settings_screen.dart';
 import 'statistics_screen.dart';
@@ -299,15 +299,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
         const SizedBox(height: 18),
         _buildTimerBar(theme),
         const SizedBox(height: 12),
-        StreamBuilder<List<double>>(
+        SoundWaveIndicator(
           stream: _controller.soundStream,
-          initialData: const [],
-          builder: (context, snapshot) {
-            return SoundWaveform(
-              values: snapshot.data ?? [],
-              visible: status == TrainerStatus.running,
-            );
-          },
+          visible: status == TrainerStatus.running,
         ),
       ],
     );
@@ -383,6 +377,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     final isRecording = _controller.isRecording;
     final hasRecording = _controller.hasRecording;
     final waiting = _controller.isAwaitingRecording;
+    final isReviewing = _controller.isAwaitingPronunciationReview;
     final result = _controller.pronunciationResult;
 
     return Column(
@@ -396,22 +391,21 @@ class _TrainingScreenState extends State<TrainingScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          displayText,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-          textAlign: TextAlign.center,
-        ),
+        _buildPronunciationPhrase(theme, displayText, result),
+        if (result != null) ...[
+          const SizedBox(height: 12),
+          _buildPronunciationSummary(theme, result),
+        ],
         const SizedBox(height: 16),
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 12,
           runSpacing: 12,
           children: [
-            if (!isRecording && !hasRecording)
+            if (!isRecording && !hasRecording && !isReviewing)
               FilledButton.icon(
-                onPressed: waiting ? _controller.startPronunciationRecording : null,
+                onPressed:
+                    waiting ? _controller.startPronunciationRecording : null,
                 icon: const Icon(Icons.mic),
                 label: const Text('Record'),
               ),
@@ -425,7 +419,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                 icon: const Icon(Icons.stop_circle_outlined),
                 label: const Text('Stop'),
               ),
-            if (!isRecording && hasRecording)
+            if (!isRecording && (hasRecording || isReviewing))
               FilledButton.tonalIcon(
                 onPressed: _sendingPronunciation
                     ? null
@@ -436,9 +430,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
                 icon: const Icon(Icons.mic_none),
                 label: const Text('Record again'),
               ),
-            if (!isRecording && hasRecording)
+            if (!isRecording && hasRecording && !isReviewing)
               FilledButton.icon(
-                onPressed: _sendingPronunciation ? null : _handleSendPronunciation,
+                onPressed:
+                    _sendingPronunciation ? null : _handleSendPronunciation,
                 icon: _sendingPronunciation
                     ? SizedBox(
                         width: 18,
@@ -451,20 +446,32 @@ class _TrainingScreenState extends State<TrainingScreen> {
                     : const Icon(Icons.send),
                 label: Text(_sendingPronunciation ? 'Sending...' : 'Send'),
               ),
+            if (!isRecording && isReviewing)
+              FilledButton.icon(
+                onPressed: _controller.completePronunciationReview,
+                icon: const Icon(Icons.arrow_forward),
+                label: const Text('Next'),
+              ),
           ],
         ),
         const SizedBox(height: 14),
         Text(
-          _buildPronunciationHelperText(waiting, isRecording, hasRecording),
+          _buildPronunciationHelperText(
+            waiting,
+            isRecording,
+            hasRecording,
+            isReviewing,
+          ),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
-        if (result != null) ...[
-          const SizedBox(height: 18),
-          _buildPronunciationAnalysis(theme, result),
-        ],
+        const SizedBox(height: 12),
+        SoundWaveIndicator(
+          stream: _controller.soundStream,
+          visible: isRecording,
+        ),
       ],
     );
   }
@@ -473,9 +480,13 @@ class _TrainingScreenState extends State<TrainingScreen> {
     bool waiting,
     bool isRecording,
     bool hasRecording,
+    bool isReviewing,
   ) {
     if (isRecording) {
       return 'Recording... tap Stop when done.';
+    }
+    if (isReviewing) {
+      return 'Review your pronunciation and tap Next to continue.';
     }
     if (hasRecording) {
       return _sendingPronunciation
@@ -488,7 +499,83 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return 'Waiting to start the next phrase.';
   }
 
-  Widget _buildPronunciationAnalysis(
+  Widget _buildPronunciationPhrase(
+    ThemeData theme,
+    String displayText,
+    PronunciationAnalysisResult? result,
+  ) {
+    final baseStyle = theme.textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+        ) ??
+        const TextStyle(fontSize: 24, fontWeight: FontWeight.w700);
+    final resolvedText = (result?.displayText?.trim().isNotEmpty ?? false)
+        ? result!.displayText!.trim()
+        : displayText;
+    final best = result?.best;
+
+    if (best == null || best.words.isEmpty) {
+      return Text(
+        resolvedText,
+        style: baseStyle,
+        textAlign: TextAlign.center,
+      );
+    }
+
+    final tokens = _tokenizePhrase(resolvedText);
+    final spans = <InlineSpan>[];
+    var wordIndex = 0;
+
+    for (final token in tokens) {
+      if (!token.isWord) {
+        spans.add(TextSpan(text: token.text, style: baseStyle));
+        continue;
+      }
+      if (wordIndex >= best.words.length) {
+        spans.add(TextSpan(text: token.text, style: baseStyle));
+        continue;
+      }
+      final word = best.words[wordIndex];
+      wordIndex += 1;
+      final color = _wordScoreColor(theme, word.accuracyScore);
+      final tooltip = _buildWordTooltip(word);
+      spans.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: Tooltip(
+            message: tooltip,
+            triggerMode: TooltipTriggerMode.tap,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.inverseSurface,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            textStyle: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onInverseSurface,
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: color, width: 2),
+                ),
+              ),
+              child: Text(
+                token.text,
+                style: baseStyle.copyWith(color: color),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Text.rich(
+      TextSpan(children: spans),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildPronunciationSummary(
     ThemeData theme,
     PronunciationAnalysisResult result,
   ) {
@@ -496,82 +583,202 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (best == null) {
       return const SizedBox.shrink();
     }
-
-    Color scoreColor(double score) => _wordScoreColor(theme, score);
+    final recommendation = _extractRecommendation(result);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          'Pronunciation feedback',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          alignment: WrapAlignment.center,
+        _buildPronunciationLegend(theme),
+        const SizedBox(height: 12),
+        Row(
           children: [
-            _ScoreChip(
-              label: 'Overall',
-              score: best.pronScore,
-              color: scoreColor(best.pronScore),
+            Expanded(
+              child: _buildScoreIndicator(
+                theme,
+                label: 'Accuracy',
+                score: best.accuracyScore,
+              ),
             ),
-            _ScoreChip(
-              label: 'Accuracy',
-              score: best.accuracyScore,
-              color: scoreColor(best.accuracyScore),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildScoreIndicator(
+                theme,
+                label: 'Fluency',
+                score: best.fluencyScore,
+              ),
             ),
-            _ScoreChip(
-              label: 'Fluency',
-              score: best.fluencyScore,
-              color: scoreColor(best.fluencyScore),
-            ),
-            _ScoreChip(
-              label: 'Completeness',
-              score: best.completenessScore,
-              color: scoreColor(best.completenessScore),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildScoreIndicator(
+                theme,
+                label: 'Completeness',
+                score: best.completenessScore,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        if (best.words.isNotEmpty)
-          Column(
-            children: [
-              Text(
-                'Word highlights',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+        if (recommendation != null) ...[
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.6,
               ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: best.words.map((word) {
-                  final color = scoreColor(word.accuracyScore);
-                  return Chip(
-                    label: Text(
-                      '${word.word} (${word.accuracyScore.toStringAsFixed(0)})',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    backgroundColor: color.withAlpha(_scaledAlpha(color, 0.18)),
-                    side: BorderSide(
-                      color: color.withAlpha(_scaledAlpha(color, 0.7)),
-                    ),
-                  );
-                }).toList(),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
               ),
-            ],
+            ),
+            child: Text(
+              recommendation,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
+        ],
       ],
     );
+  }
+
+  Widget _buildPronunciationLegend(ThemeData theme) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 8,
+      children: [
+        _LegendItem(color: Colors.green.shade600, label: 'Correct'),
+        _LegendItem(color: Colors.orange.shade600, label: 'Almost'),
+        _LegendItem(color: theme.colorScheme.error, label: 'Wrong'),
+      ],
+    );
+  }
+
+  Widget _buildScoreIndicator(
+    ThemeData theme, {
+    required String label,
+    required double score,
+  }) {
+    final normalized = (score / 100).clamp(0.0, 1.0);
+    final color = _wordScoreColor(theme, score);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: normalized,
+            minHeight: 8,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          score.toStringAsFixed(0),
+          style: theme.textTheme.titleSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _buildWordTooltip(PronunciationWord word) {
+    final buffer = StringBuffer();
+    buffer.writeln(word.word);
+    buffer.writeln('Accuracy: ${word.accuracyScore.toStringAsFixed(0)}');
+    final error = word.errorType?.trim();
+    if (error != null && error.isNotEmpty && error.toLowerCase() != 'none') {
+      buffer.writeln('Error: $error');
+    }
+    if (word.phonemes.isNotEmpty) {
+      final phonemes = word.phonemes
+          .take(6)
+          .map((phoneme) =>
+              '${phoneme.phoneme} ${phoneme.accuracyScore.toStringAsFixed(0)}')
+          .join(', ');
+      buffer.writeln('Phonemes: $phonemes');
+    }
+    return buffer.toString().trim();
+  }
+
+  String? _extractRecommendation(PronunciationAnalysisResult result) {
+    final raw = result.rawJson;
+    if (raw == null) return null;
+    const keys = {
+      'recommendation',
+      'recommendations',
+      'suggestion',
+      'suggestions',
+      'feedback',
+      'advice',
+      'note',
+      'notes',
+      'message',
+      'comment',
+      'comments',
+      'hint',
+      'hints',
+    };
+    final found = _findFirstStringByKey(raw, keys, 0);
+    if (found == null) return null;
+    final trimmed = found.trim();
+    if (trimmed.isEmpty) return null;
+    const maxLength = 420;
+    if (trimmed.length <= maxLength) return trimmed;
+    return '${trimmed.substring(0, maxLength)}...';
+  }
+
+  String? _findFirstStringByKey(
+    dynamic node,
+    Set<String> keys,
+    int depth,
+  ) {
+    if (node == null || depth > 6) return null;
+    if (node is Map) {
+      for (final entry in node.entries) {
+        final key = entry.key.toString().toLowerCase();
+        final value = entry.value;
+        if (keys.contains(key) && value is String && value.trim().isNotEmpty) {
+          return value;
+        }
+        final nested = _findFirstStringByKey(value, keys, depth + 1);
+        if (nested != null) return nested;
+      }
+    } else if (node is List) {
+      for (final item in node) {
+        final nested = _findFirstStringByKey(item, keys, depth + 1);
+        if (nested != null) return nested;
+      }
+    }
+    return null;
+  }
+
+  List<_PhraseToken> _tokenizePhrase(String text) {
+    final tokenRegex = RegExp(
+      r"[\\p{L}\\p{N}']+|[^\\p{L}\\p{N}']+",
+      unicode: true,
+    );
+    final wordRegex = RegExp(r"^[\\p{L}\\p{N}']+$", unicode: true);
+    return tokenRegex
+        .allMatches(text)
+        .map((match) {
+          final token = match.group(0) ?? '';
+          return _PhraseToken(token, wordRegex.hasMatch(token));
+        })
+        .toList();
   }
 
   Widget _buildStatusAndErrors(ThemeData theme, String statusMessage) {
@@ -688,6 +895,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   String _buildStatusMessage() {
     final status = _controller.status;
+    if (_controller.isAwaitingPronunciationReview) {
+      return 'Review the pronunciation feedback and tap Next to continue.';
+    }
     if (status == TrainerStatus.finished) {
       return 'All cards learned. Reset progress to start again.';
     }
@@ -771,44 +981,44 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 }
 
-class _ScoreChip extends StatelessWidget {
-  const _ScoreChip({
-    required this.label,
-    required this.score,
+class _LegendItem extends StatelessWidget {
+  const _LegendItem({
     required this.color,
+    required this.label,
   });
 
-  final String label;
-  final double score;
   final Color color;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Chip(
-      avatar: CircleAvatar(
-        backgroundColor: color,
-        child: Text(
-          score.toStringAsFixed(0),
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onPrimary,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
           ),
         ),
-      ),
-      label: Text(
-        label,
-        style: theme.textTheme.bodyMedium,
-      ),
-      side: BorderSide(color: color.withAlpha(_scaledAlpha(color, 0.6))),
-      backgroundColor: color.withAlpha(_scaledAlpha(color, 0.12)),
-      shape: StadiumBorder(
-        side: BorderSide(color: color.withAlpha(_scaledAlpha(color, 0.4))),
-      ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }
 
-int _scaledAlpha(Color color, double factor) {
-  final scaled = (color.a * 255.0 * factor).round();
-  return scaled.clamp(0, 255);
+class _PhraseToken {
+  final String text;
+  final bool isWord;
+
+  const _PhraseToken(this.text, this.isWord);
 }

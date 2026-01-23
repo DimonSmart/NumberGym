@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:record/record.dart';
 
 abstract class AudioRecorderServiceBase {
   bool get isRecording;
+  Stream<double> get amplitudeStream;
   Future<void> start();
   Future<File?> stop();
   Future<void> cancel();
@@ -15,10 +17,17 @@ class AudioRecorderService implements AudioRecorderServiceBase {
       : _recorder = recorder ?? AudioRecorder();
 
   final AudioRecorder _recorder;
+  final StreamController<double> _amplitudeController =
+      StreamController<double>.broadcast();
+  StreamSubscription<Amplitude>? _amplitudeSubscription;
+  bool _emitAmplitude = false;
   bool _isRecording = false;
 
   @override
   bool get isRecording => _isRecording;
+
+  @override
+  Stream<double> get amplitudeStream => _amplitudeController.stream;
 
   @override
   Future<void> start() async {
@@ -36,6 +45,14 @@ class AudioRecorderService implements AudioRecorderServiceBase {
       ),
       path: tempPath,
     );
+    _emitAmplitude = true;
+    _amplitudeSubscription ??= _recorder
+        .onAmplitudeChanged(const Duration(milliseconds: 80))
+        .listen((amplitude) {
+          if (!_emitAmplitude) return;
+          if (_amplitudeController.isClosed) return;
+          _amplitudeController.add(amplitude.current);
+        });
     _isRecording = true;
   }
 
@@ -44,6 +61,7 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     if (!_isRecording) return null;
     final path = await _recorder.stop();
     _isRecording = false;
+    _emitAmplitude = false;
     if (path == null) return null;
     final file = File(path);
     if (await file.exists()) return file;
@@ -55,10 +73,14 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     if (!_isRecording) return;
     await _recorder.stop();
     _isRecording = false;
+    _emitAmplitude = false;
   }
 
   @override
   void dispose() {
+    unawaited(_amplitudeSubscription?.cancel());
+    _amplitudeSubscription = null;
+    unawaited(_amplitudeController.close());
     _recorder.dispose();
   }
 }

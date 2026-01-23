@@ -1,5 +1,6 @@
 import '../data/card_progress.dart';
 import 'learning_language.dart';
+import 'training_task.dart';
 
 abstract class ProgressRepositoryBase {
   Future<Map<int, CardProgress>> loadAll(List<int> cardIds);
@@ -16,4 +17,6 @@ abstract class SettingsRepositoryBase {
   Future<void> setHintStreakCount(int count);
   bool readPremiumPronunciationEnabled();
   Future<void> setPremiumPronunciationEnabled(bool enabled);
+  TrainingTaskKind? readDebugForcedTaskKind();
+  Future<void> setDebugForcedTaskKind(TrainingTaskKind? kind);
 }

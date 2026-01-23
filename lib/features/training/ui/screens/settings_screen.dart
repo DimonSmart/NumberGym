@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -5,6 +6,7 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
+import '../../domain/training_task.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Box<String> settingsBox;
@@ -27,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late int _answerSeconds;
   late int _hintStreakCount;
   late bool _premiumPronunciation;
+  TrainingTaskKind? _debugForcedTaskKind;
 
   @override
   void initState() {
@@ -38,6 +41,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _hintStreakCount = _settingsRepository.readHintStreakCount();
     _premiumPronunciation =
       _settingsRepository.readPremiumPronunciationEnabled();
+    if (kDebugMode) {
+      _debugForcedTaskKind = _settingsRepository.readDebugForcedTaskKind();
+    }
   }
 
   Future<void> _confirmReset() async {
@@ -97,6 +103,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setPremiumPronunciationEnabled(enabled);
   }
 
+  Future<void> _updateDebugForcedTaskKind(TrainingTaskKind? kind) async {
+    setState(() {
+      _debugForcedTaskKind = kind;
+    });
+    await _settingsRepository.setDebugForcedTaskKind(kind);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -141,6 +154,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Include phrase-based pronunciation tasks in training flow.',
             ),
           ),
+          if (kDebugMode) ...[
+            const SizedBox(height: 16),
+            const Text(
+              'Debug',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<TrainingTaskKind?>(
+              value: _debugForcedTaskKind,
+              onChanged: _updateDebugForcedTaskKind,
+              items: [
+                const DropdownMenuItem<TrainingTaskKind?>(
+                  value: null,
+                  child: Text('No forced task'),
+                ),
+                ...TrainingTaskKind.values.map(
+                  (kind) => DropdownMenuItem<TrainingTaskKind?>(
+                    value: kind,
+                    child: Text(kind.label),
+                  ),
+                ),
+              ],
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Force task type',
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Forces the trainer to show only the selected task type.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

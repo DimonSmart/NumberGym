@@ -2,11 +2,13 @@ import 'package:hive/hive.dart';
 
 import '../domain/learning_language.dart';
 import '../domain/repositories.dart';
+import '../domain/training_task.dart';
 
 const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
+const String debugForcedTaskKindKey = 'debugForcedTaskKind';
 
 const int answerDurationMinSeconds = 5;
 const int answerDurationMaxSeconds = 15;
@@ -77,6 +79,29 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
     await settingsBox.put(premiumPronunciationKey, enabled.toString());
+  }
+
+  @override
+  TrainingTaskKind? readDebugForcedTaskKind() {
+    final rawValue = settingsBox.get(debugForcedTaskKindKey);
+    if (rawValue == null || rawValue.trim().isEmpty) {
+      return null;
+    }
+    for (final kind in TrainingTaskKind.values) {
+      if (kind.name == rawValue) {
+        return kind;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> setDebugForcedTaskKind(TrainingTaskKind? kind) async {
+    if (kind == null) {
+      await settingsBox.delete(debugForcedTaskKindKey);
+      return;
+    }
+    await settingsBox.put(debugForcedTaskKindKey, kind.name);
   }
 
   int _normalizeAnswerDurationSeconds(int seconds) {

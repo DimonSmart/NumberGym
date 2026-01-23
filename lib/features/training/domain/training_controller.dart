@@ -65,6 +65,8 @@ class TrainingController extends ChangeNotifier {
   bool get isAwaitingRecording => _session.state.isAwaitingRecording;
   bool get isRecording => _session.state.isRecording;
   bool get hasRecording => _session.state.hasRecording;
+  bool get isAwaitingPronunciationReview =>
+      _session.state.isAwaitingPronunciationReview;
   PronunciationAnalysisResult? get pronunciationResult =>
       _session.state.pronunciationResult;
   String? get hintText => _session.state.hintText;
@@ -110,6 +112,9 @@ class TrainingController extends ChangeNotifier {
 
   Future<PronunciationAnalysisResult> sendPronunciationRecording({File? file}) =>
       _session.sendPronunciationRecording(file: file);
+
+  Future<void> completePronunciationReview() =>
+      _session.completePronunciationReview();
 
   Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) =>
       _session.completeCurrentTaskWithOutcome(outcome);

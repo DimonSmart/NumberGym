@@ -4,6 +4,19 @@ enum TrainingTaskKind {
   phrasePronunciation,
 }
 
+extension TrainingTaskKindX on TrainingTaskKind {
+  String get label {
+    switch (this) {
+      case TrainingTaskKind.numberPronunciation:
+        return 'Number pronunciation';
+      case TrainingTaskKind.numberReading:
+        return 'Number reading';
+      case TrainingTaskKind.phrasePronunciation:
+        return 'Phrase pronunciation';
+    }
+  }
+}
+
 abstract class TrainingTask {
   final int id;
   final TrainingTaskKind kind;

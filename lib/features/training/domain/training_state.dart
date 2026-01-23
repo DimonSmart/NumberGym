@@ -32,6 +32,7 @@ class TrainingState {
   final bool isAwaitingRecording;
   final bool isRecording;
   final bool hasRecording;
+  final bool isAwaitingPronunciationReview;
   final PronunciationAnalysisResult? pronunciationResult;
 
   const TrainingState({
@@ -50,6 +51,7 @@ class TrainingState {
     required this.isAwaitingRecording,
     required this.isRecording,
     required this.hasRecording,
+    required this.isAwaitingPronunciationReview,
     required this.pronunciationResult,
   });
 
@@ -70,6 +72,7 @@ class TrainingState {
       isAwaitingRecording: false,
       isRecording: false,
       hasRecording: false,
+      isAwaitingPronunciationReview: false,
       pronunciationResult: null,
     );
   }

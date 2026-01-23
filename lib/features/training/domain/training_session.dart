@@ -57,8 +57,9 @@ class TrainingSession {
     final cards = buildNumberCards();
     _cardsById = {for (final card in cards) card.id: card};
     _cardIds = _cardsById.keys.toList()..sort();
-      _premiumPronunciationEnabled =
+    _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
+    _debugForcedTaskKind = _readDebugForcedTaskKind();
     _syncState();
   }
 
@@ -87,8 +88,11 @@ class TrainingSession {
   PhrasePronunciationTask? _currentPhraseTask;
   PronunciationAnalysisResult? _pronunciationResult;
   bool _premiumPronunciationEnabled = false;
+  TrainingTaskKind? _debugForcedTaskKind;
   bool _isRecording = false;
   File? _recordingFile;
+  StreamSubscription<double>? _recordingLevelSubscription;
+  bool _awaitingPronunciationReview = false;
 
   TrainerStatus _status = TrainerStatus.idle;
   bool _speechReady = false;
@@ -156,6 +160,9 @@ class TrainingSession {
       return;
     }
 
+    _premiumPronunciationEnabled =
+        _settingsRepository.readPremiumPronunciationEnabled();
+    _debugForcedTaskKind = _readDebugForcedTaskKind();
     if (_pool.isEmpty) {
       _status = TrainerStatus.finished;
       unawaited(_setKeepAwake(false));
@@ -191,8 +198,10 @@ class TrainingSession {
     _pronunciationResult = null;
     _recordingFile = null;
     _isRecording = false;
+    _awaitingPronunciationReview = false;
     _premiumPronunciationEnabled =
-      _settingsRepository.readPremiumPronunciationEnabled();
+        _settingsRepository.readPremiumPronunciationEnabled();
+    _debugForcedTaskKind = _readDebugForcedTaskKind();
     _consecutiveSilentCards = 0;
     _consecutiveClientErrors = 0;
     _consecutiveCorrectAnswers = 0;
@@ -213,6 +222,9 @@ class TrainingSession {
 
   Future<void> restoreAfterOverlay() async {
     await _loadProgress();
+    _premiumPronunciationEnabled =
+        _settingsRepository.readPremiumPronunciationEnabled();
+    _debugForcedTaskKind = _readDebugForcedTaskKind();
     _currentCard = null;
     _currentTask = null;
     _currentCardId = null;
@@ -221,6 +233,7 @@ class TrainingSession {
     _pronunciationResult = null;
     _recordingFile = null;
     _isRecording = false;
+    _awaitingPronunciationReview = false;
     _consecutiveSilentCards = 0;
     _heardSpeechThisCard = false;
     _forceDefaultLocale = false;
@@ -237,13 +250,33 @@ class TrainingSession {
       throw StateError('No active pronunciation task');
     }
     _heardSpeechThisCard = true;
-    final result = await _azureSpeechService.analyzePronunciation(
-      audioFile: audioFile,
-      expectedText: _currentPhraseTask!.text,
+    final expectedText = _currentPhraseTask!.text;
+    final exists = await audioFile.exists();
+    final size = exists ? await audioFile.length() : null;
+    _log(
+      'Pronunciation analyze: expected="${_trimForLog(expectedText)}" '
+      'file="${audioFile.path}" exists=$exists size=${size ?? "n/a"}',
     );
-    _pronunciationResult = result;
-    _syncState();
-    return result;
+    try {
+      final result = await _azureSpeechService.analyzePronunciation(
+        audioFile: audioFile,
+        expectedText: expectedText,
+      );
+      _pronunciationResult = result;
+      _syncState();
+      _log(_formatPronunciationResult(result));
+      return result;
+    } on AzureSpeechFailure catch (error) {
+      final body = error.body == null ? '' : _trimForLog(error.body!);
+      _log(
+        'Pronunciation analyze failed: ${error.message} '
+        '(code: ${error.statusCode ?? "n/a"}) body="$body"',
+      );
+      rethrow;
+    } catch (error) {
+      _log('Pronunciation analyze failed: $error');
+      rethrow;
+    }
   }
 
   Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) async {
@@ -257,11 +290,15 @@ class TrainingSession {
     if (_isRecording) return;
     _recordingFile = null;
     _pronunciationResult = null;
+    _awaitingPronunciationReview = false;
     try {
       await _audioRecorder.start();
       _isRecording = true;
+      await _startRecordingSoundWave();
+      _log('Pronunciation recording started.');
     } catch (error) {
       _errorMessage = 'Cannot start recording: $error';
+      _log('Pronunciation recording failed to start: $error');
     }
     _syncState();
   }
@@ -272,12 +309,23 @@ class TrainingSession {
     try {
       final file = await _audioRecorder.stop();
       _isRecording = false;
+      await _stopRecordingSoundWave();
       _recordingFile = file;
+      if (file == null) {
+        _log('Pronunciation recording stopped: file missing.');
+      } else {
+        final size = await file.length();
+        _log(
+          'Pronunciation recording stopped: file="${file.path}" size=$size',
+        );
+      }
       _syncState();
       return file;
     } catch (error) {
       _isRecording = false;
+      await _stopRecordingSoundWave();
       _errorMessage = 'Recording failed: $error';
+      _log('Pronunciation recording failed to stop: $error');
       _syncState();
       return null;
     }
@@ -288,20 +336,35 @@ class TrainingSession {
       await _audioRecorder.cancel();
       _isRecording = false;
     }
+    await _stopRecordingSoundWave();
     _recordingFile = null;
     _pronunciationResult = null;
+    _awaitingPronunciationReview = false;
     _syncState();
   }
 
-  Future<PronunciationAnalysisResult> sendPronunciationRecording({File? file}) async {
+  Future<PronunciationAnalysisResult> sendPronunciationRecording({
+    File? file,
+  }) async {
     final resolved = file ?? _recordingFile;
     if (resolved == null) {
       throw StateError('No recording to send');
     }
+    _log('Pronunciation send: starting.');
     final result = await analyzePronunciationRecording(resolved);
+    _awaitingPronunciationReview = true;
+    _syncState();
+    _log('Pronunciation send: completed, awaiting review.');
+    return result;
+  }
+
+  Future<void> completePronunciationReview() async {
+    if (!_awaitingPronunciationReview) return;
+    if (_currentTask?.kind != TrainingTaskKind.phrasePronunciation) return;
+    _awaitingPronunciationReview = false;
     // Pronunciation tasks do not affect progress; advance with ignore.
     await _completeCard(outcome: TrainingOutcome.ignore);
-    return result;
+    _log('Pronunciation review: completed, advancing to next task.');
   }
 
   Future<void> answerNumberReading(String selectedOption) async {
@@ -346,6 +409,7 @@ class TrainingSession {
       isAwaitingRecording: _status == TrainerStatus.waitingRecording,
       isRecording: _isRecording,
       hasRecording: _recordingFile != null,
+      isAwaitingPronunciationReview: _awaitingPronunciationReview,
       pronunciationResult: _pronunciationResult,
     );
     _onStateChanged();
@@ -360,6 +424,7 @@ class TrainingSession {
   void dispose() {
     _disposed = true;
     _feedbackTimer?.cancel();
+    unawaited(_recordingLevelSubscription?.cancel());
     _soundWaveService.dispose();
     _cardTimer.dispose();
     _speechService.dispose();
@@ -487,6 +552,13 @@ class TrainingSession {
     return _settingsRepository.readLearningLanguage();
   }
 
+  TrainingTaskKind? _readDebugForcedTaskKind() {
+    if (!kDebugMode) {
+      return null;
+    }
+    return _settingsRepository.readDebugForcedTaskKind();
+  }
+
   String? _resolveLocaleId(LearningLanguage language) {
     if (_forceDefaultLocale) return null;
     final prefix = language.localePrefix.toLowerCase();
@@ -603,6 +675,25 @@ class TrainingSession {
         .any((template) => template.supports(numberValue));
   }
 
+  int? _pickPoolIndex({
+    required LearningLanguage language,
+    required bool requirePhrase,
+  }) {
+    if (_pool.isEmpty) return null;
+    if (!requirePhrase) {
+      return _random.nextInt(_pool.length);
+    }
+    final eligible = <int>[];
+    for (var i = 0; i < _pool.length; i += 1) {
+      final cardId = _pool[i];
+      if (_hasPhraseTemplate(language, cardId)) {
+        eligible.add(i);
+      }
+    }
+    if (eligible.isEmpty) return null;
+    return eligible[_random.nextInt(eligible.length)];
+  }
+
   Future<void> _startNextCard() async {
     if (_status != TrainerStatus.running &&
         _status != TrainerStatus.waitingRecording) {
@@ -615,15 +706,42 @@ class TrainingSession {
       return;
     }
 
-    final poolIndex = _random.nextInt(_pool.length);
+    final language = _currentLanguage();
+    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    final forcedTaskKind = _debugForcedTaskKind;
+    final requirePhrase =
+        forcedTaskKind == TrainingTaskKind.phrasePronunciation;
+    final allowPhrase = _premiumPronunciationEnabled || requirePhrase;
+    final poolIndex = _pickPoolIndex(
+      language: language,
+      requirePhrase: requirePhrase,
+    );
+    if (poolIndex == null) {
+      if (requirePhrase) {
+        _errorMessage =
+            'Phrase pronunciation tasks are not available for the selected language.';
+        _status = TrainerStatus.paused;
+        _syncState();
+        unawaited(_setKeepAwake(false));
+      }
+      return;
+    }
     final cardId = _pool[poolIndex];
     final card = _cardsById[cardId];
     if (card == null) return;
 
-    final language = _currentLanguage();
-    final canUsePhrase = _premiumPronunciationEnabled &&
-        _hasPhraseTemplate(language, card.id);
-    final taskKind = _pickTaskKind(canUsePhrase: canUsePhrase);
+    final canUsePhrase =
+        allowPhrase && _hasPhraseTemplate(language, card.id);
+    if (requirePhrase && !canUsePhrase) {
+      _errorMessage =
+          'Phrase pronunciation tasks are not available for the selected language.';
+      _status = TrainerStatus.paused;
+      _syncState();
+      unawaited(_setKeepAwake(false));
+      return;
+    }
+    final taskKind =
+        forcedTaskKind ?? _pickTaskKind(canUsePhrase: canUsePhrase);
 
     if (taskKind == TrainingTaskKind.numberPronunciation && !_speechReady) {
       await _initSpeech();
@@ -648,6 +766,7 @@ class TrainingSession {
     _pronunciationResult = null;
     _recordingFile = null;
     _isRecording = false;
+    _awaitingPronunciationReview = false;
 
     _cardActive = true;
     _heardSpeechThisCard = taskKind != TrainingTaskKind.numberPronunciation;
@@ -976,7 +1095,7 @@ class TrainingSession {
   Future<void> _stopAttempt() async {
     _activeAttemptId = null;
     _cardActive = false;
-    _soundWaveService.stop();
+    await _stopRecordingSoundWave();
     _cardTimer.stop();
 
     if (_isRecording) {
@@ -1032,5 +1151,47 @@ class TrainingSession {
 
   Future<void> _setKeepAwake(bool enabled) async {
     await _keepAwakeService.setEnabled(enabled);
+  }
+
+  Future<void> _startRecordingSoundWave() async {
+    await _recordingLevelSubscription?.cancel();
+    _soundWaveService.reset();
+    _soundWaveService.start();
+    _recordingLevelSubscription = _audioRecorder.amplitudeStream.listen(
+      _soundWaveService.onSoundLevel,
+      onError: (error) {
+        _log('Recording sound level error: $error');
+      },
+    );
+  }
+
+  Future<void> _stopRecordingSoundWave() async {
+    await _recordingLevelSubscription?.cancel();
+    _recordingLevelSubscription = null;
+    _soundWaveService.stop();
+  }
+
+  String _trimForLog(String value, {int maxLength = 120}) {
+    final trimmed = value.trim().replaceAll('\n', ' ');
+    if (trimmed.length <= maxLength) {
+      return trimmed;
+    }
+    return '${trimmed.substring(0, maxLength)}...';
+  }
+
+  String _formatPronunciationResult(PronunciationAnalysisResult result) {
+    final display = result.displayText ?? '';
+    final best = result.best;
+    if (best == null) {
+      return 'Pronunciation result: display="${_trimForLog(display)}" '
+          'nBest=${result.nBest.length} best=none';
+    }
+    return 'Pronunciation result: display="${_trimForLog(display)}" '
+        'nBest=${result.nBest.length} '
+        'scores(pron=${best.pronScore.toStringAsFixed(1)}, '
+        'acc=${best.accuracyScore.toStringAsFixed(1)}, '
+        'flu=${best.fluencyScore.toStringAsFixed(1)}, '
+        'comp=${best.completenessScore.toStringAsFixed(1)}, '
+        'words=${best.words.length})';
   }
 }
