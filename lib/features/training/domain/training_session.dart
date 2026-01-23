@@ -21,6 +21,7 @@ import 'services/answer_matcher.dart';
 import 'services/audio_recorder_service.dart';
 import 'services/azure_speech_service.dart';
 import 'services/card_timer.dart';
+import 'services/internet_checker.dart';
 import 'services/keep_awake_service.dart';
 import 'services/sound_wave_service.dart';
 import 'services/speech_service.dart';
@@ -115,6 +116,7 @@ class TrainingSession {
   static const int _numberPronunciationWeight = 70;
   static const int _numberReadingWeight = 25;
   static const int _phrasePronunciationWeight = 5;
+  static const Duration _internetCheckCache = Duration(seconds: 10);
 
   TrainingFeedback? _feedback;
   Timer? _feedbackTimer;
@@ -122,6 +124,8 @@ class TrainingSession {
   bool _suppressNextClientError = false;
 
   bool _disposed = false;
+  bool _hasInternet = true;
+  DateTime? _lastInternetCheck;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -163,6 +167,7 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    await _refreshInternetStatus(force: true);
     if (_pool.isEmpty) {
       _status = TrainerStatus.finished;
       unawaited(_setKeepAwake(false));
@@ -711,7 +716,17 @@ class TrainingSession {
     final forcedTaskKind = _debugForcedTaskKind;
     final requirePhrase =
         forcedTaskKind == TrainingTaskKind.phrasePronunciation;
-    final allowPhrase = _premiumPronunciationEnabled || requirePhrase;
+    await _refreshInternetStatus();
+    if (requirePhrase && !_hasInternet) {
+      _errorMessage =
+          'Premium pronunciation requires an internet connection.';
+      _status = TrainerStatus.paused;
+      _syncState();
+      unawaited(_setKeepAwake(false));
+      return;
+    }
+    final allowPhrase =
+        (_premiumPronunciationEnabled && _hasInternet) || requirePhrase;
     final poolIndex = _pickPoolIndex(
       language: language,
       requirePhrase: requirePhrase,
@@ -1151,6 +1166,17 @@ class TrainingSession {
 
   Future<void> _setKeepAwake(bool enabled) async {
     await _keepAwakeService.setEnabled(enabled);
+  }
+
+  Future<void> _refreshInternetStatus({bool force = false}) async {
+    if (!force && _lastInternetCheck != null) {
+      final elapsed = DateTime.now().difference(_lastInternetCheck!);
+      if (elapsed < _internetCheckCache) {
+        return;
+      }
+    }
+    _lastInternetCheck = DateTime.now();
+    _hasInternet = await hasInternet();
   }
 
   Future<void> _startRecordingSoundWave() async {

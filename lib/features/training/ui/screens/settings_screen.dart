@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -6,6 +8,7 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
+import '../../domain/services/internet_checker.dart';
 import '../../domain/training_task.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -30,6 +33,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late int _hintStreakCount;
   late bool _premiumPronunciation;
   TrainingTaskKind? _debugForcedTaskKind;
+  Timer? _internetTimer;
+  bool _hasInternet = true;
 
   @override
   void initState() {
@@ -41,9 +46,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _hintStreakCount = _settingsRepository.readHintStreakCount();
     _premiumPronunciation =
       _settingsRepository.readPremiumPronunciationEnabled();
+    _refreshInternetStatus();
+    _internetTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _refreshInternetStatus(),
+    );
     if (kDebugMode) {
       _debugForcedTaskKind = _settingsRepository.readDebugForcedTaskKind();
     }
+  }
+
+  @override
+  void dispose() {
+    _internetTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _confirmReset() async {
@@ -103,6 +119,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setPremiumPronunciationEnabled(enabled);
   }
 
+  Future<void> _refreshInternetStatus() async {
+    final hasConnection = await hasInternet();
+    if (!mounted || _hasInternet == hasConnection) return;
+    setState(() {
+      _hasInternet = hasConnection;
+    });
+  }
+
   Future<void> _updateDebugForcedTaskKind(TrainingTaskKind? kind) async {
     setState(() {
       _debugForcedTaskKind = kind;
@@ -151,7 +175,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: const Text(
-              'Include phrase-based pronunciation tasks in training flow.',
+              'Include phrase-based pronunciation tasks in training flow. '
+              'Requires an internet connection.',
+            ),
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(
+                  _hasInternet ? Icons.wifi : Icons.wifi_off,
+                  size: 18,
+                  color: _hasInternet
+                      ? Colors.green.shade600
+                      : theme.colorScheme.error,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: _hasInternet
+                        ? Colors.green.shade700
+                        : theme.colorScheme.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
           if (kDebugMode) ...[
@@ -162,7 +212,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<TrainingTaskKind?>(
-              value: _debugForcedTaskKind,
+              initialValue: _debugForcedTaskKind,
               onChanged: _updateDebugForcedTaskKind,
               items: [
                 const DropdownMenuItem<TrainingTaskKind?>(
