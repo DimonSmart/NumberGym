@@ -68,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context) => AlertDialog(
         title: const Text('Reset progress?'),
         content: const Text(
-          'This will clear all progress for every card.',
+          'This will clear progress for the selected language.',
         ),
         actions: [
           TextButton(
@@ -84,10 +84,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
 
     if (confirmed != true) return;
-    await _progressRepository.reset();
+    await _progressRepository.reset(language: _language);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Progress reset.')),
+      SnackBar(content: Text('Progress reset for ${_language.label}.')),
     );
   }
 

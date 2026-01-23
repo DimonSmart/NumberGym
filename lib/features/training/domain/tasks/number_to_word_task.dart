@@ -1,15 +1,15 @@
-import 'training_task.dart';
+import '../training_task.dart';
 
-/// Number-in-words multiple choice task (Stage 3).
-class NumberReadingTask extends NumberTrainingTask {
-  NumberReadingTask({
+/// Number-to-word multiple choice task (Stage 3).
+class NumberToWordTask extends NumberTrainingTask {
+  NumberToWordTask({
     required super.id,
     required super.numberValue,
     required this.prompt,
     required this.correctOption,
     required List<String> options,
   })  : options = List<String>.unmodifiable(options),
-        super(kind: TrainingTaskKind.numberReading);
+        super(kind: TrainingTaskKind.numberToWord);
 
   final String prompt;
   final String correctOption;
@@ -20,4 +20,4 @@ class NumberReadingTask extends NumberTrainingTask {
 }
 
 /// Total options shown in the number-reading mode (1 correct + rest incorrect).
-const int numberReadingOptionCount = 3;
+const int numberToWordOptionCount = 3;

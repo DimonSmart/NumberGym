@@ -1,14 +1,41 @@
 enum LearningLanguage { english, spanish }
 
 extension LearningLanguageX on LearningLanguage {
-  String get code => this == LearningLanguage.spanish ? 'es' : 'en';
+  String get code {
+    switch (this) {
+      case LearningLanguage.english:
+        return 'en';
+      case LearningLanguage.spanish:
+        return 'es';
+    }
+  }
 
-  String get label => this == LearningLanguage.spanish ? 'Spanish' : 'English';
+  String get label {
+    switch (this) {
+      case LearningLanguage.english:
+        return 'English';
+      case LearningLanguage.spanish:
+        return 'Spanish';
+    }
+  }
 
-  String get localePrefix => this == LearningLanguage.spanish ? 'es' : 'en';
+  String get locale {
+    switch (this) {
+      case LearningLanguage.english:
+        return 'en-US';
+      case LearningLanguage.spanish:
+        return 'es-ES';
+    }
+  }
 
   static LearningLanguage fromCode(String? code) {
-    if (code == 'es') return LearningLanguage.spanish;
-    return LearningLanguage.english;
+    switch (code) {
+      case 'en':
+        return LearningLanguage.english;
+      case 'es':
+        return LearningLanguage.spanish;
+      default:
+        return LearningLanguage.english;
+    }
   }
 }

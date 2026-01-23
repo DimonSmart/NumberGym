@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 
 import 'package:number_gym/features/training/data/card_progress.dart';
 import 'package:number_gym/features/training/data/progress_repository.dart';
+import 'package:number_gym/features/training/domain/learning_language.dart';
 
 void main() {
   late Directory tempDir;
@@ -35,7 +36,10 @@ void main() {
   test('loadAll returns entries for provided ids', () async {
     final repo = ProgressRepository(box);
     final ids = <int>[0, 1, 2];
-    final results = await repo.loadAll(ids);
+    final results = await repo.loadAll(
+      ids,
+      language: LearningLanguage.english,
+    );
 
     expect(results.length, ids.length);
     expect(results.keys, containsAll(ids));
@@ -52,8 +56,11 @@ void main() {
       totalCorrect: 4,
     );
 
-    await repo.save(2, progress);
-    final results = await repo.loadAll(<int>[0, 1, 2]);
+    await repo.save(2, progress, language: LearningLanguage.english);
+    final results = await repo.loadAll(
+      <int>[0, 1, 2],
+      language: LearningLanguage.english,
+    );
     final stored = results[2]!;
 
     expect(stored.learned, true);
@@ -71,14 +78,44 @@ void main() {
       totalCorrect: 1,
     );
 
-    await repo.save(1, progress);
-    await repo.reset();
-    final results = await repo.loadAll(<int>[0, 1]);
+    await repo.save(1, progress, language: LearningLanguage.english);
+    await repo.reset(language: LearningLanguage.english);
+    final results = await repo.loadAll(
+      <int>[0, 1],
+      language: LearningLanguage.english,
+    );
     final stored = results[1]!;
 
     expect(stored.learned, false);
     expect(stored.totalAttempts, 0);
     expect(stored.totalCorrect, 0);
     expect(stored.lastAttempts, isEmpty);
+  });
+
+  test('reset clears only selected language', () async {
+    final repo = ProgressRepository(box);
+    const progress = CardProgress(
+      learned: true,
+      lastAttempts: <bool>[true, true],
+      totalAttempts: 2,
+      totalCorrect: 2,
+    );
+
+    await repo.save(1, progress, language: LearningLanguage.english);
+    await repo.save(1, progress, language: LearningLanguage.spanish);
+
+    await repo.reset(language: LearningLanguage.english);
+
+    final english = await repo.loadAll(
+      <int>[1],
+      language: LearningLanguage.english,
+    );
+    final spanish = await repo.loadAll(
+      <int>[1],
+      language: LearningLanguage.spanish,
+    );
+
+    expect(english[1]!.totalAttempts, 0);
+    expect(spanish[1]!.totalAttempts, 2);
   });
 }

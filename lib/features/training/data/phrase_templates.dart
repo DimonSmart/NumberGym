@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import '../domain/learning_language.dart';
-import '../domain/pronunciation_task.dart';
+import '../domain/tasks/phrase_pronunciation_task.dart';
 
 class PhraseTemplate {
   final int id;

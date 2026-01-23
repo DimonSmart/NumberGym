@@ -1,4 +1,4 @@
-import 'training_task.dart';
+import '../training_task.dart';
 
 class PhrasePronunciationTask extends NumberTrainingTask {
   final int phraseTemplateId;

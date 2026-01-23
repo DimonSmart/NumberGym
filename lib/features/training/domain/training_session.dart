@@ -8,14 +8,11 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../data/card_progress.dart';
-import '../data/number_card.dart';
 import '../data/number_cards.dart';
-import '../data/number_words.dart';
 import '../data/phrase_templates.dart';
+import 'language_router.dart';
 import 'learning_language.dart';
 import 'pronunciation_models.dart';
-import 'pronunciation_task.dart';
-import 'number_words_task.dart';
 import 'repositories.dart';
 import 'services/answer_matcher.dart';
 import 'services/audio_recorder_service.dart';
@@ -25,6 +22,10 @@ import 'services/internet_checker.dart';
 import 'services/keep_awake_service.dart';
 import 'services/sound_wave_service.dart';
 import 'services/speech_service.dart';
+import 'tasks/number_pronunciation_task.dart';
+import 'tasks/number_to_word_task.dart';
+import 'tasks/phrase_pronunciation_task.dart';
+import 'tasks/word_to_number_task.dart';
 import 'training_state.dart';
 import 'training_task.dart';
 
@@ -51,13 +52,15 @@ class TrainingSession {
         _answerMatcher = answerMatcher ?? AnswerMatcher(),
         _cardTimer = cardTimer ?? CardTimer(),
         _keepAwakeService = keepAwakeService ?? KeepAwakeService(),
-      _audioRecorder = audioRecorder ?? AudioRecorderService(),
+        _audioRecorder = audioRecorder ?? AudioRecorderService(),
         _azureSpeechService = azureSpeechService ?? AzureSpeechService(),
-        _phraseTemplates = phraseTemplates ?? PhraseTemplates(Random()),
         _onStateChanged = onStateChanged ?? _noop {
-    final cards = buildNumberCards();
-    _cardsById = {for (final card in cards) card.id: card};
-    _cardIds = _cardsById.keys.toList()..sort();
+    final resolvedTemplates = phraseTemplates ?? PhraseTemplates(Random());
+    _languageRouter = LanguageRouter(
+      settingsRepository: _settingsRepository,
+      phraseTemplates: resolvedTemplates,
+    );
+    _refreshCardsIfNeeded();
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
@@ -76,11 +79,12 @@ class TrainingSession {
   final ProgressRepositoryBase _progressRepository;
   final SettingsRepositoryBase _settingsRepository;
   final AzureSpeechService _azureSpeechService;
-  final PhraseTemplates _phraseTemplates;
+  late final LanguageRouter _languageRouter;
   final void Function() _onStateChanged;
 
-  late final Map<int, NumberPronunciationTask> _cardsById;
-  late final List<int> _cardIds;
+  Map<int, NumberPronunciationTask> _cardsById = {};
+  List<int> _cardIds = [];
+  LearningLanguage? _cardsLanguage;
 
   Map<int, CardProgress> _progressById = {};
   List<int> _pool = [];
@@ -114,7 +118,8 @@ class TrainingSession {
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
   static const int _maxConsecutiveClientErrors = 3;
   static const int _numberPronunciationWeight = 70;
-  static const int _numberReadingWeight = 25;
+  static const int _numberToWordWeight = 15;
+  static const int _wordToNumberWeight = 15;
   static const int _phrasePronunciationWeight = 5;
   static const Duration _internetCheckCache = Duration(seconds: 10);
 
@@ -167,6 +172,9 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    if (_cardsLanguage != _currentLanguage()) {
+      await _loadProgress();
+    }
     await _refreshInternetStatus(force: true);
     if (_pool.isEmpty) {
       _status = TrainerStatus.finished;
@@ -263,9 +271,13 @@ class TrainingSession {
       'file="${audioFile.path}" exists=$exists size=${size ?? "n/a"}',
     );
     try {
+      final language = _currentLanguage();
+      final languageCode = language.locale;
+
       final result = await _azureSpeechService.analyzePronunciation(
         audioFile: audioFile,
         expectedText: expectedText,
+        language: languageCode,
       );
       _pronunciationResult = result;
       _syncState();
@@ -372,10 +384,24 @@ class TrainingSession {
     _log('Pronunciation review: completed, advancing to next task.');
   }
 
-  Future<void> answerNumberReading(String selectedOption) async {
-    if (_currentTask is! NumberReadingTask) return;
+  Future<void> answerNumberToWord(String selectedOption) async {
+    if (_currentTask is! NumberToWordTask) return;
     if (!_cardActive) return;
-    final task = _currentTask as NumberReadingTask;
+    final task = _currentTask as NumberToWordTask;
+    final normalized = selectedOption.trim().toLowerCase();
+    final correct = task.correctOption.trim().toLowerCase();
+    _heardSpeechThisCard = true;
+    await _completeCard(
+      outcome: normalized == correct
+          ? TrainingOutcome.success
+          : TrainingOutcome.fail,
+    );
+  }
+
+  Future<void> answerWordToNumber(String selectedOption) async {
+    if (_currentTask is! WordToNumberTask) return;
+    if (!_cardActive) return;
+    final task = _currentTask as WordToNumberTask;
     final normalized = selectedOption.trim().toLowerCase();
     final correct = task.correctOption.trim().toLowerCase();
     _heardSpeechThisCard = true;
@@ -437,13 +463,31 @@ class TrainingSession {
     _audioRecorder.dispose();
   }
 
+  void _refreshCardsIfNeeded() {
+    final language = _currentLanguage();
+    if (_cardsLanguage == language && _cardsById.isNotEmpty) return;
+    _cardsLanguage = language;
+    final toWords = _languageRouter.numberWordsConverter(language);
+    final cards = buildNumberCards(
+      language: language,
+      toWords: toWords,
+    );
+    _cardsById = {for (final card in cards) card.id: card};
+    _cardIds = _cardsById.keys.toList()..sort();
+  }
+
   Future<void> _loadProgress() async {
+    _refreshCardsIfNeeded();
     if (_cardIds.isEmpty) {
       _progressById = {};
       _pool = [];
       return;
     }
-    final progress = await _progressRepository.loadAll(_cardIds);
+    final language = _currentLanguage();
+    final progress = await _progressRepository.loadAll(
+      _cardIds,
+      language: language,
+    );
     _progressById = {
       for (final id in _cardIds) id: progress[id] ?? CardProgress.empty,
     };
@@ -554,7 +598,7 @@ class TrainingSession {
   }
 
   LearningLanguage _currentLanguage() {
-    return _settingsRepository.readLearningLanguage();
+    return _languageRouter.currentLanguage;
   }
 
   TrainingTaskKind? _readDebugForcedTaskKind() {
@@ -566,7 +610,7 @@ class TrainingSession {
 
   String? _resolveLocaleId(LearningLanguage language) {
     if (_forceDefaultLocale) return null;
-    final prefix = language.localePrefix.toLowerCase();
+    final prefix = language.code.toLowerCase();
     for (final locale in _speechService.locales) {
       if (locale.localeId.toLowerCase().startsWith(prefix)) {
         return locale.localeId;
@@ -590,8 +634,7 @@ class TrainingSession {
     if (_currentTask?.kind != TrainingTaskKind.numberPronunciation) {
       return null;
     }
-    final language = _currentLanguage();
-    final answers = _currentCard?.answersFor(language) ?? const <String>[];
+    final answers = _currentCard?.answers ?? const <String>[];
     if (answers.isEmpty) return null;
 
     final prompt = (_currentCard?.prompt ?? '').trim().toLowerCase();
@@ -630,8 +673,8 @@ class TrainingSession {
 
   void _resetCardProgress(NumberPronunciationTask? card) {
     final prompt = card?.prompt ?? '';
-    final language = _currentLanguage();
-    final answers = card?.answersFor(language) ?? const <String>[];
+    final language = card?.language ?? _currentLanguage();
+    final answers = card?.answers ?? const <String>[];
     _answerMatcher.reset(prompt: prompt, answers: answers);
     if (prompt.isNotEmpty) {
       _log(
@@ -652,8 +695,12 @@ class TrainingSession {
         _numberPronunciationWeight,
       ),
       const MapEntry(
-        TrainingTaskKind.numberReading,
-        _numberReadingWeight,
+        TrainingTaskKind.numberToWord,
+        _numberToWordWeight,
+      ),
+      const MapEntry(
+        TrainingTaskKind.wordToNumber,
+        _wordToNumberWeight,
       ),
       if (canUsePhrase)
         const MapEntry(
@@ -675,9 +722,7 @@ class TrainingSession {
   }
 
   bool _hasPhraseTemplate(LearningLanguage language, int numberValue) {
-    return _phraseTemplates
-        .forLanguage(language)
-        .any((template) => template.supports(numberValue));
+    return _languageRouter.hasTemplate(numberValue, language: language);
   }
 
   int? _pickPoolIndex({
@@ -789,14 +834,23 @@ class TrainingSession {
     _suppressNextClientError = false;
 
     switch (taskKind) {
-      case TrainingTaskKind.numberReading:
-        _currentTask = _buildNumberReadingTask(card);
+      case TrainingTaskKind.numberToWord:
+        _currentTask = _buildNumberToWordTask(card);
+        _status = TrainerStatus.running;
+        _cardTimer.stop();
+        _syncState();
+        return;
+      case TrainingTaskKind.wordToNumber:
+        _currentTask = _buildWordToNumberTask(card);
         _status = TrainerStatus.running;
         _cardTimer.stop();
         _syncState();
         return;
       case TrainingTaskKind.phrasePronunciation:
-        final template = _phraseTemplates.pick(language, card.id);
+        final template = _languageRouter.pickTemplate(
+          card.id,
+          language: language,
+        );
         if (template == null) {
           _currentTask = card;
           _resetCardProgress(card);
@@ -828,13 +882,13 @@ class TrainingSession {
     }
   }
 
-  NumberReadingTask _buildNumberReadingTask(NumberPronunciationTask card) {
+  NumberToWordTask _buildNumberToWordTask(NumberPronunciationTask card) {
     final language = _currentLanguage();
-    final toWords = _numberWordsConverter(language);
+    final toWords = _languageRouter.numberWordsConverter(language);
     final correct = toWords(card.id);
     final options = <String>{correct};
 
-    while (options.length < numberReadingOptionCount) {
+    while (options.length < numberToWordOptionCount) {
       final candidateId = _cardIds[_random.nextInt(_cardIds.length)];
       if (candidateId == card.id) continue;
       try {
@@ -846,8 +900,8 @@ class TrainingSession {
     }
 
     final shuffled = options.toList()..shuffle(_random);
-    return NumberReadingTask(
-      id: _generateNumberReadingTaskId(card.id),
+    return NumberToWordTask(
+      id: _generateNumberToWordTaskId(card.id),
       numberValue: card.id,
       prompt: card.prompt,
       correctOption: correct,
@@ -855,17 +909,38 @@ class TrainingSession {
     );
   }
 
-  int _generateNumberReadingTaskId(int numberValue) {
+  int _generateNumberToWordTaskId(int numberValue) {
     return numberValue * 1000 + 500;
   }
 
-  String Function(int) _numberWordsConverter(LearningLanguage language) {
-    switch (language) {
-      case LearningLanguage.spanish:
-        return numberToSpanish;
-      case LearningLanguage.english:
-        return numberToEnglish;
+  WordToNumberTask _buildWordToNumberTask(NumberPronunciationTask card) {
+    // Prompt is the "word" form (e.g. "forty-two")
+    final language = _currentLanguage();
+    final toWords = _languageRouter.numberWordsConverter(language);
+    final correctWord = toWords(card.id);
+    
+    // Correct answer is the digit text (e.g. "42")
+    final correctOption = card.id.toString();
+    final options = <String>{correctOption};
+
+    while (options.length < numberToWordOptionCount) { // Reusing same option count
+      final candidateId = _cardIds[_random.nextInt(_cardIds.length)];
+      if (candidateId == card.id) continue;
+      options.add(candidateId.toString());
     }
+
+    final shuffled = options.toList()..shuffle(_random);
+    return WordToNumberTask(
+      id: _generateWordToNumberTaskId(card.id),
+      numberValue: card.id,
+      prompt: correctWord,
+      correctOption: correctOption,
+      options: shuffled,
+    );
+  }
+
+  int _generateWordToNumberTaskId(int numberValue) {
+    return numberValue * 1000 + 501; // distinct range
   }
 
   Future<void> _startListening() async {
@@ -1034,6 +1109,7 @@ class TrainingSession {
   Future<void> _updateProgress({required bool isCorrect}) async {
     final progressKey = _currentTask?.progressId ?? _currentCardId;
     if (progressKey == null) return;
+    final language = _currentLanguage();
     final progress = _progressById[progressKey] ?? CardProgress.empty;
     final attempts = List<bool>.from(progress.lastAttempts)..add(isCorrect);
     if (attempts.length > 10) {
@@ -1047,7 +1123,11 @@ class TrainingSession {
       totalCorrect: progress.totalCorrect + (isCorrect ? 1 : 0),
     );
     _progressById[progressKey] = updated;
-    await _progressRepository.save(progressKey, updated);
+    await _progressRepository.save(
+      progressKey,
+      updated,
+      language: language,
+    );
     if (learned) {
       _removeFromPool();
     }

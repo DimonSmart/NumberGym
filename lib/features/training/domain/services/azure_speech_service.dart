@@ -19,9 +19,11 @@ class AzureSpeechService {
   Future<PronunciationAnalysisResult> analyzePronunciation({
     required File audioFile,
     required String expectedText,
+    required String language,
   }) async {
     final request = http.MultipartRequest('POST', _endpoint)
-      ..fields['expectedText'] = expectedText;
+      ..fields['expectedText'] = expectedText
+      ..fields['language'] = language;
 
     request.files.add(await http.MultipartFile.fromPath('audio', audioFile.path));
 

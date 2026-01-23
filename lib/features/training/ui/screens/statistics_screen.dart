@@ -4,14 +4,17 @@ import 'package:hive/hive.dart';
 import '../../data/card_progress.dart';
 import '../../data/number_cards.dart';
 import '../../data/progress_repository.dart';
+import '../../domain/learning_language.dart';
 import '../widgets/training_background.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final Box<CardProgress> progressBox;
+  final LearningLanguage language;
 
   const StatisticsScreen({
     super.key,
     required this.progressBox,
+    required this.language,
   });
 
   @override
@@ -32,9 +35,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Future<void> _load() async {
-    final cards = buildNumberCards();
-    final ids = cards.map((c) => c.id).toList();
-    final progress = await _progressRepository.loadAll(ids);
+    final ids = buildNumberCardIds();
+    final progress = await _progressRepository.loadAll(
+      ids,
+      language: widget.language,
+    );
     
     if (!mounted) return;
     setState(() {

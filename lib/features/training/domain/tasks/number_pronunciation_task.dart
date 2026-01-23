@@ -1,14 +1,16 @@
-import '../domain/learning_language.dart';
-import '../domain/training_task.dart';
+import '../learning_language.dart';
+import '../training_task.dart';
 
 class NumberPronunciationTask extends NumberTrainingTask {
   final String prompt;
-  final Map<LearningLanguage, List<String>> answersByLanguage;
+  final LearningLanguage language;
+  final List<String> answers;
 
   const NumberPronunciationTask({
     required super.id,
     required this.prompt,
-    required this.answersByLanguage,
+    required this.language,
+    required this.answers,
   }) : super(
           numberValue: id,
           kind: TrainingTaskKind.numberPronunciation,
@@ -16,8 +18,4 @@ class NumberPronunciationTask extends NumberTrainingTask {
 
   @override
   String get displayText => prompt;
-
-  List<String> answersFor(LearningLanguage language) {
-    return answersByLanguage[language] ?? const <String>[];
-  }
 }

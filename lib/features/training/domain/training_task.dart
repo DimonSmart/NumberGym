@@ -1,6 +1,7 @@
 enum TrainingTaskKind {
   numberPronunciation,
-  numberReading,
+  numberToWord, // Formerly numberReading
+  wordToNumber, // New inverse variant
   phrasePronunciation,
 }
 
@@ -9,8 +10,10 @@ extension TrainingTaskKindX on TrainingTaskKind {
     switch (this) {
       case TrainingTaskKind.numberPronunciation:
         return 'Number pronunciation';
-      case TrainingTaskKind.numberReading:
-        return 'Number reading';
+      case TrainingTaskKind.numberToWord:
+        return 'Select the word';
+      case TrainingTaskKind.wordToNumber:
+        return 'Select the number';
       case TrainingTaskKind.phrasePronunciation:
         return 'Phrase pronunciation';
     }

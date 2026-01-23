@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-import '../data/number_card.dart';
 import 'pronunciation_models.dart';
-import 'number_words_task.dart';
+import 'repositories.dart';
+import 'tasks/number_pronunciation_task.dart';
+import 'tasks/number_to_word_task.dart';
+import 'tasks/word_to_number_task.dart';
 import 'training_session.dart';
 import 'training_task.dart';
-import 'repositories.dart';
 import 'services/answer_matcher.dart';
 import 'services/card_timer.dart';
 import 'services/keep_awake_service.dart';
@@ -57,9 +58,13 @@ class TrainingController extends ChangeNotifier {
   TrainingTask? get currentTask => _session.state.currentTask;
   TrainingTaskKind? get currentTaskKind => _session.state.currentTask?.kind;
   NumberPronunciationTask? get currentCard => _session.state.currentCard;
-  NumberReadingTask? get currentNumberReadingTask {
+  NumberToWordTask? get currentNumberToWordTask {
     final task = _session.state.currentTask;
-    return task is NumberReadingTask ? task : null;
+    return task is NumberToWordTask ? task : null;
+  }
+  WordToNumberTask? get currentWordToNumberTask {
+    final task = _session.state.currentTask;
+    return task is WordToNumberTask ? task : null;
   }
   String get displayText => _session.state.displayText;
   bool get isAwaitingRecording => _session.state.isAwaitingRecording;
@@ -98,8 +103,11 @@ class TrainingController extends ChangeNotifier {
   ) =>
       _session.analyzePronunciationRecording(audioFile);
 
-  Future<void> answerNumberReading(String option) =>
-      _session.answerNumberReading(option);
+  Future<void> answerNumberToWord(String option) =>
+      _session.answerNumberToWord(option);
+
+  Future<void> answerWordToNumber(String option) =>
+      _session.answerWordToNumber(option);
 
   Future<void> startPronunciationRecording() =>
       _session.startPronunciationRecording();

@@ -1,4 +1,4 @@
-import '../data/number_card.dart';
+import 'tasks/number_pronunciation_task.dart';
 import 'pronunciation_models.dart';
 import 'training_task.dart';
 

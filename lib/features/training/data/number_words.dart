@@ -1,3 +1,16 @@
+import '../domain/learning_language.dart';
+
+typedef NumberWordsConverter = String Function(int);
+
+NumberWordsConverter numberWordsFor(LearningLanguage language) {
+  switch (language) {
+    case LearningLanguage.spanish:
+      return numberToSpanish;
+    case LearningLanguage.english:
+      return numberToEnglish;
+  }
+}
+
 String numberToEnglish(int value) {
   if (value < 0) {
     throw RangeError('Negative numbers not supported');

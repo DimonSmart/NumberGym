@@ -5,7 +5,8 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/pronunciation_models.dart';
-import '../../domain/number_words_task.dart';
+import '../../domain/tasks/number_to_word_task.dart';
+import '../../domain/tasks/word_to_number_task.dart';
 import '../../domain/training_controller.dart';
 import '../widgets/sound_wave_indicator.dart';
 import '../widgets/training_background.dart';
@@ -72,8 +73,13 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 
   Future<void> _openStatistics() async {
+    final language =
+        SettingsRepository(widget.settingsBox).readLearningLanguage();
     await _openOverlay(
-      StatisticsScreen(progressBox: widget.progressBox),
+      StatisticsScreen(
+        progressBox: widget.progressBox,
+        language: language,
+      ),
     );
   }
 
@@ -251,10 +257,18 @@ class _TrainingScreenState extends State<TrainingScreen> {
         feedbackColor,
       );
     }
-    if (task.kind == TrainingTaskKind.numberReading) {
-      return _buildNumberReadingContent(
+    if (task.kind == TrainingTaskKind.numberToWord) {
+      return _buildNumberToWordContent(
         theme,
-        task as NumberReadingTask,
+        task as NumberToWordTask,
+        feedbackText,
+        feedbackColor,
+      );
+    }
+    if (task.kind == TrainingTaskKind.wordToNumber) {
+      return _buildWordToNumberContent(
+        theme,
+        task as WordToNumberTask,
         feedbackText,
         feedbackColor,
       );
@@ -307,9 +321,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
     );
   }
 
-  Widget _buildNumberReadingContent(
+  Widget _buildNumberToWordContent(
     ThemeData theme,
-    NumberReadingTask task,
+    NumberToWordTask task,
     String? feedbackText,
     Color? feedbackColor,
   ) {
@@ -342,12 +356,78 @@ class _TrainingScreenState extends State<TrainingScreen> {
             return SizedBox(
               width: 220,
               child: FilledButton.tonal(
-                onPressed: () => _controller.answerNumberReading(option),
+                onPressed: () => _controller.answerNumberToWord(option),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     option,
                     style: theme.textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 14),
+        AnimatedOpacity(
+          opacity: feedbackText == null ? 0 : 1,
+          duration: const Duration(milliseconds: 200),
+          child: Text(
+            feedbackText ?? '',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: feedbackColor,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWordToNumberContent(
+    ThemeData theme,
+    WordToNumberTask task,
+    String? feedbackText,
+    Color? feedbackColor,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Choose the correct number',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          task.prompt,
+          style: theme.textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: theme.colorScheme.onSurface,
+            fontSize: 42, // Smaller font for text prompt
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 18),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 12,
+          children: task.options.map((option) {
+            return SizedBox(
+              width: 100, // Smaller width for digits
+              child: FilledButton.tonal(
+                onPressed: () => _controller.answerWordToNumber(option),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    option,
+                    style: theme.textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -908,9 +988,15 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return 'Waiting to record phrase. Start recording when ready.';
     }
     final taskKind = _controller.currentTaskKind;
-    if (taskKind == TrainingTaskKind.numberReading) {
+    if (taskKind == TrainingTaskKind.numberToWord) {
       if (status == TrainerStatus.running) {
         return 'Select the correct answer for the number.';
+      }
+      return 'Tap Start to begin.';
+    }
+    if (taskKind == TrainingTaskKind.wordToNumber) {
+      if (status == TrainerStatus.running) {
+        return 'Select the number matching the text.';
       }
       return 'Tap Start to begin.';
     }
