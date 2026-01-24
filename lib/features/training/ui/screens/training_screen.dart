@@ -6,6 +6,7 @@ import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/pronunciation_models.dart';
 import '../../domain/training_controller.dart';
+import '../widgets/feedback_overlay.dart';
 import '../widgets/sound_wave_indicator.dart';
 import '../widgets/training_background.dart';
 import 'settings_screen.dart';
@@ -30,6 +31,13 @@ class TrainingScreen extends StatefulWidget {
 class _TrainingScreenState extends State<TrainingScreen> {
   late final TrainingController _controller;
   bool _sendingPronunciation = false;
+
+  static const String _successAnimationPrefix = 'assets/animations/success/';
+  static const String _fallbackSuccessAnimation =
+      'assets/animations/success/Success.lottie';
+  static const String _failureAnimationAsset =
+      'assets/animations/failure/Failure.lottie';
+  static const Duration _overlayTransition = Duration(milliseconds: 250);
 
   @override
   void initState() {
@@ -104,94 +112,104 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
         return Scaffold(
           body: TrainingBackground(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Numbers Trainer',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '$learnedCount learned',
-                          style: theme.textTheme.labelMedium,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '$remainingCount remaining',
-                          style: theme.textTheme.labelMedium,
-                        ),
-                        const SizedBox(width: 8),
-                        PopupMenuButton<_TrainerMenuAction>(
-                          onSelected: (value) {
-                            switch (value) {
-                              case _TrainerMenuAction.statistics:
-                                _openStatistics();
-                                break;
-                              case _TrainerMenuAction.settings:
-                                _openSettings();
-                                break;
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: _TrainerMenuAction.statistics,
-                              child: Row(
-                                children: const [
-                                  Icon(Icons.bar_chart, size: 18),
-                                  SizedBox(width: 8),
-                                  Text('Statistics'),
-                                ],
+            child: Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Numbers Trainer',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            PopupMenuItem(
-                              value: _TrainerMenuAction.settings,
-                              child: Row(
-                                children: const [
-                                  Icon(Icons.settings, size: 18),
-                                  SizedBox(width: 8),
-                                  Text('Settings'),
-                                ],
-                              ),
+                            const Spacer(),
+                            Text(
+                              '$learnedCount learned',
+                              style: theme.textTheme.labelMedium,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              '$remainingCount remaining',
+                              style: theme.textTheme.labelMedium,
+                            ),
+                            const SizedBox(width: 8),
+                            PopupMenuButton<_TrainerMenuAction>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case _TrainerMenuAction.statistics:
+                                    _openStatistics();
+                                    break;
+                                  case _TrainerMenuAction.settings:
+                                    _openSettings();
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: _TrainerMenuAction.statistics,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.bar_chart, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Statistics'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: _TrainerMenuAction.settings,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.settings, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Settings'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              icon: const Icon(Icons.more_vert),
+                              tooltip: 'Menu',
                             ),
                           ],
-                          icon: const Icon(Icons.more_vert),
-                          tooltip: 'Menu',
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildTaskContent(theme, status, hintText, feedbackText,
-                              feedbackColor),
-                          const SizedBox(height: 16),
-                          _buildStatusAndErrors(theme, statusMessage),
-                        ],
                       ),
-                    ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildTaskContent(
+                                theme,
+                                status,
+                                hintText,
+                                feedbackText,
+                                feedbackColor,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildStatusAndErrors(theme, statusMessage),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildTrainingButton(
+                        theme,
+                        isActiveSession,
+                        controlEnabled,
+                        isWaitingRecording,
+                      ),
+                      const SizedBox(height: 18),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  _buildTrainingButton(
-                    theme,
-                    isActiveSession,
-                    controlEnabled,
-                    isWaitingRecording,
-                  ),
-                  const SizedBox(height: 18),
-                ],
-              ),
+                ),
+                _buildFeedbackOverlay(theme, feedback, feedbackColor),
+              ],
             ),
           ),
         );
@@ -282,6 +300,45 @@ class _TrainingScreenState extends State<TrainingScreen> {
       hintText,
       feedbackText,
       feedbackColor,
+    );
+  }
+
+  Widget _buildFeedbackOverlay(
+    ThemeData theme,
+    TrainingFeedback? feedback,
+    Color? feedbackColor,
+  ) {
+    final show = feedback != null &&
+        (feedback.type == TrainingFeedbackType.correct ||
+            feedback.type == TrainingFeedbackType.wrong ||
+            feedback.type == TrainingFeedbackType.timeout);
+    final resolvedColor = feedbackColor ?? theme.colorScheme.primary;
+
+    return Positioned.fill(
+      child: AnimatedSwitcher(
+        duration: _overlayTransition,
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.97, end: 1.0).animate(animation),
+              child: child,
+            ),
+          );
+        },
+        child: show
+            ? FeedbackOverlay(
+                key: ValueKey(feedback),
+                feedback: feedback,
+                accentColor: resolvedColor,
+                successAssetPrefix: _successAnimationPrefix,
+                fallbackSuccessAsset: _fallbackSuccessAnimation,
+                failureAsset: _failureAnimationAsset,
+              )
+            : const SizedBox.shrink(key: ValueKey('feedback-hidden')),
+      ),
     );
   }
 

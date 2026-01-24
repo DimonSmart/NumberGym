@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
 import '../../data/card_progress.dart';
@@ -10,6 +11,7 @@ import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
 import '../../domain/services/internet_checker.dart';
 import '../../domain/training_task.dart';
+import 'package:number_gym/core/logging/app_log_buffer.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Box<String> settingsBox;
@@ -137,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final logBuffer = AppLogBuffer.instance;
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
@@ -292,6 +295,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
               final count = value.round();
               _updateHintStreakCount(count);
             },
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Logs',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'In-memory buffer (last ${(logBuffer.byteLength / 1024).toStringAsFixed(1)} KB).',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton.tonalIcon(
+            onPressed: logBuffer.isEmpty
+                ? null
+                : () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    await Clipboard.setData(
+                      ClipboardData(text: logBuffer.text),
+                    );
+                    if (!mounted) return;
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Logs copied to clipboard.')),
+                    );
+                  },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy logs'),
           ),
           const SizedBox(height: 28),
           FilledButton.tonal(

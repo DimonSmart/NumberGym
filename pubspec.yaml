@@ -38,6 +38,7 @@ dependencies:
   wakelock_plus: ^1.2.8
   http: ^1.1.2
   record: ^5.2.1
+  lottie: ^2.7.0
 
 dependency_overrides:
   # Use newer linux implementation that supports startStream from platform interface.
@@ -72,6 +73,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/animations/
 
   fonts:
     - family: SpaceGrotesk

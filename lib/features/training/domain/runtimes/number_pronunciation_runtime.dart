@@ -201,7 +201,15 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         listenMode: listenMode,
         partialResults: true,
       );
-      _log('Speech listen started: isListening=${_speechService.isListening}');
+      final listening = _speechService.isListening;
+      _log('Speech listen started: isListening=$listening');
+      if (!listening && _cardActive && _activeAttemptId == attemptId) {
+        _isListening = false;
+        _soundWaveService.stop();
+        emitState(_buildState());
+        await Future.delayed(_listenRestartDelay);
+        await _startListening();
+      }
     } catch (error) {
       _isListening = false;
       emitState(_buildState());
@@ -369,7 +377,24 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _onSpeechStatus(String status) {
-    // Timer is managed independently of speech status.
+    final normalized = status.toLowerCase().trim();
+    if (normalized.contains('listening')) {
+      if (!_isListening) {
+        _isListening = true;
+        emitState(_buildState());
+      }
+      return;
+    }
+    if (normalized.contains('notlistening') || normalized.contains('done')) {
+      if (_isListening) {
+        _isListening = false;
+        emitState(_buildState());
+      }
+      _soundWaveService.stop();
+      if (_cardActive && _activeAttemptId != null) {
+        unawaited(_handleAttemptResult(recognizedText: ''));
+      }
+    }
   }
 
   Future<void> _restartListeningAfterLocaleFallback() async {

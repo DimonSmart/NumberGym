@@ -8,6 +8,7 @@ class SoundWaveIndicator extends StatelessWidget {
   final double height;
   final double barWidth;
   final double spacing;
+  final int barCount;
   final Duration animationDuration;
   final double amplify;
   final double curve;
@@ -19,6 +20,7 @@ class SoundWaveIndicator extends StatelessWidget {
     this.height = 64,
     this.barWidth = 6,
     this.spacing = 2,
+    this.barCount = 32,
     this.animationDuration = const Duration(milliseconds: 90),
     this.amplify = 1.0,
     this.curve = 1.2,
@@ -36,6 +38,7 @@ class SoundWaveIndicator extends StatelessWidget {
           height: height,
           barWidth: barWidth,
           spacing: spacing,
+          barCount: barCount,
           animationDuration: animationDuration,
           amplify: amplify,
           curve: curve,

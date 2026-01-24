@@ -8,6 +8,7 @@ class SoundWaveform extends StatelessWidget {
   final double height;
   final double barWidth;
   final double spacing;
+  final int barCount;
   final Duration animationDuration;
   final double amplify;
   final double curve;
@@ -19,6 +20,7 @@ class SoundWaveform extends StatelessWidget {
     this.height = 64,
     this.barWidth = 6,
     this.spacing = 2,
+    this.barCount = 32,
     this.animationDuration = const Duration(milliseconds: 90),
     this.amplify = 1.0,
     this.curve = 1.2,
@@ -31,8 +33,10 @@ class SoundWaveform extends StatelessWidget {
     final trackColor =
         theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.7);
     final borderColor = theme.colorScheme.onSurface.withValues(alpha: 0.12);
+    final centerLineColor = theme.colorScheme.onSurface.withValues(alpha: 0.08);
     final barRadius = BorderRadius.circular(barWidth / 2);
     final minBarHeight = 8.0;
+    final resolvedValues = _resolveValues();
 
     return AnimatedOpacity(
       opacity: visible ? 1 : 0.35,
@@ -46,31 +50,72 @@ class SoundWaveform extends StatelessWidget {
         ),
         child: SizedBox(
           height: height,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              for (final value in values)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: spacing),
-                  child: AnimatedContainer(
-                    duration: animationDuration,
-                    width: barWidth,
-                    height: _resolveHeight(
-                      visible ? value : 0.0,
-                      minBarHeight,
-                    ),
-                    decoration: BoxDecoration(
-                      color: barColor,
-                      borderRadius: barRadius,
-                    ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: 1,
+                    color: centerLineColor,
                   ),
                 ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  for (final value in resolvedValues)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: spacing),
+                      child: SizedBox(
+                        height: height,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: AnimatedContainer(
+                            duration: animationDuration,
+                            width: barWidth,
+                            height: _resolveHeight(
+                              visible ? value : 0.0,
+                              minBarHeight,
+                            ),
+                            decoration: BoxDecoration(
+                              color: barColor,
+                              borderRadius: barRadius,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  List<double> _resolveValues() {
+    if (barCount <= 0) {
+      return const [];
+    }
+    if (values.length == barCount) {
+      return values;
+    }
+    if (values.isEmpty) {
+      return List<double>.filled(barCount, 0.0);
+    }
+    if (values.length > barCount) {
+      return values.sublist(values.length - barCount);
+    }
+    final padded = List<double>.filled(barCount, 0.0);
+    final startIndex = barCount - values.length;
+    for (var i = 0; i < values.length; i++) {
+      padded[startIndex + i] = values[i];
+    }
+    return padded;
   }
 
   double _resolveHeight(double value, double minBarHeight) {
