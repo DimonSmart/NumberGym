@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
 
 abstract class AudioRecorderServiceBase {
@@ -34,9 +35,11 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     if (_isRecording) return;
     final hasPermission = await _recorder.hasPermission();
     if (!hasPermission) {
+      _log('start failed: microphone permission denied');
       throw const AudioRecorderException('Microphone permission denied');
     }
     final tempPath = '${Directory.systemTemp.path}/number_gym_${DateTime.now().millisecondsSinceEpoch}.wav';
+    _log('start: path=$tempPath');
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.wav,
@@ -52,8 +55,11 @@ class AudioRecorderService implements AudioRecorderServiceBase {
           if (!_emitAmplitude) return;
           if (_amplitudeController.isClosed) return;
           _amplitudeController.add(amplitude.current);
+        }, onError: (error) {
+          _log('amplitude error: $error');
         });
     _isRecording = true;
+    _log('start: recording=true');
   }
 
   @override
@@ -64,7 +70,16 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     _emitAmplitude = false;
     if (path == null) return null;
     final file = File(path);
-    if (await file.exists()) return file;
+    if (await file.exists()) {
+      try {
+        final size = await file.length();
+        _log('stop: file="$path" size=$size');
+      } catch (_) {
+        _log('stop: file="$path" size=unknown');
+      }
+      return file;
+    }
+    _log('stop: file missing at "$path"');
     return null;
   }
 
@@ -74,6 +89,7 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     await _recorder.stop();
     _isRecording = false;
     _emitAmplitude = false;
+    _log('cancel: recording stopped');
   }
 
   @override
@@ -82,6 +98,13 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     _amplitudeSubscription = null;
     unawaited(_amplitudeController.close());
     _recorder.dispose();
+  }
+
+  void _log(String message) {
+    if (!kDebugMode) return;
+    final now = DateTime.now().toString();
+    final time = now.substring(11, 23);
+    debugPrint('[$time] Audio recorder: $message');
   }
 }
 

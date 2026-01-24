@@ -60,6 +60,7 @@ class TrainingSession {
   static const int _wordToNumberWeight = 15;
   static const int _phrasePronunciationWeight = 5;
   static const Duration _internetCheckCache = Duration(seconds: 10);
+  static const Duration _feedbackDuration = Duration(seconds: 3);
 
   final Random _random = Random();
   final TrainingServices _services;
@@ -92,6 +93,7 @@ class TrainingSession {
   String? _errorMessage;
   TrainingFeedback? _feedback;
   Timer? _feedbackTimer;
+  Completer<void>? _feedbackCompleter;
 
   final SilentDetector _silentDetector = SilentDetector();
   final StreakTracker _streakTracker = StreakTracker();
@@ -163,7 +165,7 @@ class TrainingSession {
   }
 
   Future<void> stopTraining() async {
-    _feedbackTimer?.cancel();
+    _clearFeedback();
     await _disposeRuntime(clearState: true);
     _services.soundWave.reset();
     _status = TrainerStatus.idle;
@@ -176,7 +178,6 @@ class TrainingSession {
     _silentDetector.reset();
     _streakTracker.reset();
     _taskHadUserInteraction = false;
-    _feedback = null;
     _syncState();
     unawaited(_setKeepAwake(false));
   }
@@ -227,7 +228,7 @@ class TrainingSession {
 
   void dispose() {
     _disposed = true;
-    _feedbackTimer?.cancel();
+    _clearFeedback();
     unawaited(_disposeRuntime(clearState: true));
     _services.dispose();
   }
@@ -653,7 +654,7 @@ class TrainingSession {
       );
     }
 
-    _showFeedback(outcome: outcome);
+    final feedbackHold = _showFeedback(outcome: outcome);
 
     _silentDetector.record(
       interacted: _taskHadUserInteraction,
@@ -666,6 +667,13 @@ class TrainingSession {
 
     if (_status == TrainerStatus.waitingRecording) {
       _status = TrainerStatus.running;
+    }
+
+    await feedbackHold;
+    if (_disposed) return;
+    if (_status != TrainerStatus.running &&
+        _status != TrainerStatus.waitingRecording) {
+      return;
     }
 
     await _startNextCard();
@@ -713,8 +721,10 @@ class TrainingSession {
     }
   }
 
-  void _showFeedback({required TrainingOutcome outcome}) {
+  Future<void> _showFeedback({required TrainingOutcome outcome}) {
     _feedbackTimer?.cancel();
+    _feedbackCompleter?.complete();
+    _feedbackCompleter = null;
     late final TrainingFeedbackType type;
     late final String text;
 
@@ -740,10 +750,26 @@ class TrainingSession {
     _feedback = TrainingFeedback(type: type, text: text);
     _syncState();
 
-    _feedbackTimer = Timer(const Duration(seconds: 3), () {
-      _feedback = null;
-      _syncState();
-    });
+    final completer = Completer<void>();
+    _feedbackCompleter = completer;
+    _feedbackTimer = Timer(_feedbackDuration, _clearFeedback);
+
+    final shouldHold = type == TrainingFeedbackType.correct ||
+        type == TrainingFeedbackType.wrong ||
+        type == TrainingFeedbackType.timeout;
+    if (!shouldHold) {
+      return Future.value();
+    }
+    return completer.future;
+  }
+
+  void _clearFeedback() {
+    _feedbackTimer?.cancel();
+    _feedbackTimer = null;
+    _feedback = null;
+    _syncState();
+    _feedbackCompleter?.complete();
+    _feedbackCompleter = null;
   }
 
   Future<void> _pauseTraining() async {

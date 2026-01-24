@@ -50,6 +50,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         );
 
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
+  static const Duration _listenStartTimeout = Duration(milliseconds: 800);
   static const int _maxConsecutiveClientErrors = 3;
 
   final NumberPronunciationTask _task;
@@ -70,8 +71,11 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   bool _speechReady = false;
   bool _cardActive = false;
   bool _isListening = false;
+  bool _timerHasStarted = false;
   bool _reportedInteraction = false;
   bool _disposed = false;
+  Timer? _listenStartTimer;
+  int? _pendingListenAttemptId;
 
   @override
   Future<void> start() async {
@@ -82,13 +86,16 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _forceDefaultLocale = false;
     _suppressNextClientError = false;
     _consecutiveClientErrors = 0;
+    _timerHasStarted = false;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
 
     final ready = await _initSpeech();
     if (!ready) {
       return;
     }
 
-    _startCardTimer();
     await _startListening();
   }
 
@@ -138,10 +145,13 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   TimerState _timerSnapshot() {
+    final remaining = _timerHasStarted
+        ? (_cardTimer.isRunning ? _cardTimer.remaining() : Duration.zero)
+        : _cardDuration;
     return TimerState(
       isRunning: _cardTimer.isRunning,
-      duration: _cardTimer.duration,
-      remaining: _cardTimer.remaining(),
+      duration: _cardDuration,
+      remaining: remaining,
     );
   }
 
@@ -163,7 +173,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _startCardTimer() {
+    if (_timerHasStarted) return;
     _cardTimer.start(_cardDuration, _onTimerTimeout);
+    _timerHasStarted = true;
+    _log('Speech timer started: duration=${_cardDuration.inMilliseconds}ms');
     emitState(_buildState());
   }
 
@@ -184,12 +197,12 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     final listenMode = _resolveListenMode();
     _log(
       'Speech listen: remaining=${remaining.inMilliseconds}ms '
-      'locale=${localeId ?? "system"} mode=$listenMode',
+      'locale=${localeId ?? "system"} mode=$listenMode attempt=$attemptId',
     );
 
-    _soundWaveService.start();
-    _isListening = true;
-    emitState(_buildState());
+    _pendingListenAttemptId = attemptId;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
 
     try {
       await _speechService.listen(
@@ -201,21 +214,36 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         listenMode: listenMode,
         partialResults: true,
       );
-      final listening = _speechService.isListening;
-      _log('Speech listen started: isListening=$listening');
-      if (!listening && _cardActive && _activeAttemptId == attemptId) {
-        _isListening = false;
-        _soundWaveService.stop();
-        emitState(_buildState());
-        await Future.delayed(_listenRestartDelay);
-        await _startListening();
-      }
     } catch (error) {
-      _isListening = false;
-      emitState(_buildState());
+      _log('Speech listen failed to start: $error');
+      _pendingListenAttemptId = null;
+      _markListeningStopped(source: 'listen-error');
       emitEvent(const TaskError('Speech recognition failed to start.'));
       await _stopAttempt(stopTimer: true);
+      return;
     }
+
+    final listening = _speechService.isListening;
+    if (listening) {
+      _markListeningStarted(source: 'listen-call');
+      return;
+    }
+
+    _log('Speech listen awaiting start: isListening=false');
+    _listenStartTimer?.cancel();
+    _listenStartTimer = Timer(_listenStartTimeout, () {
+      if (!_cardActive || _pendingListenAttemptId != attemptId) return;
+      final started = _speechService.isListening;
+      if (started) {
+        _markListeningStarted(source: 'listen-timeout-check');
+        return;
+      }
+      _log(
+        'Speech listen did not start within '
+        '${_listenStartTimeout.inMilliseconds}ms.',
+      );
+      unawaited(_restartListeningAfterStartFailure(attemptId));
+    });
   }
 
   void _onSpeechResult(SpeechRecognitionResult result, int attemptId) {
@@ -261,8 +289,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     if (_speechService.isListening) {
       await _speechService.stop();
     }
-    _isListening = false;
-    emitState(_buildState());
+    _markListeningStopped(source: 'result');
 
     final didMatch = _answerMatcher.applyRecognition(resolvedText);
     if (didMatch) {
@@ -291,18 +318,25 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     if (!_cardActive) return;
     _cardActive = false;
     _activeAttemptId = null;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
     _cardTimer.stop();
     _soundWaveService.stop();
     if (_speechService.isListening) {
       await _speechService.stop();
     }
     _isListening = false;
+    _log('Speech attempt completed: outcome=$outcome');
     emitState(_buildState());
     emitEvent(TaskCompleted(outcome));
   }
 
   Future<void> _stopAttempt({bool stopTimer = false}) async {
     _activeAttemptId = null;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
     _lastPartialResult = '';
     _isListening = false;
     _soundWaveService.stop();
@@ -312,7 +346,53 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     if (_speechService.isListening) {
       await _speechService.stop();
     }
+    _log('Speech attempt stopped (stopTimer=$stopTimer)');
     emitState(_buildState());
+  }
+
+  void _markListeningStarted({required String source}) {
+    if (!_cardActive) return;
+    final attemptId = _pendingListenAttemptId ?? _activeAttemptId;
+    if (attemptId != null && _activeAttemptId != attemptId) {
+      return;
+    }
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+
+    final wasListening = _isListening;
+    _isListening = true;
+    _soundWaveService.start();
+
+    if (!_timerHasStarted) {
+      _startCardTimer();
+    } else if (!wasListening) {
+      emitState(_buildState());
+    }
+
+    _log('Speech listen started ($source): isListening=${_speechService.isListening}');
+  }
+
+  void _markListeningStopped({required String source}) {
+    if (_isListening) {
+      _isListening = false;
+      emitState(_buildState());
+    }
+    _soundWaveService.stop();
+    _log('Speech listen stopped ($source)');
+  }
+
+  Future<void> _restartListeningAfterStartFailure(int attemptId) async {
+    if (!_cardActive || _pendingListenAttemptId != attemptId) return;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    if (_activeAttemptId == attemptId) {
+      _activeAttemptId = null;
+    }
+    _markListeningStopped(source: 'listen-start-failed');
+    await Future.delayed(_listenRestartDelay);
+    await _startListening();
   }
 
   void _reportUserInteraction() {
@@ -379,18 +459,11 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   void _onSpeechStatus(String status) {
     final normalized = status.toLowerCase().trim();
     if (normalized.contains('listening')) {
-      if (!_isListening) {
-        _isListening = true;
-        emitState(_buildState());
-      }
+      _markListeningStarted(source: 'status');
       return;
     }
     if (normalized.contains('notlistening') || normalized.contains('done')) {
-      if (_isListening) {
-        _isListening = false;
-        emitState(_buildState());
-      }
-      _soundWaveService.stop();
+      _markListeningStopped(source: 'status');
       if (_cardActive && _activeAttemptId != null) {
         unawaited(_handleAttemptResult(recognizedText: ''));
       }
@@ -401,9 +474,13 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     if (!_cardActive) return;
     _suppressNextClientError = false;
     _activeAttemptId = null;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
     if (_speechService.isListening) {
       await _speechService.stop();
     }
+    _markListeningStopped(source: 'locale-fallback');
     await Future.delayed(_listenRestartDelay);
     await _startListening();
   }
@@ -426,7 +503,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     return stt.ListenMode.dictation;
   }
 
-  Duration _remainingCardDuration() => _cardTimer.remaining();
+  Duration _remainingCardDuration() {
+    if (!_timerHasStarted) return _cardDuration;
+    return _cardTimer.remaining();
+  }
 
   bool _isNoMatchError(SpeechRecognitionError error) {
     final code = error.errorMsg.toLowerCase().trim();
