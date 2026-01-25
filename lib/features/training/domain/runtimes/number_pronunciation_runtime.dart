@@ -418,7 +418,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _markListeningStopped(source: 'result');
 
     _clearPreview(emit: false);
-    final matchResult = _answerMatcher.applyRecognition(resolvedText);
+    final matchResult =
+        _answerMatcher.applyRecognition(resolvedText.replaceAll(',', ''));
     _lastHeardText = matchResult.normalizedText.isEmpty
         ? null
         : matchResult.normalizedText;
@@ -1034,7 +1035,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _updatePreviewFromPartial(String recognizedText) {
-    final preview = _answerMatcher.previewRecognition(recognizedText);
+    final preview =
+        _answerMatcher.previewRecognition(recognizedText.replaceAll(',', ''));
     final nextText = preview.normalizedText.isEmpty
         ? null
         : preview.normalizedText;
