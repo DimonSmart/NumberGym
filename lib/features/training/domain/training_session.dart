@@ -60,7 +60,7 @@ class TrainingSession {
   static const int _wordToNumberWeight = 15;
   static const int _phrasePronunciationWeight = 5;
   static const Duration _internetCheckCache = Duration(seconds: 10);
-  static const Duration _feedbackDuration = Duration(seconds: 3);
+  static const Duration _feedbackDuration = Duration(milliseconds: 1500);
 
   final Random _random = Random();
   final TrainingServices _services;
