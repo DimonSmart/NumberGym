@@ -57,9 +57,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
 
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
   static const Duration _listenStartTimeout = Duration(milliseconds: 1500);
-  static const Duration _finalResultGrace = Duration(milliseconds: 1500);
   static const Duration _timeoutGrace = Duration(milliseconds: 500);
-  static const Duration _minListenBeforeFinalize = Duration(milliseconds: 700);
   static const Duration _listenActivityTimeout = Duration(seconds: 4);
   static const Duration _listenHealthCheckInterval = Duration(seconds: 1);
   static const Duration _maxListenDuration = Duration(seconds: 10);
@@ -79,7 +77,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   int _attemptCounter = 0;
   int? _activeAttemptId;
   int? _pendingListenAttemptId;
-  int? _finalResultGraceAttemptId;
   int? _listenStartedAttemptId;
   int? _listenActivityAttemptId;
   String _lastPartialResult = '';
@@ -92,7 +89,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   bool _forceDefaultLocale = false;
   bool _suppressNextClientError = false;
   int _consecutiveClientErrors = 0;
-  final bool _enableFinalResultGrace = false;
   bool _speechReady = false;
   bool _cardActive = false;
   bool _isListening = false;
@@ -112,7 +108,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Timer? _listenStartTimer;
   Timer? _listenActivityTimer;
   Timer? _listenHealthTimer;
-  Timer? _finalResultGraceTimer;
   Timer? _timeoutGraceTimer;
 
   @override
@@ -127,7 +122,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _timerHasStarted = false;
     _deadlinePassed = false;
     _pendingListenAttemptId = null;
-    _finalResultGraceAttemptId = null;
     _listenStartedAttemptId = null;
     _listenStartedAt = null;
     _lastSpeechActivityAt = null;
@@ -142,8 +136,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenHealthTimer?.cancel();
     _listenHealthTimer = null;
     _listenHealthFalseCount = 0;
-    _finalResultGraceTimer?.cancel();
-    _finalResultGraceTimer = null;
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
 
@@ -287,7 +279,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     );
 
     _pendingListenAttemptId = attemptId;
-    _cancelFinalResultGrace();
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
 
@@ -382,7 +373,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       }
       return;
     }
-    _cancelFinalResultGrace(attemptId: attemptId);
     final resolvedWords = recognizedWords.trim().isEmpty
         ? _lastPartialResult
         : recognizedWords;
@@ -396,7 +386,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartTimer = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
-    _cancelFinalResultGrace();
 
     var resolvedText = recognizedText;
     if (resolvedText.trim().isEmpty && _lastPartialResult.isNotEmpty) {
@@ -418,8 +407,9 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _markListeningStopped(source: 'result');
 
     _clearPreview(emit: false);
-    final matchResult =
-        _answerMatcher.applyRecognition(resolvedText.replaceAll(',', ''));
+    final matchResult = _answerMatcher.applyRecognition(
+      resolvedText.replaceAll(',', ''),
+    );
     _lastHeardText = matchResult.normalizedText.isEmpty
         ? null
         : matchResult.normalizedText;
@@ -466,13 +456,13 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> _handleTimerTimeout() async {
     if (!_cardActive || _deadlinePassed) return;
     _deadlinePassed = true;
-    _cancelFinalResultGrace();
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     _listenStartedAttemptId = null;
     _listenStartedAt = null;
-    _lastSpeechActivityAt = null;
+    _cancelListenActivityCheck();
+    _listenStartedAt = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
     _clearPreview(emit: false);
@@ -498,14 +488,12 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _cardActive = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _finalResultGraceAttemptId = null;
     _listenStartedAttemptId = null;
     _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
-    _cancelFinalResultGrace();
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
     _cardTimer.stop();
@@ -526,14 +514,12 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> _stopAttempt({bool stopTimer = false}) async {
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _finalResultGraceAttemptId = null;
     _listenStartedAttemptId = null;
     _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
-    _cancelFinalResultGrace();
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
     _lastPartialResult = '';
@@ -598,28 +584,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     }
     _soundWaveService.stop();
     _log('Speech listen stopped ($source)');
-  }
-
-  void _beginFinalResultGrace(int attemptId, {required String source}) {
-    if (_deadlinePassed) return;
-    _finalResultGraceAttemptId = attemptId;
-    _finalResultGraceTimer?.cancel();
-    _finalResultGraceTimer = Timer(_finalResultGrace, () {
-      unawaited(_enqueue(() => _finalizeIfNoFinalResult(attemptId, source)));
-    });
-    _log(
-      'Speech awaiting final result ($source): '
-      'grace=${_finalResultGrace.inMilliseconds}ms',
-    );
-  }
-
-  void _cancelFinalResultGrace({int? attemptId}) {
-    if (attemptId != null && _finalResultGraceAttemptId != attemptId) {
-      return;
-    }
-    _finalResultGraceTimer?.cancel();
-    _finalResultGraceTimer = null;
-    _finalResultGraceAttemptId = null;
   }
 
   void _scheduleListenActivityCheck(int attemptId) {
@@ -704,29 +668,12 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       _cancelListenHealthCheck();
       return;
     }
-    if (_finalResultGraceAttemptId == attemptId) {
-      return;
-    }
-    final startedAt = _listenStartedAt;
-    if (startedAt == null ||
-        DateTime.now().difference(startedAt) < _minListenBeforeFinalize) {
-      return;
-    }
     if (_speechService.isListening) {
       _listenHealthFalseCount = 0;
       return;
     }
     _listenHealthFalseCount += 1;
     if (_listenHealthFalseCount < 2) {
-      return;
-    }
-    if (_enableFinalResultGrace) {
-      _log(
-        'Speech listen health: isListening=false; waiting for final result '
-        '(soundSamples=$_soundLevelSampleCount, partials=$_partialResultCount).',
-      );
-      _markListeningStopped(source: 'health');
-      _beginFinalResultGrace(attemptId, source: 'health');
       return;
     }
     _log(
@@ -751,7 +698,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartedAt = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
-    _cancelFinalResultGrace();
     if (_speechService.isListening) {
       await _speechService.stop();
     }
@@ -771,7 +717,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartedAt = null;
     _cancelListenActivityCheck();
     _cancelListenHealthCheck();
-    _cancelFinalResultGrace();
     _lastPartialResult = '';
     _currentAttemptHadSpeech = false;
     _clearPreview(emit: false);
@@ -782,15 +727,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     await Future.delayed(const Duration(milliseconds: 100));
     if (!_cardActive || _deadlinePassed) return;
     await _startListening();
-  }
-
-  Future<void> _finalizeIfNoFinalResult(int attemptId, String source) async {
-    if (!_cardActive) return;
-    if (_finalResultGraceAttemptId != attemptId) return;
-    if (_activeAttemptId != attemptId) return;
-    _cancelFinalResultGrace(attemptId: attemptId);
-    _log('Speech final result grace expired ($source).');
-    await _handleAttemptResult(recognizedText: '');
   }
 
   Future<void> _restartListeningAfterStartFailure(int attemptId) async {
@@ -911,7 +847,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _suppressNextClientError = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _cancelFinalResultGrace();
     _listenStartedAttemptId = null;
     _listenStartedAt = null;
     _cancelListenActivityCheck();
@@ -1035,8 +970,9 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _updatePreviewFromPartial(String recognizedText) {
-    final preview =
-        _answerMatcher.previewRecognition(recognizedText.replaceAll(',', ''));
+    final preview = _answerMatcher.previewRecognition(
+      recognizedText.replaceAll(',', ''),
+    );
     final nextText = preview.normalizedText.isEmpty
         ? null
         : preview.normalizedText;
