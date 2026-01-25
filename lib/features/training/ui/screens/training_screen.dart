@@ -59,11 +59,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
     await _controller.pauseForOverlay();
     if (!mounted) return;
 
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => screen,
-      ),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => screen));
 
     if (!mounted) return;
     await _controller.restoreAfterOverlay();
@@ -79,13 +77,11 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 
   Future<void> _openStatistics() async {
-    final language =
-        SettingsRepository(widget.settingsBox).readLearningLanguage();
+    final language = SettingsRepository(
+      widget.settingsBox,
+    ).readLearningLanguage();
     await _openOverlay(
-      StatisticsScreen(
-        progressBox: widget.progressBox,
-        language: language,
-      ),
+      StatisticsScreen(progressBox: widget.progressBox, language: language),
     );
   }
 
@@ -99,8 +95,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
         final remainingCount = _controller.remainingCount;
         final statusMessage = _buildStatusMessage();
         final status = _controller.status;
-        final isActiveSession = status == TrainerStatus.running ||
-          status == TrainerStatus.waitingRecording;
+        final isActiveSession =
+            status == TrainerStatus.running ||
+            status == TrainerStatus.waitingRecording;
         final controlEnabled = isActiveSession || _controller.hasRemainingCards;
         final feedback = _controller.feedback;
         final feedbackText = feedback?.text;
@@ -227,10 +224,12 @@ class _TrainingScreenState extends State<TrainingScreen> {
     final icon = isActiveSession
         ? (isWaitingRecording ? Icons.stop_circle : Icons.stop)
         : Icons.play_arrow;
-    final backgroundColor =
-        isActiveSession ? theme.colorScheme.error : theme.colorScheme.primary;
-    final foregroundColor =
-        isActiveSession ? theme.colorScheme.onError : theme.colorScheme.onPrimary;
+    final backgroundColor = isActiveSession
+        ? theme.colorScheme.error
+        : theme.colorScheme.primary;
+    final foregroundColor = isActiveSession
+        ? theme.colorScheme.onError
+        : theme.colorScheme.onPrimary;
 
     return SizedBox(
       width: 160,
@@ -263,8 +262,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     Color? feedbackColor,
   ) {
     final task = _controller.currentTask;
-    if (task == null ||
-        task.kind == TrainingTaskKind.numberPronunciation) {
+    if (task == null || task.kind == TrainingTaskKind.numberPronunciation) {
       return _buildNumberPronunciationContent(
         theme,
         status,
@@ -308,7 +306,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
     TrainingFeedback? feedback,
     Color? feedbackColor,
   ) {
-    final show = feedback != null &&
+    final show =
+        feedback != null &&
         (feedback.type == TrainingFeedbackType.correct ||
             feedback.type == TrainingFeedbackType.wrong ||
             feedback.type == TrainingFeedbackType.timeout);
@@ -378,7 +377,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
         ),
         const SizedBox(height: 18),
         _buildTimerBar(theme),
-        const SizedBox(height: 12),
+        _buildSpeechRecognitionFeedback(theme),
         SoundWaveIndicator(
           stream: _controller.soundStream,
           visible: status == TrainerStatus.running,
@@ -559,8 +558,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
           children: [
             if (!isRecording && !hasRecording && !isReviewing)
               FilledButton.icon(
-                onPressed:
-                    waiting ? _controller.startPronunciationRecording : null,
+                onPressed: waiting
+                    ? _controller.startPronunciationRecording
+                    : null,
                 icon: const Icon(Icons.mic),
                 label: const Text('Record'),
               ),
@@ -587,8 +587,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
               ),
             if (!isRecording && hasRecording && !isReviewing)
               FilledButton.icon(
-                onPressed:
-                    _sendingPronunciation ? null : _handleSendPronunciation,
+                onPressed: _sendingPronunciation
+                    ? null
+                    : _handleSendPronunciation,
                 icon: _sendingPronunciation
                     ? SizedBox(
                         width: 18,
@@ -661,9 +662,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
     String displayText,
     PronunciationAnalysisResult? result,
   ) {
-    final baseStyle = theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.w700,
-        ) ??
+    final baseStyle =
+        theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700) ??
         const TextStyle(fontSize: 24, fontWeight: FontWeight.w700);
     final resolvedText = (result?.displayText?.trim().isNotEmpty ?? false)
         ? result!.displayText!.trim()
@@ -671,11 +671,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     final best = result?.best;
 
     if (best == null || best.words.isEmpty) {
-      return Text(
-        resolvedText,
-        style: baseStyle,
-        textAlign: TextAlign.center,
-      );
+      return Text(resolvedText, style: baseStyle, textAlign: TextAlign.center);
     }
 
     final tokens = _tokenizePhrase(resolvedText);
@@ -712,24 +708,16 @@ class _TrainingScreenState extends State<TrainingScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
               decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: color, width: 2),
-                ),
+                border: Border(bottom: BorderSide(color: color, width: 2)),
               ),
-              child: Text(
-                token.text,
-                style: baseStyle.copyWith(color: color),
-              ),
+              child: Text(token.text, style: baseStyle.copyWith(color: color)),
             ),
           ),
         ),
       );
     }
 
-    return Text.rich(
-      TextSpan(children: spans),
-      textAlign: TextAlign.center,
-    );
+    return Text.rich(TextSpan(children: spans), textAlign: TextAlign.center);
   }
 
   Widget _buildPronunciationSummary(
@@ -863,8 +851,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (word.phonemes.isNotEmpty) {
       final phonemes = word.phonemes
           .take(6)
-          .map((phoneme) =>
-              '${phoneme.phoneme} ${phoneme.accuracyScore.toStringAsFixed(0)}')
+          .map(
+            (phoneme) =>
+                '${phoneme.phoneme} ${phoneme.accuracyScore.toStringAsFixed(0)}',
+          )
           .join(', ');
       buffer.writeln('Phonemes: $phonemes');
     }
@@ -898,11 +888,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return '${trimmed.substring(0, maxLength)}...';
   }
 
-  String? _findFirstStringByKey(
-    dynamic node,
-    Set<String> keys,
-    int depth,
-  ) {
+  String? _findFirstStringByKey(dynamic node, Set<String> keys, int depth) {
     if (node == null || depth > 6) return null;
     if (node is Map) {
       for (final entry in node.entries) {
@@ -929,13 +915,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
       unicode: true,
     );
     final wordRegex = RegExp(r"^[\\p{L}\\p{N}']+$", unicode: true);
-    return tokenRegex
-        .allMatches(text)
-        .map((match) {
-          final token = match.group(0) ?? '';
-          return _PhraseToken(token, wordRegex.hasMatch(token));
-        })
-        .toList();
+    return tokenRegex.allMatches(text).map((match) {
+      final token = match.group(0) ?? '';
+      return _PhraseToken(token, wordRegex.hasMatch(token));
+    }).toList();
   }
 
   Widget _buildStatusAndErrors(ThemeData theme, String statusMessage) {
@@ -1017,9 +1000,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
       builder: (context, value, child) {
         final displayValue = isActive ? value : 0.0;
         final maxSeconds = duration.inSeconds;
-        final secondsRemaining = isActive 
-            ? (maxSeconds * displayValue).ceil() 
-            : maxSeconds; 
+        final secondsRemaining = isActive
+            ? (maxSeconds * displayValue).ceil()
+            : maxSeconds;
 
         return Column(
           children: [
@@ -1044,6 +1027,86 @@ class _TrainingScreenState extends State<TrainingScreen> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSpeechRecognitionFeedback(ThemeData theme) {
+    final expectedTokens = _controller.expectedTokens;
+    final matchedIndices = _controller.lastMatchedIndices;
+    final heardTokens = _controller.lastHeardTokens;
+    final heardText = _controller.lastHeardText?.trim() ?? '';
+    final heardDisplay =
+        (heardTokens.isNotEmpty ? heardTokens.join(' ') : heardText).trim();
+    final previewTokens = _controller.previewHeardTokens;
+    final previewText = _controller.previewHeardText?.trim() ?? '';
+    final previewDisplay =
+        (previewTokens.isNotEmpty ? previewTokens.join(' ') : previewText)
+            .trim();
+    final previewIndices = _controller.previewMatchedIndices;
+
+    if (heardDisplay.isEmpty &&
+        matchedIndices.isEmpty &&
+        previewDisplay.isEmpty &&
+        previewIndices.isEmpty) {
+      return const SizedBox(height: 12);
+    }
+
+    final matchedTokens = <String>[];
+    for (final index in matchedIndices) {
+      if (index >= 0 && index < expectedTokens.length) {
+        matchedTokens.add(expectedTokens[index]);
+      }
+    }
+    final matchedDisplay = matchedTokens.isEmpty
+        ? '--'
+        : matchedTokens.join(' ');
+    final previewMatchedTokens = <String>[];
+    for (final index in previewIndices) {
+      if (index >= 0 && index < expectedTokens.length) {
+        previewMatchedTokens.add(expectedTokens[index]);
+      }
+    }
+    final previewMatchedDisplay = previewMatchedTokens.isEmpty
+        ? '--'
+        : previewMatchedTokens.join(' ');
+    final style = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+      height: 1.2,
+    );
+    final previewStyle = style?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.65),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (previewDisplay.isNotEmpty)
+            Text(
+              'Listening: $previewDisplay',
+              style: previewStyle,
+              textAlign: TextAlign.center,
+            ),
+          if (previewIndices.isNotEmpty)
+            Text(
+              'Preview matched: $previewMatchedDisplay',
+              style: previewStyle,
+              textAlign: TextAlign.center,
+            ),
+          if (heardDisplay.isNotEmpty)
+            Text(
+              'Heard: $heardDisplay',
+              style: style,
+              textAlign: TextAlign.center,
+            ),
+          Text(
+            'Matched: $matchedDisplay',
+            style: style,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
@@ -1085,10 +1148,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return 'Tap Start to begin.';
   }
 
-  Color _resolveFeedbackColor(
-    ThemeData theme,
-    TrainingFeedbackType type,
-  ) {
+  Color _resolveFeedbackColor(ThemeData theme, TrainingFeedbackType type) {
     switch (type) {
       case TrainingFeedbackType.correct:
         return Colors.green.shade700;
@@ -1111,24 +1171,32 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (_controller.expectedTokens.isEmpty ||
         _controller.matchedTokens.length != _controller.expectedTokens.length ||
         baseStyle == null) {
-      return Text(
-        prompt,
-        style: baseStyle,
-        textAlign: TextAlign.center,
-      );
+      return Text(prompt, style: baseStyle, textAlign: TextAlign.center);
     }
 
-    final matchedStyle = baseStyle.copyWith(
-      color: theme.colorScheme.primary,
+    final matchedStyle = baseStyle.copyWith(color: theme.colorScheme.primary);
+    final previewColor = theme.colorScheme.primary.withValues(alpha: 0.55);
+    final previewStyle = baseStyle.copyWith(
+      color: previewColor,
+      decoration: TextDecoration.underline,
+      decorationStyle: TextDecorationStyle.dotted,
+      decorationColor: previewColor,
     );
+    final previewSet = _controller.previewMatchedIndices.toSet();
 
     final spans = <TextSpan>[];
     for (var i = 0; i < _controller.expectedTokens.length; i++) {
       final token = _controller.expectedTokens[i];
-      spans.add(TextSpan(
-        text: token,
-        style: _controller.matchedTokens[i] ? matchedStyle : baseStyle,
-      ));
+      final isMatched = _controller.matchedTokens[i];
+      final isPreview = previewSet.contains(i);
+      spans.add(
+        TextSpan(
+          text: token,
+          style: isMatched
+              ? matchedStyle
+              : (isPreview ? previewStyle : baseStyle),
+        ),
+      );
       if (i < _controller.expectedTokens.length - 1) {
         spans.add(TextSpan(text: ' ', style: baseStyle));
       }
@@ -1142,10 +1210,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
 }
 
 class _LegendItem extends StatelessWidget {
-  const _LegendItem({
-    required this.color,
-    required this.label,
-  });
+  const _LegendItem({required this.color, required this.label});
 
   final Color color;
   final String label;
@@ -1159,10 +1224,7 @@ class _LegendItem extends StatelessWidget {
         Container(
           width: 10,
           height: 10,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
         Text(

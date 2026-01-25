@@ -45,19 +45,37 @@ final class NumberPronunciationState extends TaskState {
     required super.numberValue,
     required super.displayText,
     required super.timer,
-    required this.expectedTokens,
-    required this.matchedTokens,
+    required List<String> expectedTokens,
+    required List<bool> matchedTokens,
+    required this.lastHeardText,
+    required List<String> lastHeardTokens,
+    required List<int> lastMatchedIndices,
+    required this.previewHeardText,
+    required List<String> previewHeardTokens,
+    required List<int> previewMatchedIndices,
     required this.hintText,
     required this.isListening,
     required this.speechReady,
-  }) : super(
-          kind: TrainingTaskKind.numberPronunciation,
-          affectsProgress: true,
-          usesTimer: true,
-        );
+  }) : expectedTokens = List<String>.unmodifiable(expectedTokens),
+       matchedTokens = List<bool>.unmodifiable(matchedTokens),
+       lastHeardTokens = List<String>.unmodifiable(lastHeardTokens),
+       lastMatchedIndices = List<int>.unmodifiable(lastMatchedIndices),
+       previewHeardTokens = List<String>.unmodifiable(previewHeardTokens),
+       previewMatchedIndices = List<int>.unmodifiable(previewMatchedIndices),
+       super(
+         kind: TrainingTaskKind.numberPronunciation,
+         affectsProgress: true,
+         usesTimer: true,
+       );
 
   final List<String> expectedTokens;
   final List<bool> matchedTokens;
+  final String? lastHeardText;
+  final List<String> lastHeardTokens;
+  final List<int> lastMatchedIndices;
+  final String? previewHeardText;
+  final List<String> previewHeardTokens;
+  final List<int> previewMatchedIndices;
   final String? hintText;
   final bool isListening;
   final bool speechReady;
@@ -72,11 +90,8 @@ final class MultipleChoiceState extends TaskState {
     required super.timer,
     required this.prompt,
     required List<String> options,
-  })  : options = List<String>.unmodifiable(options),
-        super(
-          affectsProgress: true,
-          usesTimer: true,
-        );
+  }) : options = List<String>.unmodifiable(options),
+       super(affectsProgress: true, usesTimer: true);
 
   final String prompt;
   final List<String> options;
@@ -94,11 +109,11 @@ final class PhrasePronunciationState extends TaskState {
     required this.result,
     required this.isWaveVisible,
   }) : super(
-          kind: TrainingTaskKind.phrasePronunciation,
-          affectsProgress: false,
-          usesTimer: false,
-          timer: TimerState.zero,
-        );
+         kind: TrainingTaskKind.phrasePronunciation,
+         affectsProgress: false,
+         usesTimer: false,
+         timer: TimerState.zero,
+       );
 
   final PhraseFlow flow;
   final bool hasRecording;

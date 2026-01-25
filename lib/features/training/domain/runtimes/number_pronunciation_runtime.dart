@@ -24,33 +24,45 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     required Duration cardDuration,
     required String? hintText,
     required void Function(bool ready, String? errorMessage) onSpeechReady,
-  })  : _task = task,
-        _speechService = speechService,
-        _soundWaveService = soundWaveService,
-        _cardTimer = cardTimer,
-        _cardDuration = cardDuration,
-        _hintText = hintText,
-        _onSpeechReady = onSpeechReady,
-        super(
-          NumberPronunciationState(
-            taskId: task.id,
-            numberValue: task.numberValue,
-            displayText: task.displayText,
-            timer: TimerState(
-              isRunning: false,
-              duration: cardDuration,
-              remaining: cardDuration,
-            ),
-            expectedTokens: const <String>[],
-            matchedTokens: const <bool>[],
-            hintText: hintText,
-            isListening: false,
-            speechReady: false,
-          ),
-        );
+  }) : _task = task,
+       _speechService = speechService,
+       _soundWaveService = soundWaveService,
+       _cardTimer = cardTimer,
+       _cardDuration = cardDuration,
+       _hintText = hintText,
+       _onSpeechReady = onSpeechReady,
+       super(
+         NumberPronunciationState(
+           taskId: task.id,
+           numberValue: task.numberValue,
+           displayText: task.displayText,
+           timer: TimerState(
+             isRunning: false,
+             duration: cardDuration,
+             remaining: cardDuration,
+           ),
+           expectedTokens: const <String>[],
+           matchedTokens: const <bool>[],
+           lastHeardText: null,
+           lastHeardTokens: const <String>[],
+           lastMatchedIndices: const <int>[],
+           previewHeardText: null,
+           previewHeardTokens: const <String>[],
+           previewMatchedIndices: const <int>[],
+           hintText: hintText,
+           isListening: false,
+           speechReady: false,
+         ),
+       );
 
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
-  static const Duration _listenStartTimeout = Duration(milliseconds: 800);
+  static const Duration _listenStartTimeout = Duration(milliseconds: 1500);
+  static const Duration _finalResultGrace = Duration(milliseconds: 1500);
+  static const Duration _timeoutGrace = Duration(milliseconds: 500);
+  static const Duration _minListenBeforeFinalize = Duration(milliseconds: 700);
+  static const Duration _listenActivityTimeout = Duration(seconds: 4);
+  static const Duration _listenHealthCheckInterval = Duration(seconds: 1);
+  static const Duration _maxListenDuration = Duration(seconds: 10);
   static const int _maxConsecutiveClientErrors = 3;
 
   final NumberPronunciationTask _task;
@@ -62,20 +74,46 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   final void Function(bool ready, String? errorMessage) _onSpeechReady;
   final AnswerMatcher _answerMatcher = AnswerMatcher();
 
+  Future<void> _serialOperation = Future.value();
+
   int _attemptCounter = 0;
   int? _activeAttemptId;
+  int? _pendingListenAttemptId;
+  int? _finalResultGraceAttemptId;
+  int? _listenStartedAttemptId;
+  int? _listenActivityAttemptId;
   String _lastPartialResult = '';
+  String? _lastHeardText;
+  List<String> _lastHeardTokens = const <String>[];
+  List<int> _lastMatchedIndices = const <int>[];
+  String? _previewHeardText;
+  List<String> _previewHeardTokens = const <String>[];
+  List<int> _previewMatchedIndices = const <int>[];
   bool _forceDefaultLocale = false;
   bool _suppressNextClientError = false;
   int _consecutiveClientErrors = 0;
+  final bool _enableFinalResultGrace = false;
   bool _speechReady = false;
   bool _cardActive = false;
   bool _isListening = false;
   bool _timerHasStarted = false;
   bool _reportedInteraction = false;
+  bool _deadlinePassed = false;
+  bool _currentAttemptHadSpeech = false;
+  int _emptyResultStreak = 0;
+  int _soundLevelSampleCount = 0;
+  double _lastSoundLevel = 0.0;
+  DateTime? _lastSoundLevelAt;
+  int _partialResultCount = 0;
+  int _listenHealthFalseCount = 0;
+  DateTime? _listenStartedAt;
+  DateTime? _lastSpeechActivityAt;
   bool _disposed = false;
   Timer? _listenStartTimer;
-  int? _pendingListenAttemptId;
+  Timer? _listenActivityTimer;
+  Timer? _listenHealthTimer;
+  Timer? _finalResultGraceTimer;
+  Timer? _timeoutGraceTimer;
 
   @override
   Future<void> start() async {
@@ -87,9 +125,27 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _suppressNextClientError = false;
     _consecutiveClientErrors = 0;
     _timerHasStarted = false;
+    _deadlinePassed = false;
     _pendingListenAttemptId = null;
+    _finalResultGraceAttemptId = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _lastSpeechActivityAt = null;
+    _listenActivityAttemptId = null;
+    _lastSpeechActivityAt = null;
+    _currentAttemptHadSpeech = false;
+    _emptyResultStreak = 0;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _listenActivityTimer?.cancel();
+    _listenActivityTimer = null;
+    _listenHealthTimer?.cancel();
+    _listenHealthTimer = null;
+    _listenHealthFalseCount = 0;
+    _finalResultGraceTimer?.cancel();
+    _finalResultGraceTimer = null;
+    _timeoutGraceTimer?.cancel();
+    _timeoutGraceTimer = null;
 
     final ready = await _initSpeech();
     if (!ready) {
@@ -108,8 +164,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> onTimerTimeout() async {
-    if (!_cardActive) return;
-    await _complete(TrainingOutcome.timeout);
+    await _enqueue(_handleTimerTimeout);
   }
 
   @override
@@ -120,7 +175,17 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _resetMatcher() {
-    _answerMatcher.reset(prompt: _task.prompt, answers: _task.answers);
+    _answerMatcher.reset(
+      prompt: _task.prompt,
+      answers: _task.answers,
+      language: _task.language,
+    );
+    _lastHeardText = null;
+    _lastHeardTokens = const <String>[];
+    _lastMatchedIndices = const <int>[];
+    _previewHeardText = null;
+    _previewHeardTokens = const <String>[];
+    _previewMatchedIndices = const <int>[];
     emitState(_buildState());
     if (_task.prompt.trim().isNotEmpty) {
       _log(
@@ -138,6 +203,12 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       timer: _timerSnapshot(),
       expectedTokens: List<String>.unmodifiable(_answerMatcher.expectedTokens),
       matchedTokens: List<bool>.unmodifiable(_answerMatcher.matchedTokens),
+      lastHeardText: _lastHeardText,
+      lastHeardTokens: List<String>.unmodifiable(_lastHeardTokens),
+      lastMatchedIndices: List<int>.unmodifiable(_lastMatchedIndices),
+      previewHeardText: _previewHeardText,
+      previewHeardTokens: List<String>.unmodifiable(_previewHeardTokens),
+      previewMatchedIndices: List<int>.unmodifiable(_previewMatchedIndices),
       hintText: _hintText,
       isListening: _isListening,
       speechReady: _speechReady,
@@ -164,7 +235,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _onSpeechReady(result.ready, result.errorMessage);
     emitState(_buildState());
     if (!result.ready) {
-      final message = result.errorMessage ??
+      final message =
+          result.errorMessage ??
           'Speech recognition is not available on this device.';
       emitEvent(TaskError(message));
       return false;
@@ -182,6 +254,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
 
   Future<void> _startListening() async {
     if (!_cardActive) return;
+    if (_deadlinePassed) return;
     final remaining = _remainingCardDuration();
     if (remaining < const Duration(milliseconds: 500)) {
       await _complete(TrainingOutcome.timeout);
@@ -191,7 +264,20 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     final attemptId = ++_attemptCounter;
     _activeAttemptId = attemptId;
     _lastPartialResult = '';
+    _clearPreview(emit: true);
+    _currentAttemptHadSpeech = false;
     _suppressNextClientError = false;
+    _listenActivityAttemptId = null;
+    _lastSpeechActivityAt = null;
+    _listenActivityTimer?.cancel();
+    _listenActivityTimer = null;
+    _soundLevelSampleCount = 0;
+    _lastSoundLevel = 0.0;
+    _lastSoundLevelAt = null;
+    _partialResultCount = 0;
+    _listenHealthFalseCount = 0;
+    _listenHealthTimer?.cancel();
+    _listenHealthTimer = null;
 
     final localeId = _resolveLocaleId(_task.language);
     final listenMode = _resolveListenMode();
@@ -201,15 +287,27 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     );
 
     _pendingListenAttemptId = attemptId;
+    _cancelFinalResultGrace();
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
 
+    final listenFor = remaining < _maxListenDuration
+        ? remaining
+        : _maxListenDuration;
+    final pauseFor = listenFor;
+    _log(
+      'Speech listen config: listenFor=${listenFor.inMilliseconds}ms '
+      'pauseFor=${pauseFor.inMilliseconds}ms',
+    );
+
     try {
+      _soundWaveService.reset();
       await _speechService.listen(
         onResult: (result) => _onSpeechResult(result, attemptId),
-        onSoundLevelChange: _soundWaveService.onSoundLevel,
-        listenFor: remaining,
-        pauseFor: remaining,
+        onSoundLevelChange: (level) =>
+            _handleSoundLevel(level: level, attemptId: attemptId),
+        listenFor: listenFor,
+        pauseFor: pauseFor,
         localeId: localeId,
         listenMode: listenMode,
         partialResults: true,
@@ -242,37 +340,64 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         'Speech listen did not start within '
         '${_listenStartTimeout.inMilliseconds}ms.',
       );
-      unawaited(_restartListeningAfterStartFailure(attemptId));
+      unawaited(_enqueue(() => _restartListeningAfterStartFailure(attemptId)));
     });
   }
 
   void _onSpeechResult(SpeechRecognitionResult result, int attemptId) {
-    if (_activeAttemptId != attemptId) return;
+    unawaited(_enqueue(() => _handleSpeechResult(result, attemptId)));
+  }
+
+  Future<void> _handleSpeechResult(
+    SpeechRecognitionResult result,
+    int attemptId,
+  ) async {
+    if (_activeAttemptId != attemptId) {
+      _log(
+        'Late result ignored for attempt=$attemptId: '
+        '"${result.recognizedWords}" final=${result.finalResult}',
+      );
+      return;
+    }
+    _bumpListenActivity(attemptId);
     _consecutiveClientErrors = 0;
     final recognizedWords = result.recognizedWords;
+    _log(
+      'Speech result: final=${result.finalResult} '
+      'length=${recognizedWords.length} attempt=$attemptId',
+    );
     if (recognizedWords.trim().isNotEmpty) {
+      _currentAttemptHadSpeech = true;
       _reportUserInteraction();
     }
     if (!result.finalResult) {
+      _partialResultCount += 1;
       if (recognizedWords.trim().isNotEmpty &&
           recognizedWords != _lastPartialResult) {
         _lastPartialResult = recognizedWords;
         _log('Speech partial: "$recognizedWords"');
+        _updatePreviewFromPartial(recognizedWords);
+      } else if (recognizedWords.trim().isEmpty) {
+        _clearPreview(emit: true);
       }
       return;
     }
+    _cancelFinalResultGrace(attemptId: attemptId);
     final resolvedWords = recognizedWords.trim().isEmpty
         ? _lastPartialResult
         : recognizedWords;
     _lastPartialResult = '';
-    unawaited(
-      _handleAttemptResult(recognizedText: resolvedWords),
-    );
+    await _handleAttemptResult(recognizedText: resolvedWords);
   }
 
-  Future<void> _handleAttemptResult({
-    required String recognizedText,
-  }) async {
+  Future<void> _handleAttemptResult({required String recognizedText}) async {
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _cancelFinalResultGrace();
+
     var resolvedText = recognizedText;
     if (resolvedText.trim().isEmpty && _lastPartialResult.isNotEmpty) {
       resolvedText = _lastPartialResult;
@@ -280,6 +405,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _lastPartialResult = '';
     _log('Speech recognized: "$resolvedText"');
     if (resolvedText.trim().isNotEmpty) {
+      _currentAttemptHadSpeech = true;
       _reportUserInteraction();
     }
     final attemptId = _activeAttemptId;
@@ -291,27 +417,79 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     }
     _markListeningStopped(source: 'result');
 
-    final didMatch = _answerMatcher.applyRecognition(resolvedText);
-    if (didMatch) {
-      emitState(_buildState());
-    }
+    _clearPreview(emit: false);
+    final matchResult = _answerMatcher.applyRecognition(resolvedText);
+    _lastHeardText = matchResult.normalizedText.isEmpty
+        ? null
+        : matchResult.normalizedText;
+    _lastHeardTokens = matchResult.recognizedTokens;
+    _lastMatchedIndices = matchResult.matchedIndices;
+    emitState(_buildState());
 
     if (_answerMatcher.isComplete) {
       await _complete(TrainingOutcome.success);
       return;
     }
 
+    if (resolvedText.trim().isEmpty) {
+      _emptyResultStreak += 1;
+    } else {
+      _emptyResultStreak = 0;
+    }
+
     if (!_cardActive) return;
-    if (_remainingCardDuration() <= Duration.zero) {
-      await _complete(TrainingOutcome.timeout);
+    if (_deadlinePassed) {
+      _log('Deadline passed; waiting for grace finalization.');
       return;
     }
-    await Future.delayed(_listenRestartDelay);
+    if (_remainingCardDuration() <= Duration.zero) {
+      await _handleTimerTimeout();
+      return;
+    }
+    await Future.delayed(_restartDelayForEmptyResult());
+
+    if (_deadlinePassed || !_cardActive) return;
+    if (_speechService.isListening) {
+      _log('Speech still listening after delay. Forcing stop before restart.');
+      await _speechService.stop();
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
+
     await _startListening();
   }
 
-  Future<void> _onTimerTimeout() async {
-    await onTimerTimeout();
+  void _onTimerTimeout() {
+    unawaited(onTimerTimeout());
+  }
+
+  Future<void> _handleTimerTimeout() async {
+    if (!_cardActive || _deadlinePassed) return;
+    _deadlinePassed = true;
+    _cancelFinalResultGrace();
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _lastSpeechActivityAt = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _clearPreview(emit: false);
+    _timeoutGraceTimer?.cancel();
+    _timeoutGraceTimer = Timer(_timeoutGrace, () {
+      unawaited(_enqueue(_finalizeTimeoutGrace));
+    });
+    _log('Speech timer deadline reached. Waiting for grace window.');
+    if (_speechService.isListening) {
+      await _speechService.stop();
+    }
+    _markListeningStopped(source: 'timeout');
+  }
+
+  Future<void> _finalizeTimeoutGrace() async {
+    if (!_cardActive) return;
+    if (_answerMatcher.isComplete) return;
+    await _complete(TrainingOutcome.timeout);
   }
 
   Future<void> _complete(TrainingOutcome outcome) async {
@@ -319,9 +497,21 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _cardActive = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
+    _finalResultGraceAttemptId = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _cancelFinalResultGrace();
+    _timeoutGraceTimer?.cancel();
+    _timeoutGraceTimer = null;
     _cardTimer.stop();
+    _deadlinePassed = false;
+    _currentAttemptHadSpeech = false;
+    _emptyResultStreak = 0;
+    _clearPreview(emit: false);
     _soundWaveService.stop();
     if (_speechService.isListening) {
       await _speechService.stop();
@@ -335,9 +525,19 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> _stopAttempt({bool stopTimer = false}) async {
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
+    _finalResultGraceAttemptId = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _cancelFinalResultGrace();
+    _timeoutGraceTimer?.cancel();
+    _timeoutGraceTimer = null;
     _lastPartialResult = '';
+    _currentAttemptHadSpeech = false;
+    _clearPreview(emit: false);
     _isListening = false;
     _soundWaveService.stop();
     if (stopTimer) {
@@ -353,12 +553,20 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   void _markListeningStarted({required String source}) {
     if (!_cardActive) return;
     final attemptId = _pendingListenAttemptId ?? _activeAttemptId;
-    if (attemptId != null && _activeAttemptId != attemptId) {
+    if (attemptId == null) {
+      _log('Speech listen started ignored: no active attempt.');
+      return;
+    }
+    if (_activeAttemptId != attemptId) {
       return;
     }
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _listenStartedAttemptId = attemptId;
+    _listenStartedAt = DateTime.now();
+    _scheduleListenActivityCheck(attemptId);
+    _scheduleListenHealthCheck(attemptId);
 
     final wasListening = _isListening;
     _isListening = true;
@@ -370,28 +578,236 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       emitState(_buildState());
     }
 
-    _log('Speech listen started ($source): isListening=${_speechService.isListening}');
+    _log(
+      'Speech listen started ($source): isListening=${_speechService.isListening}',
+    );
   }
 
-  void _markListeningStopped({required String source}) {
+  void _markListeningStopped({
+    required String source,
+    bool cancelTimers = true,
+  }) {
     if (_isListening) {
       _isListening = false;
       emitState(_buildState());
+    }
+    if (cancelTimers) {
+      _cancelListenActivityCheck();
+      _cancelListenHealthCheck();
     }
     _soundWaveService.stop();
     _log('Speech listen stopped ($source)');
   }
 
-  Future<void> _restartListeningAfterStartFailure(int attemptId) async {
-    if (!_cardActive || _pendingListenAttemptId != attemptId) return;
+  void _beginFinalResultGrace(int attemptId, {required String source}) {
+    if (_deadlinePassed) return;
+    _finalResultGraceAttemptId = attemptId;
+    _finalResultGraceTimer?.cancel();
+    _finalResultGraceTimer = Timer(_finalResultGrace, () {
+      unawaited(_enqueue(() => _finalizeIfNoFinalResult(attemptId, source)));
+    });
+    _log(
+      'Speech awaiting final result ($source): '
+      'grace=${_finalResultGrace.inMilliseconds}ms',
+    );
+  }
+
+  void _cancelFinalResultGrace({int? attemptId}) {
+    if (attemptId != null && _finalResultGraceAttemptId != attemptId) {
+      return;
+    }
+    _finalResultGraceTimer?.cancel();
+    _finalResultGraceTimer = null;
+    _finalResultGraceAttemptId = null;
+  }
+
+  void _scheduleListenActivityCheck(int attemptId) {
+    _listenActivityAttemptId = attemptId;
+    _lastSpeechActivityAt = DateTime.now();
+    _listenActivityTimer?.cancel();
+    _listenActivityTimer = Timer(_listenActivityTimeout, () {
+      unawaited(_enqueue(() => _handleListenActivityTimeout(attemptId)));
+    });
+  }
+
+  void _cancelListenActivityCheck() {
+    _listenActivityAttemptId = null;
+    _listenActivityTimer?.cancel();
+    _listenActivityTimer = null;
+  }
+
+  void _scheduleListenHealthCheck(int attemptId) {
+    _listenHealthFalseCount = 0;
+    _listenHealthTimer?.cancel();
+    _listenHealthTimer = Timer.periodic(_listenHealthCheckInterval, (_) {
+      unawaited(_enqueue(() => _handleListenHealthCheck(attemptId)));
+    });
+  }
+
+  void _cancelListenHealthCheck() {
+    _listenHealthFalseCount = 0;
+    _listenHealthTimer?.cancel();
+    _listenHealthTimer = null;
+  }
+
+  void _bumpListenActivity(int attemptId) {
+    if (_listenActivityAttemptId != attemptId) {
+      _listenActivityAttemptId = attemptId;
+    }
+    _lastSpeechActivityAt = DateTime.now();
+    _listenActivityTimer?.cancel();
+    _listenActivityTimer = Timer(_listenActivityTimeout, () {
+      unawaited(_enqueue(() => _handleListenActivityTimeout(attemptId)));
+    });
+  }
+
+  Future<void> _handleListenActivityTimeout(int attemptId) async {
+    if (!_cardActive || _deadlinePassed) return;
+    if (_activeAttemptId != attemptId) return;
+    final lastActivity = _lastSpeechActivityAt;
+    if (lastActivity != null &&
+        DateTime.now().difference(lastActivity) < _listenActivityTimeout) {
+      _scheduleListenActivityCheck(attemptId);
+      return;
+    }
+    final startedAt = _listenStartedAt;
+    final sinceStartMs = startedAt == null
+        ? null
+        : DateTime.now().difference(startedAt).inMilliseconds;
+    final lastSoundAt = _lastSoundLevelAt;
+    final sinceSoundMs = lastSoundAt == null
+        ? null
+        : DateTime.now().difference(lastSoundAt).inMilliseconds;
+    final lastActivityMs = lastActivity == null
+        ? null
+        : DateTime.now().difference(lastActivity).inMilliseconds;
+    _log(
+      'Speech activity timed out; restarting listen. '
+      'sinceStart=${sinceStartMs ?? "n/a"}ms '
+      'lastActivity=${lastActivityMs ?? "n/a"}ms '
+      'soundSamples=$_soundLevelSampleCount '
+      'lastSound=${_lastSoundLevel.toStringAsFixed(2)} '
+      'sinceSound=${sinceSoundMs ?? "n/a"}ms '
+      'partials=$_partialResultCount '
+      'isListening=${_speechService.isListening}',
+    );
+    await _restartListeningAfterStall(attemptId);
+  }
+
+  Future<void> _handleListenHealthCheck(int attemptId) async {
+    if (!_cardActive || _deadlinePassed) {
+      _cancelListenHealthCheck();
+      return;
+    }
+    if (_activeAttemptId != attemptId) {
+      _cancelListenHealthCheck();
+      return;
+    }
+    if (_finalResultGraceAttemptId == attemptId) {
+      return;
+    }
+    final startedAt = _listenStartedAt;
+    if (startedAt == null ||
+        DateTime.now().difference(startedAt) < _minListenBeforeFinalize) {
+      return;
+    }
+    if (_speechService.isListening) {
+      _listenHealthFalseCount = 0;
+      return;
+    }
+    _listenHealthFalseCount += 1;
+    if (_listenHealthFalseCount < 2) {
+      return;
+    }
+    if (_enableFinalResultGrace) {
+      _log(
+        'Speech listen health: isListening=false; waiting for final result '
+        '(soundSamples=$_soundLevelSampleCount, partials=$_partialResultCount).',
+      );
+      _markListeningStopped(source: 'health');
+      _beginFinalResultGrace(attemptId, source: 'health');
+      return;
+    }
+    _log(
+      'Speech listen health: isListening=false; restarting listen '
+      '(soundSamples=$_soundLevelSampleCount, partials=$_partialResultCount).',
+    );
+    await _restartListeningAfterStall(attemptId, source: 'health');
+  }
+
+  Future<void> _restartListeningAfterStall(
+    int attemptId, {
+    String source = 'activity-timeout',
+  }) async {
+    if (!_cardActive) return;
+    if (_activeAttemptId != attemptId) return;
+    if (_deadlinePassed) return;
+    _activeAttemptId = null;
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _cancelFinalResultGrace();
+    if (_speechService.isListening) {
+      await _speechService.stop();
+    }
+    _markListeningStopped(source: source);
+    await Future.delayed(_restartDelayForEmptyResult());
+    if (_deadlinePassed || !_cardActive) return;
+    await _startListening();
+  }
+
+  Future<void> _restartListeningAfterAttemptError() async {
+    if (!_cardActive || _deadlinePassed) return;
+    _activeAttemptId = null;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
+    _cancelFinalResultGrace();
+    _lastPartialResult = '';
+    _currentAttemptHadSpeech = false;
+    _clearPreview(emit: false);
+    if (_speechService.isListening) {
+      await _speechService.stop();
+    }
+    _markListeningStopped(source: 'attempt-error');
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (!_cardActive || _deadlinePassed) return;
+    await _startListening();
+  }
+
+  Future<void> _finalizeIfNoFinalResult(int attemptId, String source) async {
+    if (!_cardActive) return;
+    if (_finalResultGraceAttemptId != attemptId) return;
+    if (_activeAttemptId != attemptId) return;
+    _cancelFinalResultGrace(attemptId: attemptId);
+    _log('Speech final result grace expired ($source).');
+    await _handleAttemptResult(recognizedText: '');
+  }
+
+  Future<void> _restartListeningAfterStartFailure(int attemptId) async {
+    if (!_cardActive || _pendingListenAttemptId != attemptId) return;
+    if (_deadlinePassed) return;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
     if (_activeAttemptId == attemptId) {
       _activeAttemptId = null;
     }
     _markListeningStopped(source: 'listen-start-failed');
     await Future.delayed(_listenRestartDelay);
+    if (_deadlinePassed || !_cardActive) return;
     await _startListening();
   }
 
@@ -402,17 +818,23 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _onSpeechError(SpeechRecognitionError error) {
-    _log(
-      'Speech error: "${error.errorMsg}", permanent: ${error.permanent}',
-    );
+    unawaited(_enqueue(() => _handleSpeechError(error)));
+  }
+
+  Future<void> _handleSpeechError(SpeechRecognitionError error) async {
+    _log('Speech error: "${error.errorMsg}", permanent: ${error.permanent}');
     if (!_cardActive || _activeAttemptId == null) {
       _log('Speech error ignored: no active attempt.');
+      return;
+    }
+    if (_deadlinePassed) {
+      _log('Speech error ignored: deadline already passed.');
       return;
     }
     if (_isLanguageUnavailableError(error) && !_forceDefaultLocale) {
       _forceDefaultLocale = true;
       _log('Speech language unavailable. Falling back to system default.');
-      unawaited(_restartListeningAfterLocaleFallback());
+      await _restartListeningAfterLocaleFallback();
       return;
     }
     final isAttemptError =
@@ -426,16 +848,16 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       final shouldPause =
           _consecutiveClientErrors >= _maxConsecutiveClientErrors;
       if (shouldPause) {
-        emitEvent(const TaskError(
-          'Speech recognition stopped. Tap Start to try again.',
-        ));
-        unawaited(_stopAttempt(stopTimer: true));
+        emitEvent(
+          const TaskError(
+            'Speech recognition stopped. Tap Start to try again.',
+          ),
+        );
+        await _stopAttempt(stopTimer: true);
         return;
       }
       if (_activeAttemptId != null) {
-        unawaited(
-          _handleAttemptResult(recognizedText: ''),
-        );
+        await _handleAttemptResult(recognizedText: '');
       }
       return;
     }
@@ -444,37 +866,55 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       if (_cardActive) {
         _suppressNextClientError = true;
       }
-      if (_activeAttemptId != null) {
-        unawaited(
-          _handleAttemptResult(recognizedText: ''),
-        );
+      final salvage = _lastPartialResult.trim();
+      if (salvage.isNotEmpty) {
+        _log('Speech salvage from partial due to error: "$salvage"');
+        await _handleAttemptResult(recognizedText: salvage);
+        return;
       }
+      _log('Speech attempt failed: ${error.errorMsg}. Restarting listen.');
+      await _restartListeningAfterAttemptError();
       return;
     }
 
     emitEvent(TaskError(_friendlySpeechError(error)));
-    unawaited(_stopAttempt(stopTimer: true));
+    await _stopAttempt(stopTimer: true);
   }
 
-  void _onSpeechStatus(String status) {
-    final normalized = status.toLowerCase().trim();
-    if (normalized.contains('listening')) {
+  Future<void> _handleSpeechStatus(String status) async {
+    _log(
+      'Speech status: "$status" '
+      'attempt=$_activeAttemptId '
+      'isListening=${_speechService.isListening} '
+      'hadSpeech=$_currentAttemptHadSpeech '
+      'partials=$_partialResultCount '
+      'soundSamples=$_soundLevelSampleCount',
+    );
+    if (status == stt.SpeechToText.listeningStatus) {
       _markListeningStarted(source: 'status');
       return;
     }
-    if (normalized.contains('notlistening') || normalized.contains('done')) {
-      _markListeningStopped(source: 'status');
-      if (_cardActive && _activeAttemptId != null) {
-        unawaited(_handleAttemptResult(recognizedText: ''));
-      }
+    if (status == stt.SpeechToText.notListeningStatus ||
+        status == stt.SpeechToText.doneStatus) {
+      _markListeningStopped(source: 'status', cancelTimers: false);
     }
+  }
+
+  void _onSpeechStatus(String status) {
+    unawaited(_enqueue(() => _handleSpeechStatus(status)));
   }
 
   Future<void> _restartListeningAfterLocaleFallback() async {
     if (!_cardActive) return;
+    if (_deadlinePassed) return;
     _suppressNextClientError = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
+    _cancelFinalResultGrace();
+    _listenStartedAttemptId = null;
+    _listenStartedAt = null;
+    _cancelListenActivityCheck();
+    _cancelListenHealthCheck();
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     if (_speechService.isListening) {
@@ -482,18 +922,43 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     }
     _markListeningStopped(source: 'locale-fallback');
     await Future.delayed(_listenRestartDelay);
+    if (_deadlinePassed || !_cardActive) return;
     await _startListening();
   }
 
   String? _resolveLocaleId(LearningLanguage language) {
     if (_forceDefaultLocale) return null;
+    final preferred = _preferredLocaleId(language);
+    if (preferred != null) {
+      final preferredNormalized = _normalizeLocaleId(preferred);
+      for (final locale in _speechService.locales) {
+        if (_normalizeLocaleId(locale.localeId) == preferredNormalized) {
+          return locale.localeId;
+        }
+      }
+    }
+
     final prefix = language.code.toLowerCase();
     for (final locale in _speechService.locales) {
-      if (locale.localeId.toLowerCase().startsWith(prefix)) {
+      final normalized = _normalizeLocaleId(locale.localeId);
+      if (normalized == prefix || normalized.startsWith('${prefix}_')) {
         return locale.localeId;
       }
     }
     return null;
+  }
+
+  String? _preferredLocaleId(LearningLanguage language) {
+    switch (language) {
+      case LearningLanguage.english:
+        return 'en_US';
+      case LearningLanguage.spanish:
+        return null;
+    }
+  }
+
+  String _normalizeLocaleId(String localeId) {
+    return localeId.toLowerCase().replaceAll('-', '_');
   }
 
   stt.ListenMode _resolveListenMode() {
@@ -549,10 +1014,90 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     return 'Speech recognition error: $message';
   }
 
+  Future<void> _enqueue(Future<void> Function() action) {
+    if (_disposed) return Future.value();
+    final next = _serialOperation.then((_) async {
+      if (_disposed) return;
+      await action();
+    });
+    _serialOperation = next.catchError((error, stack) {
+      _log('Speech runtime error: $error');
+    });
+    return next;
+  }
+
   void _log(String message) {
     if (!kDebugMode) return;
     final now = DateTime.now().toString();
     final time = now.substring(11, 23);
     debugPrint('[$time] $message');
+  }
+
+  void _updatePreviewFromPartial(String recognizedText) {
+    final preview = _answerMatcher.previewRecognition(recognizedText);
+    final nextText = preview.normalizedText.isEmpty
+        ? null
+        : preview.normalizedText;
+    if (_previewHeardText == nextText &&
+        _previewMatchedIndices.length == preview.matchedIndices.length &&
+        _previewHeardTokens.length == preview.recognizedTokens.length) {
+      var sameIndices = true;
+      for (var i = 0; i < _previewMatchedIndices.length; i += 1) {
+        if (_previewMatchedIndices[i] != preview.matchedIndices[i]) {
+          sameIndices = false;
+          break;
+        }
+      }
+      var sameTokens = true;
+      for (var i = 0; i < _previewHeardTokens.length; i += 1) {
+        if (_previewHeardTokens[i] != preview.recognizedTokens[i]) {
+          sameTokens = false;
+          break;
+        }
+      }
+      if (sameIndices && sameTokens) {
+        return;
+      }
+    }
+    _previewHeardText = nextText;
+    _previewHeardTokens = preview.recognizedTokens;
+    _previewMatchedIndices = preview.matchedIndices;
+    emitState(_buildState());
+  }
+
+  void _clearPreview({bool emit = false}) {
+    if (_previewHeardText == null &&
+        _previewHeardTokens.isEmpty &&
+        _previewMatchedIndices.isEmpty) {
+      return;
+    }
+    _previewHeardText = null;
+    _previewHeardTokens = const <String>[];
+    _previewMatchedIndices = const <int>[];
+    if (emit) {
+      emitState(_buildState());
+    }
+  }
+
+  void _handleSoundLevel({required double level, required int attemptId}) {
+    _soundWaveService.onSoundLevel(level);
+    if (_activeAttemptId != attemptId) return;
+    _soundLevelSampleCount += 1;
+    _lastSoundLevel = level;
+    _lastSoundLevelAt = DateTime.now();
+    _bumpListenActivity(attemptId);
+    if (level.abs() > 0.5) {
+      _currentAttemptHadSpeech = true;
+    }
+  }
+
+  Duration _restartDelayForEmptyResult() {
+    if (_emptyResultStreak <= 0) {
+      return _listenRestartDelay;
+    }
+    const maxDelayMs = 1600;
+    final delayMs =
+        _listenRestartDelay.inMilliseconds + (_emptyResultStreak * 300);
+    return Duration(milliseconds: delayMs > maxDelayMs ? maxDelayMs : delayMs);
   }
 }

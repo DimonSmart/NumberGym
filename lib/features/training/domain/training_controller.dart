@@ -82,6 +82,16 @@ class TrainingController extends ChangeNotifier {
       numberPronunciationState?.expectedTokens ?? const <String>[];
   List<bool> get matchedTokens =>
       numberPronunciationState?.matchedTokens ?? const <bool>[];
+  String? get lastHeardText => numberPronunciationState?.lastHeardText;
+  List<String> get lastHeardTokens =>
+      numberPronunciationState?.lastHeardTokens ?? const <String>[];
+  List<int> get lastMatchedIndices =>
+      numberPronunciationState?.lastMatchedIndices ?? const <int>[];
+  String? get previewHeardText => numberPronunciationState?.previewHeardText;
+  List<String> get previewHeardTokens =>
+      numberPronunciationState?.previewHeardTokens ?? const <String>[];
+  List<int> get previewMatchedIndices =>
+      numberPronunciationState?.previewMatchedIndices ?? const <int>[];
 
   bool get isAwaitingRecording =>
       _session.state.status == TrainerStatus.waitingRecording;

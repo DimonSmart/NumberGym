@@ -43,6 +43,10 @@ class SpeechService implements SpeechServiceBase {
 
   final stt.SpeechToText _speech;
   List<stt.LocaleName> _locales = const [];
+  void Function(SpeechRecognitionError error)? _errorSink;
+  void Function(String status)? _statusSink;
+  Future<SpeechInitResult>? _initFuture;
+  bool _initialized = false;
 
   @override
   List<stt.LocaleName> get locales => _locales;
@@ -55,6 +59,8 @@ class SpeechService implements SpeechServiceBase {
     required void Function(SpeechRecognitionError) onError,
     required void Function(String) onStatus,
   }) async {
+    _errorSink = onError;
+    _statusSink = onStatus;
     final micStatus = await Permission.microphone.request();
     if (!micStatus.isGranted) {
       return const SpeechInitResult(
@@ -64,20 +70,18 @@ class SpeechService implements SpeechServiceBase {
       );
     }
 
-    final available = await _speech.initialize(
-      onError: onError,
-      onStatus: onStatus,
-    );
-
-    if (!available) {
-      return const SpeechInitResult(
-        ready: false,
-        errorMessage: 'Speech recognition is not available on this device.',
-      );
+    if (_initialized) {
+      return SpeechInitResult(ready: true, locales: _locales);
     }
 
-    _locales = await _speech.locales();
-    return SpeechInitResult(ready: true, locales: _locales);
+    _initFuture ??= _initializeSpeech();
+    final result = await _initFuture!;
+    if (result.ready) {
+      _initialized = true;
+    } else {
+      _initFuture = null;
+    }
+    return result;
   }
 
   @override
@@ -110,6 +114,33 @@ class SpeechService implements SpeechServiceBase {
 
   @override
   void dispose() {
+    _errorSink = null;
+    _statusSink = null;
     unawaited(_speech.stop());
+  }
+
+  Future<SpeechInitResult> _initializeSpeech() async {
+    final available = await _speech.initialize(
+      onError: _handleError,
+      onStatus: _handleStatus,
+    );
+
+    if (!available) {
+      return const SpeechInitResult(
+        ready: false,
+        errorMessage: 'Speech recognition is not available on this device.',
+      );
+    }
+
+    _locales = await _speech.locales();
+    return SpeechInitResult(ready: true, locales: _locales);
+  }
+
+  void _handleError(SpeechRecognitionError error) {
+    _errorSink?.call(error);
+  }
+
+  void _handleStatus(String status) {
+    _statusSink?.call(status);
   }
 }
