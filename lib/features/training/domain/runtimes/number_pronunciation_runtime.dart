@@ -58,8 +58,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   static const Duration _listenRestartDelay = Duration(milliseconds: 500);
   static const Duration _listenStartTimeout = Duration(milliseconds: 1500);
   static const Duration _timeoutGrace = Duration(milliseconds: 500);
-  static const Duration _listenActivityTimeout = Duration(seconds: 4);
-  static const Duration _listenHealthCheckInterval = Duration(seconds: 1);
   static const Duration _maxListenDuration = Duration(seconds: 10);
   static const int _maxConsecutiveClientErrors = 3;
 
@@ -77,8 +75,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   int _attemptCounter = 0;
   int? _activeAttemptId;
   int? _pendingListenAttemptId;
-  int? _listenStartedAttemptId;
-  int? _listenActivityAttemptId;
   String _lastPartialResult = '';
   String? _lastHeardText;
   List<String> _lastHeardTokens = const <String>[];
@@ -98,16 +94,9 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   bool _currentAttemptHadSpeech = false;
   int _emptyResultStreak = 0;
   int _soundLevelSampleCount = 0;
-  double _lastSoundLevel = 0.0;
-  DateTime? _lastSoundLevelAt;
   int _partialResultCount = 0;
-  int _listenHealthFalseCount = 0;
-  DateTime? _listenStartedAt;
-  DateTime? _lastSpeechActivityAt;
   bool _disposed = false;
   Timer? _listenStartTimer;
-  Timer? _listenActivityTimer;
-  Timer? _listenHealthTimer;
   Timer? _timeoutGraceTimer;
 
   @override
@@ -122,20 +111,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _timerHasStarted = false;
     _deadlinePassed = false;
     _pendingListenAttemptId = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _lastSpeechActivityAt = null;
-    _listenActivityAttemptId = null;
-    _lastSpeechActivityAt = null;
     _currentAttemptHadSpeech = false;
     _emptyResultStreak = 0;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _listenActivityTimer?.cancel();
-    _listenActivityTimer = null;
-    _listenHealthTimer?.cancel();
-    _listenHealthTimer = null;
-    _listenHealthFalseCount = 0;
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
 
@@ -259,17 +238,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _clearPreview(emit: true);
     _currentAttemptHadSpeech = false;
     _suppressNextClientError = false;
-    _listenActivityAttemptId = null;
-    _lastSpeechActivityAt = null;
-    _listenActivityTimer?.cancel();
-    _listenActivityTimer = null;
     _soundLevelSampleCount = 0;
-    _lastSoundLevel = 0.0;
-    _lastSoundLevelAt = null;
     _partialResultCount = 0;
-    _listenHealthFalseCount = 0;
-    _listenHealthTimer?.cancel();
-    _listenHealthTimer = null;
 
     final localeId = _resolveLocaleId(_task.language);
     final listenMode = _resolveListenMode();
@@ -350,7 +320,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       );
       return;
     }
-    _bumpListenActivity(attemptId);
     _consecutiveClientErrors = 0;
     final recognizedWords = result.recognizedWords;
     _log(
@@ -384,8 +353,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
 
     var resolvedText = recognizedText;
     if (resolvedText.trim().isEmpty && _lastPartialResult.isNotEmpty) {
@@ -459,12 +426,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     _clearPreview(emit: false);
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = Timer(_timeoutGrace, () {
@@ -488,12 +449,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _cardActive = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
     _cardTimer.stop();
@@ -514,12 +471,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> _stopAttempt({bool stopTimer = false}) async {
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
     _lastPartialResult = '';
@@ -550,10 +503,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _listenStartedAttemptId = attemptId;
-    _listenStartedAt = DateTime.now();
-    _scheduleListenActivityCheck(attemptId);
-    _scheduleListenHealthCheck(attemptId);
 
     final wasListening = _isListening;
     _isListening = true;
@@ -570,141 +519,13 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     );
   }
 
-  void _markListeningStopped({
-    required String source,
-    bool cancelTimers = true,
-  }) {
+  void _markListeningStopped({required String source}) {
     if (_isListening) {
       _isListening = false;
       emitState(_buildState());
     }
-    if (cancelTimers) {
-      _cancelListenActivityCheck();
-      _cancelListenHealthCheck();
-    }
     _soundWaveService.stop();
     _log('Speech listen stopped ($source)');
-  }
-
-  void _scheduleListenActivityCheck(int attemptId) {
-    _listenActivityAttemptId = attemptId;
-    _lastSpeechActivityAt = DateTime.now();
-    _listenActivityTimer?.cancel();
-    _listenActivityTimer = Timer(_listenActivityTimeout, () {
-      unawaited(_enqueue(() => _handleListenActivityTimeout(attemptId)));
-    });
-  }
-
-  void _cancelListenActivityCheck() {
-    _listenActivityAttemptId = null;
-    _listenActivityTimer?.cancel();
-    _listenActivityTimer = null;
-  }
-
-  void _scheduleListenHealthCheck(int attemptId) {
-    _listenHealthFalseCount = 0;
-    _listenHealthTimer?.cancel();
-    _listenHealthTimer = Timer.periodic(_listenHealthCheckInterval, (_) {
-      unawaited(_enqueue(() => _handleListenHealthCheck(attemptId)));
-    });
-  }
-
-  void _cancelListenHealthCheck() {
-    _listenHealthFalseCount = 0;
-    _listenHealthTimer?.cancel();
-    _listenHealthTimer = null;
-  }
-
-  void _bumpListenActivity(int attemptId) {
-    if (_listenActivityAttemptId != attemptId) {
-      _listenActivityAttemptId = attemptId;
-    }
-    _lastSpeechActivityAt = DateTime.now();
-    _listenActivityTimer?.cancel();
-    _listenActivityTimer = Timer(_listenActivityTimeout, () {
-      unawaited(_enqueue(() => _handleListenActivityTimeout(attemptId)));
-    });
-  }
-
-  Future<void> _handleListenActivityTimeout(int attemptId) async {
-    if (!_cardActive || _deadlinePassed) return;
-    if (_activeAttemptId != attemptId) return;
-    final lastActivity = _lastSpeechActivityAt;
-    if (lastActivity != null &&
-        DateTime.now().difference(lastActivity) < _listenActivityTimeout) {
-      _scheduleListenActivityCheck(attemptId);
-      return;
-    }
-    final startedAt = _listenStartedAt;
-    final sinceStartMs = startedAt == null
-        ? null
-        : DateTime.now().difference(startedAt).inMilliseconds;
-    final lastSoundAt = _lastSoundLevelAt;
-    final sinceSoundMs = lastSoundAt == null
-        ? null
-        : DateTime.now().difference(lastSoundAt).inMilliseconds;
-    final lastActivityMs = lastActivity == null
-        ? null
-        : DateTime.now().difference(lastActivity).inMilliseconds;
-    _log(
-      'Speech activity timed out; restarting listen. '
-      'sinceStart=${sinceStartMs ?? "n/a"}ms '
-      'lastActivity=${lastActivityMs ?? "n/a"}ms '
-      'soundSamples=$_soundLevelSampleCount '
-      'lastSound=${_lastSoundLevel.toStringAsFixed(2)} '
-      'sinceSound=${sinceSoundMs ?? "n/a"}ms '
-      'partials=$_partialResultCount '
-      'isListening=${_speechService.isListening}',
-    );
-    await _restartListeningAfterStall(attemptId);
-  }
-
-  Future<void> _handleListenHealthCheck(int attemptId) async {
-    if (!_cardActive || _deadlinePassed) {
-      _cancelListenHealthCheck();
-      return;
-    }
-    if (_activeAttemptId != attemptId) {
-      _cancelListenHealthCheck();
-      return;
-    }
-    if (_speechService.isListening) {
-      _listenHealthFalseCount = 0;
-      return;
-    }
-    _listenHealthFalseCount += 1;
-    if (_listenHealthFalseCount < 2) {
-      return;
-    }
-    _log(
-      'Speech listen health: isListening=false; restarting listen '
-      '(soundSamples=$_soundLevelSampleCount, partials=$_partialResultCount).',
-    );
-    await _restartListeningAfterStall(attemptId, source: 'health');
-  }
-
-  Future<void> _restartListeningAfterStall(
-    int attemptId, {
-    String source = 'activity-timeout',
-  }) async {
-    if (!_cardActive) return;
-    if (_activeAttemptId != attemptId) return;
-    if (_deadlinePassed) return;
-    _activeAttemptId = null;
-    _pendingListenAttemptId = null;
-    _listenStartTimer?.cancel();
-    _listenStartTimer = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
-    if (_speechService.isListening) {
-      await _speechService.stop();
-    }
-    _markListeningStopped(source: source);
-    await Future.delayed(_restartDelayForEmptyResult());
-    if (_deadlinePassed || !_cardActive) return;
-    await _startListening();
   }
 
   Future<void> _restartListeningAfterAttemptError() async {
@@ -713,10 +534,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     _lastPartialResult = '';
     _currentAttemptHadSpeech = false;
     _clearPreview(emit: false);
@@ -735,10 +552,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     if (_activeAttemptId == attemptId) {
       _activeAttemptId = null;
     }
@@ -833,7 +646,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     }
     if (status == stt.SpeechToText.notListeningStatus ||
         status == stt.SpeechToText.doneStatus) {
-      _markListeningStopped(source: 'status', cancelTimers: false);
+      _markListeningStopped(source: 'status');
     }
   }
 
@@ -847,10 +660,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _suppressNextClientError = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
-    _listenStartedAttemptId = null;
-    _listenStartedAt = null;
-    _cancelListenActivityCheck();
-    _cancelListenHealthCheck();
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     if (_speechService.isListening) {
@@ -1021,9 +830,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _soundWaveService.onSoundLevel(level);
     if (_activeAttemptId != attemptId) return;
     _soundLevelSampleCount += 1;
-    _lastSoundLevel = level;
-    _lastSoundLevelAt = DateTime.now();
-    _bumpListenActivity(attemptId);
     if (level.abs() > 0.5) {
       _currentAttemptHadSpeech = true;
     }
