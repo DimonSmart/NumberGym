@@ -10,6 +10,7 @@ import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
 import '../../domain/services/internet_checker.dart';
+import '../../domain/services/tts_service.dart';
 import '../../domain/training_task.dart';
 import 'package:number_gym/core/logging/app_log_buffer.dart';
 
@@ -30,10 +31,16 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
+  late final TtsServiceBase _ttsService;
   late LearningLanguage _language;
   late int _answerSeconds;
   late int _hintStreakCount;
   late bool _premiumPronunciation;
+  bool _ttsAvailable = true;
+  bool _ttsLoading = false;
+  List<TtsVoice> _ttsVoices = const [];
+  String? _ttsVoiceId;
+  bool _ttsPreviewing = false;
   TrainingTaskKind? _debugForcedTaskKind;
   Timer? _internetTimer;
   bool _hasInternet = true;
@@ -43,11 +50,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
+    _ttsService = TtsService();
     _language = _settingsRepository.readLearningLanguage();
     _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
     _hintStreakCount = _settingsRepository.readHintStreakCount();
     _premiumPronunciation =
       _settingsRepository.readPremiumPronunciationEnabled();
+    _loadTtsData();
     _refreshInternetStatus();
     _internetTimer = Timer.periodic(
       const Duration(seconds: 5),
@@ -61,6 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void dispose() {
     _internetTimer?.cancel();
+    _ttsService.dispose();
     super.dispose();
   }
 
@@ -98,6 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _language = value;
     });
     await _settingsRepository.setLearningLanguage(value);
+    await _loadTtsData();
   }
 
   Future<void> _updateAnswerSeconds(int seconds) async {
@@ -119,6 +130,91 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _premiumPronunciation = enabled;
     });
     await _settingsRepository.setPremiumPronunciationEnabled(enabled);
+  }
+
+  Future<void> _loadTtsData() async {
+    if (!mounted) return;
+    setState(() {
+      _ttsLoading = true;
+    });
+    final locale = _language.locale;
+    final available = await _ttsService.isLanguageAvailable(locale);
+    final voices = await _ttsService.listVoices();
+    final filtered = filterVoicesByLocale(voices, locale);
+    String? selected = _settingsRepository.readTtsVoiceId(_language);
+    if (selected != null &&
+        filtered.every((voice) => voice.id != selected)) {
+      selected = null;
+    }
+    if (selected == null && filtered.isNotEmpty) {
+      selected = filtered.first.id;
+      await _settingsRepository.setTtsVoiceId(_language, selected);
+    }
+    if (!mounted) return;
+    setState(() {
+      _ttsAvailable = available;
+      _ttsVoices = filtered;
+      _ttsVoiceId = selected;
+      _ttsLoading = false;
+    });
+  }
+
+  Future<void> _updateTtsVoiceId(String? voiceId) async {
+    if (voiceId == null || voiceId.trim().isEmpty) return;
+    setState(() {
+      _ttsVoiceId = voiceId;
+    });
+    await _settingsRepository.setTtsVoiceId(_language, voiceId);
+  }
+
+  Future<void> _previewTtsVoice() async {
+    if (_ttsLoading || _ttsPreviewing) return;
+    if (!_ttsAvailable) {
+      _showSnack('Text-to-speech is not available for this language.');
+      return;
+    }
+    if (_ttsVoices.isEmpty) {
+      _showSnack('No voices found to preview.');
+      return;
+    }
+    final selectedId = _ttsVoiceId;
+    final selectedVoice = selectedId == null
+        ? _ttsVoices.first
+        : _ttsVoices.firstWhere(
+            (voice) => voice.id == selectedId,
+            orElse: () => _ttsVoices.first,
+          );
+    setState(() {
+      _ttsPreviewing = true;
+    });
+    try {
+      await _ttsService.setVoice(selectedVoice);
+      await _ttsService.speak(_ttsPreviewText(_language));
+    } catch (error) {
+      _showSnack('Preview failed: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _ttsPreviewing = false;
+        });
+      }
+    }
+  }
+
+  String _ttsPreviewText(LearningLanguage language) {
+    switch (language) {
+      case LearningLanguage.spanish:
+        return '¡Hola! Soy tu voz nueva. ¿Qué tal sueno?';
+      case LearningLanguage.english:
+        return 'Hi! I’m your new voice. How do I sound?';
+    }
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _refreshInternetStatus() async {
@@ -169,6 +265,103 @@ class _SettingsScreenState extends State<SettingsScreen> {
               border: OutlineInputBorder(),
             ),
           ),
+          const SizedBox(height: 24),
+          const Text(
+            'Text-to-speech',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (_ttsLoading)
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: theme.colorScheme.primary,
+                  ),
+                )
+              else
+                Icon(
+                  Icons.record_voice_over,
+                  size: 18,
+                  color: _ttsAvailable
+                      ? Colors.green.shade600
+                      : theme.colorScheme.error,
+                ),
+              const SizedBox(width: 8),
+              Text(
+                _ttsLoading
+                    ? 'TTS: Checking...'
+                    : 'TTS: ${_ttsAvailable ? 'Available' : 'Unavailable'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: _ttsAvailable
+                      ? Colors.green.shade700
+                      : theme.colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!_ttsAvailable && !_ttsLoading) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Скачайте голос в настройках устройства.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          if (_ttsLoading)
+            const LinearProgressIndicator()
+          else if (_ttsVoices.isEmpty)
+            Text(
+              'No voices found for ${_language.label}.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            )
+          else
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _ttsVoiceId,
+                    onChanged: _ttsAvailable ? _updateTtsVoiceId : null,
+                    items: _ttsVoices
+                        .map(
+                          (voice) => DropdownMenuItem(
+                            value: voice.id,
+                            child: Text(voice.label),
+                          ),
+                        )
+                        .toList(),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Voice',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.tonalIcon(
+                  onPressed:
+                      _ttsAvailable && !_ttsPreviewing ? _previewTtsVoice : null,
+                  icon: _ttsPreviewing
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        )
+                      : const Icon(Icons.volume_up),
+                  label: Text(_ttsPreviewing ? 'Playing' : 'Preview'),
+                ),
+              ],
+            ),
           const SizedBox(height: 24),
           SwitchListTile(
             value: _premiumPronunciation,

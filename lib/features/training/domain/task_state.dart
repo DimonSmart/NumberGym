@@ -97,6 +97,25 @@ final class MultipleChoiceState extends TaskState {
   final List<String> options;
 }
 
+final class ListeningNumbersState extends TaskState {
+  ListeningNumbersState({
+    required super.taskId,
+    required super.numberValue,
+    required super.displayText,
+    required super.timer,
+    required List<String> options,
+    required this.isAnswerRevealed,
+  }) : options = List<String>.unmodifiable(options),
+       super(
+         kind: TrainingTaskKind.listeningNumbers,
+         affectsProgress: true,
+         usesTimer: true,
+       );
+
+  final List<String> options;
+  final bool isAnswerRevealed;
+}
+
 enum PhraseFlow { waiting, recording, recorded, sending, reviewing }
 
 final class PhrasePronunciationState extends TaskState {

@@ -34,6 +34,10 @@ final class SelectOptionAction extends TaskAction {
   final String option;
 }
 
+final class RepeatPromptAction extends TaskAction {
+  const RepeatPromptAction();
+}
+
 final class RetrySpeechInitAction extends TaskAction {
   const RetrySpeechInitAction();
 }

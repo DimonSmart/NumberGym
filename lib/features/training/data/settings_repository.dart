@@ -9,6 +9,7 @@ const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String debugForcedTaskKindKey = 'debugForcedTaskKind';
+const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
 const int answerDurationMinSeconds = 5;
 const int answerDurationMaxSeconds = 15;
@@ -82,6 +83,24 @@ class SettingsRepository implements SettingsRepositoryBase {
   }
 
   @override
+  String? readTtsVoiceId(LearningLanguage language) {
+    final rawValue = settingsBox.get(_ttsVoiceKey(language));
+    if (rawValue == null) return null;
+    final trimmed = rawValue.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  @override
+  Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId) async {
+    final key = _ttsVoiceKey(language);
+    if (voiceId == null || voiceId.trim().isEmpty) {
+      await settingsBox.delete(key);
+      return;
+    }
+    await settingsBox.put(key, voiceId.trim());
+  }
+
+  @override
   TrainingTaskKind? readDebugForcedTaskKind() {
     final rawValue = settingsBox.get(debugForcedTaskKindKey);
     if (rawValue == null || rawValue.trim().isEmpty) {
@@ -117,5 +136,9 @@ class SettingsRepository implements SettingsRepositoryBase {
 
   int _normalizeHintStreakCount(int count) {
     return count.clamp(hintStreakMinCount, hintStreakMaxCount).toInt();
+  }
+
+  String _ttsVoiceKey(LearningLanguage language) {
+    return '$ttsVoiceIdPrefix.${language.code}';
   }
 }

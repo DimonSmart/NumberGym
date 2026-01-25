@@ -7,6 +7,7 @@ import 'services/internet_checker.dart';
 import 'services/keep_awake_service.dart';
 import 'services/sound_wave_service.dart';
 import 'services/speech_service.dart';
+import 'services/tts_service.dart';
 
 typedef InternetChecker = Future<bool> Function();
 
@@ -18,6 +19,7 @@ class TrainingServices {
     required this.keepAwake,
     required this.audioRecorder,
     required this.azure,
+    required this.tts,
     required this.internet,
   });
 
@@ -29,6 +31,7 @@ class TrainingServices {
       keepAwake: KeepAwakeService(),
       audioRecorder: AudioRecorderService(),
       azure: AzureSpeechService(),
+      tts: TtsService(),
       internet: hasInternet,
     );
   }
@@ -39,6 +42,7 @@ class TrainingServices {
   final KeepAwakeServiceBase keepAwake;
   final AudioRecorderServiceBase audioRecorder;
   final AzureSpeechService azure;
+  final TtsServiceBase tts;
   final InternetChecker internet;
 
   void dispose() {
@@ -47,5 +51,6 @@ class TrainingServices {
     timer.dispose();
     keepAwake.dispose();
     audioRecorder.dispose();
+    tts.dispose();
   }
 }

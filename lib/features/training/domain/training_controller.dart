@@ -15,6 +15,7 @@ export 'task_runtime.dart'
     show
         TaskAction,
         SelectOptionAction,
+        RepeatPromptAction,
         RetrySpeechInitAction,
         StartRecordingAction,
         StopRecordingAction,
@@ -26,6 +27,7 @@ export 'task_state.dart'
         TaskState,
         NumberPronunciationState,
         MultipleChoiceState,
+        ListeningNumbersState,
         PhrasePronunciationState,
         PhraseFlow,
         TimerState;
@@ -69,6 +71,11 @@ class TrainingController extends ChangeNotifier {
   MultipleChoiceState? get multipleChoiceState {
     final task = _session.state.currentTask;
     return task is MultipleChoiceState ? task : null;
+  }
+
+  ListeningNumbersState? get listeningNumbersState {
+    final task = _session.state.currentTask;
+    return task is ListeningNumbersState ? task : null;
   }
 
   PhrasePronunciationState? get phrasePronunciationState {
@@ -129,6 +136,9 @@ class TrainingController extends ChangeNotifier {
 
   Future<void> selectOption(String option) =>
       _session.handleAction(SelectOptionAction(option));
+
+  Future<void> repeatListeningPrompt() =>
+      _session.handleAction(const RepeatPromptAction());
 
   Future<void> startPronunciationRecording() =>
       _session.handleAction(const StartRecordingAction());

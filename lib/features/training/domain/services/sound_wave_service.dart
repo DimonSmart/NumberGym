@@ -25,14 +25,12 @@ class SoundWaveService implements SoundWaveServiceBase {
        _soundRangeFloor = rangeFloor,
        _soundNoiseFloor = noiseFloor,
        _soundResponseCurve = responseCurve,
-       _soundGain = gain,
-       _barOffsets = _buildBarOffsets(historyLength);
+       _soundGain = gain;
 
   final StreamController<List<double>> _streamController =
       StreamController<List<double>>.broadcast();
 
   final List<double> _soundHistory;
-  List<double>? _barOffsets;
   final Duration _soundHistoryTick;
   final double _soundSmoothing;
   final double _soundRangeFloor;
@@ -148,24 +146,6 @@ class SoundWaveService implements SoundWaveServiceBase {
   _publishSoundHistory();
 }
 
-
-  static List<double> _buildBarOffsets(int length) {
-    return List<double>.generate(
-      length,
-      (i) => (i * 0.5) % (2 * pi),
-      growable: false,
-    );
-  }
-
-  List<double> _ensureBarOffsets() {
-    final existing = _barOffsets;
-    if (existing != null && existing.length == _soundHistory.length) {
-      return existing;
-    }
-    final rebuilt = _buildBarOffsets(_soundHistory.length);
-    _barOffsets = rebuilt;
-    return rebuilt;
-  }
 
   void _publishSoundHistory() {
     if (_streamController.isClosed) {

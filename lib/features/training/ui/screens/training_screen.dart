@@ -289,6 +289,14 @@ class _TrainingScreenState extends State<TrainingScreen> {
         feedbackColor,
       );
     }
+    if (task is ListeningNumbersState) {
+      return _buildListeningNumbersContent(
+        theme,
+        task,
+        feedbackText,
+        feedbackColor,
+      );
+    }
     if (task is PhrasePronunciationState) {
       return _buildPhrasePronunciationContent(theme, task);
     }
@@ -488,6 +496,101 @@ class _TrainingScreenState extends State<TrainingScreen> {
           children: task.options.map((option) {
             return SizedBox(
               width: 100, // Smaller width for digits
+              child: FilledButton.tonal(
+                onPressed: () => _controller.selectOption(option),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    option,
+                    style: theme.textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 14),
+        AnimatedOpacity(
+          opacity: feedbackText == null ? 0 : 1,
+          duration: const Duration(milliseconds: 200),
+          child: Text(
+            feedbackText ?? '',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: feedbackColor,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildTimerBar(theme),
+      ],
+    );
+  }
+
+  Widget _buildListeningNumbersContent(
+    ThemeData theme,
+    ListeningNumbersState task,
+    String? feedbackText,
+    Color? feedbackColor,
+  ) {
+    final displayText = task.displayText.isEmpty ? '?' : task.displayText;
+    final showReplayHint = !task.isAnswerRevealed;
+    final promptStyle = theme.textTheme.displaySmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: theme.colorScheme.onSurface,
+      fontSize: 56,
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Listen and choose the number',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: showReplayHint ? _controller.repeatListeningPrompt : null,
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  displayText,
+                  key: ValueKey(displayText),
+                  style: promptStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (showReplayHint) ...[
+          const SizedBox(height: 4),
+          Text(
+            'Tap ? to listen again',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+        const SizedBox(height: 18),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 12,
+          children: task.options.map((option) {
+            return SizedBox(
+              width: 100,
               child: FilledButton.tonal(
                 onPressed: () => _controller.selectOption(option),
                 child: Padding(
@@ -1134,6 +1237,12 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (taskKind == TrainingTaskKind.wordToNumber) {
       if (status == TrainerStatus.running) {
         return 'Select the number matching the text.';
+      }
+      return 'Tap Start to begin.';
+    }
+    if (taskKind == TrainingTaskKind.listeningNumbers) {
+      if (status == TrainerStatus.running) {
+        return 'Listen and select the correct number. Tap ? to hear again.';
       }
       return 'Tap Start to begin.';
     }

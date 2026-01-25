@@ -39,6 +39,7 @@ dependencies:
   http: ^1.1.2
   record: ^5.2.1
   lottie: ^2.7.0
+  flutter_tts: ^4.2.5
 
 dependency_overrides:
   # Use newer linux implementation that supports startStream from platform interface.
