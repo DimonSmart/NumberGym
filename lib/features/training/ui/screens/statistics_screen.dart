@@ -22,6 +22,7 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
+  static const int _learnedStreakTarget = 10;
   late final ProgressRepository _progressRepository;
   Map<int, CardProgress> _progressById = {};
   List<int> _gridIds = [];
@@ -111,12 +112,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
     final accuracy = totalAttempts == 0 ? 0.0 : totalCorrect / totalAttempts;
 
-    final maxAttempts = gridProgress.values.fold<int>(
-      0,
-      (current, progress) =>
-          progress.totalAttempts > current ? progress.totalAttempts : current,
-    );
-
     final hotIds = _resolveHotIds(gridProgress);
 
     return SingleChildScrollView(
@@ -125,9 +120,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSummaryCards(theme, totalAttempts, totalCorrect, accuracy),
-          const SizedBox(height: 20),
-          _buildAccuracyBanner(theme, totalAttempts, totalCorrect, accuracy),
-          const SizedBox(height: 26),
+          const SizedBox(height: 24),
           Text(
             'Streak grid',
             style: theme.textTheme.titleMedium?.copyWith(
@@ -136,15 +129,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Each cell shows the number and its current correct streak.',
+            'Color shows learning progress; below is the current correct streak.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 12),
-          _buildLegend(theme, maxAttempts),
+          _buildLegend(theme),
           const SizedBox(height: 14),
-          _buildGrid(theme, _gridIds, gridProgress, maxAttempts, hotIds),
+          _buildGrid(theme, _gridIds, gridProgress, hotIds),
         ],
       ),
     );
@@ -196,98 +189,39 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildAccuracyBanner(
-    ThemeData theme,
-    int totalAttempts,
-    int totalCorrect,
-    double accuracy,
-  ) {
+  Widget _buildLegend(ThemeData theme) {
     final scheme = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [
-            scheme.primaryContainer.withValues(alpha: 0.45),
-            scheme.secondaryContainer.withValues(alpha: 0.35),
-          ],
-        ),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.6),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Overall accuracy',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              Text(
-                '${(accuracy * 100).toStringAsFixed(1)}%',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '$totalCorrect / $totalAttempts',
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: accuracy,
-              minHeight: 10,
-              backgroundColor: scheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLegend(ThemeData theme, int maxAttempts) {
-    final scheme = theme.colorScheme;
-    final lowColor = _effortColor(scheme, 0, maxAttempts);
-    final highColor = maxAttempts == 0
-        ? scheme.primaryContainer
-        : _effortColor(scheme, maxAttempts, maxAttempts);
+    final notStartedColor = _notStartedColor(scheme);
+    final startedColor = _startedColor(scheme);
+    final learnedColor = _learnedColor(scheme);
 
     return Wrap(
       spacing: 12,
       runSpacing: 8,
       children: [
         _LegendSwatch(
-          color: lowColor,
-          label: 'Low effort',
+          color: notStartedColor,
+          label: 'Not started',
         ),
         _LegendSwatch(
-          color: highColor,
-          label: 'High effort',
+          color: startedColor,
+          label: 'Just started',
         ),
         _LegendSwatch(
-          color: Colors.red.shade300,
-          label: 'Top 10 not learned',
+          gradient: LinearGradient(
+            colors: [startedColor, learnedColor],
+          ),
+          label: 'In progress',
+        ),
+        _LegendSwatch(
+          color: learnedColor,
+          label: 'Learned',
+        ),
+        _LegendSwatch(
+          color: theme.colorScheme.surface,
+          borderColor: theme.colorScheme.error,
+          borderWidth: 2,
+          label: 'Needs attention (many attempts)',
         ),
       ],
     );
@@ -297,7 +231,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     ThemeData theme,
     List<int> gridIds,
     Map<int, CardProgress> progressById,
-    int maxAttempts,
     Set<int> hotIds,
   ) {
     return LayoutBuilder(
@@ -338,28 +271,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             itemBuilder: (context, index) {
               final id = gridIds[index];
               final progress = progressById[id] ?? CardProgress.empty;
-              final attempts = progress.totalAttempts;
               final streak = _consecutiveCorrect(progress.lastAttempts);
               final baseColor =
-                  _effortColor(theme.colorScheme, attempts, maxAttempts);
+                  _progressColor(theme.colorScheme, progress, streak);
               final isHot = hotIds.contains(id);
-              final backgroundColor = isHot
-                  ? Color.lerp(baseColor, Colors.red.shade200, 0.4)!
-                  : baseColor;
               final borderColor = isHot
-                  ? Colors.red.shade400
+                  ? theme.colorScheme.error
                   : theme.colorScheme.outlineVariant.withValues(alpha: 0.6);
+              final borderWidth = isHot ? 2.0 : 1.0;
               final textColor =
-                  ThemeData.estimateBrightnessForColor(backgroundColor) ==
+                  ThemeData.estimateBrightnessForColor(baseColor) ==
                           Brightness.dark
                       ? Colors.white
                       : theme.colorScheme.onSurface;
 
               return Container(
                 decoration: BoxDecoration(
-                  color: backgroundColor,
+                  color: baseColor,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: borderColor),
+                  border: Border.all(color: borderColor, width: borderWidth),
                 ),
                 child: Center(
                   child: FittedBox(
@@ -420,16 +350,39 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return count;
   }
 
-  Color _effortColor(ColorScheme scheme, int attempts, int maxAttempts) {
-    if (maxAttempts <= 0) {
-      return scheme.surfaceContainerHighest;
+  Color _progressColor(
+    ColorScheme scheme,
+    CardProgress progress,
+    int streak,
+  ) {
+    if (progress.totalAttempts == 0) {
+      return _notStartedColor(scheme);
     }
-    final t = (attempts / maxAttempts).clamp(0.0, 1.0);
-    return Color.lerp(
-      scheme.surfaceContainerLowest,
-      scheme.primaryContainer,
-      t,
-    )!;
+    if (progress.learned) {
+      return _learnedColor(scheme);
+    }
+    final startedColor = _startedColor(scheme);
+    if (streak <= 0) {
+      return startedColor;
+    }
+    final t = (streak / _learnedStreakTarget).clamp(0.0, 1.0);
+    return Color.lerp(startedColor, _learnedColor(scheme), t)!;
+  }
+
+  Color _notStartedColor(ColorScheme scheme) {
+    return scheme.surfaceContainerHighest;
+  }
+
+  Color _startedColor(ColorScheme scheme) {
+    return scheme.brightness == Brightness.dark
+        ? Colors.amber.shade400
+        : Colors.amber.shade200;
+  }
+
+  Color _learnedColor(ColorScheme scheme) {
+    return scheme.brightness == Brightness.dark
+        ? Colors.green.shade400
+        : Colors.green.shade500;
   }
 }
 
@@ -519,13 +472,19 @@ class _StatCard extends StatelessWidget {
 }
 
 class _LegendSwatch extends StatelessWidget {
-  final Color color;
+  final Color? color;
+  final Gradient? gradient;
+  final Color? borderColor;
+  final double borderWidth;
   final String label;
 
   const _LegendSwatch({
-    required this.color,
+    this.color,
+    this.gradient,
+    this.borderColor,
+    this.borderWidth = 1,
     required this.label,
-  });
+  }) : assert(color != null || gradient != null);
 
   @override
   Widget build(BuildContext context) {
@@ -538,9 +497,12 @@ class _LegendSwatch extends StatelessWidget {
           height: 14,
           decoration: BoxDecoration(
             color: color,
+            gradient: gradient,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
+              color: borderColor ??
+                  theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
+              width: borderWidth,
             ),
           ),
         ),
