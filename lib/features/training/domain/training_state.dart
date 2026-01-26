@@ -1,6 +1,6 @@
 import 'task_state.dart';
 
-enum TrainerStatus { idle, running, waitingRecording, paused, finished }
+enum TrainerStatus { idle, running, finished }
 
 enum TrainingFeedbackType { correct, wrong, timeout, skipped }
 

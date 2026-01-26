@@ -126,8 +126,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
         );
         final statusViewModel = TrainingStatusViewModel.fromState(
           state: _controller.state,
-          isAwaitingPronunciationReview:
-              _controller.isAwaitingPronunciationReview,
         );
 
         return Scaffold(

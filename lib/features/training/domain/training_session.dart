@@ -4,21 +4,22 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
-import '../data/card_progress.dart';
-import '../data/number_cards.dart';
 import '../data/phrase_templates.dart';
+import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
+import 'progress_manager.dart';
 import 'repositories.dart';
 import 'runtimes/listening_numbers_runtime.dart';
 import 'runtimes/multiple_choice_runtime.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtimes/phrase_pronunciation_runtime.dart';
+import 'runtime_coordinator.dart';
 import 'session_helpers.dart';
 import 'task_availability.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
-import 'task_state.dart';
+import 'task_scheduler.dart';
 import 'tasks/number_pronunciation_task.dart';
 import 'tasks/number_to_word_task.dart';
 import 'training_outcome.dart';
@@ -44,16 +45,28 @@ class TrainingSession {
       phraseTemplates: resolvedTemplates,
     );
     _taskRegistry = taskRegistry ?? _buildDefaultRegistry();
-    _internetGate = InternetGate(
-      checker: _services.internet,
-      cache: _internetCheckCache,
-    );
-    _availabilityRegistry = TaskAvailabilityRegistry(
+    final availabilityRegistry = TaskAvailabilityRegistry(
       providers: [
         SpeechTaskAvailabilityProvider(_services.speech),
         TtsTaskAvailabilityProvider(_services.tts),
         PhraseTaskAvailabilityProvider(),
       ],
+    );
+    _taskScheduler = TaskScheduler(
+      languageRouter: _languageRouter,
+      availabilityRegistry: availabilityRegistry,
+      internetChecker: _services.internet,
+      random: _random,
+    );
+    _progressManager = ProgressManager(
+      progressRepository: _progressRepository,
+      languageRouter: _languageRouter,
+      random: _random,
+    );
+    _feedbackCoordinator = FeedbackCoordinator(onChanged: _syncState);
+    _runtimeCoordinator = RuntimeCoordinator(
+      onChanged: _syncState,
+      onEvent: _handleRuntimeEvent,
     );
     _refreshCardsIfNeeded();
     _premiumPronunciationEnabled =
@@ -64,14 +77,6 @@ class TrainingSession {
 
   static void _noop() {}
 
-  static const int _numberPronunciationWeight = 70;
-  static const int _numberToWordWeight = 15;
-  static const int _wordToNumberWeight = 15;
-  static const int _listeningNumbersWeight = 15;
-  static const int _phrasePronunciationWeight = 5;
-  static const Duration _internetCheckCache = Duration(seconds: 10);
-  static const Duration _feedbackDuration = Duration(milliseconds: 1500);
-
   final Random _random = Random();
   final TrainingServices _services;
   final SettingsRepositoryBase _settingsRepository;
@@ -79,36 +84,18 @@ class TrainingSession {
   final void Function() _onStateChanged;
   late final LanguageRouter _languageRouter;
   late final TaskRegistry _taskRegistry;
-  late final InternetGate _internetGate;
-  late final TaskAvailabilityRegistry _availabilityRegistry;
-
-  Map<int, NumberPronunciationTask> _cardsById = {};
-  List<int> _cardIds = [];
-  LearningLanguage? _cardsLanguage;
-
-  Map<int, CardProgress> _progressById = {};
-  List<int> _pool = [];
-
-  TaskRuntime? _runtime;
-  StreamSubscription<TaskEvent>? _runtimeEvents;
-  StreamSubscription<TaskState>? _runtimeStates;
-  TaskState? _currentTaskState;
-
-  int? _currentPoolIndex;
+  late final TaskScheduler _taskScheduler;
+  late final ProgressManager _progressManager;
+  late final FeedbackCoordinator _feedbackCoordinator;
+  late final RuntimeCoordinator _runtimeCoordinator;
 
   bool _premiumPronunciationEnabled = false;
   TrainingTaskKind? _debugForcedTaskKind;
 
-  TrainerStatus _status = TrainerStatus.idle;
-  bool _speechReady = false;
   String? _errorMessage;
-  TrainingFeedback? _feedback;
-  Timer? _feedbackTimer;
-  Completer<void>? _feedbackCompleter;
 
   final SilentDetector _silentDetector = SilentDetector();
   final StreakTracker _streakTracker = StreakTracker();
-  bool _taskHadUserInteraction = false;
 
   bool _disposed = false;
 
@@ -117,11 +104,10 @@ class TrainingSession {
 
   Stream<List<double>> get soundStream => _services.soundWave.stream;
 
-  int get totalCards => _cardsById.length;
-  int get learnedCount =>
-      _progressById.values.where((progress) => progress.learned).length;
-  int get remainingCount => totalCards - learnedCount;
-  bool get hasRemainingCards => _pool.isNotEmpty;
+  int get totalCards => _progressManager.totalCards;
+  int get learnedCount => _progressManager.learnedCount;
+  int get remainingCount => _progressManager.remainingCount;
+  bool get hasRemainingCards => _progressManager.hasRemainingCards;
 
   bool get premiumPronunciationEnabled => _premiumPronunciationEnabled;
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
@@ -136,7 +122,7 @@ class TrainingSession {
   }
 
   Future<void> retryInitSpeech() async {
-    final runtime = _runtime;
+    final runtime = _runtimeCoordinator.runtime;
     if (runtime is NumberPronunciationRuntime) {
       await runtime.handleAction(const RetrySpeechInitAction());
       return;
@@ -146,62 +132,58 @@ class TrainingSession {
   }
 
   Future<void> startTraining() async {
-    if (_status == TrainerStatus.running ||
-        _status == TrainerStatus.waitingRecording) {
+    final status = _runtimeCoordinator.status;
+    if (status == TrainerStatus.running) {
       return;
     }
 
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
-    if (_cardsLanguage != _currentLanguage()) {
+    if (_progressManager.cardsLanguage != _currentLanguage()) {
       await _loadProgress();
     }
-    await _internetGate.refresh(force: true);
-    final availabilityContext = _availabilityContext(_currentLanguage());
-    await _availabilityRegistry.check(
-      TrainingTaskKind.listeningNumbers,
-      availabilityContext,
-      force: true,
+    await _taskScheduler.warmUpAvailability(
+      language: _currentLanguage(),
+      premiumPronunciationEnabled: _premiumPronunciationEnabled,
     );
-    if (_pool.isEmpty) {
-      _status = TrainerStatus.finished;
+    if (!_progressManager.hasRemainingCards) {
+      _runtimeCoordinator.setStatus(TrainerStatus.finished);
       unawaited(_setKeepAwake(false));
       _syncState();
       return;
     }
 
     _errorMessage = null;
-    _status = TrainerStatus.running;
+    _runtimeCoordinator.setStatus(TrainerStatus.running);
     _silentDetector.reset();
     _streakTracker.reset();
-    _taskHadUserInteraction = false;
+    _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(true));
     await _startNextCard();
   }
 
   Future<void> stopTraining() async {
-    _clearFeedback();
-    await _disposeRuntime(clearState: true);
+    _feedbackCoordinator.clear();
+    await _runtimeCoordinator.disposeRuntime(clearState: true);
     _services.soundWave.reset();
-    _status = TrainerStatus.idle;
+    _runtimeCoordinator.setStatus(TrainerStatus.idle);
     _errorMessage = null;
-    _currentPoolIndex = null;
-    _currentTaskState = null;
+    _progressManager.resetSelection();
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
     _silentDetector.reset();
     _streakTracker.reset();
-    _taskHadUserInteraction = false;
+    _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(false));
   }
 
   Future<void> pauseForOverlay() async {
-    await _disposeRuntime(clearState: true);
-    _status = TrainerStatus.idle;
+    await _runtimeCoordinator.disposeRuntime(clearState: true);
+    _runtimeCoordinator.setStatus(TrainerStatus.idle);
     await _setKeepAwake(false);
     _syncState();
   }
@@ -211,77 +193,49 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
-    _currentPoolIndex = null;
-    _currentTaskState = null;
+    _progressManager.resetSelection();
+    await _runtimeCoordinator.disposeRuntime(clearState: true);
     _silentDetector.reset();
-    _taskHadUserInteraction = false;
-    _status = TrainerStatus.idle;
+    _runtimeCoordinator.resetInteraction();
+    _runtimeCoordinator.setStatus(TrainerStatus.idle);
     await _setKeepAwake(false);
     _syncState();
   }
 
   Future<void> handleAction(TaskAction action) async {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    await runtime.handleAction(action);
+    await _runtimeCoordinator.handleAction(action);
   }
 
   Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) async {
-    if (_currentTaskState == null) return;
+    if (_runtimeCoordinator.currentTask == null) return;
     await _handleTaskCompleted(outcome);
   }
 
   void _syncState() {
     if (_disposed) return;
     _state = TrainingState(
-      status: _status,
-      speechReady: _speechReady,
+      status: _runtimeCoordinator.status,
+      speechReady: _runtimeCoordinator.speechReady,
       errorMessage: _errorMessage,
-      feedback: _feedback,
-      currentTask: _currentTaskState,
+      feedback: _feedbackCoordinator.feedback,
+      currentTask: _runtimeCoordinator.currentTask,
     );
     _onStateChanged();
   }
 
   void dispose() {
     _disposed = true;
-    _clearFeedback();
-    unawaited(_disposeRuntime(clearState: true));
+    _feedbackCoordinator.dispose();
+    unawaited(_runtimeCoordinator.disposeRuntime(clearState: true));
     _services.dispose();
   }
 
   void _refreshCardsIfNeeded() {
-    final language = _currentLanguage();
-    if (_cardsLanguage == language && _cardsById.isNotEmpty) return;
-    _cardsLanguage = language;
-    final toWords = _languageRouter.numberWordsConverter(language);
-    final cards = buildNumberCards(
-      language: language,
-      toWords: toWords,
-    );
-    _cardsById = {for (final card in cards) card.id: card};
-    _cardIds = _cardsById.keys.toList()..sort();
+    _progressManager.refreshCardsIfNeeded(_currentLanguage());
   }
 
   Future<void> _loadProgress() async {
-    _refreshCardsIfNeeded();
-    if (_cardIds.isEmpty) {
-      _progressById = {};
-      _pool = [];
-      return;
-    }
-    final language = _currentLanguage();
-    final progress = await _progressRepository.loadAll(
-      _cardIds,
-      language: language,
-    );
-    _progressById = {
-      for (final id in _cardIds) id: progress[id] ?? CardProgress.empty,
-    };
-    _pool = [
-      for (final id in _cardIds)
-        if (!(_progressById[id]?.learned ?? false)) id,
-    ]..shuffle(_random);
+    await _progressManager.loadProgress(_currentLanguage());
   }
 
   Future<void> _initSpeechDirect() async {
@@ -289,7 +243,7 @@ class TrainingSession {
       onError: _logSpeechError,
       onStatus: (_) {},
     );
-    _speechReady = result.ready;
+    _runtimeCoordinator.updateSpeechReady(result.ready);
     _errorMessage = result.ready ? null : result.errorMessage;
   }
 
@@ -307,17 +261,6 @@ class TrainingSession {
       return null;
     }
     return _settingsRepository.readDebugForcedTaskKind();
-  }
-
-  TaskAvailabilityContext _availabilityContext(LearningLanguage language) {
-    return TaskAvailabilityContext(
-      language: language,
-      premiumPronunciationEnabled: _premiumPronunciationEnabled,
-      internetCheck: ({bool force = false}) async {
-        await _internetGate.refresh(force: force);
-        return _internetGate.hasInternet;
-      },
-    );
   }
 
   Duration _resolveCardDuration() {
@@ -369,7 +312,7 @@ class TrainingSession {
   }
 
   void _handleSpeechReady(bool ready, String? errorMessage) {
-    _speechReady = ready;
+    _runtimeCoordinator.updateSpeechReady(ready);
     if (ready) {
       _errorMessage = null;
     } else if (errorMessage != null) {
@@ -514,79 +457,13 @@ class TrainingSession {
     return numberValue * 1000 + templateId;
   }
 
-  TrainingTaskKind _pickTaskKind({
-    required bool canUsePhrase,
-    required bool canUseListening,
-    required bool canUseSpeech,
-  }) {
-    final weightedKinds = <MapEntry<TrainingTaskKind, int>>[
-      if (canUseSpeech)
-        const MapEntry(
-          TrainingTaskKind.numberPronunciation,
-          _numberPronunciationWeight,
-        ),
-      const MapEntry(
-        TrainingTaskKind.numberToWord,
-        _numberToWordWeight,
-      ),
-      const MapEntry(
-        TrainingTaskKind.wordToNumber,
-        _wordToNumberWeight,
-      ),
-      if (canUseListening)
-        const MapEntry(
-          TrainingTaskKind.listeningNumbers,
-          _listeningNumbersWeight,
-        ),
-      if (canUsePhrase)
-        const MapEntry(
-          TrainingTaskKind.phrasePronunciation,
-          _phrasePronunciationWeight,
-        ),
-    ];
-    final totalWeight =
-        weightedKinds.fold(0, (sum, entry) => sum + entry.value);
-    final roll = _random.nextInt(totalWeight);
-    var cursor = 0;
-    for (final entry in weightedKinds) {
-      cursor += entry.value;
-      if (roll < cursor) {
-        return entry.key;
-      }
-    }
-    return weightedKinds.last.key;
-  }
-
-  bool _hasPhraseTemplate(LearningLanguage language, int numberValue) {
-    return _languageRouter.hasTemplate(numberValue, language: language);
-  }
-
-  int? _pickPoolIndex({
-    required LearningLanguage language,
-    required bool requirePhrase,
-  }) {
-    if (_pool.isEmpty) return null;
-    if (!requirePhrase) {
-      return _random.nextInt(_pool.length);
-    }
-    final eligible = <int>[];
-    for (var i = 0; i < _pool.length; i += 1) {
-      final cardId = _pool[i];
-      if (_hasPhraseTemplate(language, cardId)) {
-        eligible.add(i);
-      }
-    }
-    if (eligible.isEmpty) return null;
-    return eligible[_random.nextInt(eligible.length)];
-  }
-
   Future<void> _startNextCard() async {
-    if (_status != TrainerStatus.running &&
-        _status != TrainerStatus.waitingRecording) {
+    final status = _runtimeCoordinator.status;
+    if (status != TrainerStatus.running) {
       return;
     }
-    if (_pool.isEmpty) {
-      _status = TrainerStatus.finished;
+    if (!_progressManager.hasRemainingCards) {
+      _runtimeCoordinator.setStatus(TrainerStatus.finished);
       unawaited(_setKeepAwake(false));
       _syncState();
       return;
@@ -594,97 +471,38 @@ class TrainingSession {
 
     final language = _currentLanguage();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
-    final forcedTaskKind = _debugForcedTaskKind;
-    final requirePhrase =
-        forcedTaskKind == TrainingTaskKind.phrasePronunciation;
-    final requireListening =
-        forcedTaskKind == TrainingTaskKind.listeningNumbers;
-    final requireSpeech =
-        forcedTaskKind == TrainingTaskKind.numberPronunciation;
-    final availabilityContext = _availabilityContext(language);
-    final phraseAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.phrasePronunciation,
-      availabilityContext,
-      force: requirePhrase,
-    );
-    final listeningAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.listeningNumbers,
-      availabilityContext,
-      force: requireListening,
-    );
-    final speechAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.numberPronunciation,
-      availabilityContext,
-      force: requireSpeech,
-    );
-    if (requirePhrase && !phraseAvailability.isAvailable) {
-      _errorMessage =
-          phraseAvailability.message ??
-          'Premium pronunciation requires an internet connection.';
-      await _pauseTraining();
-      return;
-    }
-    if (requireListening && !listeningAvailability.isAvailable) {
-      _errorMessage =
-          listeningAvailability.message ??
-          'Text-to-speech is not available for the selected language.';
-      await _pauseTraining();
-      return;
-    }
-    if (requireSpeech && !speechAvailability.isAvailable) {
-      _errorMessage =
-          speechAvailability.message ??
-          'Speech recognition is not available on this device.';
-      await _pauseTraining();
-      return;
-    }
-    final allowPhrase =
-        phraseAvailability.isAvailable || requirePhrase;
-    final allowListening = listeningAvailability.isAvailable || requireListening;
-    final allowSpeech = speechAvailability.isAvailable || requireSpeech;
-    final poolIndex = _pickPoolIndex(
+    final scheduleResult = await _taskScheduler.scheduleNext(
+      progressManager: _progressManager,
       language: language,
-      requirePhrase: requirePhrase,
+      premiumPronunciationEnabled: _premiumPronunciationEnabled,
+      forcedTaskKind: _debugForcedTaskKind,
     );
-    if (poolIndex == null) {
-      if (requirePhrase) {
-        _errorMessage =
-            'Phrase pronunciation tasks are not available for the selected language.';
-        await _pauseTraining();
-      }
+    if (scheduleResult is TaskScheduleFinished) {
+      _runtimeCoordinator.setStatus(TrainerStatus.finished);
+      unawaited(_setKeepAwake(false));
+      _syncState();
       return;
     }
-    final cardId = _pool[poolIndex];
-    final card = _cardsById[cardId];
-    if (card == null) return;
-
-    final canUsePhrase =
-        allowPhrase && _hasPhraseTemplate(language, card.id);
-    if (requirePhrase && !canUsePhrase) {
-      _errorMessage =
-          'Phrase pronunciation tasks are not available for the selected language.';
+    if (scheduleResult is TaskSchedulePaused) {
+      _errorMessage = scheduleResult.errorMessage;
       await _pauseTraining();
       return;
     }
-    final canUseListening = allowListening;
-    final canUseSpeech = allowSpeech;
-    final taskKind =
-        forcedTaskKind ??
-        _pickTaskKind(
-          canUsePhrase: canUsePhrase,
-          canUseListening: canUseListening,
-          canUseSpeech: canUseSpeech,
-        );
+    if (scheduleResult is! TaskScheduleReady) {
+      return;
+    }
 
-    _currentPoolIndex = poolIndex;
-    _taskHadUserInteraction = false;
+    final card = scheduleResult.card;
+    final taskKind = scheduleResult.kind;
+
     _services.soundWave.reset();
+    _errorMessage = null;
 
     final hintText = _resolveHintText(card, taskKind);
     final context = TaskBuildContext(
       card: card,
       language: language,
-      cardIds: _cardIds,
+      cardIds: _progressManager.cardIds,
       toWords: _languageRouter.numberWordsConverter(language),
       cardDuration: _resolveCardDuration(),
       languageRouter: _languageRouter,
@@ -694,54 +512,11 @@ class TrainingSession {
     );
 
     final runtime = _taskRegistry.create(taskKind, context);
-    await _attachRuntime(runtime);
+    await _runtimeCoordinator.attach(runtime);
   }
 
-  Future<void> _attachRuntime(TaskRuntime runtime) async {
-    await _disposeRuntime(clearState: false);
-    _runtime = runtime;
-    _runtimeEvents = runtime.events.listen(_handleTaskEvent);
-    _runtimeStates = runtime.states.listen((state) {
-      _currentTaskState = state;
-      if (state is NumberPronunciationState) {
-        _speechReady = state.speechReady;
-      }
-      _syncState();
-    });
-    _currentTaskState = runtime.state;
-    if (_currentTaskState is NumberPronunciationState) {
-      _speechReady = (_currentTaskState as NumberPronunciationState).speechReady;
-    }
-    final resolvedKind = runtime.state.kind;
-    _status = resolvedKind == TrainingTaskKind.phrasePronunciation
-        ? TrainerStatus.waitingRecording
-        : TrainerStatus.running;
-    _errorMessage = null;
-    _syncState();
-    await runtime.start();
-  }
-
-  Future<void> _disposeRuntime({required bool clearState}) async {
-    await _runtimeEvents?.cancel();
-    await _runtimeStates?.cancel();
-    _runtimeEvents = null;
-    _runtimeStates = null;
-    final runtime = _runtime;
-    _runtime = null;
-    if (runtime != null) {
-      await runtime.dispose();
-    }
-    if (clearState) {
-      _currentTaskState = null;
-    }
-  }
-
-  void _handleTaskEvent(TaskEvent event) {
+  void _handleRuntimeEvent(TaskEvent event) {
     if (_disposed) return;
-    if (event is TaskUserInteracted) {
-      _taskHadUserInteraction = true;
-      return;
-    }
     if (event is TaskError) {
       _errorMessage = event.message;
       if (event.shouldPause) {
@@ -757,25 +532,30 @@ class TrainingSession {
   }
 
   Future<void> _handleTaskCompleted(TrainingOutcome outcome) async {
-    final taskState = _currentTaskState;
+    final taskState = _runtimeCoordinator.currentTask;
     if (taskState == null) return;
-    await _disposeRuntime(clearState: false);
+    await _runtimeCoordinator.disposeRuntime(clearState: false);
 
     final affectsProgress =
         taskState.affectsProgress && outcome != TrainingOutcome.ignore;
     if (affectsProgress) {
       final isCorrect = outcome == TrainingOutcome.success;
       _streakTracker.record(isCorrect);
-      await _updateProgress(
+      final progressResult = await _progressManager.updateProgress(
         progressKey: taskState.numberValue,
         isCorrect: isCorrect,
+        language: _currentLanguage(),
       );
+      if (progressResult.learned && progressResult.poolEmpty) {
+        _runtimeCoordinator.setStatus(TrainerStatus.finished);
+        unawaited(_setKeepAwake(false));
+      }
     }
 
-    final feedbackHold = _showFeedback(outcome: outcome);
+    final feedbackHold = _feedbackCoordinator.show(outcome);
 
     _silentDetector.record(
-      interacted: _taskHadUserInteraction,
+      interacted: _runtimeCoordinator.taskHadUserInteraction,
       affectsProgress: affectsProgress,
     );
     if (_silentDetector.shouldPause) {
@@ -783,116 +563,19 @@ class TrainingSession {
       return;
     }
 
-    if (_status == TrainerStatus.waitingRecording) {
-      _status = TrainerStatus.running;
-    }
-
     await feedbackHold;
     if (_disposed) return;
-    if (_status != TrainerStatus.running &&
-        _status != TrainerStatus.waitingRecording) {
+    final status = _runtimeCoordinator.status;
+    if (status != TrainerStatus.running) {
       return;
     }
 
     await _startNextCard();
   }
 
-  Future<void> _updateProgress({
-    required int progressKey,
-    required bool isCorrect,
-  }) async {
-    final language = _currentLanguage();
-    final progress = _progressById[progressKey] ?? CardProgress.empty;
-    final attempts = List<bool>.from(progress.lastAttempts)..add(isCorrect);
-    if (attempts.length > 10) {
-      attempts.removeRange(0, attempts.length - 10);
-    }
-    final learned = attempts.length == 10 && attempts.every((value) => value);
-    final updated = progress.copyWith(
-      learned: learned,
-      lastAttempts: attempts,
-      totalAttempts: progress.totalAttempts + 1,
-      totalCorrect: progress.totalCorrect + (isCorrect ? 1 : 0),
-    );
-    _progressById[progressKey] = updated;
-    await _progressRepository.save(
-      progressKey,
-      updated,
-      language: language,
-    );
-    if (learned) {
-      _removeFromPool();
-    }
-    _syncState();
-  }
-
-  void _removeFromPool() {
-    final index = _currentPoolIndex;
-    if (index == null || index >= _pool.length) return;
-    final lastIndex = _pool.length - 1;
-    _pool[index] = _pool[lastIndex];
-    _pool.removeLast();
-    _currentPoolIndex = null;
-    if (_pool.isEmpty) {
-      _status = TrainerStatus.finished;
-      unawaited(_setKeepAwake(false));
-    }
-  }
-
-  Future<void> _showFeedback({required TrainingOutcome outcome}) {
-    _feedbackTimer?.cancel();
-    _feedbackCompleter?.complete();
-    _feedbackCompleter = null;
-    late final TrainingFeedbackType type;
-    late final String text;
-
-    switch (outcome) {
-      case TrainingOutcome.success:
-        type = TrainingFeedbackType.correct;
-        text = 'Correct';
-        break;
-      case TrainingOutcome.fail:
-        type = TrainingFeedbackType.wrong;
-        text = 'Wrong';
-        break;
-      case TrainingOutcome.timeout:
-        type = TrainingFeedbackType.timeout;
-        text = 'Timeout';
-        break;
-      case TrainingOutcome.ignore:
-        type = TrainingFeedbackType.skipped;
-        text = 'Skipped';
-        break;
-    }
-
-    _feedback = TrainingFeedback(type: type, text: text);
-    _syncState();
-
-    final completer = Completer<void>();
-    _feedbackCompleter = completer;
-    _feedbackTimer = Timer(_feedbackDuration, _clearFeedback);
-
-    final shouldHold = type == TrainingFeedbackType.correct ||
-        type == TrainingFeedbackType.wrong ||
-        type == TrainingFeedbackType.timeout;
-    if (!shouldHold) {
-      return Future.value();
-    }
-    return completer.future;
-  }
-
-  void _clearFeedback() {
-    _feedbackTimer?.cancel();
-    _feedbackTimer = null;
-    _feedback = null;
-    _syncState();
-    _feedbackCompleter?.complete();
-    _feedbackCompleter = null;
-  }
-
   Future<void> _pauseTraining() async {
-    await _disposeRuntime(clearState: false);
-    _status = TrainerStatus.paused;
+    await _runtimeCoordinator.disposeRuntime(clearState: false);
+    _runtimeCoordinator.setStatus(TrainerStatus.idle);
     _syncState();
     unawaited(_setKeepAwake(false));
   }

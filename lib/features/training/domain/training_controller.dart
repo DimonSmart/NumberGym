@@ -101,7 +101,7 @@ class TrainingController extends ChangeNotifier {
       numberPronunciationState?.previewMatchedIndices ?? const <int>[];
 
   bool get isAwaitingRecording =>
-      _session.state.status == TrainerStatus.waitingRecording;
+      phrasePronunciationState?.flow == PhraseFlow.waiting;
   bool get isRecording =>
       phrasePronunciationState?.flow == PhraseFlow.recording;
   bool get hasRecording => phrasePronunciationState?.hasRecording ?? false;
