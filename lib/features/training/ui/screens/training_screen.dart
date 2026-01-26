@@ -357,6 +357,15 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Text(
+          'Read the number aloud',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
         _buildPrompt(theme, _controller.displayText),
         if (hintText != null && hintText.isNotEmpty) ...[
           const SizedBox(height: 6),
@@ -1214,7 +1223,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
   String _buildStatusMessage() {
     final status = _controller.status;
     if (_controller.isAwaitingPronunciationReview) {
-      return 'Review the pronunciation feedback and tap Next to continue.';
+      return 'Tap Next to continue.';
     }
     if (status == TrainerStatus.finished) {
       return 'All cards learned. Reset progress to start again.';
@@ -1236,13 +1245,13 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return 'Listening...';
     }
     if (taskKind == TrainingTaskKind.numberToWord) {
-      return 'Select the correct answer for the number.';
+      return '';
     }
     if (taskKind == TrainingTaskKind.wordToNumber) {
-      return 'Select the number matching the text.';
+      return '';
     }
     if (taskKind == TrainingTaskKind.listeningNumbers) {
-      return 'Listen and select the correct number. Tap ? to hear again.';
+      return '';
     }
     return 'Get ready for the next task.';
   }
