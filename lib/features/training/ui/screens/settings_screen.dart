@@ -330,11 +330,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: DropdownButtonFormField<String>(
                     initialValue: _ttsVoiceId,
                     onChanged: _ttsAvailable ? _updateTtsVoiceId : null,
+                    isExpanded: true,
                     items: _ttsVoices
                         .map(
                           (voice) => DropdownMenuItem(
                             value: voice.id,
-                            child: Text(voice.label),
+                            child: Text(
+                              voice.label,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    selectedItemBuilder: (context) => _ttsVoices
+                        .map(
+                          (voice) => Text(
+                            voice.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         )
                         .toList(),
