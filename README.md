@@ -25,5 +25,7 @@ aloud, and repeats until the response is learned.
 
 ## Card range
 
-The single source of truth for the card range lives in
+The primary number range is fully covered from 0 to 100. Beyond that, the app
+also supports round hundreds (200, 300, ... , 900) and larger values like 1000,
+10000, and 1000000. The single source of truth for the card range lives in
 `lib/features/training/data/number_cards.dart`.

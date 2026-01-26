@@ -10,7 +10,9 @@ import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
 import '../../domain/services/internet_checker.dart';
+import '../../domain/services/speech_service.dart';
 import '../../domain/services/tts_service.dart';
+import '../../domain/task_availability.dart';
 import '../../domain/training_task.dart';
 import 'package:number_gym/core/logging/app_log_buffer.dart';
 
@@ -32,6 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
   late final TtsServiceBase _ttsService;
+  late final SpeechServiceBase _speechService;
+  late final TaskAvailabilityRegistry _availabilityRegistry;
   late LearningLanguage _language;
   late int _answerSeconds;
   late int _hintStreakCount;
@@ -41,6 +45,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<TtsVoice> _ttsVoices = const [];
   String? _ttsVoiceId;
   bool _ttsPreviewing = false;
+  bool _speechAvailable = true;
+  bool _speechLoading = false;
+  String? _speechStatusMessage;
   TrainingTaskKind? _debugForcedTaskKind;
   Timer? _internetTimer;
   bool _hasInternet = true;
@@ -51,12 +58,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
     _ttsService = TtsService();
+    _speechService = SpeechService();
+    _availabilityRegistry = TaskAvailabilityRegistry(
+      providers: [
+        SpeechTaskAvailabilityProvider(_speechService),
+        TtsTaskAvailabilityProvider(_ttsService),
+      ],
+    );
     _language = _settingsRepository.readLearningLanguage();
     _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
     _hintStreakCount = _settingsRepository.readHintStreakCount();
     _premiumPronunciation =
       _settingsRepository.readPremiumPronunciationEnabled();
     _loadTtsData();
+    _loadSpeechAvailability();
     _refreshInternetStatus();
     _internetTimer = Timer.periodic(
       const Duration(seconds: 5),
@@ -71,6 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() {
     _internetTimer?.cancel();
     _ttsService.dispose();
+    _speechService.dispose();
     super.dispose();
   }
 
@@ -109,6 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     await _settingsRepository.setLearningLanguage(value);
     await _loadTtsData();
+    await _loadSpeechAvailability();
   }
 
   Future<void> _updateAnswerSeconds(int seconds) async {
@@ -138,7 +155,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _ttsLoading = true;
     });
     final locale = _language.locale;
-    final available = await _ttsService.isLanguageAvailable(locale);
+    final availability = await _availabilityRegistry.check(
+      TrainingTaskKind.listeningNumbers,
+      TaskAvailabilityContext(
+        language: _language,
+        premiumPronunciationEnabled: _premiumPronunciation,
+      ),
+    );
+    final available = availability.isAvailable;
     final voices = await _ttsService.listVoices();
     final filtered = filterVoicesByLocale(voices, locale);
     String? selected = _settingsRepository.readTtsVoiceId(_language);
@@ -156,6 +180,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _ttsVoices = filtered;
       _ttsVoiceId = selected;
       _ttsLoading = false;
+    });
+  }
+
+  Future<void> _loadSpeechAvailability() async {
+    if (!mounted) return;
+    setState(() {
+      _speechLoading = true;
+    });
+    final availability = await _availabilityRegistry.check(
+      TrainingTaskKind.numberPronunciation,
+      TaskAvailabilityContext(
+        language: _language,
+        premiumPronunciationEnabled: _premiumPronunciation,
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _speechAvailable = availability.isAvailable;
+      _speechStatusMessage = availability.message;
+      _speechLoading = false;
     });
   }
 
@@ -375,6 +419,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
+          const SizedBox(height: 24),
+          const Text(
+            'Speech recognition',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (_speechLoading)
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: theme.colorScheme.primary,
+                  ),
+                )
+              else
+                Icon(
+                  _speechAvailable ? Icons.mic : Icons.mic_off,
+                  size: 18,
+                  color: _speechAvailable
+                      ? Colors.green.shade600
+                      : theme.colorScheme.error,
+                ),
+              const SizedBox(width: 8),
+              Text(
+                _speechLoading
+                    ? 'Speech recognition: Checking...'
+                    : 'Speech recognition: ${_speechAvailable ? 'Available' : 'Unavailable'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: _speechAvailable
+                      ? Colors.green.shade700
+                      : theme.colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!_speechAvailable &&
+              !_speechLoading &&
+              _speechStatusMessage != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              _speechStatusMessage!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
           SwitchListTile(
             value: _premiumPronunciation,

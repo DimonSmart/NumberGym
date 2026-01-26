@@ -23,6 +23,7 @@ abstract class SpeechServiceBase {
   Future<SpeechInitResult> initialize({
     required void Function(SpeechRecognitionError) onError,
     required void Function(String) onStatus,
+    bool requestPermission = true,
   });
   Future<void> listen({
     required void Function(SpeechRecognitionResult) onResult,
@@ -58,10 +59,13 @@ class SpeechService implements SpeechServiceBase {
   Future<SpeechInitResult> initialize({
     required void Function(SpeechRecognitionError) onError,
     required void Function(String) onStatus,
+    bool requestPermission = true,
   }) async {
     _errorSink = onError;
     _statusSink = onStatus;
-    final micStatus = await Permission.microphone.request();
+    final micStatus = requestPermission
+        ? await Permission.microphone.request()
+        : await Permission.microphone.status;
     if (!micStatus.isGranted) {
       return const SpeechInitResult(
         ready: false,

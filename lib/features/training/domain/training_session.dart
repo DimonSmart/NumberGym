@@ -15,6 +15,7 @@ import 'runtimes/multiple_choice_runtime.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtimes/phrase_pronunciation_runtime.dart';
 import 'session_helpers.dart';
+import 'task_availability.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
 import 'task_state.dart';
@@ -47,6 +48,13 @@ class TrainingSession {
       checker: _services.internet,
       cache: _internetCheckCache,
     );
+    _availabilityRegistry = TaskAvailabilityRegistry(
+      providers: [
+        SpeechTaskAvailabilityProvider(_services.speech),
+        TtsTaskAvailabilityProvider(_services.tts),
+        PhraseTaskAvailabilityProvider(),
+      ],
+    );
     _refreshCardsIfNeeded();
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
@@ -72,6 +80,7 @@ class TrainingSession {
   late final LanguageRouter _languageRouter;
   late final TaskRegistry _taskRegistry;
   late final InternetGate _internetGate;
+  late final TaskAvailabilityRegistry _availabilityRegistry;
 
   Map<int, NumberPronunciationTask> _cardsById = {};
   List<int> _cardIds = [];
@@ -89,8 +98,6 @@ class TrainingSession {
 
   bool _premiumPronunciationEnabled = false;
   TrainingTaskKind? _debugForcedTaskKind;
-  bool? _ttsAvailable;
-  LearningLanguage? _ttsAvailabilityLanguage;
 
   TrainerStatus _status = TrainerStatus.idle;
   bool _speechReady = false;
@@ -151,7 +158,12 @@ class TrainingSession {
       await _loadProgress();
     }
     await _internetGate.refresh(force: true);
-    await _ensureTtsAvailability(_currentLanguage(), force: true);
+    final availabilityContext = _availabilityContext(_currentLanguage());
+    await _availabilityRegistry.check(
+      TrainingTaskKind.listeningNumbers,
+      availabilityContext,
+      force: true,
+    );
     if (_pool.isEmpty) {
       _status = TrainerStatus.finished;
       unawaited(_setKeepAwake(false));
@@ -297,19 +309,15 @@ class TrainingSession {
     return _settingsRepository.readDebugForcedTaskKind();
   }
 
-  Future<bool> _ensureTtsAvailability(
-    LearningLanguage language, {
-    bool force = false,
-  }) async {
-    if (!force &&
-        _ttsAvailabilityLanguage == language &&
-        _ttsAvailable != null) {
-      return _ttsAvailable!;
-    }
-    final available = await _services.tts.isLanguageAvailable(language.locale);
-    _ttsAvailabilityLanguage = language;
-    _ttsAvailable = available;
-    return available;
+  TaskAvailabilityContext _availabilityContext(LearningLanguage language) {
+    return TaskAvailabilityContext(
+      language: language,
+      premiumPronunciationEnabled: _premiumPronunciationEnabled,
+      internetCheck: ({bool force = false}) async {
+        await _internetGate.refresh(force: force);
+        return _internetGate.hasInternet;
+      },
+    );
   }
 
   Duration _resolveCardDuration() {
@@ -509,12 +517,14 @@ class TrainingSession {
   TrainingTaskKind _pickTaskKind({
     required bool canUsePhrase,
     required bool canUseListening,
+    required bool canUseSpeech,
   }) {
     final weightedKinds = <MapEntry<TrainingTaskKind, int>>[
-      const MapEntry(
-        TrainingTaskKind.numberPronunciation,
-        _numberPronunciationWeight,
-      ),
+      if (canUseSpeech)
+        const MapEntry(
+          TrainingTaskKind.numberPronunciation,
+          _numberPronunciationWeight,
+        ),
       const MapEntry(
         TrainingTaskKind.numberToWord,
         _numberToWordWeight,
@@ -589,24 +599,49 @@ class TrainingSession {
         forcedTaskKind == TrainingTaskKind.phrasePronunciation;
     final requireListening =
         forcedTaskKind == TrainingTaskKind.listeningNumbers;
-    await _internetGate.refresh();
-    final ttsAvailable = await _ensureTtsAvailability(language);
-    if (requirePhrase && !_internetGate.hasInternet) {
+    final requireSpeech =
+        forcedTaskKind == TrainingTaskKind.numberPronunciation;
+    final availabilityContext = _availabilityContext(language);
+    final phraseAvailability = await _availabilityRegistry.check(
+      TrainingTaskKind.phrasePronunciation,
+      availabilityContext,
+      force: requirePhrase,
+    );
+    final listeningAvailability = await _availabilityRegistry.check(
+      TrainingTaskKind.listeningNumbers,
+      availabilityContext,
+      force: requireListening,
+    );
+    final speechAvailability = await _availabilityRegistry.check(
+      TrainingTaskKind.numberPronunciation,
+      availabilityContext,
+      force: requireSpeech,
+    );
+    if (requirePhrase && !phraseAvailability.isAvailable) {
       _errorMessage =
+          phraseAvailability.message ??
           'Premium pronunciation requires an internet connection.';
       await _pauseTraining();
       return;
     }
-    if (requireListening && !ttsAvailable) {
+    if (requireListening && !listeningAvailability.isAvailable) {
       _errorMessage =
+          listeningAvailability.message ??
           'Text-to-speech is not available for the selected language.';
       await _pauseTraining();
       return;
     }
+    if (requireSpeech && !speechAvailability.isAvailable) {
+      _errorMessage =
+          speechAvailability.message ??
+          'Speech recognition is not available on this device.';
+      await _pauseTraining();
+      return;
+    }
     final allowPhrase =
-        (_premiumPronunciationEnabled && _internetGate.hasInternet) ||
-            requirePhrase;
-    final allowListening = ttsAvailable || requireListening;
+        phraseAvailability.isAvailable || requirePhrase;
+    final allowListening = listeningAvailability.isAvailable || requireListening;
+    final allowSpeech = speechAvailability.isAvailable || requireSpeech;
     final poolIndex = _pickPoolIndex(
       language: language,
       requirePhrase: requirePhrase,
@@ -632,11 +667,13 @@ class TrainingSession {
       return;
     }
     final canUseListening = allowListening;
+    final canUseSpeech = allowSpeech;
     final taskKind =
         forcedTaskKind ??
         _pickTaskKind(
           canUsePhrase: canUsePhrase,
           canUseListening: canUseListening,
+          canUseSpeech: canUseSpeech,
         );
 
     _currentPoolIndex = poolIndex;
