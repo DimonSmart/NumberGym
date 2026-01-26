@@ -34,20 +34,7 @@ class IntroScreen extends StatelessWidget {
             ),
           ),
           Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.65),
-                    Colors.black.withValues(alpha: 0.2),
-                    Colors.black.withValues(alpha: 0.75),
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
-                ),
-              ),
-            ),
+            child: SizedBox.shrink(),
           ),
           SafeArea(
             child: Padding(
@@ -99,13 +86,13 @@ class IntroScreen extends StatelessWidget {
                   Text(
                     'Numbers Gym',
                     style: theme.textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
+                          color: Colors.blue.shade700,
                           fontWeight: FontWeight.w700,
                         ) ??
                         const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: Colors.blue,
                         ),
                   ),
                   const SizedBox(height: 12),
@@ -113,13 +100,13 @@ class IntroScreen extends StatelessWidget {
                     'Practice English numbers by listening, speaking, and quick '
                     'quizzes. Build confidence in a few minutes a day.',
                     style: theme.textTheme.titleMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.blue.shade700,
                           height: 1.3,
                         ) ??
                         const TextStyle(
                           fontSize: 18,
                           height: 1.3,
-                          color: Colors.white70,
+                          color: Colors.blue,
                         ),
                   ),
                   const Spacer(),

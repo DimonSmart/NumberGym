@@ -122,6 +122,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
         final hintText = _controller.hintText;
 
         return Scaffold(
+          backgroundColor: Colors.transparent,
           body: TrainingBackground(
             child: Stack(
               children: [
