@@ -82,7 +82,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   String? _previewHeardText;
   List<String> _previewHeardTokens = const <String>[];
   List<int> _previewMatchedIndices = const <int>[];
-  bool _forceDefaultLocale = false;
   bool _suppressNextClientError = false;
   int _consecutiveClientErrors = 0;
   bool _speechReady = false;
@@ -105,7 +104,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _resetMatcher();
     _cardActive = true;
     _reportedInteraction = false;
-    _forceDefaultLocale = false;
     _suppressNextClientError = false;
     _consecutiveClientErrors = 0;
     _timerHasStarted = false;
@@ -581,12 +579,6 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       _log('Speech error ignored: deadline already passed.');
       return;
     }
-    if (_isLanguageUnavailableError(error) && !_forceDefaultLocale) {
-      _forceDefaultLocale = true;
-      _log('Speech language unavailable. Falling back to system default.');
-      await _restartListeningAfterLocaleFallback();
-      return;
-    }
     final isAttemptError =
         _isSpeechTimeoutError(error) || _isNoMatchError(error);
     if (_isClientError(error)) {
@@ -654,25 +646,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     unawaited(_enqueue(() => _handleSpeechStatus(status)));
   }
 
-  Future<void> _restartListeningAfterLocaleFallback() async {
-    if (!_cardActive) return;
-    if (_deadlinePassed) return;
-    _suppressNextClientError = false;
-    _activeAttemptId = null;
-    _pendingListenAttemptId = null;
-    _listenStartTimer?.cancel();
-    _listenStartTimer = null;
-    if (_speechService.isListening) {
-      await _speechService.stop();
-    }
-    _markListeningStopped(source: 'locale-fallback');
-    await Future.delayed(_listenRestartDelay);
-    if (_deadlinePassed || !_cardActive) return;
-    await _startListening();
-  }
-
   String? _resolveLocaleId(LearningLanguage language) {
-    if (_forceDefaultLocale) return null;
     final preferred = _preferredLocaleId(language);
     if (preferred != null) {
       final preferredNormalized = _normalizeLocaleId(preferred);
