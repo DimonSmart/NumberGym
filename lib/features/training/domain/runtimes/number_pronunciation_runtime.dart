@@ -600,7 +600,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       if (shouldPause) {
         emitEvent(
           const TaskError(
-            'Speech recognition stopped. Tap Start to try again.',
+            'Speech recognition stopped. Tap Try again to resume.',
           ),
         );
         await _stopAttempt(stopTimer: true);

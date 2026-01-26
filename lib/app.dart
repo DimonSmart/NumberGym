@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import 'features/training/data/card_progress.dart';
-import 'features/training/ui/screens/training_screen.dart';
+import 'features/intro/ui/screens/intro_screen.dart';
 
 class NumbersTrainerApp extends StatelessWidget {
   final Box<String> settingsBox;
@@ -23,14 +23,14 @@ class NumbersTrainerApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Numbers Trainer',
+      title: 'Numbers Gym',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,
         fontFamily: 'SpaceGrotesk',
         scaffoldBackgroundColor: colorScheme.surface,
       ),
-      home: TrainingScreen(
+      home: IntroScreen(
         settingsBox: settingsBox,
         progressBox: progressBox,
       ),

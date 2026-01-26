@@ -76,6 +76,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/animations/
+    - assets/images/
 
   fonts:
     - family: SpaceGrotesk

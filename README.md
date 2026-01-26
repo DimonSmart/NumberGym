@@ -1,4 +1,4 @@
-# Numbers Trainer
+# Numbers Gym
 
 Speech-driven training app for practicing spoken answers with short cards. It starts with
 number pronunciation (0-100) in English and Spanish and is built to expand into other

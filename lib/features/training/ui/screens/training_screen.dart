@@ -31,6 +31,7 @@ class TrainingScreen extends StatefulWidget {
 class _TrainingScreenState extends State<TrainingScreen> {
   late final TrainingController _controller;
   bool _sendingPronunciation = false;
+  bool _startingTraining = false;
 
   static const String _successAnimationPrefix = 'assets/animations/success/';
   static const String _fallbackSuccessAnimation =
@@ -46,13 +47,29 @@ class _TrainingScreenState extends State<TrainingScreen> {
       settingsRepository: SettingsRepository(widget.settingsBox),
       progressRepository: ProgressRepository(widget.progressBox),
     );
-    _controller.initialize();
+    _initializeAndStart();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _initializeAndStart() async {
+    await _controller.initialize();
+    if (!mounted) return;
+    await _ensureTrainingStarted();
+  }
+
+  Future<void> _ensureTrainingStarted() async {
+    if (!mounted || _startingTraining) return;
+    _startingTraining = true;
+    try {
+      await _controller.startTraining();
+    } finally {
+      _startingTraining = false;
+    }
   }
 
   Future<void> _openOverlay(Widget screen) async {
@@ -65,6 +82,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
     if (!mounted) return;
     await _controller.restoreAfterOverlay();
+    if (!mounted) return;
+    await _ensureTrainingStarted();
   }
 
   Future<void> _openSettings() async {
@@ -95,17 +114,12 @@ class _TrainingScreenState extends State<TrainingScreen> {
         final remainingCount = _controller.remainingCount;
         final statusMessage = _buildStatusMessage();
         final status = _controller.status;
-        final isActiveSession =
-            status == TrainerStatus.running ||
-            status == TrainerStatus.waitingRecording;
-        final controlEnabled = isActiveSession || _controller.hasRemainingCards;
         final feedback = _controller.feedback;
         final feedbackText = feedback?.text;
         final feedbackColor = feedback == null
             ? null
             : _resolveFeedbackColor(theme, feedback.type);
         final hintText = _controller.hintText;
-        final isWaitingRecording = _controller.isAwaitingRecording;
 
         return Scaffold(
           body: TrainingBackground(
@@ -119,7 +133,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                         child: Row(
                           children: [
                             Text(
-                              'Numbers Trainer',
+                              'Numbers Gym',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -195,12 +209,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildTrainingButton(
-                        theme,
-                        isActiveSession,
-                        controlEnabled,
-                        isWaitingRecording,
-                      ),
+                      _buildStopButton(theme),
                       const SizedBox(height: 18),
                     ],
                   ),
@@ -214,44 +223,32 @@ class _TrainingScreenState extends State<TrainingScreen> {
     );
   }
 
-  Widget _buildTrainingButton(
-    ThemeData theme,
-    bool isActiveSession,
-    bool enabled,
-    bool isWaitingRecording,
-  ) {
-    final label = isActiveSession ? 'Stop' : 'Start';
-    final icon = isActiveSession
-        ? (isWaitingRecording ? Icons.stop_circle : Icons.stop)
-        : Icons.play_arrow;
-    final backgroundColor = isActiveSession
-        ? theme.colorScheme.error
-        : theme.colorScheme.primary;
-    final foregroundColor = isActiveSession
-        ? theme.colorScheme.onError
-        : theme.colorScheme.onPrimary;
-
+  Widget _buildStopButton(ThemeData theme) {
     return SizedBox(
       width: 160,
       height: 48,
       child: FilledButton.icon(
-        onPressed: enabled
-            ? () async {
-                if (isActiveSession) {
-                  await _controller.stopTraining();
-                } else {
-                  await _controller.startTraining();
-                }
-              }
-            : null,
+        onPressed: _handleStopTraining,
         style: FilledButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
+          backgroundColor: theme.colorScheme.error,
+          foregroundColor: theme.colorScheme.onError,
         ),
-        icon: Icon(icon),
-        label: Text(label),
+        icon: const Icon(Icons.stop),
+        label: const Text('Stop'),
       ),
     );
+  }
+
+  Future<void> _handleStopTraining() async {
+    await _controller.stopTraining();
+    if (!mounted) return;
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> _handleRetry() async {
+    await _controller.retryInitSpeech();
+    if (!mounted) return;
+    await _ensureTrainingStarted();
   }
 
   Widget _buildTaskContent(
@@ -1052,7 +1049,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
           ),
           const SizedBox(height: 12),
           FilledButton.tonal(
-            onPressed: _controller.retryInitSpeech,
+            onPressed: _handleRetry,
             child: const Text('Try again'),
           ),
         ],
@@ -1222,39 +1219,31 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return 'All cards learned. Reset progress to start again.';
     }
     if (status == TrainerStatus.paused) {
-      return 'Paused. Tap Start to begin again.';
+      return 'Paused. Tap Stop to return to the start screen.';
     }
     if (status == TrainerStatus.waitingRecording) {
-      return 'Waiting to record phrase. Start recording when ready.';
+      return 'Waiting to record phrase. Tap Record when ready.';
+    }
+    if (status == TrainerStatus.idle) {
+      return 'Preparing the next task...';
     }
     final taskKind = _controller.currentTaskKind;
-    if (taskKind == TrainingTaskKind.numberToWord) {
-      if (status == TrainerStatus.running) {
-        return 'Select the correct answer for the number.';
-      }
-      return 'Tap Start to begin.';
-    }
-    if (taskKind == TrainingTaskKind.wordToNumber) {
-      if (status == TrainerStatus.running) {
-        return 'Select the number matching the text.';
-      }
-      return 'Tap Start to begin.';
-    }
-    if (taskKind == TrainingTaskKind.listeningNumbers) {
-      if (status == TrainerStatus.running) {
-        return 'Listen and select the correct number. Tap ? to hear again.';
-      }
-      return 'Tap Start to begin.';
-    }
     if (taskKind == TrainingTaskKind.numberPronunciation) {
       if (!_controller.speechReady) {
-        return 'Tap Start to request microphone access.';
+        return 'Microphone access is required to continue.';
       }
-      if (status == TrainerStatus.running) {
-        return 'Listening...';
-      }
+      return 'Listening...';
     }
-    return 'Tap Start to begin.';
+    if (taskKind == TrainingTaskKind.numberToWord) {
+      return 'Select the correct answer for the number.';
+    }
+    if (taskKind == TrainingTaskKind.wordToNumber) {
+      return 'Select the number matching the text.';
+    }
+    if (taskKind == TrainingTaskKind.listeningNumbers) {
+      return 'Listen and select the correct number. Tap ? to hear again.';
+    }
+    return 'Get ready for the next task.';
   }
 
   Color _resolveFeedbackColor(ThemeData theme, TrainingFeedbackType type) {
