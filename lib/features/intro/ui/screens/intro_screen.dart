@@ -11,8 +11,9 @@ import '../../../training/domain/learning_language.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
+import 'about_screen.dart';
 
-enum _IntroMenuAction { statistics, settings }
+enum _IntroMenuAction { statistics, settings, about }
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({
@@ -42,10 +43,12 @@ class _IntroScreenState extends State<IntroScreen> {
     _progressRepository = ProgressRepository(widget.progressBox);
     _language = SettingsRepository(widget.settingsBox).readLearningLanguage();
     _loadProgress();
-    _progressSubscription =
-        widget.progressBox.watch().listen((_) => _loadProgress());
-    _settingsSubscription =
-        widget.settingsBox.watch().listen((_) => _loadProgress());
+    _progressSubscription = widget.progressBox.watch().listen(
+      (_) => _loadProgress(),
+    );
+    _settingsSubscription = widget.settingsBox.watch().listen(
+      (_) => _loadProgress(),
+    );
   }
 
   @override
@@ -56,14 +59,14 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> _loadProgress() async {
-    final language = SettingsRepository(widget.settingsBox).readLearningLanguage();
+    final language = SettingsRepository(
+      widget.settingsBox,
+    ).readLearningLanguage();
     final ids = buildNumberCardIds();
-    final progress = await _progressRepository.loadAll(
-      ids,
-      language: language,
-    );
-    final learnedCount =
-        progress.values.where((progress) => progress.learned).length;
+    final progress = await _progressRepository.loadAll(ids, language: language);
+    final learnedCount = progress.values
+        .where((progress) => progress.learned)
+        .length;
     final allLearned = ids.isNotEmpty && learnedCount == ids.length;
 
     if (!mounted) return;
@@ -88,9 +91,7 @@ class _IntroScreenState extends State<IntroScreen> {
               alignment: Alignment.topCenter,
             ),
           ),
-          Positioned.fill(
-            child: SizedBox.shrink(),
-          ),
+          Positioned.fill(child: SizedBox.shrink()),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
@@ -108,6 +109,9 @@ class _IntroScreenState extends State<IntroScreen> {
                               break;
                             case _IntroMenuAction.settings:
                               _openSettings(context);
+                              break;
+                            case _IntroMenuAction.about:
+                              _openAbout(context);
                               break;
                           }
                         },
@@ -129,6 +133,16 @@ class _IntroScreenState extends State<IntroScreen> {
                                 Icon(Icons.settings, size: 18),
                                 SizedBox(width: 8),
                                 Text('Settings'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: _IntroMenuAction.about,
+                            child: Row(
+                              children: const [
+                                Icon(Icons.info_outline, size: 18),
+                                SizedBox(width: 8),
+                                Text('About'),
                               ],
                             ),
                           ),
@@ -158,7 +172,8 @@ class _IntroScreenState extends State<IntroScreen> {
                   ),
                   Text(
                     'Numbers Gym',
-                    style: theme.textTheme.displaySmall?.copyWith(
+                    style:
+                        theme.textTheme.displaySmall?.copyWith(
                           color: Colors.blue.shade700,
                           fontWeight: FontWeight.w700,
                         ) ??
@@ -172,7 +187,8 @@ class _IntroScreenState extends State<IntroScreen> {
                   Text(
                     'Practice English numbers by listening, speaking, and quick '
                     'quizzes. Build confidence in a few minutes a day.',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style:
+                        theme.textTheme.titleMedium?.copyWith(
                           color: Colors.blue.shade700,
                           height: 1.3,
                         ) ??
@@ -272,11 +288,19 @@ class _IntroScreenState extends State<IntroScreen> {
         .then((_) => _loadProgress());
   }
 
+  void _openAbout(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const AboutScreen()));
+  }
+
   void _openStatistics(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            StatisticsScreen(progressBox: widget.progressBox, language: _language),
+        builder: (context) => StatisticsScreen(
+          progressBox: widget.progressBox,
+          language: _language,
+        ),
       ),
     );
   }
