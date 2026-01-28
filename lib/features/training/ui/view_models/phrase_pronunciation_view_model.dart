@@ -15,7 +15,6 @@ class PhrasePronunciationViewModel {
     required this.showRecordAgainButton,
     required this.showSendButton,
     required this.showNextButton,
-    required this.disableRecordAgain,
     required this.disableSend,
     required this.sendLabel,
     required this.showSendProgress,
@@ -33,7 +32,6 @@ class PhrasePronunciationViewModel {
   final bool showRecordAgainButton;
   final bool showSendButton;
   final bool showNextButton;
-  final bool disableRecordAgain;
   final bool disableSend;
   final String sendLabel;
   final bool showSendProgress;
@@ -41,6 +39,7 @@ class PhrasePronunciationViewModel {
   bool get isRecording => flow == PhraseFlow.recording;
   bool get isReviewing => flow == PhraseFlow.reviewing;
   bool get isSending => flow == PhraseFlow.sending;
+  bool get isRecorded => flow == PhraseFlow.recorded;
 
   factory PhrasePronunciationViewModel.fromState({
     required PhrasePronunciationState task,
@@ -50,12 +49,12 @@ class PhrasePronunciationViewModel {
     final isRecording = flow == PhraseFlow.recording;
     final isReviewing = flow == PhraseFlow.reviewing;
     final isSending = flow == PhraseFlow.sending;
+    final isRecorded = flow == PhraseFlow.recorded;
     final hasRecording = task.hasRecording;
 
     final showRecordButton = !isRecording && !hasRecording && !isReviewing;
     final showStopButton = isRecording;
-    final showRecordAgainButton =
-        !isRecording && (hasRecording || isReviewing);
+    final showRecordAgainButton = isRecorded;
     final showSendButton = !isRecording && hasRecording && !isReviewing;
     final showNextButton = !isRecording && isReviewing;
 
@@ -78,7 +77,6 @@ class PhrasePronunciationViewModel {
       showRecordAgainButton: showRecordAgainButton,
       showSendButton: showSendButton,
       showNextButton: showNextButton,
-      disableRecordAgain: isSending,
       disableSend: isSending,
       sendLabel: isSending ? 'Sending...' : 'Send',
       showSendProgress: isSending,

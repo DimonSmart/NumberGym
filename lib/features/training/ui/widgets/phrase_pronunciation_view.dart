@@ -67,9 +67,7 @@ class PhrasePronunciationView extends StatelessWidget {
               ),
             if (viewModel.showRecordAgainButton)
               FilledButton.tonalIcon(
-                onPressed: viewModel.disableRecordAgain
-                    ? null
-                    : () async => onRecordAgain(),
+                onPressed: () async => onRecordAgain(),
                 icon: const Icon(Icons.mic_none),
                 label: const Text('Record again'),
               ),
