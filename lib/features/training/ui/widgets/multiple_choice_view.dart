@@ -45,10 +45,15 @@ class MultipleChoiceView extends StatelessWidget {
                 onPressed: () => onOptionSelected(option),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    option,
-                    style: viewModel.optionStyle,
-                    textAlign: TextAlign.center,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      option,
+                      style: viewModel.optionStyle,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
                   ),
                 ),
               ),
