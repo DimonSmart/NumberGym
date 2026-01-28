@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/task_state.dart';
-import '../../domain/training_state.dart';
 import '../../domain/training_task.dart';
 import 'training_feedback_view_model.dart';
 
@@ -36,7 +35,6 @@ class MultipleChoiceViewModel {
 
   factory MultipleChoiceViewModel.fromState({
     required ThemeData theme,
-    required TrainerStatus status,
     required MultipleChoiceState task,
     required TrainingFeedbackViewModel feedback,
   }) {
@@ -61,7 +59,7 @@ class MultipleChoiceViewModel {
       feedbackText: feedback.text,
       feedbackColor: feedback.color,
       timer: task.timer,
-      isTimerActive: status == TrainerStatus.running,
+      isTimerActive: task.timer.isRunning,
       taskKey: task.numberValue,
     );
   }

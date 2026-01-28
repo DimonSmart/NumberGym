@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'task_runtime.dart';
 import 'task_state.dart';
-import 'training_state.dart';
 
 class RuntimeCoordinator {
   RuntimeCoordinator({
@@ -19,21 +18,14 @@ class RuntimeCoordinator {
   StreamSubscription<TaskState>? _runtimeStates;
   TaskState? _currentTaskState;
 
-  TrainerStatus _status = TrainerStatus.idle;
   bool _speechReady = false;
   bool _taskHadUserInteraction = false;
 
-  TrainerStatus get status => _status;
   TaskState? get currentTask => _currentTaskState;
   bool get speechReady => _speechReady;
   bool get taskHadUserInteraction => _taskHadUserInteraction;
   TaskRuntime? get runtime => _runtime;
-
-  void setStatus(TrainerStatus status) {
-    if (_status == status) return;
-    _status = status;
-    _onChanged();
-  }
+  bool get isActive => _runtime != null;
 
   void resetInteraction() {
     _taskHadUserInteraction = false;
@@ -56,7 +48,6 @@ class RuntimeCoordinator {
       _speechReady =
           (_currentTaskState as NumberPronunciationState).speechReady;
     }
-    _status = TrainerStatus.running;
     _onChanged();
     await runtime.start();
   }

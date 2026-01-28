@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/task_state.dart';
-import '../../domain/training_state.dart';
 import 'training_feedback_view_model.dart';
 
 class SpeechRecognitionLine {
@@ -51,7 +50,6 @@ class NumberPronunciationViewModel {
 
   factory NumberPronunciationViewModel.fromState({
     required NumberPronunciationState? task,
-    required TrainerStatus status,
     required TrainingFeedbackViewModel feedback,
   }) {
     final displayText = task?.displayText ?? '--';
@@ -66,9 +64,9 @@ class NumberPronunciationViewModel {
       feedbackText: feedback.text,
       feedbackColor: feedback.color,
       timer: task?.timer ?? TimerState.zero,
-      isTimerActive: status == TrainerStatus.running,
+      isTimerActive: task?.timer.isRunning ?? false,
       taskKey: task?.numberValue ?? -1,
-      showSoundWave: status == TrainerStatus.running,
+      showSoundWave: task?.timer.isRunning ?? false,
       speechLines: _buildSpeechLines(task),
     );
   }

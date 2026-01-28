@@ -41,12 +41,14 @@ class TrainingController extends ChangeNotifier {
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
     stt.SpeechToText? speech,
+    VoidCallback? onAutoStop,
   }) {
     _session = TrainingSession(
       settingsRepository: settingsRepository,
       progressRepository: progressRepository,
       services: services ?? TrainingServices.defaults(speech: speech),
       onStateChanged: _notify,
+      onAutoStop: onAutoStop,
     );
   }
 
@@ -54,7 +56,6 @@ class TrainingController extends ChangeNotifier {
   bool _disposed = false;
 
   TrainingState get state => _session.state;
-  TrainerStatus get status => _session.state.status;
   bool get speechReady => _session.state.speechReady;
   String? get errorMessage => _session.state.errorMessage;
   TrainingFeedback? get feedback => _session.state.feedback;

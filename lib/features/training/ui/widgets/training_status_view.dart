@@ -15,17 +15,19 @@ class TrainingStatusView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final showMessage = viewModel.message.isNotEmpty;
     return Column(
       children: [
-        Text(
-          viewModel.message,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+        if (showMessage)
+          Text(
+            viewModel.message,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
-        ),
         if (viewModel.hasError) ...[
-          const SizedBox(height: 16),
+          if (showMessage) const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(

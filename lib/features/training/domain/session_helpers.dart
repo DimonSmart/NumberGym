@@ -41,7 +41,7 @@ class SilentDetector {
     }
   }
 
-  bool get shouldPause => _streak >= threshold;
+  bool get shouldStop => _streak >= threshold;
 }
 
 class InternetGate {

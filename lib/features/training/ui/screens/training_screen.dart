@@ -18,10 +18,6 @@ import '../widgets/number_pronunciation_view.dart';
 import '../widgets/phrase_pronunciation_view.dart';
 import '../widgets/training_background.dart';
 import '../widgets/training_status_view.dart';
-import 'settings_screen.dart';
-import 'statistics_screen.dart';
-
-enum _TrainerMenuAction { statistics, settings }
 
 class TrainingScreen extends StatefulWidget {
   final Box<String> settingsBox;
@@ -54,6 +50,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     _controller = TrainingController(
       settingsRepository: SettingsRepository(widget.settingsBox),
       progressRepository: ProgressRepository(widget.progressBox),
+      onAutoStop: _handleAutoStop,
     );
     _initializeAndStart();
   }
@@ -78,38 +75,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
     } finally {
       _startingTraining = false;
     }
-  }
-
-  Future<void> _openOverlay(Widget screen) async {
-    await _controller.pauseForOverlay();
-    if (!mounted) return;
-
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => screen));
-
-    if (!mounted) return;
-    await _controller.restoreAfterOverlay();
-    if (!mounted) return;
-    await _ensureTrainingStarted();
-  }
-
-  Future<void> _openSettings() async {
-    await _openOverlay(
-      SettingsScreen(
-        settingsBox: widget.settingsBox,
-        progressBox: widget.progressBox,
-      ),
-    );
-  }
-
-  Future<void> _openStatistics() async {
-    final language = SettingsRepository(
-      widget.settingsBox,
-    ).readLearningLanguage();
-    await _openOverlay(
-      StatisticsScreen(progressBox: widget.progressBox, language: language),
-    );
   }
 
   @override
@@ -156,43 +121,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
                               '$remainingCount remaining',
                               style: theme.textTheme.labelMedium,
                             ),
-                            const SizedBox(width: 8),
-                            PopupMenuButton<_TrainerMenuAction>(
-                              onSelected: (value) {
-                                switch (value) {
-                                  case _TrainerMenuAction.statistics:
-                                    _openStatistics();
-                                    break;
-                                  case _TrainerMenuAction.settings:
-                                    _openSettings();
-                                    break;
-                                }
-                              },
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  value: _TrainerMenuAction.statistics,
-                                  child: Row(
-                                    children: const [
-                                      Icon(Icons.bar_chart, size: 18),
-                                      SizedBox(width: 8),
-                                      Text('Statistics'),
-                                    ],
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  value: _TrainerMenuAction.settings,
-                                  child: Row(
-                                    children: const [
-                                      Icon(Icons.settings, size: 18),
-                                      SizedBox(width: 8),
-                                      Text('Settings'),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              icon: const Icon(Icons.more_vert),
-                              tooltip: 'Menu',
-                            ),
                           ],
                         ),
                       ),
@@ -236,7 +164,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (task is MultipleChoiceState) {
       final viewModel = MultipleChoiceViewModel.fromState(
         theme: theme,
-        status: _controller.status,
         task: task,
         feedback: feedbackViewModel,
       );
@@ -248,7 +175,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (task is ListeningNumbersState) {
       final viewModel = ListeningNumbersViewModel.fromState(
         theme: theme,
-        status: _controller.status,
         task: task,
         feedback: feedbackViewModel,
       );
@@ -273,7 +199,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
     final viewModel = NumberPronunciationViewModel.fromState(
       task: _controller.numberPronunciationState,
-      status: _controller.status,
       feedback: feedbackViewModel,
     );
     return NumberPronunciationView(
@@ -284,16 +209,16 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Widget _buildStopButton(ThemeData theme) {
     return SizedBox(
-      width: 160,
+      width: 200,
       height: 48,
       child: FilledButton.icon(
         onPressed: _handleStopTraining,
         style: FilledButton.styleFrom(
-          backgroundColor: theme.colorScheme.error,
-          foregroundColor: theme.colorScheme.onError,
+          backgroundColor: theme.colorScheme.secondaryContainer,
+          foregroundColor: theme.colorScheme.onSecondaryContainer,
         ),
-        icon: const Icon(Icons.stop),
-        label: const Text('Stop'),
+        icon: const Icon(Icons.flag_outlined),
+        label: const Text('End training'),
       ),
     );
   }
@@ -355,5 +280,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
         SnackBar(content: Text('Pronunciation scoring failed: $error')),
       );
     }
+  }
+
+  void _handleAutoStop() {
+    if (!mounted) return;
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

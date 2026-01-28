@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/task_state.dart';
-import '../../domain/training_state.dart';
 import 'training_feedback_view_model.dart';
 
 class ListeningNumbersViewModel {
@@ -37,7 +36,6 @@ class ListeningNumbersViewModel {
 
   factory ListeningNumbersViewModel.fromState({
     required ThemeData theme,
-    required TrainerStatus status,
     required ListeningNumbersState task,
     required TrainingFeedbackViewModel feedback,
   }) {
@@ -57,7 +55,7 @@ class ListeningNumbersViewModel {
       feedbackText: feedback.text,
       feedbackColor: feedback.color,
       timer: task.timer,
-      isTimerActive: status == TrainerStatus.running,
+      isTimerActive: task.timer.isRunning,
       taskKey: task.numberValue,
     );
   }

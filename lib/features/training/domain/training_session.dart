@@ -35,10 +35,12 @@ class TrainingSession {
     PhraseTemplates? phraseTemplates,
     TaskRegistry? taskRegistry,
     void Function()? onStateChanged,
+    void Function()? onAutoStop,
   })  : _settingsRepository = settingsRepository,
         _progressRepository = progressRepository,
         _services = services ?? TrainingServices.defaults(),
-        _onStateChanged = onStateChanged ?? _noop {
+        _onStateChanged = onStateChanged ?? _noop,
+        _onAutoStop = onAutoStop ?? _noop {
     final resolvedTemplates = phraseTemplates ?? PhraseTemplates(Random());
     _languageRouter = LanguageRouter(
       settingsRepository: _settingsRepository,
@@ -82,6 +84,7 @@ class TrainingSession {
   final SettingsRepositoryBase _settingsRepository;
   final ProgressRepositoryBase _progressRepository;
   final void Function() _onStateChanged;
+  final void Function() _onAutoStop;
   late final LanguageRouter _languageRouter;
   late final TaskRegistry _taskRegistry;
   late final TaskScheduler _taskScheduler;
@@ -98,6 +101,7 @@ class TrainingSession {
   final StreakTracker _streakTracker = StreakTracker();
 
   bool _disposed = false;
+  bool _trainingActive = false;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -132,10 +136,7 @@ class TrainingSession {
   }
 
   Future<void> startTraining() async {
-    final status = _runtimeCoordinator.status;
-    if (status == TrainerStatus.running) {
-      return;
-    }
+    if (_trainingActive) return;
 
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
@@ -148,14 +149,14 @@ class TrainingSession {
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
     );
     if (!_progressManager.hasRemainingCards) {
-      _runtimeCoordinator.setStatus(TrainerStatus.finished);
+      _trainingActive = false;
       unawaited(_setKeepAwake(false));
       _syncState();
       return;
     }
 
     _errorMessage = null;
-    _runtimeCoordinator.setStatus(TrainerStatus.running);
+    _trainingActive = true;
     _silentDetector.reset();
     _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
@@ -168,7 +169,7 @@ class TrainingSession {
     _feedbackCoordinator.clear();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _services.soundWave.reset();
-    _runtimeCoordinator.setStatus(TrainerStatus.idle);
+    _trainingActive = false;
     _errorMessage = null;
     _progressManager.resetSelection();
     _premiumPronunciationEnabled =
@@ -183,7 +184,7 @@ class TrainingSession {
 
   Future<void> pauseForOverlay() async {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
-    _runtimeCoordinator.setStatus(TrainerStatus.idle);
+    _trainingActive = false;
     await _setKeepAwake(false);
     _syncState();
   }
@@ -197,7 +198,7 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _silentDetector.reset();
     _runtimeCoordinator.resetInteraction();
-    _runtimeCoordinator.setStatus(TrainerStatus.idle);
+    _trainingActive = false;
     await _setKeepAwake(false);
     _syncState();
   }
@@ -214,7 +215,6 @@ class TrainingSession {
   void _syncState() {
     if (_disposed) return;
     _state = TrainingState(
-      status: _runtimeCoordinator.status,
       speechReady: _runtimeCoordinator.speechReady,
       errorMessage: _errorMessage,
       feedback: _feedbackCoordinator.feedback,
@@ -458,12 +458,11 @@ class TrainingSession {
   }
 
   Future<void> _startNextCard() async {
-    final status = _runtimeCoordinator.status;
-    if (status != TrainerStatus.running) {
+    if (!_trainingActive) {
       return;
     }
     if (!_progressManager.hasRemainingCards) {
-      _runtimeCoordinator.setStatus(TrainerStatus.finished);
+      _trainingActive = false;
       unawaited(_setKeepAwake(false));
       _syncState();
       return;
@@ -478,7 +477,7 @@ class TrainingSession {
       forcedTaskKind: _debugForcedTaskKind,
     );
     if (scheduleResult is TaskScheduleFinished) {
-      _runtimeCoordinator.setStatus(TrainerStatus.finished);
+      _trainingActive = false;
       unawaited(_setKeepAwake(false));
       _syncState();
       return;
@@ -547,8 +546,9 @@ class TrainingSession {
         language: _currentLanguage(),
       );
       if (progressResult.learned && progressResult.poolEmpty) {
-        _runtimeCoordinator.setStatus(TrainerStatus.finished);
+        _trainingActive = false;
         unawaited(_setKeepAwake(false));
+        _syncState();
       }
     }
 
@@ -558,15 +558,15 @@ class TrainingSession {
       interacted: _runtimeCoordinator.taskHadUserInteraction,
       affectsProgress: affectsProgress,
     );
-    if (_silentDetector.shouldPause) {
-      await _pauseTraining();
+    if (_silentDetector.shouldStop) {
+      await stopTraining();
+      _onAutoStop();
       return;
     }
 
     await feedbackHold;
     if (_disposed) return;
-    final status = _runtimeCoordinator.status;
-    if (status != TrainerStatus.running) {
+    if (!_trainingActive) {
       return;
     }
 
@@ -575,7 +575,7 @@ class TrainingSession {
 
   Future<void> _pauseTraining() async {
     await _runtimeCoordinator.disposeRuntime(clearState: false);
-    _runtimeCoordinator.setStatus(TrainerStatus.idle);
+    _trainingActive = false;
     _syncState();
     unawaited(_setKeepAwake(false));
   }

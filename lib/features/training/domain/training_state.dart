@@ -1,7 +1,5 @@
 import 'task_state.dart';
 
-enum TrainerStatus { idle, running, finished }
-
 enum TrainingFeedbackType { correct, wrong, timeout, skipped }
 
 class TrainingFeedback {
@@ -15,14 +13,12 @@ class TrainingFeedback {
 }
 
 class TrainingState {
-  final TrainerStatus status;
   final bool speechReady;
   final String? errorMessage;
   final TrainingFeedback? feedback;
   final TaskState? currentTask;
 
   const TrainingState({
-    required this.status,
     required this.speechReady,
     required this.errorMessage,
     required this.feedback,
@@ -31,7 +27,6 @@ class TrainingState {
 
   factory TrainingState.initial() {
     return const TrainingState(
-      status: TrainerStatus.idle,
       speechReady: false,
       errorMessage: null,
       feedback: null,

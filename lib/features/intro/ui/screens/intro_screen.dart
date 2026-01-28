@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../../training/data/card_progress.dart';
+import '../../../training/data/number_cards.dart';
+import '../../../training/data/progress_repository.dart';
 import '../../../training/data/settings_repository.dart';
+import '../../../training/domain/learning_language.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
 
 enum _IntroMenuAction { statistics, settings }
 
-class IntroScreen extends StatelessWidget {
+class IntroScreen extends StatefulWidget {
   const IntroScreen({
     super.key,
     required this.settingsBox,
@@ -18,6 +23,56 @@ class IntroScreen extends StatelessWidget {
 
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+
+  @override
+  State<IntroScreen> createState() => _IntroScreenState();
+}
+
+class _IntroScreenState extends State<IntroScreen> {
+  late final ProgressRepository _progressRepository;
+  late LearningLanguage _language;
+  StreamSubscription? _progressSubscription;
+  StreamSubscription? _settingsSubscription;
+  bool _allLearned = false;
+  bool _loadingProgress = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _progressRepository = ProgressRepository(widget.progressBox);
+    _language = SettingsRepository(widget.settingsBox).readLearningLanguage();
+    _loadProgress();
+    _progressSubscription =
+        widget.progressBox.watch().listen((_) => _loadProgress());
+    _settingsSubscription =
+        widget.settingsBox.watch().listen((_) => _loadProgress());
+  }
+
+  @override
+  void dispose() {
+    _progressSubscription?.cancel();
+    _settingsSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadProgress() async {
+    final language = SettingsRepository(widget.settingsBox).readLearningLanguage();
+    final ids = buildNumberCardIds();
+    final progress = await _progressRepository.loadAll(
+      ids,
+      language: language,
+    );
+    final learnedCount =
+        progress.values.where((progress) => progress.learned).length;
+    final allLearned = ids.isNotEmpty && learnedCount == ids.length;
+
+    if (!mounted) return;
+    setState(() {
+      _language = language;
+      _allLearned = allLearned;
+      _loadingProgress = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +133,25 @@ class IntroScreen extends StatelessWidget {
                             ),
                           ),
                         ],
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
+                        icon: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.62),
+                            shape: BoxShape.circle,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
                         tooltip: 'Menu',
                       ),
                     ],
@@ -110,34 +183,7 @@ class IntroScreen extends StatelessWidget {
                         ),
                   ),
                   const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: FilledButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => TrainingScreen(
-                              settingsBox: settingsBox,
-                              progressBox: progressBox,
-                            ),
-                          ),
-                        );
-                      },
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black87,
-                        textStyle: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text('Start'),
-                    ),
-                  ),
+                  _buildCallToAction(theme, context),
                 ],
               ),
             ),
@@ -147,23 +193,90 @@ class IntroScreen extends StatelessWidget {
     );
   }
 
-  void _openSettings(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => SettingsScreen(
-          settingsBox: settingsBox,
-          progressBox: progressBox,
+  Widget _buildCallToAction(ThemeData theme, BuildContext context) {
+    if (_loadingProgress) {
+      return const SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_allLearned) {
+      return Container(
+        width: double.infinity,
+        height: 52,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
+        alignment: Alignment.center,
+        child: Text(
+          'Все выучено',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+            color: Colors.black87,
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: FilledButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => TrainingScreen(
+                settingsBox: widget.settingsBox,
+                progressBox: widget.progressBox,
+              ),
+            ),
+          );
+        },
+        style: FilledButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          textStyle: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        child: const Text('Start'),
       ),
     );
   }
 
+  void _openSettings(BuildContext context) {
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => SettingsScreen(
+              settingsBox: widget.settingsBox,
+              progressBox: widget.progressBox,
+            ),
+          ),
+        )
+        .then((_) => _loadProgress());
+  }
+
   void _openStatistics(BuildContext context) {
-    final language = SettingsRepository(settingsBox).readLearningLanguage();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            StatisticsScreen(progressBox: progressBox, language: language),
+            StatisticsScreen(progressBox: widget.progressBox, language: _language),
       ),
     );
   }
