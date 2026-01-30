@@ -9,7 +9,10 @@ class WordToNumberTask extends NumberTrainingTask {
     required this.correctOption,
     required List<String> options,
   })  : options = List<String>.unmodifiable(options),
-        super(kind: TrainingTaskKind.wordToNumber);
+        assert(id.number == numberValue),
+        super(
+          kind: TrainingTaskKind.wordToNumber,
+        );
 
   final String prompt;
   final String correctOption;

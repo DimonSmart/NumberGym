@@ -40,7 +40,7 @@ class NumberPronunciationViewModel {
   final Color? feedbackColor;
   final TimerState timer;
   final bool isTimerActive;
-  final int taskKey;
+  final String taskKey;
   final bool showSoundWave;
   final List<SpeechRecognitionLine> speechLines;
 
@@ -65,7 +65,7 @@ class NumberPronunciationViewModel {
       feedbackColor: feedback.color,
       timer: task?.timer ?? TimerState.zero,
       isTimerActive: task?.timer.isRunning ?? false,
-      taskKey: task?.numberValue ?? -1,
+      taskKey: task?.taskId.storageKey ?? 'none',
       showSoundWave: task?.timer.isRunning ?? false,
       speechLines: _buildSpeechLines(task),
     );

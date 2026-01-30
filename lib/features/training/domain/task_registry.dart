@@ -3,6 +3,7 @@ import 'dart:math';
 import 'language_router.dart';
 import 'learning_language.dart';
 import 'task_runtime.dart';
+import 'training_item.dart';
 import 'training_services.dart';
 import 'training_task.dart';
 import 'tasks/number_pronunciation_task.dart';
@@ -22,7 +23,7 @@ class TaskBuildContext {
 
   final NumberPronunciationTask card;
   final LearningLanguage language;
-  final List<int> cardIds;
+  final List<TrainingItemId> cardIds;
   final String Function(int) toWords;
   final Duration cardDuration;
   final LanguageRouter languageRouter;

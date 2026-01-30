@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 
 import '../domain/learning_language.dart';
 import '../domain/repositories.dart';
+import '../domain/training_item.dart';
 import 'card_progress.dart';
 
 class ProgressRepository implements ProgressRepositoryBase {
@@ -10,11 +11,11 @@ class ProgressRepository implements ProgressRepositoryBase {
   ProgressRepository(this.progressBox);
 
   @override
-  Future<Map<int, CardProgress>> loadAll(
-    List<int> cardIds, {
+  Future<Map<TrainingItemId, CardProgress>> loadAll(
+    List<TrainingItemId> cardIds, {
     required LearningLanguage language,
   }) async {
-    final results = <int, CardProgress>{};
+    final results = <TrainingItemId, CardProgress>{};
     for (final id in cardIds) {
       results[id] = await _readProgress(id, language);
     }
@@ -23,7 +24,7 @@ class ProgressRepository implements ProgressRepositoryBase {
 
   @override
   Future<void> save(
-    int cardId,
+    TrainingItemId cardId,
     CardProgress progress, {
     required LearningLanguage language,
   }) async {
@@ -35,44 +36,29 @@ class ProgressRepository implements ProgressRepositoryBase {
     final scopedPrefix = _cardKeyPrefix(language);
     final keysToDelete = progressBox.keys.where((key) {
       if (key is! String) return false;
-      return key.startsWith(scopedPrefix) || _isLegacyKey(key);
+      return key.startsWith(scopedPrefix);
     }).toList();
     if (keysToDelete.isEmpty) return;
     await progressBox.deleteAll(keysToDelete);
   }
 
   Future<CardProgress> _readProgress(
-    int id,
+    TrainingItemId id,
     LearningLanguage language,
   ) async {
     final scopedKey = _cardKey(id, language);
     final scopedProgress = progressBox.get(scopedKey);
     if (scopedProgress != null) return scopedProgress;
 
-    final legacyKey = _legacyCardKey(id);
-    final legacyProgress = progressBox.get(legacyKey);
-    if (legacyProgress != null) {
-      await progressBox.put(scopedKey, legacyProgress);
-      await progressBox.delete(legacyKey);
-      return legacyProgress;
-    }
-
     return CardProgress.empty;
   }
 
-  String _cardKey(int id, LearningLanguage language) {
-    return '${_cardKeyPrefix(language)}$id';
+  String _cardKey(TrainingItemId id, LearningLanguage language) {
+    return '${_cardKeyPrefix(language)}${id.storageKey}';
   }
 
   String _cardKeyPrefix(LearningLanguage language) {
     return 'card_${language.code}_';
   }
 
-  String _legacyCardKey(int id) => 'card_$id';
-
-  static final RegExp _legacyKeyPattern = RegExp(r'^card_\d+$');
-
-  bool _isLegacyKey(String key) {
-    return _legacyKeyPattern.hasMatch(key);
-  }
 }

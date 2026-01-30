@@ -25,6 +25,7 @@ import 'tasks/number_to_word_task.dart';
 import 'training_outcome.dart';
 import 'training_services.dart';
 import 'training_state.dart';
+import 'training_item.dart';
 import 'training_task.dart';
 
 class TrainingSession {
@@ -322,14 +323,17 @@ class TrainingSession {
   }
 
   TaskRuntime _buildNumberToWordRuntime(TaskBuildContext context) {
-    final correct = context.toWords(context.card.id);
+    final correct = context.toWords(context.card.numberValue);
     final options = <String>{correct};
+    final candidateIds = _candidateIdsFor(context);
 
     while (options.length < numberToWordOptionCount) {
-      final candidateId = context.cardIds[context.random.nextInt(context.cardIds.length)];
-      if (candidateId == context.card.id) continue;
+      final candidateId =
+          candidateIds[context.random.nextInt(candidateIds.length)];
+      final candidateValue = candidateId.number!;
+      if (candidateValue == context.card.numberValue) continue;
       try {
-        final option = context.toWords(candidateId);
+        final option = context.toWords(candidateValue);
         options.add(option);
       } catch (_) {
         // Skip invalid conversions and try another number.
@@ -339,8 +343,8 @@ class TrainingSession {
     final shuffled = options.toList()..shuffle(context.random);
     return MultipleChoiceRuntime(
       kind: TrainingTaskKind.numberToWord,
-      taskId: _generateNumberToWordTaskId(context.card.id),
-      numberValue: context.card.id,
+      taskId: context.card.id,
+      numberValue: context.card.numberValue,
       prompt: context.card.prompt,
       correctOption: correct,
       options: shuffled,
@@ -350,21 +354,24 @@ class TrainingSession {
   }
 
   TaskRuntime _buildWordToNumberRuntime(TaskBuildContext context) {
-    final correctWord = context.toWords(context.card.id);
-    final correctOption = context.card.id.toString();
+    final correctWord = context.toWords(context.card.numberValue);
+    final correctOption = context.card.numberValue.toString();
     final options = <String>{correctOption};
+    final candidateIds = _candidateIdsFor(context);
 
     while (options.length < numberToWordOptionCount) {
-      final candidateId = context.cardIds[context.random.nextInt(context.cardIds.length)];
-      if (candidateId == context.card.id) continue;
-      options.add(candidateId.toString());
+      final candidateId =
+          candidateIds[context.random.nextInt(candidateIds.length)];
+      final candidateValue = candidateId.number!;
+      if (candidateValue == context.card.numberValue) continue;
+      options.add(candidateValue.toString());
     }
 
     final shuffled = options.toList()..shuffle(context.random);
     return MultipleChoiceRuntime(
       kind: TrainingTaskKind.wordToNumber,
-      taskId: _generateWordToNumberTaskId(context.card.id),
-      numberValue: context.card.id,
+      taskId: context.card.id,
+      numberValue: context.card.numberValue,
       prompt: correctWord,
       correctOption: correctOption,
       options: shuffled,
@@ -374,28 +381,30 @@ class TrainingSession {
   }
 
   TaskRuntime _buildListeningNumbersRuntime(TaskBuildContext context) {
-    final correctOption = context.card.id.toString();
+    final correctOption = context.card.numberValue.toString();
     final options = <String>{correctOption};
+    final candidateIds = _candidateIdsFor(context);
 
     while (options.length < numberToWordOptionCount) {
       final candidateId =
-          context.cardIds[context.random.nextInt(context.cardIds.length)];
-      if (candidateId == context.card.id) continue;
-      options.add(candidateId.toString());
+          candidateIds[context.random.nextInt(candidateIds.length)];
+      final candidateValue = candidateId.number!;
+      if (candidateValue == context.card.numberValue) continue;
+      options.add(candidateValue.toString());
     }
 
     final shuffled = options.toList()..shuffle(context.random);
     String speechText;
     try {
-      speechText = context.toWords(context.card.id);
+      speechText = context.toWords(context.card.numberValue);
     } catch (_) {
       speechText = correctOption;
     }
 
     final voiceId = _settingsRepository.readTtsVoiceId(context.language);
     return ListeningNumbersRuntime(
-      taskId: _generateListeningNumbersTaskId(context.card.id),
-      numberValue: context.card.id,
+      taskId: context.card.id,
+      numberValue: context.card.numberValue,
       options: shuffled,
       speechText: speechText,
       cardDuration: context.cardDuration,
@@ -408,15 +417,15 @@ class TrainingSession {
 
   TaskRuntime _buildPhrasePronunciationRuntime(TaskBuildContext context) {
     final template = _languageRouter.pickTemplate(
-      context.card.id,
+      context.card.numberValue,
       language: context.language,
     );
     if (template == null) {
       return _buildFallbackPronunciationRuntime(context);
     }
     final task = template.toTask(
-      value: context.card.id,
-      taskId: _generatePhraseTaskId(context.card.id, template.id),
+      value: context.card.numberValue,
+      taskId: context.card.id,
     );
     return PhrasePronunciationRuntime(
       task: task,
@@ -439,22 +448,6 @@ class TrainingSession {
       hintText: hintText,
       onSpeechReady: _handleSpeechReady,
     );
-  }
-
-  int _generateNumberToWordTaskId(int numberValue) {
-    return numberValue * 1000 + 500;
-  }
-
-  int _generateWordToNumberTaskId(int numberValue) {
-    return numberValue * 1000 + 501;
-  }
-
-  int _generateListeningNumbersTaskId(int numberValue) {
-    return numberValue * 1000 + 502;
-  }
-
-  int _generatePhraseTaskId(int numberValue, int templateId) {
-    return numberValue * 1000 + templateId;
   }
 
   Future<void> _startNextCard() async {
@@ -514,6 +507,13 @@ class TrainingSession {
     await _runtimeCoordinator.attach(runtime);
   }
 
+  List<TrainingItemId> _candidateIdsFor(TaskBuildContext context) {
+    final currentType = context.card.id.type;
+    return context.cardIds
+        .where((itemId) => itemId.type == currentType && itemId.number != null)
+        .toList();
+  }
+
   void _handleRuntimeEvent(TaskEvent event) {
     if (_disposed) return;
     if (event is TaskError) {
@@ -541,7 +541,7 @@ class TrainingSession {
       final isCorrect = outcome == TrainingOutcome.success;
       _streakTracker.record(isCorrect);
       final progressResult = await _progressManager.updateProgress(
-        progressKey: taskState.numberValue,
+        progressKey: taskState.taskId,
         isCorrect: isCorrect,
         language: _currentLanguage(),
       );

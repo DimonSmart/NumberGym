@@ -2,11 +2,12 @@ import '../services/card_timer.dart';
 import '../services/tts_service.dart';
 import '../task_runtime.dart';
 import '../task_state.dart';
+import '../training_item.dart';
 import '../training_outcome.dart';
 
 class ListeningNumbersRuntime extends TaskRuntimeBase {
   ListeningNumbersRuntime({
-    required int taskId,
+    required TrainingItemId taskId,
     required int numberValue,
     required List<String> options,
     required String speechText,
@@ -41,7 +42,7 @@ class ListeningNumbersRuntime extends TaskRuntimeBase {
 
   static const String _hiddenPrompt = '?';
 
-  final int _taskId;
+  final TrainingItemId _taskId;
   final int _numberValue;
   final List<String> _options;
   final String _speechText;

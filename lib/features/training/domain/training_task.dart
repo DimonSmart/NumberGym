@@ -1,3 +1,5 @@
+import 'training_item.dart';
+
 enum TrainingTaskKind {
   numberPronunciation,
   numberToWord, // Formerly numberReading
@@ -33,10 +35,26 @@ extension TrainingTaskKindX on TrainingTaskKind {
         return true;
     }
   }
+
+  Set<TrainingItemType> get supportedItemTypes {
+    switch (this) {
+      case TrainingTaskKind.numberPronunciation:
+      case TrainingTaskKind.numberToWord:
+      case TrainingTaskKind.wordToNumber:
+      case TrainingTaskKind.listeningNumbers:
+      case TrainingTaskKind.phrasePronunciation:
+        return const {
+          TrainingItemType.digits,
+          TrainingItemType.base,
+          TrainingItemType.hundreds,
+          TrainingItemType.thousands,
+        };
+    }
+  }
 }
 
 abstract class TrainingTask {
-  final int id;
+  final TrainingItemId id;
   final TrainingTaskKind kind;
 
   const TrainingTask({
@@ -45,10 +63,10 @@ abstract class TrainingTask {
   });
 
   /// Key used to track progress; by default equals [id].
-  int get progressId => id;
+  TrainingItemId get progressId => id;
 
   /// Number value the task is built around.
-  int get numberValue;
+  int? get numberValue;
 
   /// Text shown to the learner.
   String get displayText;
@@ -63,7 +81,4 @@ abstract class NumberTrainingTask extends TrainingTask {
     required super.kind,
     required this.numberValue,
   });
-
-  @override
-  int get progressId => numberValue;
 }

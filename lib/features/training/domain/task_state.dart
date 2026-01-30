@@ -1,4 +1,5 @@
 import 'pronunciation_models.dart';
+import 'training_item.dart';
 import 'training_task.dart';
 
 class TimerState {
@@ -31,8 +32,8 @@ sealed class TaskState {
   });
 
   final TrainingTaskKind kind;
-  final int taskId;
-  final int numberValue;
+  final TrainingItemId taskId;
+  final int? numberValue;
   final String displayText;
   final bool affectsProgress;
   final bool usesTimer;

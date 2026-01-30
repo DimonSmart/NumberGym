@@ -10,7 +10,7 @@ class TrainingTimerBar extends StatelessWidget {
 
   final Duration duration;
   final bool isActive;
-  final int taskKey;
+  final String taskKey;
 
   @override
   Widget build(BuildContext context) {

@@ -8,6 +8,7 @@ import 'task_availability.dart';
 import 'training_services.dart';
 import 'training_task.dart';
 import 'tasks/number_pronunciation_task.dart';
+import 'training_item.dart';
 
 sealed class TaskScheduleResult {
   const TaskScheduleResult();
@@ -137,9 +138,16 @@ class TaskScheduler {
     final allowSpeech = speechAvailability.isAvailable || requireSpeech;
 
     final picked = progressManager.pickNextCard(
-      isEligible: requirePhrase
-          ? (card) => _hasPhraseTemplate(language, card.id)
-          : (_) => true,
+      isEligible: (card) {
+        if (forcedTaskKind != null &&
+            !forcedTaskKind.supportedItemTypes.contains(card.id.type)) {
+          return false;
+        }
+        if (requirePhrase) {
+          return _hasPhraseTemplate(language, card.numberValue);
+        }
+        return true;
+      },
     );
     if (picked == null) {
       if (requirePhrase) {
@@ -147,11 +155,21 @@ class TaskScheduler {
           'Phrase pronunciation tasks are not available for the selected language.',
         );
       }
+      if (forcedTaskKind != null) {
+        return const TaskSchedulePaused(
+          'Selected task is not available for this item.',
+        );
+      }
       return const TaskScheduleFinished();
     }
 
     final card = picked.card;
-    final canUsePhrase = allowPhrase && _hasPhraseTemplate(language, card.id);
+    final itemType = card.id.type;
+    final canUsePhrase =
+        allowPhrase &&
+        TrainingTaskKind.phrasePronunciation.supportedItemTypes
+            .contains(itemType) &&
+        _hasPhraseTemplate(language, card.numberValue);
     if (requirePhrase && !canUsePhrase) {
       return const TaskSchedulePaused(
         'Phrase pronunciation tasks are not available for the selected language.',
@@ -164,6 +182,7 @@ class TaskScheduler {
           canUsePhrase: canUsePhrase,
           canUseListening: allowListening,
           canUseSpeech: allowSpeech,
+          itemType: itemType,
         );
 
     return TaskScheduleReady(card: card, kind: taskKind);
@@ -187,27 +206,36 @@ class TaskScheduler {
     required bool canUsePhrase,
     required bool canUseListening,
     required bool canUseSpeech,
+    required TrainingItemType itemType,
   }) {
     final weightedKinds = <MapEntry<TrainingTaskKind, int>>[
-      if (canUseSpeech)
+      if (canUseSpeech &&
+          TrainingTaskKind.numberPronunciation.supportedItemTypes
+              .contains(itemType))
         const MapEntry(
           TrainingTaskKind.numberPronunciation,
           _numberPronunciationWeight,
         ),
-      const MapEntry(
-        TrainingTaskKind.numberToWord,
-        _numberToWordWeight,
-      ),
-      const MapEntry(
-        TrainingTaskKind.wordToNumber,
-        _wordToNumberWeight,
-      ),
-      if (canUseListening)
+      if (TrainingTaskKind.numberToWord.supportedItemTypes.contains(itemType))
+        const MapEntry(
+          TrainingTaskKind.numberToWord,
+          _numberToWordWeight,
+        ),
+      if (TrainingTaskKind.wordToNumber.supportedItemTypes.contains(itemType))
+        const MapEntry(
+          TrainingTaskKind.wordToNumber,
+          _wordToNumberWeight,
+        ),
+      if (canUseListening &&
+          TrainingTaskKind.listeningNumbers.supportedItemTypes
+              .contains(itemType))
         const MapEntry(
           TrainingTaskKind.listeningNumbers,
           _listeningNumbersWeight,
         ),
-      if (canUsePhrase)
+      if (canUsePhrase &&
+          TrainingTaskKind.phrasePronunciation.supportedItemTypes
+              .contains(itemType))
         const MapEntry(
           TrainingTaskKind.phrasePronunciation,
           _phrasePronunciationWeight,

@@ -5,6 +5,7 @@ import '../../data/card_progress.dart';
 import '../../data/number_cards.dart';
 import '../../data/progress_repository.dart';
 import '../../domain/learning_language.dart';
+import '../../domain/training_item.dart';
 import '../widgets/training_background.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -24,8 +25,8 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   static const int _learnedStreakTarget = 10;
   late final ProgressRepository _progressRepository;
-  Map<int, CardProgress> _progressById = {};
-  List<int> _gridIds = [];
+  Map<TrainingItemId, CardProgress> _progressById = {};
+  List<TrainingItemId> _gridIds = [];
   bool _loading = true;
 
   @override
@@ -229,9 +230,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   Widget _buildGrid(
     ThemeData theme,
-    List<int> gridIds,
-    Map<int, CardProgress> progressById,
-    Set<int> hotIds,
+    List<TrainingItemId> gridIds,
+    Map<TrainingItemId, CardProgress> progressById,
+    Set<TrainingItemId> hotIds,
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -275,6 +276,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               final baseColor =
                   _progressColor(theme.colorScheme, progress, streak);
               final isHot = hotIds.contains(id);
+              final displayText = id.number?.toString() ?? id.storageKey;
               final borderColor = isHot
                   ? theme.colorScheme.error
                   : theme.colorScheme.outlineVariant.withValues(alpha: 0.6);
@@ -298,7 +300,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          id.toString(),
+                          displayText,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontSize: numberFontSize,
                             fontWeight: FontWeight.w600,
@@ -326,7 +328,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Set<int> _resolveHotIds(Map<int, CardProgress> progressById) {
+  Set<TrainingItemId> _resolveHotIds(
+    Map<TrainingItemId, CardProgress> progressById,
+  ) {
     final entries = progressById.entries
         .where((entry) => !entry.value.learned && entry.value.totalAttempts > 0)
         .toList();

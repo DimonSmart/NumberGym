@@ -6,13 +6,14 @@ class NumberPronunciationTask extends NumberTrainingTask {
   final LearningLanguage language;
   final List<String> answers;
 
-  const NumberPronunciationTask({
+  NumberPronunciationTask({
     required super.id,
+    required super.numberValue,
     required this.prompt,
     required this.language,
     required this.answers,
-  }) : super(
-          numberValue: id,
+  })  : assert(id.number == numberValue),
+        super(
           kind: TrainingTaskKind.numberPronunciation,
         );
 

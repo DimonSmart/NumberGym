@@ -1,13 +1,14 @@
 import '../services/card_timer.dart';
 import '../task_runtime.dart';
 import '../task_state.dart';
+import '../training_item.dart';
 import '../training_outcome.dart';
 import '../training_task.dart';
 
 class MultipleChoiceRuntime extends TaskRuntimeBase {
   MultipleChoiceRuntime({
     required TrainingTaskKind kind,
-    required int taskId,
+    required TrainingItemId taskId,
     required int numberValue,
     required String prompt,
     required String correctOption,

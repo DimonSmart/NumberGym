@@ -7,7 +7,7 @@ class PhrasePronunciationTask extends NumberTrainingTask {
   final int maxValue;
   final String text;
 
-  const PhrasePronunciationTask({
+  PhrasePronunciationTask({
     required super.id,
     required this.phraseTemplateId,
     required this.templateText,
@@ -15,7 +15,10 @@ class PhrasePronunciationTask extends NumberTrainingTask {
     required this.maxValue,
     required super.numberValue,
     required this.text,
-  }) : super(kind: TrainingTaskKind.phrasePronunciation);
+  })  : assert(id.number == numberValue),
+        super(
+          kind: TrainingTaskKind.phrasePronunciation,
+        );
 
   bool get isInRange => numberValue >= minValue && numberValue <= maxValue;
 

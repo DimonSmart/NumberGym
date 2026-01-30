@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../domain/learning_language.dart';
 import '../domain/tasks/phrase_pronunciation_task.dart';
+import '../domain/training_item.dart';
 
 class PhraseTemplate {
   final int id;
@@ -20,7 +21,10 @@ class PhraseTemplate {
 
   String materialize(int value) => templateText.replaceAll('{X}', value.toString());
 
-  PhrasePronunciationTask toTask({required int value, required int taskId}) {
+  PhrasePronunciationTask toTask({
+    required int value,
+    required TrainingItemId taskId,
+  }) {
     return PhrasePronunciationTask(
       id: taskId,
       phraseTemplateId: id,

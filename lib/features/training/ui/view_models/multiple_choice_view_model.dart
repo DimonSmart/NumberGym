@@ -29,7 +29,7 @@ class MultipleChoiceViewModel {
   final Color? feedbackColor;
   final TimerState timer;
   final bool isTimerActive;
-  final int taskKey;
+  final String taskKey;
 
   bool get showFeedback => feedbackText != null;
 
@@ -60,7 +60,7 @@ class MultipleChoiceViewModel {
       feedbackColor: feedback.color,
       timer: task.timer,
       isTimerActive: task.timer.isRunning,
-      taskKey: task.numberValue,
+      taskKey: task.taskId.storageKey,
     );
   }
 }

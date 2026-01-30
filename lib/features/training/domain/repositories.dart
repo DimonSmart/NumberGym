@@ -1,14 +1,15 @@
 import '../data/card_progress.dart';
 import 'learning_language.dart';
+import 'training_item.dart';
 import 'training_task.dart';
 
 abstract class ProgressRepositoryBase {
-  Future<Map<int, CardProgress>> loadAll(
-    List<int> cardIds, {
+  Future<Map<TrainingItemId, CardProgress>> loadAll(
+    List<TrainingItemId> cardIds, {
     required LearningLanguage language,
   });
   Future<void> save(
-    int cardId,
+    TrainingItemId cardId,
     CardProgress progress, {
     required LearningLanguage language,
   });

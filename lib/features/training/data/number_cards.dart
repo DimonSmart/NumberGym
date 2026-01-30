@@ -1,22 +1,42 @@
 import '../domain/learning_language.dart';
 import '../domain/tasks/number_pronunciation_task.dart';
+import '../domain/training_item.dart';
 import 'number_words.dart';
 
-List<int> buildNumberCardIds() {
-  final ids = <int>[];
-  // 0 - 100
-  for (var i = 0; i <= 100; i++) {
-    ids.add(i);
+List<TrainingItemId> buildNumberCardIds() {
+  final ids = <TrainingItemId>[];
+  for (var i = 0; i <= 9; i++) {
+    ids.add(
+      TrainingItemId(
+        type: TrainingItemType.digits,
+        number: i,
+      ),
+    );
   }
-  // 200 - 900
-  for (var i = 200; i < 1000; i += 100) {
-    ids.add(i);
+  for (var i = 10; i <= 99; i++) {
+    ids.add(
+      TrainingItemId(
+        type: TrainingItemType.base,
+        number: i,
+      ),
+    );
   }
-  // Powers of 10
-  ids.add(1000);
-  ids.add(10000);
-  ids.add(100000);
-  ids.add(1000000);
+  for (var i = 100; i <= 900; i += 100) {
+    ids.add(
+      TrainingItemId(
+        type: TrainingItemType.hundreds,
+        number: i,
+      ),
+    );
+  }
+  for (var i = 1000; i <= 9000; i += 1000) {
+    ids.add(
+      TrainingItemId(
+        type: TrainingItemType.thousands,
+        number: i,
+      ),
+    );
+  }
   return ids;
 }
 
@@ -27,13 +47,15 @@ List<NumberPronunciationTask> buildNumberCards({
   final ids = buildNumberCardIds();
   final converter = toWords ?? numberWordsFor(language);
   return ids.map((id) {
-    final prompt = id.toString();
+    final value = id.number!;
+    final prompt = value.toString();
     return NumberPronunciationTask(
       id: id,
+      numberValue: value,
       prompt: prompt,
       language: language,
       answers: <String>[
-        converter(id),
+        converter(value),
         prompt,
       ],
     );

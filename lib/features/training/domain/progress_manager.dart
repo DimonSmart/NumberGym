@@ -6,6 +6,7 @@ import 'language_router.dart';
 import 'learning_language.dart';
 import 'repositories.dart';
 import 'tasks/number_pronunciation_task.dart';
+import 'training_item.dart';
 
 class PickedCard {
   const PickedCard({
@@ -40,17 +41,17 @@ class ProgressManager {
   final LanguageRouter _languageRouter;
   final Random _random;
 
-  Map<int, NumberPronunciationTask> _cardsById = {};
-  List<int> _cardIds = [];
+  Map<TrainingItemId, NumberPronunciationTask> _cardsById = {};
+  List<TrainingItemId> _cardIds = [];
   LearningLanguage? _cardsLanguage;
 
-  Map<int, CardProgress> _progressById = {};
-  List<int> _pool = [];
+  Map<TrainingItemId, CardProgress> _progressById = {};
+  List<TrainingItemId> _pool = [];
 
   int? _currentPoolIndex;
 
   LearningLanguage? get cardsLanguage => _cardsLanguage;
-  List<int> get cardIds => _cardIds;
+  List<TrainingItemId> get cardIds => _cardIds;
 
   int get totalCards => _cardsById.length;
   int get learnedCount =>
@@ -58,7 +59,7 @@ class ProgressManager {
   int get remainingCount => totalCards - learnedCount;
   bool get hasRemainingCards => _pool.isNotEmpty;
 
-  NumberPronunciationTask? cardById(int id) => _cardsById[id];
+  NumberPronunciationTask? cardById(TrainingItemId id) => _cardsById[id];
 
   void refreshCardsIfNeeded(LearningLanguage language) {
     if (_cardsLanguage == language && _cardsById.isNotEmpty) return;
@@ -117,7 +118,7 @@ class ProgressManager {
   }
 
   Future<ProgressUpdateResult> updateProgress({
-    required int progressKey,
+    required TrainingItemId progressKey,
     required bool isCorrect,
     required LearningLanguage language,
   }) async {

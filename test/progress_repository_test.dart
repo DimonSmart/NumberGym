@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:number_gym/features/training/data/card_progress.dart';
 import 'package:number_gym/features/training/data/progress_repository.dart';
 import 'package:number_gym/features/training/domain/learning_language.dart';
+import 'package:number_gym/features/training/domain/training_item.dart';
 
 void main() {
   late Directory tempDir;
@@ -35,7 +36,11 @@ void main() {
 
   test('loadAll returns entries for provided ids', () async {
     final repo = ProgressRepository(box);
-    final ids = <int>[0, 1, 2];
+    final ids = <TrainingItemId>[
+      const TrainingItemId(type: TrainingItemType.digits, number: 0),
+      const TrainingItemId(type: TrainingItemType.digits, number: 1),
+      const TrainingItemId(type: TrainingItemType.digits, number: 2),
+    ];
     final results = await repo.loadAll(
       ids,
       language: LearningLanguage.english,
@@ -43,8 +48,8 @@ void main() {
 
     expect(results.length, ids.length);
     expect(results.keys, containsAll(ids));
-    expect(results[0]!.totalAttempts, 0);
-    expect(results[0]!.totalCorrect, 0);
+    expect(results[ids[0]]!.totalAttempts, 0);
+    expect(results[ids[0]]!.totalCorrect, 0);
   });
 
   test('save persists progress', () async {
@@ -56,12 +61,20 @@ void main() {
       totalCorrect: 4,
     );
 
-    await repo.save(2, progress, language: LearningLanguage.english);
+    const targetId = TrainingItemId(
+      type: TrainingItemType.digits,
+      number: 2,
+    );
+    await repo.save(targetId, progress, language: LearningLanguage.english);
     final results = await repo.loadAll(
-      <int>[0, 1, 2],
+      <TrainingItemId>[
+        const TrainingItemId(type: TrainingItemType.digits, number: 0),
+        const TrainingItemId(type: TrainingItemType.digits, number: 1),
+        targetId,
+      ],
       language: LearningLanguage.english,
     );
-    final stored = results[2]!;
+    final stored = results[targetId]!;
 
     expect(stored.learned, true);
     expect(stored.totalAttempts, 5);
@@ -78,13 +91,20 @@ void main() {
       totalCorrect: 1,
     );
 
-    await repo.save(1, progress, language: LearningLanguage.english);
+    const targetId = TrainingItemId(
+      type: TrainingItemType.digits,
+      number: 1,
+    );
+    await repo.save(targetId, progress, language: LearningLanguage.english);
     await repo.reset(language: LearningLanguage.english);
     final results = await repo.loadAll(
-      <int>[0, 1],
+      <TrainingItemId>[
+        const TrainingItemId(type: TrainingItemType.digits, number: 0),
+        targetId,
+      ],
       language: LearningLanguage.english,
     );
-    final stored = results[1]!;
+    final stored = results[targetId]!;
 
     expect(stored.learned, false);
     expect(stored.totalAttempts, 0);
@@ -101,21 +121,25 @@ void main() {
       totalCorrect: 2,
     );
 
-    await repo.save(1, progress, language: LearningLanguage.english);
-    await repo.save(1, progress, language: LearningLanguage.spanish);
+    const targetId = TrainingItemId(
+      type: TrainingItemType.digits,
+      number: 1,
+    );
+    await repo.save(targetId, progress, language: LearningLanguage.english);
+    await repo.save(targetId, progress, language: LearningLanguage.spanish);
 
     await repo.reset(language: LearningLanguage.english);
 
     final english = await repo.loadAll(
-      <int>[1],
+      <TrainingItemId>[targetId],
       language: LearningLanguage.english,
     );
     final spanish = await repo.loadAll(
-      <int>[1],
+      <TrainingItemId>[targetId],
       language: LearningLanguage.spanish,
     );
 
-    expect(english[1]!.totalAttempts, 0);
-    expect(spanish[1]!.totalAttempts, 2);
+    expect(english[targetId]!.totalAttempts, 0);
+    expect(spanish[targetId]!.totalAttempts, 2);
   });
 }
