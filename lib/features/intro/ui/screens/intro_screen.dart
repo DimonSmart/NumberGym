@@ -11,6 +11,7 @@ import '../../../training/domain/learning_language.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
+import '../../../training/ui/widgets/training_background.dart';
 import 'about_screen.dart';
 
 enum _IntroMenuAction { statistics, settings, about }
@@ -80,132 +81,126 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final heroImageWidth = screenWidth * 0.8;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/intro.png',
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-            ),
-          ),
-          Positioned.fill(child: SizedBox.shrink()),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Spacer(),
-                      PopupMenuButton<_IntroMenuAction>(
-                        onSelected: (value) {
-                          switch (value) {
-                            case _IntroMenuAction.statistics:
-                              _openStatistics(context);
-                              break;
-                            case _IntroMenuAction.settings:
-                              _openSettings(context);
-                              break;
-                            case _IntroMenuAction.about:
-                              _openAbout(context);
-                              break;
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: _IntroMenuAction.statistics,
-                            child: Row(
-                              children: const [
-                                Icon(Icons.bar_chart, size: 18),
-                                SizedBox(width: 8),
-                                Text('Statistics'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: _IntroMenuAction.settings,
-                            child: Row(
-                              children: const [
-                                Icon(Icons.settings, size: 18),
-                                SizedBox(width: 8),
-                                Text('Settings'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: _IntroMenuAction.about,
-                            child: Row(
-                              children: const [
-                                Icon(Icons.info_outline, size: 18),
-                                SizedBox(width: 8),
-                                Text('About'),
-                              ],
-                            ),
-                          ),
-                        ],
-                        icon: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.62),
-                            shape: BoxShape.circle,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                                offset: Offset(0, 3),
-                              ),
+      body: TrainingBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Spacer(),
+                    PopupMenuButton<_IntroMenuAction>(
+                      onSelected: (value) {
+                        switch (value) {
+                          case _IntroMenuAction.statistics:
+                            _openStatistics(context);
+                            break;
+                          case _IntroMenuAction.settings:
+                            _openSettings(context);
+                            break;
+                          case _IntroMenuAction.about:
+                            _openAbout(context);
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: _IntroMenuAction.statistics,
+                          child: Row(
+                            children: const [
+                              Icon(Icons.bar_chart, size: 18),
+                              SizedBox(width: 8),
+                              Text('Statistics'),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.more_vert,
-                            color: Colors.white,
-                            size: 22,
+                        ),
+                        PopupMenuItem(
+                          value: _IntroMenuAction.settings,
+                          child: Row(
+                            children: const [
+                              Icon(Icons.settings, size: 18),
+                              SizedBox(width: 8),
+                              Text('Settings'),
+                            ],
                           ),
                         ),
-                        tooltip: 'Menu',
+                        PopupMenuItem(
+                          value: _IntroMenuAction.about,
+                          child: Row(
+                            children: const [
+                              Icon(Icons.info_outline, size: 18),
+                              SizedBox(width: 8),
+                              Text('About'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      icon: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.62),
+                          shape: BoxShape.circle,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
+                          size: 22,
+                        ),
                       ),
-                    ],
+                      tooltip: 'Menu',
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/images/numbers_gym_name.png',
+                    width: heroImageWidth,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
                   ),
-                  Text(
-                    'Numbers Gym',
-                    style:
-                        theme.textTheme.displaySmall?.copyWith(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.w700,
-                        ) ??
-                        const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.blue,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Practice English numbers by listening, speaking, and quick '
-                    'quizzes. Build confidence in a few minutes a day.',
-                    style:
-                        theme.textTheme.titleMedium?.copyWith(
-                          color: Colors.blue.shade700,
-                          height: 1.3,
-                        ) ??
-                        const TextStyle(
-                          fontSize: 18,
-                          height: 1.3,
-                          color: Colors.blue,
-                        ),
-                  ),
-                  const Spacer(),
-                  _buildCallToAction(theme, context),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+                const Spacer(),
+                _buildBottomContent(theme, context, heroImageWidth),
+              ],
             ),
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildBottomContent(
+    ThemeData theme,
+    BuildContext context,
+    double heroImageWidth,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/images/app_icon_transparent.png',
+          width: heroImageWidth,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+        ),
+        const SizedBox(height: 16),
+        _buildCallToAction(theme, context),
+      ],
     );
   }
 
