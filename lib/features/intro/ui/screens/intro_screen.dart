@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -81,103 +82,144 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final heroImageWidth = screenWidth * 0.8;
-
     return Scaffold(
       body: TrainingBackground(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Spacer(),
-                    PopupMenuButton<_IntroMenuAction>(
-                      onSelected: (value) {
-                        switch (value) {
-                          case _IntroMenuAction.statistics:
-                            _openStatistics(context);
-                            break;
-                          case _IntroMenuAction.settings:
-                            _openSettings(context);
-                            break;
-                          case _IntroMenuAction.about:
-                            _openAbout(context);
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: _IntroMenuAction.statistics,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.bar_chart, size: 18),
-                              SizedBox(width: 8),
-                              Text('Statistics'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: _IntroMenuAction.settings,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.settings, size: 18),
-                              SizedBox(width: 8),
-                              Text('Settings'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: _IntroMenuAction.about,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.info_outline, size: 18),
-                              SizedBox(width: 8),
-                              Text('About'),
-                            ],
-                          ),
-                        ),
-                      ],
-                      icon: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.62),
-                          shape: BoxShape.circle,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const horizontalPadding = 24.0;
+              const verticalPaddingTop = 28.0;
+              const verticalPaddingBottom = 24.0;
+              const maxContentWidth = 520.0;
+              const logoAspectRatio = 227 / 980;
+              const menuHeight = 48.0;
+              const gapAfterLogo = 12.0;
+              const gapAfterMascot = 16.0;
+              const ctaHeight = 52.0;
+              const layoutSafety = 4.0;
+
+              final contentWidth =
+                  constraints.maxWidth - (horizontalPadding * 2);
+              final contentHeight =
+                  constraints.maxHeight - verticalPaddingTop - verticalPaddingBottom;
+              final effectiveWidth = math.min(contentWidth, maxContentWidth);
+              final availableImageHeight = math.max(
+                0.0,
+                contentHeight -
+                    (menuHeight +
+                        gapAfterLogo +
+                        gapAfterMascot +
+                        ctaHeight +
+                        layoutSafety),
+              );
+              final maxWidthByHeight =
+                  availableImageHeight / (1 + logoAspectRatio);
+              final heroImageWidth =
+                  math.max(0.0, math.min(effectiveWidth * 0.9, maxWidthByHeight));
+
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  verticalPaddingTop,
+                  horizontalPadding,
+                  verticalPaddingBottom,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Spacer(),
+                            PopupMenuButton<_IntroMenuAction>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case _IntroMenuAction.statistics:
+                                    _openStatistics(context);
+                                    break;
+                                  case _IntroMenuAction.settings:
+                                    _openSettings(context);
+                                    break;
+                                  case _IntroMenuAction.about:
+                                    _openAbout(context);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.statistics,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.bar_chart, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Statistics'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.settings,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.settings, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Settings'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.about,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.info_outline, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('About'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              icon: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.62),
+                                  shape: BoxShape.circle,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.more_vert,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
+                              tooltip: 'Menu',
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                          size: 22,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/images/numbers_gym_name.png',
+                            width: heroImageWidth,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
+                          ),
                         ),
-                      ),
-                      tooltip: 'Menu',
+                        const SizedBox(height: 12),
+                        const Spacer(),
+                        _buildBottomContent(theme, context, heroImageWidth),
+                      ],
                     ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/images/numbers_gym_name.png',
-                    width: heroImageWidth,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
                   ),
                 ),
-                const SizedBox(height: 12),
-                const Spacer(),
-                _buildBottomContent(theme, context, heroImageWidth),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
