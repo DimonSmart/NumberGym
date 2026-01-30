@@ -1,27 +1,26 @@
 import 'dart:math';
 
-import '../data/number_words.dart';
-import '../data/phrase_templates.dart';
+import '../languages/language_pack.dart';
+import '../languages/registry.dart';
 import 'learning_language.dart';
 import 'repositories.dart';
 
 class LanguageRouter {
   LanguageRouter({
     required SettingsRepositoryBase settingsRepository,
-    PhraseTemplates? phraseTemplates,
     Random? random,
   })  : _settingsRepository = settingsRepository,
-        _phraseTemplates = phraseTemplates ?? PhraseTemplates(random ?? Random());
+        _random = random ?? Random();
 
   final SettingsRepositoryBase _settingsRepository;
-  final PhraseTemplates _phraseTemplates;
+  final Random _random;
 
   LearningLanguage get currentLanguage =>
       _settingsRepository.readLearningLanguage();
 
   NumberWordsConverter numberWordsConverter([LearningLanguage? language]) {
     final selected = language ?? currentLanguage;
-    return numberWordsFor(selected);
+    return LanguageRegistry.of(selected).numberWordsConverter;
   }
 
   String numberToWords(int value, {LearningLanguage? language}) {
@@ -38,18 +37,23 @@ class LanguageRouter {
 
   List<PhraseTemplate> templates([LearningLanguage? language]) {
     final selected = language ?? currentLanguage;
-    return _phraseTemplates.forLanguage(selected);
+    return LanguageRegistry.of(selected).phraseTemplates;
   }
 
   PhraseTemplate? pickTemplate(int value, {LearningLanguage? language}) {
     final selected = language ?? currentLanguage;
-    return _phraseTemplates.pick(selected, value);
+    final available = LanguageRegistry.of(selected)
+        .phraseTemplates
+        .where((template) => template.supports(value))
+        .toList();
+    if (available.isEmpty) return null;
+    return available[_random.nextInt(available.length)];
   }
 
   bool hasTemplate(int value, {LearningLanguage? language}) {
     final selected = language ?? currentLanguage;
-    return _phraseTemplates
-        .forLanguage(selected)
+    return LanguageRegistry.of(selected)
+        .phraseTemplates
         .any((template) => template.supports(value));
   }
 }

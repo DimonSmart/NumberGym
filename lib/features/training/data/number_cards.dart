@@ -1,7 +1,8 @@
 import '../domain/learning_language.dart';
 import '../domain/tasks/number_pronunciation_task.dart';
 import '../domain/training_item.dart';
-import 'number_words.dart';
+import '../languages/language_pack.dart';
+import '../languages/registry.dart';
 
 List<TrainingItemId> buildNumberCardIds() {
   final ids = <TrainingItemId>[];
@@ -45,7 +46,7 @@ List<NumberPronunciationTask> buildNumberCards({
   NumberWordsConverter? toWords,
 }) {
   final ids = buildNumberCardIds();
-  final converter = toWords ?? numberWordsFor(language);
+  final converter = toWords ?? LanguageRegistry.of(language).numberWordsConverter;
   return ids.map((id) {
     final value = id.number!;
     final prompt = value.toString();

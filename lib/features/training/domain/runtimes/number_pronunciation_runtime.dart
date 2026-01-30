@@ -14,6 +14,7 @@ import '../task_runtime.dart';
 import '../task_state.dart';
 import '../tasks/number_pronunciation_task.dart';
 import '../training_outcome.dart';
+import '../../languages/registry.dart';
 
 class NumberPronunciationRuntime extends TaskRuntimeBase {
   NumberPronunciationRuntime({
@@ -668,12 +669,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   String? _preferredLocaleId(LearningLanguage language) {
-    switch (language) {
-      case LearningLanguage.english:
-        return 'en_US';
-      case LearningLanguage.spanish:
-        return null;
-    }
+    return LanguageRegistry.of(language).preferredSpeechLocaleId;
   }
 
   String _normalizeLocaleId(String localeId) {

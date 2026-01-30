@@ -1,4 +1,4 @@
-enum LearningLanguage { english, spanish }
+enum LearningLanguage { english, spanish, french, german, hebrew }
 
 extension LearningLanguageX on LearningLanguage {
   String get code {
@@ -7,24 +7,12 @@ extension LearningLanguageX on LearningLanguage {
         return 'en';
       case LearningLanguage.spanish:
         return 'es';
-    }
-  }
-
-  String get label {
-    switch (this) {
-      case LearningLanguage.english:
-        return 'English';
-      case LearningLanguage.spanish:
-        return 'Spanish';
-    }
-  }
-
-  String get locale {
-    switch (this) {
-      case LearningLanguage.english:
-        return 'en-US';
-      case LearningLanguage.spanish:
-        return 'es-ES';
+      case LearningLanguage.french:
+        return 'fr';
+      case LearningLanguage.german:
+        return 'de';
+      case LearningLanguage.hebrew:
+        return 'he';
     }
   }
 
@@ -34,6 +22,12 @@ extension LearningLanguageX on LearningLanguage {
         return LearningLanguage.english;
       case 'es':
         return LearningLanguage.spanish;
+      case 'fr':
+        return LearningLanguage.french;
+      case 'de':
+        return LearningLanguage.german;
+      case 'he':
+        return LearningLanguage.hebrew;
       default:
         return LearningLanguage.english;
     }

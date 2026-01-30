@@ -1,4 +1,6 @@
-import '../../../../core/utils/string_extensions.dart';
+import '../../languages/language_pack.dart';
+import '../../languages/number_lexicon.dart';
+import '../../languages/registry.dart';
 import '../learning_language.dart';
 
 class MatchResult {
@@ -23,7 +25,7 @@ class AnswerMatcher {
   List<bool> _matchedTokens = const [];
   int _matchedTokenCount = 0;
   Set<String> _acceptedAnswers = {};
-  LearningLanguage _language = LearningLanguage.english;
+  LanguagePack _pack = LanguageRegistry.of(LearningLanguage.english);
 
   List<String> get expectedTokens => _expectedTokens;
   List<bool> get matchedTokens => _matchedTokens;
@@ -38,15 +40,15 @@ class AnswerMatcher {
     required List<String> answers,
     required LearningLanguage language,
   }) {
-    _language = language;
+    _pack = LanguageRegistry.of(language);
     final expected = _tokenizeExpected(prompt);
     _expectedTokens = expected.map((token) => token.display).toList();
     _expectedKeys = expected.map((token) => token.key).toList();
     _matchedTokens = List<bool>.filled(_expectedTokens.length, false);
     _matchedTokenCount = 0;
     final normalized = <String>{
-      for (final answer in answers) answer.normalizeAnswer(),
-      if (prompt.isNotEmpty) prompt.normalizeAnswer(),
+      for (final answer in answers) _pack.normalizer(answer),
+      if (prompt.isNotEmpty) _pack.normalizer(prompt),
     }..removeWhere((value) => value.isEmpty);
     _acceptedAnswers = normalized;
   }
@@ -57,11 +59,11 @@ class AnswerMatcher {
     _matchedTokens = const [];
     _matchedTokenCount = 0;
     _acceptedAnswers = {};
-    _language = LearningLanguage.english;
+    _pack = LanguageRegistry.of(LearningLanguage.english);
   }
 
   MatchResult applyRecognition(String recognizedText) {
-    final normalizedText = recognizedText.normalizeAnswer();
+    final normalizedText = _pack.normalizer(recognizedText);
     final tokenization = _tokenizeRecognition(recognizedText);
     final recognizedTokens = tokenization.displayTokens;
     final recognizedKeys = tokenization.keys;
@@ -111,7 +113,7 @@ class AnswerMatcher {
   }
 
   MatchResult previewRecognition(String recognizedText) {
-    final normalizedText = recognizedText.normalizeAnswer();
+    final normalizedText = _pack.normalizer(recognizedText);
     final tokenization = _tokenizeRecognition(recognizedText);
     final recognizedTokens = tokenization.displayTokens;
     final recognizedKeys = tokenization.keys;
@@ -230,7 +232,7 @@ class AnswerMatcher {
       }
 
       final normalized = rawToken.normalized;
-      if (normalized.isEmpty || _ignoredWords.contains(normalized)) {
+      if (normalized.isEmpty || _pack.ignoredWords.contains(normalized)) {
         index += 1;
         continue;
       }
@@ -275,7 +277,7 @@ class AnswerMatcher {
       return _NumberParseResult(value: direct, length: 1);
     }
 
-    final lexicon = _lexiconForLanguage(_language);
+    final lexicon = _pack.numberLexicon;
     if (!lexicon.isNumberWord(firstNormalized)) {
       return null;
     }
@@ -341,7 +343,7 @@ class AnswerMatcher {
   String? _nextNumberWord(
     List<_RawToken> tokens,
     int start,
-    _NumberLexicon lexicon,
+    NumberLexicon lexicon,
   ) {
     for (var i = start; i < tokens.length; i += 1) {
       final token = tokens[i];
@@ -363,18 +365,13 @@ class AnswerMatcher {
     return tokenRegex.allMatches(text).map((match) {
       final raw = match.group(0) ?? '';
       final isOperator = _operatorSymbols.containsKey(raw);
-      final normalized = isOperator ? '' : raw.normalizeAnswer();
+      final normalized = isOperator ? '' : _pack.normalizer(raw);
       return _RawToken(raw, normalized, isOperator);
     }).toList();
   }
 
-  _NumberLexicon _lexiconForLanguage(LearningLanguage language) {
-    switch (language) {
-      case LearningLanguage.spanish:
-        return _spanishLexicon;
-      case LearningLanguage.english:
-        return _englishLexicon;
-    }
+  String? _operatorKeyFromWord(String word) {
+    return _pack.operatorWords[word];
   }
 }
 
@@ -410,25 +407,6 @@ class _NumberParseResult {
   const _NumberParseResult({required this.value, required this.length});
 }
 
-class _NumberLexicon {
-  final Map<String, int> units;
-  final Map<String, int> tens;
-  final Map<String, int> scales;
-  final Set<String> conjunctions;
-
-  const _NumberLexicon({
-    required this.units,
-    required this.tens,
-    required this.scales,
-    required this.conjunctions,
-  });
-
-  bool isNumberWord(String word) {
-    return units.containsKey(word) ||
-        tens.containsKey(word) ||
-        scales.containsKey(word);
-  }
-}
 
 const _operatorSymbols = {
   '+': 'PLUS',
@@ -438,140 +416,9 @@ const _operatorSymbols = {
   '=': 'EQUALS',
 };
 
-const _operatorWords = {
-  'plus': 'PLUS',
-  'add': 'PLUS',
-  'added': 'PLUS',
-  'sum': 'PLUS',
-  'mas': 'PLUS',
-  'menos': 'MINUS',
-  'minus': 'MINUS',
-  'subtract': 'MINUS',
-  'subtracted': 'MINUS',
-  'times': 'MULTIPLY',
-  'multiply': 'MULTIPLY',
-  'multiplied': 'MULTIPLY',
-  'por': 'MULTIPLY',
-  'divide': 'DIVIDE',
-  'divided': 'DIVIDE',
-  'dividido': 'DIVIDE',
-  'over': 'DIVIDE',
-  'equal': 'EQUALS',
-  'equals': 'EQUALS',
-  'is': 'EQUALS',
-  'igual': 'EQUALS',
-  'es': 'EQUALS',
-  'x': 'MULTIPLY',
-};
-
-const _ignoredWords = {
-  'um',
-  'uh',
-  'erm',
-  'ah',
-  'eh',
-  'please',
-  'porfavor',
-  'favor',
-};
-
-const _englishLexicon = _NumberLexicon(
-  units: {
-    'zero': 0,
-    'one': 1,
-    'two': 2,
-    'three': 3,
-    'four': 4,
-    'five': 5,
-    'six': 6,
-    'seven': 7,
-    'eight': 8,
-    'nine': 9,
-    'ten': 10,
-    'eleven': 11,
-    'twelve': 12,
-    'thirteen': 13,
-    'fourteen': 14,
-    'fifteen': 15,
-    'sixteen': 16,
-    'seventeen': 17,
-    'eighteen': 18,
-    'nineteen': 19,
-  },
-  tens: {
-    'twenty': 20,
-    'thirty': 30,
-    'forty': 40,
-    'fifty': 50,
-    'sixty': 60,
-    'seventy': 70,
-    'eighty': 80,
-    'ninety': 90,
-  },
-  scales: {'hundred': 100, 'thousand': 1000, 'million': 1000000},
-  conjunctions: {'and'},
-);
-
-const _spanishLexicon = _NumberLexicon(
-  units: {
-    'cero': 0,
-    'uno': 1,
-    'un': 1,
-    'una': 1,
-    'dos': 2,
-    'tres': 3,
-    'cuatro': 4,
-    'cinco': 5,
-    'seis': 6,
-    'siete': 7,
-    'ocho': 8,
-    'nueve': 9,
-    'diez': 10,
-    'once': 11,
-    'doce': 12,
-    'trece': 13,
-    'catorce': 14,
-    'quince': 15,
-    'dieciseis': 16,
-    'diecisiete': 17,
-    'dieciocho': 18,
-    'diecinueve': 19,
-    'veinte': 20,
-    'veintiuno': 21,
-    'veintidos': 22,
-    'veintitres': 23,
-    'veinticuatro': 24,
-    'veinticinco': 25,
-    'veintiseis': 26,
-    'veintisiete': 27,
-    'veintiocho': 28,
-    'veintinueve': 29,
-  },
-  tens: {
-    'treinta': 30,
-    'cuarenta': 40,
-    'cincuenta': 50,
-    'sesenta': 60,
-    'setenta': 70,
-    'ochenta': 80,
-    'noventa': 90,
-  },
-  scales: {
-    'cien': 100,
-    'ciento': 100,
-    'mil': 1000,
-    'millon': 1000000,
-    'millones': 1000000,
-  },
-  conjunctions: {'y'},
-);
 
 String? _operatorKeyFromSymbol(String symbol) {
   return _operatorSymbols[symbol];
-}
-
-String? _operatorKeyFromWord(String word) {
-  return _operatorWords[word];
 }
 
 String _numKey(int value) => 'NUM:$value';

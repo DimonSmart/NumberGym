@@ -14,6 +14,7 @@ import '../../domain/services/speech_service.dart';
 import '../../domain/services/tts_service.dart';
 import '../../domain/task_availability.dart';
 import '../../domain/training_task.dart';
+import '../../languages/registry.dart';
 import 'package:number_gym/core/logging/app_log_buffer.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -115,7 +116,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _progressRepository.reset(language: _language);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Progress reset for ${_language.label}.')),
+      SnackBar(
+        content: Text(
+          'Progress reset for ${LanguageRegistry.of(_language).label}.',
+        ),
+      ),
     );
   }
 
@@ -154,7 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _ttsLoading = true;
     });
-    final locale = _language.locale;
+    final locale = LanguageRegistry.of(_language).locale;
     final availability = await _availabilityRegistry.check(
       TrainingTaskKind.listeningNumbers,
       TaskAvailabilityContext(
@@ -246,12 +251,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String _ttsPreviewText(LearningLanguage language) {
-    switch (language) {
-      case LearningLanguage.spanish:
-        return '¡Hola! Soy tu voz nueva. ¿Qué tal sueno?';
-      case LearningLanguage.english:
-        return 'Hi! I’m your new voice. How do I sound?';
-    }
+    return LanguageRegistry.of(language).ttsPreviewText;
   }
 
   void _showSnack(String message) {
@@ -301,7 +301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 .map(
                   (language) => DropdownMenuItem(
                     value: language,
-                    child: Text(language.label),
+                    child: Text(LanguageRegistry.of(language).label),
                   ),
                 )
                 .toList(),
@@ -362,7 +362,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const LinearProgressIndicator()
           else if (_ttsVoices.isEmpty)
             Text(
-              'No voices found for ${_language.label}.',
+              'No voices found for ${LanguageRegistry.of(_language).label}.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
