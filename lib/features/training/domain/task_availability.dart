@@ -1,4 +1,5 @@
 import 'learning_language.dart';
+import '../languages/registry.dart';
 import 'services/speech_service.dart';
 import 'services/tts_service.dart';
 import 'training_task.dart';
@@ -117,7 +118,8 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
               'Text-to-speech is not available for the selected language.',
             );
     }
-    final available = await _ttsService.isLanguageAvailable(language.locale);
+    final available =
+        await _ttsService.isLanguageAvailable(LanguageRegistry.of(language).locale);
     _cachedLanguage = language;
     _cachedAvailable = available;
     if (available) {

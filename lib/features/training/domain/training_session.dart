@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
-import '../data/phrase_templates.dart';
+import '../languages/registry.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
@@ -33,7 +33,6 @@ class TrainingSession {
     required SettingsRepositoryBase settingsRepository,
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
-    PhraseTemplates? phraseTemplates,
     TaskRegistry? taskRegistry,
     void Function()? onStateChanged,
     void Function()? onAutoStop,
@@ -42,10 +41,9 @@ class TrainingSession {
         _services = services ?? TrainingServices.defaults(),
         _onStateChanged = onStateChanged ?? _noop,
         _onAutoStop = onAutoStop ?? _noop {
-    final resolvedTemplates = phraseTemplates ?? PhraseTemplates(Random());
     _languageRouter = LanguageRouter(
       settingsRepository: _settingsRepository,
-      phraseTemplates: resolvedTemplates,
+      random: _random,
     );
     _taskRegistry = taskRegistry ?? _buildDefaultRegistry();
     final availabilityRegistry = TaskAvailabilityRegistry(
@@ -410,7 +408,7 @@ class TrainingSession {
       cardDuration: context.cardDuration,
       cardTimer: context.services.timer,
       ttsService: context.services.tts,
-      locale: context.language.locale,
+      locale: LanguageRegistry.of(context.language).locale,
       voiceId: voiceId,
     );
   }

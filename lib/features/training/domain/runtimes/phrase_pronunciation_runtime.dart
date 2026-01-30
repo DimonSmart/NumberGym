@@ -12,6 +12,7 @@ import '../task_runtime.dart';
 import '../task_state.dart';
 import '../tasks/phrase_pronunciation_task.dart';
 import '../training_outcome.dart';
+import '../../languages/registry.dart';
 
 class PhrasePronunciationRuntime extends TaskRuntimeBase {
   PhrasePronunciationRuntime({
@@ -166,7 +167,7 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
       final result = await _azureSpeechService.analyzePronunciation(
         audioFile: file,
         expectedText: _task.text,
-        language: _language.locale,
+        language: LanguageRegistry.of(_language).locale,
       );
       _result = result;
       _flow = PhraseFlow.reviewing;
