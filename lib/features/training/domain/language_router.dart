@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../languages/language_pack.dart';
+import '../languages/phrase_template.dart';
 import '../languages/registry.dart';
 import 'learning_language.dart';
 import 'repositories.dart';
