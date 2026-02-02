@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:number_gym/tts/voices_ready.dart';
 
@@ -45,10 +46,19 @@ class TtsService implements TtsServiceBase {
   @override
   Future<bool> isLanguageAvailable(String locale) async {
     await _ensureVoicesLoaded();
-    final available = _parseAvailability(
-      await _tts.isLanguageAvailable(locale),
-    );
-    if (available) return true;
+    bool? available;
+    try {
+      available = _parseAvailability(
+        await _tts.isLanguageAvailable(locale),
+      );
+    } on MissingPluginException {
+      available = null;
+    } on PlatformException {
+      available = null;
+    } catch (_) {
+      available = null;
+    }
+    if (available == true) return true;
 
     List<TtsVoice> voices;
     try {
@@ -56,7 +66,7 @@ class TtsService implements TtsServiceBase {
     } catch (_) {
       return false;
     }
-    if (voices.isEmpty) return false;
+    if (voices.isEmpty) return available ?? false;
     final normalizedTarget = _normalizeLocale(locale);
     final prefix = normalizedTarget.split('-').first;
     return voices.any(
@@ -67,7 +77,16 @@ class TtsService implements TtsServiceBase {
   @override
   Future<List<TtsVoice>> listVoices() async {
     await _ensureVoicesLoaded();
-    final raw = await _tts.getVoices;
+    dynamic raw;
+    try {
+      raw = await _tts.getVoices;
+    } on MissingPluginException {
+      return const [];
+    } on PlatformException {
+      return const [];
+    } catch (_) {
+      return const [];
+    }
     if (raw is! List) return const [];
     final voices = <TtsVoice>[];
     for (final entry in raw) {
