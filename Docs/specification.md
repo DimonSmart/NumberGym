@@ -93,15 +93,15 @@ The system must include cards for:
 - Training uses two pools: **AllCards** (full content) and **Active** (study window).
 - Active is filled from Backlog up to the active limit.
 - Training selects only not-learned cards from Active.
-- Card order uses `nextDue` to choose the next item type (earliest first), then
-  selects a random eligible card of that type from Active.
+- Card order uses `nextDue` to find the earliest due cards, then selects a random
+  eligible card among those earliest due items from Active.
 - The session finishes when all cards are learned.
 
 #### 4.2.1. Card selection process
 1. Load progress for the active language and build Active/Backlog from unlearned cards.
 2. Filter Active to eligible cards (task constraints, availability).
-3. Order eligible cards by `nextDue` (earliest first) and pick the first item type.
-4. Randomly select any eligible card of that type from Active.
+3. Order eligible cards by `nextDue` (earliest first) and find the earliest due group.
+4. Randomly select any eligible card from that earliest due group.
 5. Build the next task variant based on availability and weights.
 
 ### 4.3. Progress rules

@@ -5,6 +5,7 @@ import '../data/number_cards.dart';
 import 'learning_language.dart';
 import 'learning_strategy/learning_params.dart';
 import 'learning_strategy/learning_queue.dart';
+import 'learning_strategy/learning_state.dart';
 import 'learning_strategy/learning_strategy.dart';
 import 'language_router.dart';
 import 'repositories.dart';
@@ -143,8 +144,9 @@ class ProgressManager {
     DateTime? now,
   }) {
     if (_cardIds.isEmpty) return null;
+    final resolvedNow = now ?? DateTime.now();
     final candidateStates = _learningStrategy.pickNextStates(
-      now: now ?? DateTime.now(),
+      now: resolvedNow,
       limit: _cardIds.length,
       progressById: _progressById,
       isEligible: (id) {
@@ -154,20 +156,24 @@ class ProgressManager {
       },
     );
     if (candidateStates.isEmpty) return null;
-    final firstCard = _cardsById[candidateStates.first.id];
-    if (firstCard == null) return null;
-    final targetType = firstCard.id.type;
+    final nowMillis = resolvedNow.millisecondsSinceEpoch;
+    int resolvedDue(LearningState state) {
+      final due = state.progress.nextDue;
+      return due > 0 ? due : nowMillis;
+    }
 
-    final sameTypeIds = <TrainingItemId>[];
+    final earliestDue = resolvedDue(candidateStates.first);
+    final earliestIds = <TrainingItemId>[];
     for (final state in candidateStates) {
-      final card = _cardsById[state.id];
-      if (card != null && card.id.type == targetType) {
-        sameTypeIds.add(state.id);
+      if (resolvedDue(state) != earliestDue) break;
+      if (_cardsById.containsKey(state.id)) {
+        earliestIds.add(state.id);
       }
     }
-    final pickedId = sameTypeIds.isEmpty
+
+    final pickedId = earliestIds.isEmpty
         ? candidateStates.first.id
-        : sameTypeIds[_random.nextInt(sameTypeIds.length)];
+        : earliestIds[_random.nextInt(earliestIds.length)];
     final pickedCard = _cardsById[pickedId];
     if (pickedCard == null) return null;
     return PickedCard(card: pickedCard);
