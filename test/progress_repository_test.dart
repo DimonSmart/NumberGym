@@ -56,9 +56,19 @@ void main() {
     final repo = ProgressRepository(box);
     const progress = CardProgress(
       learned: true,
-      lastAttempts: <bool>[true, true, false],
-      totalAttempts: 5,
-      totalCorrect: 4,
+      clusters: <CardCluster>[
+        CardCluster(
+          lastAnswerAt: 1000,
+          correctCount: 4,
+          wrongCount: 1,
+          skippedCount: 0,
+        ),
+      ],
+      intervalDays: 4,
+      nextDue: 12345,
+      ease: 2.1,
+      spacedSuccessCount: 1,
+      lastCountedSuccessDay: 10,
     );
 
     const targetId = TrainingItemId(
@@ -79,16 +89,31 @@ void main() {
     expect(stored.learned, true);
     expect(stored.totalAttempts, 5);
     expect(stored.totalCorrect, 4);
-    expect(stored.lastAttempts.length, 3);
+    expect(stored.clusters.length, 1);
+    expect(stored.intervalDays, 4);
+    expect(stored.nextDue, 12345);
+    expect(stored.ease, 2.1);
+    expect(stored.spacedSuccessCount, 1);
+    expect(stored.lastCountedSuccessDay, 10);
   });
 
   test('reset clears progress', () async {
     final repo = ProgressRepository(box);
     const progress = CardProgress(
       learned: false,
-      lastAttempts: <bool>[true],
-      totalAttempts: 1,
-      totalCorrect: 1,
+      clusters: <CardCluster>[
+        CardCluster(
+          lastAnswerAt: 2000,
+          correctCount: 1,
+          wrongCount: 0,
+          skippedCount: 0,
+        ),
+      ],
+      intervalDays: 2,
+      nextDue: 999,
+      ease: 1.8,
+      spacedSuccessCount: 0,
+      lastCountedSuccessDay: -1,
     );
 
     const targetId = TrainingItemId(
@@ -109,16 +134,26 @@ void main() {
     expect(stored.learned, false);
     expect(stored.totalAttempts, 0);
     expect(stored.totalCorrect, 0);
-    expect(stored.lastAttempts, isEmpty);
+    expect(stored.clusters, isEmpty);
   });
 
   test('reset clears only selected language', () async {
     final repo = ProgressRepository(box);
     const progress = CardProgress(
       learned: true,
-      lastAttempts: <bool>[true, true],
-      totalAttempts: 2,
-      totalCorrect: 2,
+      clusters: <CardCluster>[
+        CardCluster(
+          lastAnswerAt: 3000,
+          correctCount: 2,
+          wrongCount: 0,
+          skippedCount: 0,
+        ),
+      ],
+      intervalDays: 3,
+      nextDue: 555,
+      ease: 2.0,
+      spacedSuccessCount: 2,
+      lastCountedSuccessDay: 5,
     );
 
     const targetId = TrainingItemId(

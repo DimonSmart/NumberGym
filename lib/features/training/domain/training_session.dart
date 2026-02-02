@@ -62,7 +62,6 @@ class TrainingSession {
     _progressManager = ProgressManager(
       progressRepository: _progressRepository,
       languageRouter: _languageRouter,
-      random: _random,
     );
     _feedbackCoordinator = FeedbackCoordinator(onChanged: _syncState);
     _runtimeCoordinator = RuntimeCoordinator(
@@ -533,17 +532,19 @@ class TrainingSession {
     if (taskState == null) return;
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
-    final affectsProgress =
-        taskState.affectsProgress && outcome != TrainingOutcome.ignore;
+    final affectsProgress = taskState.affectsProgress;
     if (affectsProgress) {
       final isCorrect = outcome == TrainingOutcome.success;
+      final isSkipped =
+          outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.ignore;
       _streakTracker.record(isCorrect);
-      final progressResult = await _progressManager.updateProgress(
+      final attemptResult = await _progressManager.recordAttempt(
         progressKey: taskState.taskId,
         isCorrect: isCorrect,
+        isSkipped: isSkipped,
         language: _currentLanguage(),
       );
-      if (progressResult.learned && progressResult.poolEmpty) {
+      if (attemptResult.learned && attemptResult.poolEmpty) {
         _trainingActive = false;
         unawaited(_setKeepAwake(false));
         _syncState();

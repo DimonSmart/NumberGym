@@ -55,6 +55,11 @@ The system must allow switching the learning language. All content and progress 
 **Done criteria:**
 - Changes are stored locally.
 - Reset clears only the selected language’s progress.
+- Reset requires confirmation.
+- TTS availability is checked and voices can be previewed.
+- Speech recognition availability/status is shown.
+- Online/offline indicator is shown for premium features.
+- Copy logs exports the in-memory log buffer and is disabled when empty.
 
 ### 3.5. Statistics
 **User scenario:**
@@ -63,27 +68,56 @@ The system must allow switching the learning language. All content and progress 
 
 **Done criteria:**
 - Metrics and grid reflect local progress data.
+- The grid shows each card's current successful cluster streak.
+- The most troublesome cards are highlighted (top 10 by attempts among not learned).
+
+### 3.6. Training interruptions
+**User scenario:**
+1. The user opens **Statistics** or **Settings** during an active session.
+2. Training pauses while those screens are open.
+3. When the user returns, training resumes.
+
+**Done criteria:**
+- The active task runtime is disposed while the overlay is open.
+- The session resumes from the next card on return.
 
 ## 4. Functional requirements
 
 ### 4.1. Card set
 The system must include cards for:
-- 0–100 (inclusive),
-- round hundreds 200–900,
-- 1000, 10000, 100000, 1000000.
+- 0–99 (inclusive),
+- round hundreds 100–900,
+- round thousands 1000–9000.
 
 ### 4.2. Training rules
-- Training selects only not-learned cards.
-- Card order is randomized.
+- Training uses two pools: **AllCards** (full content) and **Active** (study window).
+- Active is filled from Backlog up to the active limit.
+- Training selects only not-learned cards from Active.
+- Card order uses `nextDue` to choose the next item type (earliest first), then
+  selects a random eligible card of that type from Active.
 - The session finishes when all cards are learned.
 
+#### 4.2.1. Card selection process
+1. Load progress for the active language and build Active/Backlog from unlearned cards.
+2. Filter Active to eligible cards (task constraints, availability).
+3. Order eligible cards by `nextDue` (earliest first) and pick the first item type.
+4. Randomly select any eligible card of that type from Active.
+5. Build the next task variant based on availability and weights.
+
 ### 4.3. Progress rules
-- Each card stores the last 10 attempts.
-- A card is learned if the last 10 attempts are all correct.
+- Each card stores the last N **clusters**. A cluster aggregates correct / wrong / skipped counts
+  within a time gap threshold.
+- The scheduler is updated on every attempt; cluster gaps only split stored clusters.
+- Each attempt updates interval, ease, and `nextDue` based on the current outcome.
+- A cluster is successful if its accuracy is above the configured threshold.
+- **Spaced success** counts only when enough days passed since the previous counted success.
+- A card is learned only if it reaches both:
+  - minimum spaced successes,
+  - minimum interval length.
 - Statistics must expose:
   - totalAttempts,
   - totalCorrect,
-  - current consecutive correct streak.
+  - current consecutive successful cluster streak.
 
 ### 4.4. Exercises
 
@@ -132,13 +166,14 @@ The system stores:
 - hint streak threshold,
 - premium pronunciation flag,
 - selected TTS voice per language.
+- debug-only forced task kind (for QA/testing).
 
 ### 5.2. Progress
 For each card and language, store:
 - learned flag,
-- lastAttempts (last 10 results),
-- totalAttempts,
-- totalCorrect.
+- spaced scheduling fields (`intervalDays`, `nextDue`, `ease`, `spacedSuccessCount`, `lastCountedSuccessDay`),
+- last N clusters of attempts (each cluster stores lastAnswerAt + correct/wrong/skipped counts),
+- total attempts / correct totals derived from clusters.
 
 ## 6. Non-functional requirements
 - Core modes (pronunciation / multiple choice / listening) must work offline if the device capabilities are available locally.

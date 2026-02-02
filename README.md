@@ -11,8 +11,13 @@ aloud, and repeats until the response is learned.
 
 ## Concept
 
-- A session draws from the set of not-yet-learned cards in random order.
-- Once a card is consistently answered correctly, it drops out of the session.
+- The app maintains two pools: a full card pool (all available content) and an
+  active window used for current study.
+- A session draws from the active window; `nextDue` determines the next item
+  type, then a random card of that type is selected.
+- Card progress is updated after each attempt via spaced repetition; clusters
+  are stored for streak and analytics.
+- Learned cards drop out of the active window and are replaced from the backlog.
 - Cards can represent numbers, simple expressions, measurements, and time formats,
   allowing multiple levels and domains without changing the flow.
 
@@ -25,12 +30,12 @@ aloud, and repeats until the response is learned.
 
 ## Card range
 
-The primary number range is fully covered from 0 to 100. Beyond that, the app
-also supports round hundreds (200, 300, ... , 900) and larger values like 1000,
-10000, and 1000000. The single source of truth for the card range lives in
+The primary number range is fully covered from 0 to 99. Beyond that, the app
+also supports round hundreds (100, 200, ... , 900) and round thousands
+(1000, 2000, ... , 9000). The single source of truth for the card range lives in
 `lib/features/training/data/number_cards.dart`.
 
 ## Documentation
 
-- [Current behavior (Russian)](Docs/current-behavior.md)
-- [Spec-driven specification (Russian)](Docs/specification.md)
+- [Specification](Docs/specification.md)
+- [Domain glossary](Docs/glossary.md)

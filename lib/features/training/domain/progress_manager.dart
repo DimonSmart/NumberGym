@@ -2,8 +2,11 @@ import 'dart:math';
 
 import '../data/card_progress.dart';
 import '../data/number_cards.dart';
-import 'language_router.dart';
 import 'learning_language.dart';
+import 'learning_strategy/learning_params.dart';
+import 'learning_strategy/learning_queue.dart';
+import 'learning_strategy/learning_strategy.dart';
+import 'language_router.dart';
 import 'repositories.dart';
 import 'tasks/number_pronunciation_task.dart';
 import 'training_item.dart';
@@ -11,53 +14,79 @@ import 'training_item.dart';
 class PickedCard {
   const PickedCard({
     required this.card,
-    required this.poolIndex,
   });
 
   final NumberPronunciationTask card;
-  final int poolIndex;
 }
 
-class ProgressUpdateResult {
-  const ProgressUpdateResult({
+class ProgressAttemptResult {
+  const ProgressAttemptResult({
     required this.learned,
     required this.poolEmpty,
+    required this.clusterApplied,
+    required this.clusterSuccess,
+    required this.countedSuccess,
   });
 
   final bool learned;
   final bool poolEmpty;
+  final bool clusterApplied;
+  final bool clusterSuccess;
+  final bool countedSuccess;
+
+  static const ProgressAttemptResult none = ProgressAttemptResult(
+    learned: false,
+    poolEmpty: false,
+    clusterApplied: false,
+    clusterSuccess: false,
+    countedSuccess: false,
+  );
 }
 
 class ProgressManager {
   ProgressManager({
     required ProgressRepositoryBase progressRepository,
     required LanguageRouter languageRouter,
+    LearningParams? learningParams,
     Random? random,
   })  : _progressRepository = progressRepository,
         _languageRouter = languageRouter,
-        _random = random ?? Random();
+        _random = random ?? Random(),
+        _learningParams = learningParams ?? LearningParams.defaults() {
+    _queue = LearningQueue(
+      allCards: const <TrainingItemId>[],
+      activeLimit: _learningParams.activeLimit,
+    );
+    _learningStrategy = LearningStrategy.defaults(
+      queue: _queue,
+      params: _learningParams,
+    );
+  }
 
   final ProgressRepositoryBase _progressRepository;
   final LanguageRouter _languageRouter;
   final Random _random;
+  final LearningParams _learningParams;
+  late LearningQueue _queue;
+  late LearningStrategy _learningStrategy;
 
   Map<TrainingItemId, NumberPronunciationTask> _cardsById = {};
   List<TrainingItemId> _cardIds = [];
   LearningLanguage? _cardsLanguage;
 
   Map<TrainingItemId, CardProgress> _progressById = {};
-  List<TrainingItemId> _pool = [];
-
-  int? _currentPoolIndex;
 
   LearningLanguage? get cardsLanguage => _cardsLanguage;
   List<TrainingItemId> get cardIds => _cardIds;
+  LearningParams get learningParams => _learningParams;
+  int get activeCount => _queue.activeCount;
+  int get backlogCount => _queue.backlogCount;
 
   int get totalCards => _cardsById.length;
   int get learnedCount =>
       _progressById.values.where((progress) => progress.learned).length;
   int get remainingCount => totalCards - learnedCount;
-  bool get hasRemainingCards => _pool.isNotEmpty;
+  bool get hasRemainingCards => _queue.hasRemaining;
 
   NumberPronunciationTask? cardById(TrainingItemId id) => _cardsById[id];
 
@@ -77,8 +106,14 @@ class ProgressManager {
     refreshCardsIfNeeded(language);
     if (_cardIds.isEmpty) {
       _progressById = {};
-      _pool = [];
-      _currentPoolIndex = null;
+      _queue = LearningQueue(
+        allCards: const <TrainingItemId>[],
+        activeLimit: _learningParams.activeLimit,
+      );
+      _learningStrategy = LearningStrategy.defaults(
+        queue: _queue,
+        params: _learningParams,
+      );
       return;
     }
     final progress = await _progressRepository.loadAll(
@@ -88,77 +123,152 @@ class ProgressManager {
     _progressById = {
       for (final id in _cardIds) id: progress[id] ?? CardProgress.empty,
     };
-    _pool = [
+    final unlearned = <TrainingItemId>[
       for (final id in _cardIds)
         if (!(_progressById[id]?.learned ?? false)) id,
-    ]..shuffle(_random);
-    _currentPoolIndex = null;
+    ];
+    _queue = LearningQueue(
+      allCards: _cardIds,
+      activeLimit: _learningParams.activeLimit,
+    );
+    _queue.reset(unlearned: unlearned);
+    _learningStrategy = LearningStrategy.defaults(
+      queue: _queue,
+      params: _learningParams,
+    );
   }
 
   PickedCard? pickNextCard({
     required bool Function(NumberPronunciationTask card) isEligible,
+    DateTime? now,
   }) {
-    if (_pool.isEmpty) return null;
-    final eligible = <int>[];
-    for (var i = 0; i < _pool.length; i += 1) {
-      final cardId = _pool[i];
-      final card = _cardsById[cardId];
-      if (card == null) continue;
-      if (isEligible(card)) {
-        eligible.add(i);
+    if (_cardIds.isEmpty) return null;
+    final candidateStates = _learningStrategy.pickNextStates(
+      now: now ?? DateTime.now(),
+      limit: _cardIds.length,
+      progressById: _progressById,
+      isEligible: (id) {
+        final card = _cardsById[id];
+        if (card == null) return false;
+        return isEligible(card);
+      },
+    );
+    if (candidateStates.isEmpty) return null;
+    final firstCard = _cardsById[candidateStates.first.id];
+    if (firstCard == null) return null;
+    final targetType = firstCard.id.type;
+
+    final sameTypeIds = <TrainingItemId>[];
+    for (final state in candidateStates) {
+      final card = _cardsById[state.id];
+      if (card != null && card.id.type == targetType) {
+        sameTypeIds.add(state.id);
       }
     }
-    if (eligible.isEmpty) return null;
-    final poolIndex = eligible[_random.nextInt(eligible.length)];
-    _currentPoolIndex = poolIndex;
-    final cardId = _pool[poolIndex];
-    final card = _cardsById[cardId];
-    if (card == null) return null;
-    return PickedCard(card: card, poolIndex: poolIndex);
+    final pickedId = sameTypeIds.isEmpty
+        ? candidateStates.first.id
+        : sameTypeIds[_random.nextInt(sameTypeIds.length)];
+    final pickedCard = _cardsById[pickedId];
+    if (pickedCard == null) return null;
+    return PickedCard(card: pickedCard);
   }
 
-  Future<ProgressUpdateResult> updateProgress({
+  Future<ProgressAttemptResult> recordAttempt({
     required TrainingItemId progressKey,
     required bool isCorrect,
+    required bool isSkipped,
     required LearningLanguage language,
+    DateTime? now,
   }) async {
-    final progress = _progressById[progressKey] ?? CardProgress.empty;
-    final attempts = List<bool>.from(progress.lastAttempts)..add(isCorrect);
-    if (attempts.length > 10) {
-      attempts.removeRange(0, attempts.length - 10);
+    final timestamp = now ?? DateTime.now();
+    var progress = _progressById[progressKey] ?? CardProgress.empty;
+    final clusters = List<CardCluster>.from(progress.clusters);
+    final lastCluster = clusters.isEmpty ? null : clusters.last;
+    final gapMinutes = _learningParams.clusterMaxGapMinutes;
+    final updatedClusters = List<CardCluster>.from(clusters);
+    final updatedLastAnswerAt = timestamp.millisecondsSinceEpoch;
+    if (lastCluster != null && lastCluster.lastAnswerAt > 0) {
+      final withinGap = timestamp.difference(
+            DateTime.fromMillisecondsSinceEpoch(
+              lastCluster.lastAnswerAt,
+            ),
+          ) <=
+          Duration(minutes: gapMinutes);
+      if (withinGap) {
+        final updatedCluster = _updateCluster(
+          lastCluster,
+          isCorrect: isCorrect,
+          isSkipped: isSkipped,
+          lastAnswerAt: updatedLastAnswerAt,
+        );
+        updatedClusters[updatedClusters.length - 1] = updatedCluster;
+      } else {
+        updatedClusters.add(
+          CardCluster(
+            lastAnswerAt: updatedLastAnswerAt,
+            correctCount: isCorrect ? 1 : 0,
+            wrongCount: (!isCorrect && !isSkipped) ? 1 : 0,
+            skippedCount: isSkipped ? 1 : 0,
+          ),
+        );
+      }
+    } else {
+      updatedClusters.add(
+        CardCluster(
+          lastAnswerAt: updatedLastAnswerAt,
+          correctCount: isCorrect ? 1 : 0,
+          wrongCount: (!isCorrect && !isSkipped) ? 1 : 0,
+          skippedCount: isSkipped ? 1 : 0,
+        ),
+      );
     }
-    final learned = attempts.length == 10 && attempts.every((value) => value);
-    final updated = progress.copyWith(
-      learned: learned,
-      lastAttempts: attempts,
-      totalAttempts: progress.totalAttempts + 1,
-      totalCorrect: progress.totalCorrect + (isCorrect ? 1 : 0),
+    final maxClusters = _learningParams.maxStoredClusters;
+    if (updatedClusters.length > maxClusters) {
+      final overflow = updatedClusters.length - maxClusters;
+      updatedClusters.removeRange(0, overflow);
+    }
+
+    final attemptAccuracy = isCorrect ? 1.0 : 0.0;
+    final result = _learningStrategy.applyClusterResult(
+      itemId: progressKey,
+      progress: progress,
+      accuracy: attemptAccuracy,
+      now: timestamp,
     );
+    progress = result.progress;
+    final attemptResult = ProgressAttemptResult(
+      learned: result.learnedNow,
+      poolEmpty: !_queue.hasRemaining,
+      clusterApplied: true,
+      clusterSuccess: result.clusterSuccess,
+      countedSuccess: result.countedSuccess,
+    );
+
+    final updated = progress.copyWith(clusters: updatedClusters);
     _progressById[progressKey] = updated;
     await _progressRepository.save(
       progressKey,
       updated,
       language: language,
     );
-    if (learned) {
-      _removeFromPool();
-    }
-    return ProgressUpdateResult(
-      learned: learned,
-      poolEmpty: _pool.isEmpty,
+    return attemptResult;
+  }
+
+  CardCluster _updateCluster(
+    CardCluster cluster, {
+    required bool isCorrect,
+    required bool isSkipped,
+    required int lastAnswerAt,
+  }) {
+    return cluster.copyWith(
+      lastAnswerAt: lastAnswerAt,
+      correctCount: cluster.correctCount + (isCorrect ? 1 : 0),
+      wrongCount: cluster.wrongCount + (!isCorrect && !isSkipped ? 1 : 0),
+      skippedCount: cluster.skippedCount + (isSkipped ? 1 : 0),
     );
   }
 
   void resetSelection() {
-    _currentPoolIndex = null;
-  }
-
-  void _removeFromPool() {
-    final index = _currentPoolIndex;
-    if (index == null || index >= _pool.length) return;
-    final lastIndex = _pool.length - 1;
-    _pool[index] = _pool[lastIndex];
-    _pool.removeLast();
-    _currentPoolIndex = null;
+    // No-op: selection is handled by the learning strategy.
   }
 }

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../data/card_progress.dart';
 import '../../data/number_cards.dart';
 import '../../data/progress_repository.dart';
+import '../../domain/learning_strategy/learning_params.dart';
 import '../../domain/learning_language.dart';
 import '../../domain/training_item.dart';
 import '../widgets/training_background.dart';
@@ -102,6 +103,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final gridProgress = {
       for (final id in _gridIds) id: _progressById[id] ?? CardProgress.empty,
     };
+    final successThreshold =
+        LearningParams.defaults().clusterSuccessAccuracy;
 
     final totalAttempts = _progressById.values.fold<int>(
       0,
@@ -130,7 +133,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Color shows learning progress; below is the current correct streak.',
+            'Color shows learning progress; below is the current successful cluster streak.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -138,7 +141,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const SizedBox(height: 12),
           _buildLegend(theme),
           const SizedBox(height: 14),
-          _buildGrid(theme, _gridIds, gridProgress, hotIds),
+          _buildGrid(theme, _gridIds, gridProgress, hotIds, successThreshold),
         ],
       ),
     );
@@ -233,6 +236,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     List<TrainingItemId> gridIds,
     Map<TrainingItemId, CardProgress> progressById,
     Set<TrainingItemId> hotIds,
+    double successThreshold,
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -272,7 +276,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             itemBuilder: (context, index) {
               final id = gridIds[index];
               final progress = progressById[id] ?? CardProgress.empty;
-              final streak = _consecutiveCorrect(progress.lastAttempts);
+              final streak =
+                  _clusterSuccessStreak(progress, successThreshold);
               final baseColor =
                   _progressColor(theme.colorScheme, progress, streak);
               final isHot = hotIds.contains(id);
@@ -345,13 +350,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return entries.map((entry) => entry.key).toSet();
   }
 
-  int _consecutiveCorrect(List<bool> attempts) {
+  int _clusterSuccessStreak(
+    CardProgress progress,
+    double successThreshold,
+  ) {
     var count = 0;
-    for (var i = attempts.length - 1; i >= 0; i--) {
-      if (!attempts[i]) break;
+    for (var i = progress.clusters.length - 1; i >= 0; i--) {
+      final cluster = progress.clusters[i];
+      if (!_isClusterSuccess(cluster, successThreshold)) {
+        break;
+      }
       count += 1;
     }
     return count;
+  }
+
+  bool _isClusterSuccess(CardCluster cluster, double threshold) {
+    final total = cluster.totalAttempts;
+    if (total == 0) return false;
+    return (cluster.correctCount / total) >= threshold;
   }
 
   Color _progressColor(
