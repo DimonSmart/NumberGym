@@ -39,9 +39,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   static const String _successAnimationPrefix = 'assets/animations/success/';
   static const String _fallbackSuccessAnimation =
-      'assets/animations/success/Success.lottie';
+      'assets/animations/success/Success.json';
   static const String _failureAnimationAsset =
-      'assets/animations/failure/Failure.lottie';
+      'assets/animations/failure/Failure.json';
   static const Duration _overlayTransition = Duration(milliseconds: 250);
 
   @override

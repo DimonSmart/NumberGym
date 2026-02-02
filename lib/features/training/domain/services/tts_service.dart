@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:number_gym/tts/voices_ready.dart';
 
 class TtsVoice {
   const TtsVoice({
@@ -34,22 +35,38 @@ class TtsService implements TtsServiceBase {
   TtsService({FlutterTts? tts}) : _tts = tts ?? FlutterTts();
 
   final FlutterTts _tts;
+  final VoicesReady _voicesReady = VoicesReady();
   bool _disposed = false;
+
+  Future<void> _ensureVoicesLoaded() async {
+    await _voicesReady.wait();
+  }
 
   @override
   Future<bool> isLanguageAvailable(String locale) async {
-    final result = await _tts.isLanguageAvailable(locale);
-    if (result is bool) {
-      return result;
-    }
-    if (result == null) {
+    await _ensureVoicesLoaded();
+    final available = _parseAvailability(
+      await _tts.isLanguageAvailable(locale),
+    );
+    if (available) return true;
+
+    List<TtsVoice> voices;
+    try {
+      voices = await listVoices();
+    } catch (_) {
       return false;
     }
-    return result.toString().toLowerCase() == 'true';
+    if (voices.isEmpty) return false;
+    final normalizedTarget = _normalizeLocale(locale);
+    final prefix = normalizedTarget.split('-').first;
+    return voices.any(
+      (voice) => _normalizeLocale(voice.locale).startsWith(prefix),
+    );
   }
 
   @override
   Future<List<TtsVoice>> listVoices() async {
+    await _ensureVoicesLoaded();
     final raw = await _tts.getVoices;
     if (raw is! List) return const [];
     final voices = <TtsVoice>[];
@@ -92,6 +109,7 @@ class TtsService implements TtsServiceBase {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
+    _voicesReady.dispose();
     unawaited(_tts.stop());
   }
 }
@@ -142,4 +160,20 @@ String? _stringValue(dynamic value) {
   if (value == null) return null;
   if (value is String) return value;
   return value.toString();
+}
+
+bool _parseAvailability(dynamic result) {
+  if (result == null) return false;
+  if (result is bool) return result;
+  if (result is num) return result >= 0;
+  if (result is String) {
+    final normalized = result.trim().toLowerCase();
+    if (normalized == 'true') return true;
+    if (normalized == 'false') return false;
+    final numeric = num.tryParse(normalized);
+    if (numeric != null) {
+      return numeric >= 0;
+    }
+  }
+  return result.toString().toLowerCase() == 'true';
 }

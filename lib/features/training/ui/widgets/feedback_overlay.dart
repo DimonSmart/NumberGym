@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -34,6 +33,8 @@ class _FeedbackOverlayState extends State<FeedbackOverlay> {
   final Map<String, Future<ByteData>> _assetLoads = {};
   List<String> _successAssets = const [];
   String? _activeAsset;
+  bool _manifestReady = false;
+  Set<String> _availableAssets = const {};
 
   @override
   void initState() {
@@ -52,40 +53,43 @@ class _FeedbackOverlayState extends State<FeedbackOverlay> {
 
   Future<void> _loadSuccessAssets() async {
     try {
-      final manifest = await rootBundle.loadString('AssetManifest.json');
-      final decoded = jsonDecode(manifest) as Map<String, dynamic>;
-      final assets = decoded.keys
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final allAssets = manifest.listAssets();
+      final assets = allAssets
           .where(
             (key) =>
                 key.startsWith(widget.successAssetPrefix) &&
-                key.endsWith('.lottie'),
+                key.endsWith('.json'),
           )
           .toList()
         ..sort();
       if (!mounted) return;
       setState(() {
         _successAssets = assets;
+        _availableAssets = allAssets.toSet();
+        _manifestReady = true;
       });
-      if (widget.feedback.type == TrainingFeedbackType.correct) {
-        _selectAssetForFeedback();
-      }
+      _selectAssetForFeedback();
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _successAssets = const [];
+        _availableAssets = const {};
+        _manifestReady = true;
       });
     }
   }
 
   void _selectAssetForFeedback() {
     final feedback = widget.feedback;
-    String asset;
+    String? asset;
     if (feedback.type == TrainingFeedbackType.correct) {
       final pool =
           _successAssets.isEmpty ? [widget.fallbackSuccessAsset] : _successAssets;
-      asset = pool[_random.nextInt(pool.length)];
+      final candidate = pool[_random.nextInt(pool.length)];
+      asset = _canUseAsset(candidate) ? candidate : null;
     } else {
-      asset = widget.failureAsset;
+      asset = _canUseAsset(widget.failureAsset) ? widget.failureAsset : null;
     }
     if (_activeAsset == asset) return;
     if (mounted) {
@@ -99,7 +103,10 @@ class _FeedbackOverlayState extends State<FeedbackOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    final asset = _activeAsset ?? widget.fallbackSuccessAsset;
+    final asset = _activeAsset ??
+        (widget.feedback.type == TrainingFeedbackType.correct
+            ? widget.fallbackSuccessAsset
+            : null);
     final theme = Theme.of(context);
 
     return ColoredBox(
@@ -137,9 +144,12 @@ class _FeedbackOverlayState extends State<FeedbackOverlay> {
   }
 
   Widget _buildAnimation({
-    required String asset,
+    required String? asset,
     required IconData fallbackIcon,
   }) {
+    if (!_manifestReady || asset == null || !_availableAssets.contains(asset)) {
+      return _buildFallbackIcon(fallbackIcon);
+    }
     final future =
         _assetLoads.putIfAbsent(asset, () => rootBundle.load(asset));
     return FutureBuilder<ByteData>(
@@ -168,5 +178,10 @@ class _FeedbackOverlayState extends State<FeedbackOverlay> {
         color: widget.accentColor,
       ),
     );
+  }
+
+  bool _canUseAsset(String asset) {
+    if (!_manifestReady) return false;
+    return _availableAssets.contains(asset);
   }
 }
