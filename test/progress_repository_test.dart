@@ -69,6 +69,7 @@ void main() {
       ease: 2.1,
       spacedSuccessCount: 1,
       lastCountedSuccessDay: 10,
+      learnedAt: 1000,
     );
 
     const targetId = TrainingItemId(
@@ -114,6 +115,7 @@ void main() {
       ease: 1.8,
       spacedSuccessCount: 0,
       lastCountedSuccessDay: -1,
+      learnedAt: 0,
     );
 
     const targetId = TrainingItemId(
@@ -154,6 +156,7 @@ void main() {
       ease: 2.0,
       spacedSuccessCount: 2,
       lastCountedSuccessDay: 5,
+      learnedAt: 3000,
     );
 
     const targetId = TrainingItemId(

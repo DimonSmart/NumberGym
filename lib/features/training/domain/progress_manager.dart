@@ -236,6 +236,11 @@ class ProgressManager {
       now: timestamp,
     );
     progress = result.progress;
+    if (result.learnedNow && progress.learnedAt == 0) {
+      progress = progress.copyWith(
+        learnedAt: timestamp.millisecondsSinceEpoch,
+      );
+    }
     final attemptResult = ProgressAttemptResult(
       learned: result.learnedNow,
       poolEmpty: !_queue.hasRemaining,

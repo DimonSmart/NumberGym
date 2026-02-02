@@ -58,6 +58,7 @@ void main() {
       ease: 2.0,
       spacedSuccessCount: 0,
       lastCountedSuccessDay: -1,
+      learnedAt: 0,
     );
     final scheduler = SpacedScheduler(params);
     final result = scheduler.applyClusterResult(
@@ -80,6 +81,7 @@ void main() {
       ease: 2.0,
       spacedSuccessCount: 1,
       lastCountedSuccessDay: -1,
+      learnedAt: 0,
     );
     final scheduler = SpacedScheduler(params);
     final now = DateTime(2026, 1, 4, 9, 0);

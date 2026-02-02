@@ -44,6 +44,7 @@ class CardProgress {
   final double ease;
   final int spacedSuccessCount;
   final int lastCountedSuccessDay;
+  final int learnedAt;
 
   const CardProgress({
     required this.learned,
@@ -53,6 +54,7 @@ class CardProgress {
     required this.ease,
     required this.spacedSuccessCount,
     required this.lastCountedSuccessDay,
+    required this.learnedAt,
   });
 
   int get totalAttempts =>
@@ -74,6 +76,7 @@ class CardProgress {
     double? ease,
     int? spacedSuccessCount,
     int? lastCountedSuccessDay,
+    int? learnedAt,
   }) {
     return CardProgress(
       learned: learned ?? this.learned,
@@ -84,6 +87,7 @@ class CardProgress {
       spacedSuccessCount: spacedSuccessCount ?? this.spacedSuccessCount,
       lastCountedSuccessDay:
           lastCountedSuccessDay ?? this.lastCountedSuccessDay,
+      learnedAt: learnedAt ?? this.learnedAt,
     );
   }
 
@@ -95,6 +99,7 @@ class CardProgress {
     ease: 0,
     spacedSuccessCount: 0,
     lastCountedSuccessDay: -1,
+    learnedAt: 0,
   );
 }
 
@@ -113,6 +118,7 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
     var ease = CardProgress.empty.ease;
     var spacedSuccessCount = CardProgress.empty.spacedSuccessCount;
     var lastCountedSuccessDay = CardProgress.empty.lastCountedSuccessDay;
+    var learnedAt = CardProgress.empty.learnedAt;
     List<CardCluster> clusters = const [];
     if (reader.availableBytes >= 16) {
       totalAttempts = reader.readInt();
@@ -154,6 +160,9 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
         clusters = items;
       }
     }
+    if (reader.availableBytes >= 8) {
+      learnedAt = reader.readInt();
+    }
     if (clusters.isEmpty && (totalAttempts > 0 || attempts.isNotEmpty)) {
       if (totalCorrect > totalAttempts) {
         totalCorrect = totalAttempts;
@@ -175,6 +184,7 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
       ease: ease,
       spacedSuccessCount: spacedSuccessCount,
       lastCountedSuccessDay: lastCountedSuccessDay,
+      learnedAt: learnedAt,
     );
   }
 
@@ -196,5 +206,6 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
       writer.writeInt(cluster.wrongCount);
       writer.writeInt(cluster.skippedCount);
     }
+    writer.writeInt(obj.learnedAt);
   }
 }
