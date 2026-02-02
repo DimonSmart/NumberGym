@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
+
+import '../../../../core/logging/app_logger.dart';
 
 abstract class AudioRecorderServiceBase {
   bool get isRecording;
@@ -101,10 +102,7 @@ class AudioRecorderService implements AudioRecorderServiceBase {
   }
 
   void _log(String message) {
-    if (!kDebugMode) return;
-    final now = DateTime.now().toString();
-    final time = now.substring(11, 23);
-    debugPrint('[$time] Audio recorder: $message');
+    appLogD('audio', 'Audio recorder: $message');
   }
 }
 

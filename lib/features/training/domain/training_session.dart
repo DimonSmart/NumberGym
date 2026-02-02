@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
+import '../../../core/logging/app_logger.dart';
 import '../languages/registry.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
@@ -246,8 +247,11 @@ class TrainingSession {
   }
 
   void _logSpeechError(SpeechRecognitionError error) {
-    if (!kDebugMode) return;
-    debugPrint('Speech error during init: ${error.errorMsg}');
+    appLogW(
+      'speech',
+      'Speech error during init: ${error.errorMsg}',
+      error: error,
+    );
   }
 
   LearningLanguage _currentLanguage() {
@@ -533,23 +537,36 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
     final affectsProgress = taskState.affectsProgress;
-    if (affectsProgress) {
-      final isCorrect = outcome == TrainingOutcome.success;
-      final isSkipped =
-          outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.ignore;
-      _streakTracker.record(isCorrect);
-      final attemptResult = await _progressManager.recordAttempt(
-        progressKey: taskState.taskId,
-        isCorrect: isCorrect,
-        isSkipped: isSkipped,
-        language: _currentLanguage(),
-      );
-      if (attemptResult.learned && attemptResult.poolEmpty) {
-        _trainingActive = false;
-        unawaited(_setKeepAwake(false));
-        _syncState();
+      if (affectsProgress) {
+        final isCorrect = outcome == TrainingOutcome.success;
+        final isSkipped =
+            outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.ignore;
+        _streakTracker.record(isCorrect);
+        final attemptResult = await _progressManager.recordAttempt(
+          progressKey: taskState.taskId,
+          isCorrect: isCorrect,
+          isSkipped: isSkipped,
+          language: _currentLanguage(),
+        );
+        final clusterLabel = attemptResult.newCluster ? 'new' : 'existing';
+        appLogI(
+          'progress',
+          'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
+          'outcome=${outcome.name} correct=$isCorrect skipped=$isSkipped '
+          'cluster=$clusterLabel',
+        );
+        if (attemptResult.learned && attemptResult.poolEmpty) {
+          _trainingActive = false;
+          unawaited(_setKeepAwake(false));
+          _syncState();
+        }
+      } else {
+        appLogI(
+          'progress',
+          'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
+          'outcome=${outcome.name} affectsProgress=false',
+        );
       }
-    }
 
     final feedbackHold = _feedbackCoordinator.show(outcome);
 

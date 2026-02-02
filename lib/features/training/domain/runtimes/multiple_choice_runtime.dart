@@ -1,3 +1,4 @@
+import '../../../../core/logging/app_logger.dart';
 import '../services/card_timer.dart';
 import '../task_runtime.dart';
 import '../task_state.dart';
@@ -16,6 +17,7 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
     required Duration cardDuration,
     required CardTimerBase cardTimer,
   })  : _kind = kind,
+        _taskId = taskId,
         _correctOption = correctOption,
         _cardDuration = cardDuration,
         _cardTimer = cardTimer,
@@ -36,6 +38,7 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
         );
 
   final TrainingTaskKind _kind;
+  final TrainingItemId _taskId;
   final String _correctOption;
   final Duration _cardDuration;
   final CardTimerBase _cardTimer;
@@ -59,6 +62,12 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
     final outcome = normalized == correct
         ? TrainingOutcome.success
         : TrainingOutcome.fail;
+    appLogI(
+      'task',
+      'Answer: kind=${_kind.name} id=$_taskId '
+      'selected="${action.option}" correct="$_correctOption" '
+      'outcome=${outcome.name}',
+    );
     await _complete(outcome);
   }
 

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../../../core/logging/app_logger.dart';
 import '../learning_language.dart';
 import '../services/answer_matcher.dart';
 import '../services/card_timer.dart';
@@ -462,6 +462,13 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
       await _speechService.stop();
     }
     _isListening = false;
+    final heard = _lastHeardText?.trim();
+    appLogI(
+      'task',
+      'Answer: kind=numberPronunciation id=${_task.id} '
+      'heard="${heard == null || heard.isEmpty ? '<empty>' : heard}" '
+      'outcome=${outcome.name}',
+    );
     _log('Speech attempt completed: outcome=$outcome');
     emitState(_buildState());
     emitEvent(TaskCompleted(outcome));
@@ -742,10 +749,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _log(String message) {
-    if (!kDebugMode) return;
-    final now = DateTime.now().toString();
-    final time = now.substring(11, 23);
-    debugPrint('[$time] $message');
+    appLogD('speech', message);
   }
 
   void _updatePreviewFromPartial(String recognizedText) {

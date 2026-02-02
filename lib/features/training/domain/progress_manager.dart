@@ -27,6 +27,7 @@ class ProgressAttemptResult {
     required this.clusterApplied,
     required this.clusterSuccess,
     required this.countedSuccess,
+    required this.newCluster,
   });
 
   final bool learned;
@@ -34,6 +35,7 @@ class ProgressAttemptResult {
   final bool clusterApplied;
   final bool clusterSuccess;
   final bool countedSuccess;
+  final bool newCluster;
 
   static const ProgressAttemptResult none = ProgressAttemptResult(
     learned: false,
@@ -41,6 +43,7 @@ class ProgressAttemptResult {
     clusterApplied: false,
     clusterSuccess: false,
     countedSuccess: false,
+    newCluster: false,
   );
 }
 
@@ -193,6 +196,7 @@ class ProgressManager {
     final gapMinutes = _learningParams.clusterMaxGapMinutes;
     final updatedClusters = List<CardCluster>.from(clusters);
     final updatedLastAnswerAt = timestamp.millisecondsSinceEpoch;
+    var createdNewCluster = true;
     if (lastCluster != null && lastCluster.lastAnswerAt > 0) {
       final withinGap = timestamp.difference(
             DateTime.fromMillisecondsSinceEpoch(
@@ -201,6 +205,7 @@ class ProgressManager {
           ) <=
           Duration(minutes: gapMinutes);
       if (withinGap) {
+        createdNewCluster = false;
         final updatedCluster = _updateCluster(
           lastCluster,
           isCorrect: isCorrect,
@@ -209,6 +214,7 @@ class ProgressManager {
         );
         updatedClusters[updatedClusters.length - 1] = updatedCluster;
       } else {
+        createdNewCluster = true;
         updatedClusters.add(
           CardCluster(
             lastAnswerAt: updatedLastAnswerAt,
@@ -219,6 +225,7 @@ class ProgressManager {
         );
       }
     } else {
+      createdNewCluster = true;
       updatedClusters.add(
         CardCluster(
           lastAnswerAt: updatedLastAnswerAt,
@@ -253,6 +260,7 @@ class ProgressManager {
       clusterApplied: true,
       clusterSuccess: result.clusterSuccess,
       countedSuccess: result.countedSuccess,
+      newCluster: createdNewCluster,
     );
 
     final updated = progress.copyWith(clusters: updatedClusters);

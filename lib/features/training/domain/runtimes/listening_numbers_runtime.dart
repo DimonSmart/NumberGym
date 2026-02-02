@@ -1,9 +1,11 @@
+import '../../../../core/logging/app_logger.dart';
 import '../services/card_timer.dart';
 import '../services/tts_service.dart';
 import '../task_runtime.dart';
 import '../task_state.dart';
 import '../training_item.dart';
 import '../training_outcome.dart';
+import '../training_task.dart';
 
 class ListeningNumbersRuntime extends TaskRuntimeBase {
   ListeningNumbersRuntime({
@@ -79,6 +81,12 @@ class ListeningNumbersRuntime extends TaskRuntimeBase {
     final outcome = normalized == correct
         ? TrainingOutcome.success
         : TrainingOutcome.fail;
+    appLogI(
+      'task',
+      'Answer: kind=${TrainingTaskKind.listeningNumbers.name} id=$_taskId '
+      'selected="${action.option}" correct="$correct" '
+      'outcome=${outcome.name}',
+    );
     if (outcome == TrainingOutcome.success) {
       _answerRevealed = true;
       emitState(_buildState());

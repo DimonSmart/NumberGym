@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-
+import '../../../../core/logging/app_logger.dart';
 import '../learning_language.dart';
 import '../pronunciation_models.dart';
 import '../services/audio_recorder_service.dart';
@@ -172,6 +171,14 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
       _result = result;
       _flow = PhraseFlow.reviewing;
       emitState(_buildState());
+      final best = result.best;
+      final score = best == null ? 'n/a' : best.pronScore.toStringAsFixed(1);
+      appLogI(
+        'task',
+        'Answer: kind=phrasePronunciation id=${_task.id} '
+        'expected="${_task.text}" heard="${result.displayText ?? ''}" '
+        'pronScore=$score',
+      );
       _log('Pronunciation send: completed, awaiting review.');
     } catch (error) {
       _flow = PhraseFlow.recorded;
@@ -205,9 +212,6 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _log(String message) {
-    if (!kDebugMode) return;
-    final now = DateTime.now().toString();
-    final time = now.substring(11, 23);
-    debugPrint('[$time] $message');
+    appLogD('speech', message);
   }
 }

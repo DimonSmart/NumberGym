@@ -1,27 +1,28 @@
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
+
+import 'package:web/web.dart' as web;
 
 class VoicesReady {
-  StreamSubscription<html.Event>? _sub;
+  StreamSubscription<web.Event>? _sub;
 
   Future<void> wait({Duration timeout = const Duration(seconds: 2)}) async {
-    final synth = html.window.speechSynthesis;
-    if (synth == null) return;
+    final synth = web.window.speechSynthesis;
 
     // Some browsers only populate voices after the first getVoices().
-    synth.getVoices();
-
-    if (synth.getVoices().isNotEmpty) return;
+    final initialVoices = _hasVoices(synth);
+    if (initialVoices == null) return;
+    if (initialVoices) return;
 
     final completer = Completer<void>();
 
     void tryComplete() {
-      if (!completer.isCompleted && synth.getVoices().isNotEmpty) {
+      if (!completer.isCompleted && _hasVoices(synth) == true) {
         completer.complete();
       }
     }
 
-    _sub ??= html.EventStreamProvider<html.Event>('voiceschanged')
+    _sub ??= web.EventStreamProvider<web.Event>('voiceschanged')
         .forTarget(synth)
         .listen((_) {
       // Let the browser apply updates before checking.
@@ -44,5 +45,13 @@ class VoicesReady {
   void dispose() {
     _sub?.cancel();
     _sub = null;
+  }
+
+  bool? _hasVoices(web.SpeechSynthesis synth) {
+    try {
+      return synth.getVoices().toDart.isNotEmpty;
+    } catch (_) {
+      return null;
+    }
   }
 }
