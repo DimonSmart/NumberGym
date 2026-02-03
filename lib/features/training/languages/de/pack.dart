@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../../domain/learning_language.dart';
+import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
 import '../phrase_template.dart';
+import '../time_lexicon.dart';
 
 LanguagePack buildGermanPack() {
   return LanguagePack(
@@ -14,8 +16,10 @@ LanguagePack buildGermanPack() {
     locale: 'de-DE',
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToGerman,
+    timeWordsConverter: _timeToGerman,
     phraseTemplates: _germanPhrases,
     numberLexicon: _germanLexicon,
+    timeLexicon: _germanTimeLexicon,
     operatorWords: _germanOperatorWords,
     ignoredWords: _germanIgnoredWords,
     ttsPreviewText: 'Hallo! Ich bin deine neue Stimme. Wie klinge ich?',
@@ -89,6 +93,26 @@ String _numberToGerman(int value) {
   return value.toString();
 }
 
+String _timeToGerman(TimeValue time) {
+  final minute = time.minute;
+  final hourWords = _numberToGerman(time.hour);
+  if (minute == 0) {
+    return '$hourWords uhr';
+  }
+  if (minute == 15) {
+    return 'viertel nach $hourWords';
+  }
+  if (minute == 30) {
+    return 'halb nach $hourWords';
+  }
+  if (minute == 45) {
+    final nextHour = (time.hour + 1) % 24;
+    return 'viertel vor ${_numberToGerman(nextHour)}';
+  }
+  final minuteWords = _numberToGerman(minute);
+  return '$hourWords $minuteWords';
+}
+
 const _germanLexicon = NumberLexicon(
   units: {
     'null': 0,
@@ -131,6 +155,16 @@ const _germanLexicon = NumberLexicon(
     'millionen': 1000000,
   },
   conjunctions: {'und'},
+);
+
+const _germanTimeLexicon = TimeLexicon(
+  quarterWords: {'viertel'},
+  halfWords: {'halb'},
+  pastWords: {'nach'},
+  toWords: {'vor'},
+  oclockWords: {'uhr'},
+  connectorWords: {'und'},
+  fillerWords: {'um'},
 );
 
 const _germanOperatorWords = {

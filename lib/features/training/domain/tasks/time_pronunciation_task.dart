@@ -29,5 +29,5 @@ class TimePronunciationTask extends TrainingTask implements PronunciationTaskDat
   TrainingItemId get progressId => id;
 
   @override
-  String get displayText => timeValue.displayText;
+  String get displayText => prompt;
 }

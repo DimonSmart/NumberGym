@@ -21,7 +21,6 @@ import 'task_availability.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
 import 'task_scheduler.dart';
-import 'tasks/number_pronunciation_task.dart';
 import 'tasks/number_to_word_task.dart';
 import 'training_outcome.dart';
 import 'training_services.dart';
@@ -73,6 +72,7 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedItemType = _readDebugForcedItemType();
     _syncState();
   }
 
@@ -93,6 +93,7 @@ class TrainingSession {
 
   bool _premiumPronunciationEnabled = false;
   TrainingTaskKind? _debugForcedTaskKind;
+  TrainingItemType? _debugForcedItemType;
 
   String? _errorMessage;
 
@@ -140,6 +141,7 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedItemType = _readDebugForcedItemType();
     if (_progressManager.cardsLanguage != _currentLanguage()) {
       await _loadProgress();
     }
@@ -174,6 +176,7 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedItemType = _readDebugForcedItemType();
     _silentDetector.reset();
     _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
@@ -193,6 +196,7 @@ class TrainingSession {
     _premiumPronunciationEnabled =
         _settingsRepository.readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedItemType = _readDebugForcedItemType();
     _progressManager.resetSelection();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _silentDetector.reset();
@@ -265,6 +269,13 @@ class TrainingSession {
     return _settingsRepository.readDebugForcedTaskKind();
   }
 
+  TrainingItemType? _readDebugForcedItemType() {
+    if (!kDebugMode) {
+      return null;
+    }
+    return _settingsRepository.readDebugForcedItemType();
+  }
+
   Duration _resolveCardDuration() {
     final seconds = _settingsRepository.readAnswerDurationSeconds();
     return Duration(seconds: seconds);
@@ -296,7 +307,7 @@ class TrainingSession {
   TaskRegistry _buildDefaultRegistry() {
     return TaskRegistry({
       TrainingTaskKind.numberPronunciation: (context) {
-        final card = _requireNumberPronunciationTask(context.card);
+        final card = context.card;
         return NumberPronunciationRuntime(
           task: card,
           speechService: context.services.speech,
@@ -443,7 +454,7 @@ class TrainingSession {
   }
 
   TaskRuntime _buildFallbackPronunciationRuntime(TaskBuildContext context) {
-    final card = _requireNumberPronunciationTask(context.card);
+    final card = context.card;
     final hintText = context.hintText ??
         _resolveHintText(card, TrainingTaskKind.numberPronunciation);
     return NumberPronunciationRuntime(
@@ -470,11 +481,13 @@ class TrainingSession {
 
     final language = _currentLanguage();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedItemType = _readDebugForcedItemType();
     final scheduleResult = await _taskScheduler.scheduleNext(
       progressManager: _progressManager,
       language: language,
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
       forcedTaskKind: _debugForcedTaskKind,
+      forcedItemType: _debugForcedItemType,
     );
     if (scheduleResult is TaskScheduleFinished) {
       _trainingActive = false;
@@ -527,15 +540,6 @@ class TrainingSession {
       throw StateError('Expected a number-based pronunciation card.');
     }
     return numberValue;
-  }
-
-  NumberPronunciationTask _requireNumberPronunciationTask(
-    PronunciationTaskData card,
-  ) {
-    if (card is NumberPronunciationTask) {
-      return card;
-    }
-    throw StateError('Expected a number pronunciation card.');
   }
 
   void _handleRuntimeEvent(TaskEvent event) {

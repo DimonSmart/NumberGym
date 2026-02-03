@@ -12,13 +12,13 @@ import '../services/sound_wave_service.dart';
 import '../services/speech_service.dart';
 import '../task_runtime.dart';
 import '../task_state.dart';
-import '../tasks/number_pronunciation_task.dart';
+import '../training_task.dart';
 import '../training_outcome.dart';
 import '../../languages/registry.dart';
 
 class NumberPronunciationRuntime extends TaskRuntimeBase {
   NumberPronunciationRuntime({
-    required NumberPronunciationTask task,
+    required PronunciationTaskData task,
     required SpeechServiceBase speechService,
     required SoundWaveServiceBase soundWaveService,
     required CardTimerBase cardTimer,
@@ -62,7 +62,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   static const Duration _maxListenDuration = Duration(seconds: 10);
   static const int _maxConsecutiveClientErrors = 3;
 
-  final NumberPronunciationTask _task;
+  final PronunciationTaskData _task;
   final SpeechServiceBase _speechService;
   final SoundWaveServiceBase _soundWaveService;
   final CardTimerBase _cardTimer;

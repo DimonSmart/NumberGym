@@ -77,7 +77,7 @@ class DefaultLearningStrategy implements LearningStrategy {
     bool Function(TrainingItemId id)? isEligible,
   }) {
     if (limit <= 0) return const <LearningState>[];
-    _queue.fillActive();
+    _queue.fillActive(isEligible: isEligible);
     final filtered = <LearningState>[];
     for (final id in _queue.active) {
       if (isEligible != null && !isEligible(id)) {

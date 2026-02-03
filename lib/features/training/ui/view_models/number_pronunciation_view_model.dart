@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/task_state.dart';
+import '../../domain/training_item.dart';
 import 'training_feedback_view_model.dart';
 
 class SpeechRecognitionLine {
@@ -54,7 +55,7 @@ class NumberPronunciationViewModel {
   }) {
     final displayText = task?.displayText ?? '--';
     return NumberPronunciationViewModel(
-      title: 'Read the number aloud',
+      title: _resolveTitle(task),
       promptText: displayText.isEmpty ? '--' : displayText,
       expectedTokens: task?.expectedTokens ?? const <String>[],
       matchedTokens: task?.matchedTokens ?? const <bool>[],
@@ -133,6 +134,23 @@ class NumberPronunciationViewModel {
       ),
     );
     return List<SpeechRecognitionLine>.unmodifiable(lines);
+  }
+
+  static String _resolveTitle(NumberPronunciationState? task) {
+    final itemType = task?.taskId.type;
+    switch (itemType) {
+      case TrainingItemType.timeExact:
+      case TrainingItemType.timeQuarter:
+      case TrainingItemType.timeHalf:
+      case TrainingItemType.timeRandom:
+        return 'Say the time aloud';
+      case TrainingItemType.digits:
+      case TrainingItemType.base:
+      case TrainingItemType.hundreds:
+      case TrainingItemType.thousands:
+      case null:
+        return 'Read the number aloud';
+    }
   }
 
   static String _buildMatchedDisplay(

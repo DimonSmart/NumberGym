@@ -13,6 +13,7 @@ import '../../domain/services/internet_checker.dart';
 import '../../domain/services/speech_service.dart';
 import '../../domain/services/tts_service.dart';
 import '../../domain/task_availability.dart';
+import '../../domain/training_item.dart';
 import '../../domain/training_task.dart';
 import '../../languages/registry.dart';
 import 'package:number_gym/core/logging/app_log_buffer.dart';
@@ -50,6 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _speechLoading = false;
   String? _speechStatusMessage;
   TrainingTaskKind? _debugForcedTaskKind;
+  TrainingItemType? _debugForcedItemType;
   Timer? _internetTimer;
   bool _hasInternet = true;
 
@@ -80,6 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     if (kDebugMode) {
       _debugForcedTaskKind = _settingsRepository.readDebugForcedTaskKind();
+      _debugForcedItemType = _settingsRepository.readDebugForcedItemType();
     }
   }
 
@@ -274,6 +277,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _debugForcedTaskKind = kind;
     });
     await _settingsRepository.setDebugForcedTaskKind(kind);
+  }
+
+  Future<void> _updateDebugForcedItemType(TrainingItemType? type) async {
+    setState(() {
+      _debugForcedItemType = type;
+    });
+    await _settingsRepository.setDebugForcedItemType(type);
+  }
+
+  String _itemTypeLabel(TrainingItemType type) {
+    switch (type) {
+      case TrainingItemType.digits:
+        return 'Digits';
+      case TrainingItemType.base:
+        return 'Base';
+      case TrainingItemType.hundreds:
+        return 'Hundreds';
+      case TrainingItemType.thousands:
+        return 'Thousands';
+      case TrainingItemType.timeExact:
+        return 'Time (exact)';
+      case TrainingItemType.timeQuarter:
+        return 'Time (quarter)';
+      case TrainingItemType.timeHalf:
+        return 'Time (half)';
+      case TrainingItemType.timeRandom:
+        return 'Time (random)';
+    }
   }
 
   @override
@@ -512,6 +543,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Text(
               'Debug',
               style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<TrainingItemType?>(
+              initialValue: _debugForcedItemType,
+              onChanged: _updateDebugForcedItemType,
+              items: [
+                const DropdownMenuItem<TrainingItemType?>(
+                  value: null,
+                  child: Text('No forced card type'),
+                ),
+                ...TrainingItemType.values.map(
+                  (type) => DropdownMenuItem<TrainingItemType?>(
+                    value: type,
+                    child: Text(_itemTypeLabel(type)),
+                  ),
+                ),
+              ],
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Force card type',
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Filters the training pool to only the selected card type.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<TrainingTaskKind?>(

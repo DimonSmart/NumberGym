@@ -29,9 +29,27 @@ class LearningQueue {
     fillActive();
   }
 
-  void fillActive() {
-    while (_active.length < _activeLimit && _backlog.isNotEmpty) {
-      _active.add(_backlog.removeAt(0));
+  void fillActive({bool Function(TrainingItemId id)? isEligible}) {
+    if (isEligible == null) {
+      while (_active.length < _activeLimit && _backlog.isNotEmpty) {
+        _active.add(_backlog.removeAt(0));
+      }
+      return;
+    }
+
+    if (_active.isEmpty && _backlog.isEmpty) return;
+    final combined = <TrainingItemId>[
+      ..._active,
+      ..._backlog,
+    ];
+    _active.clear();
+    _backlog.clear();
+    for (final id in combined) {
+      if (isEligible(id) && _active.length < _activeLimit) {
+        _active.add(id);
+      } else {
+        _backlog.add(id);
+      }
     }
   }
 

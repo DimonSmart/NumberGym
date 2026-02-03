@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../../domain/learning_language.dart';
+import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
 import '../phrase_template.dart';
+import '../time_lexicon.dart';
 
 LanguagePack buildSpanishPack() {
   return LanguagePack(
@@ -14,8 +16,10 @@ LanguagePack buildSpanishPack() {
     locale: 'es-ES',
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToSpanish,
+    timeWordsConverter: _timeToSpanish,
     phraseTemplates: _spanishPhrases,
     numberLexicon: _spanishLexicon,
+    timeLexicon: _spanishTimeLexicon,
     operatorWords: _spanishOperatorWords,
     ignoredWords: _spanishIgnoredWords,
     ttsPreviewText: '¡Hola! Soy tu voz nueva. ¿Qué tal sueno?',
@@ -126,6 +130,26 @@ String _numberToSpanish(int value) {
   return value.toString();
 }
 
+String _timeToSpanish(TimeValue time) {
+  final minute = time.minute;
+  final hourWords = _numberToSpanish(time.hour);
+  if (minute == 0) {
+    return '$hourWords en punto';
+  }
+  if (minute == 15) {
+    return '$hourWords y cuarto';
+  }
+  if (minute == 30) {
+    return '$hourWords y media';
+  }
+  if (minute == 45) {
+    final nextHour = (time.hour + 1) % 24;
+    return '${_numberToSpanish(nextHour)} menos cuarto';
+  }
+  final minuteWords = _numberToSpanish(minute);
+  return '$hourWords $minuteWords';
+}
+
 const _spanishLexicon = NumberLexicon(
   units: {
     'cero': 0,
@@ -178,6 +202,16 @@ const _spanishLexicon = NumberLexicon(
     'millones': 1000000,
   },
   conjunctions: {'y'},
+);
+
+const _spanishTimeLexicon = TimeLexicon(
+  quarterWords: {'cuarto'},
+  halfWords: {'media'},
+  pastWords: {'pasadas'},
+  toWords: {'menos'},
+  oclockWords: {'punto'},
+  connectorWords: {'y'},
+  fillerWords: {'en', 'la', 'las'},
 );
 
 const _spanishOperatorWords = {

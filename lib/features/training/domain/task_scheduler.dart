@@ -80,9 +80,18 @@ class TaskScheduler {
     required LearningLanguage language,
     required bool premiumPronunciationEnabled,
     TrainingTaskKind? forcedTaskKind,
+    TrainingItemType? forcedItemType,
   }) async {
     if (!progressManager.hasRemainingCards) {
       return const TaskScheduleFinished();
+    }
+
+    if (forcedTaskKind != null &&
+        forcedItemType != null &&
+        !forcedTaskKind.supportedItemTypes.contains(forcedItemType)) {
+      return const TaskSchedulePaused(
+        'Selected task does not support the selected card type.',
+      );
     }
 
     final requirePhrase =
@@ -138,6 +147,9 @@ class TaskScheduler {
 
     final picked = progressManager.pickNextCard(
       isEligible: (card) {
+        if (forcedItemType != null && card.id.type != forcedItemType) {
+          return false;
+        }
         if (forcedTaskKind != null &&
             !forcedTaskKind.supportedItemTypes.contains(card.id.type)) {
           return false;
@@ -154,6 +166,16 @@ class TaskScheduler {
       if (requirePhrase) {
         return const TaskSchedulePaused(
           'Phrase pronunciation tasks are not available for the selected language.',
+        );
+      }
+      if (forcedItemType != null && forcedTaskKind != null) {
+        return const TaskSchedulePaused(
+          'Selected card type is not supported by the forced task.',
+        );
+      }
+      if (forcedItemType != null) {
+        return const TaskSchedulePaused(
+          'Selected card type has no available cards.',
         );
       }
       if (forcedTaskKind != null) {
@@ -179,12 +201,36 @@ class TaskScheduler {
       );
     }
 
+    final canUseSpeechKind =
+        allowSpeech &&
+        TrainingTaskKind.numberPronunciation.supportedItemTypes
+            .contains(itemType);
+    final canUseListeningKind =
+        allowListening &&
+        TrainingTaskKind.listeningNumbers.supportedItemTypes
+            .contains(itemType);
+    final canUseNumberToWordKind =
+        TrainingTaskKind.numberToWord.supportedItemTypes.contains(itemType);
+    final canUseWordToNumberKind =
+        TrainingTaskKind.wordToNumber.supportedItemTypes.contains(itemType);
+
+    if (!canUseSpeechKind &&
+        !canUseListeningKind &&
+        !canUseNumberToWordKind &&
+        !canUseWordToNumberKind &&
+        !canUsePhrase) {
+      return TaskSchedulePaused(
+        speechAvailability.message ??
+            'Speech recognition is not available on this device.',
+      );
+    }
+
     final taskKind =
         forcedTaskKind ??
         _pickTaskKind(
           canUsePhrase: canUsePhrase,
-          canUseListening: allowListening,
-          canUseSpeech: allowSpeech,
+          canUseListening: canUseListeningKind,
+          canUseSpeech: canUseSpeechKind,
           itemType: itemType,
         );
 

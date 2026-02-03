@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../../domain/learning_language.dart';
+import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
 import '../phrase_template.dart';
+import '../time_lexicon.dart';
 
 LanguagePack buildHebrewPack() {
   return LanguagePack(
@@ -14,8 +16,10 @@ LanguagePack buildHebrewPack() {
     locale: 'he-IL',
     textDirection: TextDirection.rtl,
     numberWordsConverter: _numberToHebrew,
+    timeWordsConverter: _timeToHebrew,
     phraseTemplates: _hebrewPhrases,
     numberLexicon: _hebrewLexicon,
+    timeLexicon: _hebrewTimeLexicon,
     operatorWords: _hebrewOperatorWords,
     ignoredWords: _hebrewIgnoredWords,
     ttsPreviewText: 'היי! אני הקול החדש שלך. איך אני נשמע?',
@@ -101,6 +105,32 @@ String _numberToHebrew(int value) {
   return value.toString();
 }
 
+const _hebrewQuarter = '\u05e8\u05d1\u05e2';
+const _hebrewHalf = '\u05d7\u05e6\u05d9';
+const _hebrewPast = '\u05d0\u05d7\u05e8\u05d9';
+const _hebrewTo = '\u05dc\u05e4\u05e0\u05d9';
+
+String _timeToHebrew(TimeValue time) {
+  final minute = time.minute;
+  final hourWords = _numberToHebrew(time.hour);
+  if (minute == 0) {
+    return hourWords;
+  }
+  if (minute == 15) {
+    return '$_hebrewQuarter $_hebrewPast $hourWords';
+  }
+  if (minute == 30) {
+    return '$_hebrewHalf $_hebrewPast $hourWords';
+  }
+  if (minute == 45) {
+    final nextHour = (time.hour + 1) % 24;
+    final nextWords = _numberToHebrew(nextHour);
+    return '$_hebrewQuarter $_hebrewTo $nextWords';
+  }
+  final minuteWords = _numberToHebrew(minute);
+  return '$hourWords $minuteWords';
+}
+
 const _hebrewLexicon = NumberLexicon(
   units: {
     'אפס': 0,
@@ -145,6 +175,16 @@ const _hebrewLexicon = NumberLexicon(
     'מיליונים': 1000000,
   },
   conjunctions: {'ו'},
+);
+
+const _hebrewTimeLexicon = TimeLexicon(
+  quarterWords: {_hebrewQuarter},
+  halfWords: {_hebrewHalf},
+  pastWords: {_hebrewPast},
+  toWords: {_hebrewTo},
+  oclockWords: {},
+  connectorWords: {},
+  fillerWords: {},
 );
 
 const _hebrewOperatorWords = {

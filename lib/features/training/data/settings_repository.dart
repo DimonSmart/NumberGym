@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 
 import '../domain/learning_language.dart';
 import '../domain/repositories.dart';
+import '../domain/training_item.dart';
 import '../domain/training_task.dart';
 
 const String learningLanguageKey = 'learningLanguage';
@@ -9,6 +10,7 @@ const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String debugForcedTaskKindKey = 'debugForcedTaskKind';
+const String debugForcedItemTypeKey = 'debugForcedItemType';
 const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
 const int answerDurationMinSeconds = 5;
@@ -121,6 +123,29 @@ class SettingsRepository implements SettingsRepositoryBase {
       return;
     }
     await settingsBox.put(debugForcedTaskKindKey, kind.name);
+  }
+
+  @override
+  TrainingItemType? readDebugForcedItemType() {
+    final rawValue = settingsBox.get(debugForcedItemTypeKey);
+    if (rawValue == null || rawValue.trim().isEmpty) {
+      return null;
+    }
+    for (final type in TrainingItemType.values) {
+      if (type.name == rawValue) {
+        return type;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> setDebugForcedItemType(TrainingItemType? type) async {
+    if (type == null) {
+      await settingsBox.delete(debugForcedItemTypeKey);
+      return;
+    }
+    await settingsBox.put(debugForcedItemTypeKey, type.name);
   }
 
   int _normalizeAnswerDurationSeconds(int seconds) {

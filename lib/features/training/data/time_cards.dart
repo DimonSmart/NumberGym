@@ -51,16 +51,28 @@ List<TimePronunciationTask> buildTimeCards({
   final rng = random ?? Random();
   return ids.map((id) {
     final value = id.time ?? _randomTime(rng);
-    final prompt = toWords?.call(value) ?? value.displayText;
+    final numeric = value.displayText;
+    final words = toWords?.call(value) ?? numeric;
+    final prompt =
+        id.type == TrainingItemType.timeExact ? numeric : words;
+    final answers = <String>[];
+    void addAnswer(String text) {
+      if (text.trim().isEmpty) return;
+      if (answers.any((answer) => answer.toLowerCase() == text.toLowerCase())) {
+        return;
+      }
+      answers.add(text);
+    }
+
+    addAnswer(prompt);
+    addAnswer(words);
+    addAnswer(numeric);
     return TimePronunciationTask(
       id: id,
       timeValue: value,
       prompt: prompt,
       language: language,
-      answers: <String>[
-        prompt,
-        value.displayText,
-      ],
+      answers: answers,
     );
   }).toList();
 }

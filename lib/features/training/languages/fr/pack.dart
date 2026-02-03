@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../../domain/learning_language.dart';
+import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
 import '../phrase_template.dart';
+import '../time_lexicon.dart';
 
 LanguagePack buildFrenchPack() {
   return LanguagePack(
@@ -14,8 +16,10 @@ LanguagePack buildFrenchPack() {
     locale: 'fr-FR',
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToFrench,
+    timeWordsConverter: _timeToFrench,
     phraseTemplates: _frenchPhrases,
     numberLexicon: _frenchLexicon,
+    timeLexicon: _frenchTimeLexicon,
     operatorWords: _frenchOperatorWords,
     ignoredWords: _frenchIgnoredWords,
     ttsPreviewText: 'Salut ! Je suis ta nouvelle voix. Ça te va ?',
@@ -98,6 +102,29 @@ String _numberToFrench(int value) {
   return value.toString();
 }
 
+String _timeToFrench(TimeValue time) {
+  final minute = time.minute;
+  final hourWords = time.hour == 1 ? 'une' : _numberToFrench(time.hour);
+  final hourLabel = time.hour == 1 ? 'heure' : 'heures';
+  if (minute == 0) {
+    return '$hourWords $hourLabel';
+  }
+  if (minute == 15) {
+    return '$hourWords $hourLabel et quart';
+  }
+  if (minute == 30) {
+    return '$hourWords $hourLabel et demie';
+  }
+  if (minute == 45) {
+    final nextHour = (time.hour + 1) % 24;
+    final nextWords = nextHour == 1 ? 'une' : _numberToFrench(nextHour);
+    final nextLabel = nextHour == 1 ? 'heure' : 'heures';
+    return '$nextWords $nextLabel moins le quart';
+  }
+  final minuteWords = _numberToFrench(minute);
+  return '$hourWords $hourLabel $minuteWords';
+}
+
 const _frenchLexicon = NumberLexicon(
   units: {
     'zero': 0,
@@ -134,6 +161,16 @@ const _frenchLexicon = NumberLexicon(
     'millions': 1000000,
   },
   conjunctions: {'et'},
+);
+
+const _frenchTimeLexicon = TimeLexicon(
+  quarterWords: {'quart'},
+  halfWords: {'demie', 'demi'},
+  pastWords: {'apres'},
+  toWords: {'moins'},
+  oclockWords: {'heure', 'heures'},
+  connectorWords: {'et'},
+  fillerWords: {'le', 'la', 'les'},
 );
 
 const _frenchOperatorWords = {

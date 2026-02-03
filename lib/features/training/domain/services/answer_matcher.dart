@@ -1,7 +1,9 @@
 import '../../languages/language_pack.dart';
 import '../../languages/number_lexicon.dart';
 import '../../languages/registry.dart';
+import '../../languages/time_lexicon.dart';
 import '../learning_language.dart';
+import '../time_value.dart';
 
 class MatchResult {
   final String normalizedText;
@@ -26,6 +28,7 @@ class AnswerMatcher {
   int _matchedTokenCount = 0;
   Set<String> _acceptedAnswers = {};
   LanguagePack _pack = LanguageRegistry.of(LearningLanguage.english);
+  bool _expectsTime = false;
 
   List<String> get expectedTokens => _expectedTokens;
   List<bool> get matchedTokens => _matchedTokens;
@@ -51,6 +54,7 @@ class AnswerMatcher {
       if (prompt.isNotEmpty) _pack.normalizer(prompt),
     }..removeWhere((value) => value.isEmpty);
     _acceptedAnswers = normalized;
+    _expectsTime = _looksLikeTime(prompt, answers);
   }
 
   void clear() {
@@ -60,11 +64,13 @@ class AnswerMatcher {
     _matchedTokenCount = 0;
     _acceptedAnswers = {};
     _pack = LanguageRegistry.of(LearningLanguage.english);
+    _expectsTime = false;
   }
 
   MatchResult applyRecognition(String recognizedText) {
-    final normalizedText = _pack.normalizer(recognizedText);
-    final tokenization = _tokenizeRecognition(recognizedText);
+    final resolvedText = _maybeCanonicalizeTime(recognizedText);
+    final normalizedText = _pack.normalizer(resolvedText);
+    final tokenization = _tokenizeRecognition(resolvedText);
     final recognizedTokens = tokenization.displayTokens;
     final recognizedKeys = tokenization.keys;
 
@@ -77,8 +83,7 @@ class AnswerMatcher {
       );
     }
 
-    if (_expectedKeys.length <= 1 &&
-        _acceptedAnswers.contains(normalizedText)) {
+    if (_acceptedAnswers.contains(normalizedText)) {
       final indices = _markAllMatched();
       return MatchResult(
         normalizedText: normalizedText,
@@ -113,8 +118,9 @@ class AnswerMatcher {
   }
 
   MatchResult previewRecognition(String recognizedText) {
-    final normalizedText = _pack.normalizer(recognizedText);
-    final tokenization = _tokenizeRecognition(recognizedText);
+    final resolvedText = _maybeCanonicalizeTime(recognizedText);
+    final normalizedText = _pack.normalizer(resolvedText);
+    final tokenization = _tokenizeRecognition(resolvedText);
     final recognizedTokens = tokenization.displayTokens;
     final recognizedKeys = tokenization.keys;
 
@@ -370,6 +376,213 @@ class AnswerMatcher {
     }).toList();
   }
 
+  String _maybeCanonicalizeTime(String text) {
+    if (!_expectsTime) return text;
+    final parsed = _parseTimeText(text);
+    if (parsed == null) return text;
+    return _pack.timeWordsConverter(
+      TimeValue(hour: parsed.hour, minute: parsed.minute),
+    );
+  }
+
+  bool _looksLikeTime(String prompt, List<String> answers) {
+    final lexicon = _pack.timeLexicon;
+    if (_containsTimeDigits(prompt) ||
+        _containsTimeWords(prompt, lexicon)) {
+      return true;
+    }
+    for (final answer in answers) {
+      if (_containsTimeDigits(answer) ||
+          _containsTimeWords(answer, lexicon)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _containsTimeDigits(String text) {
+    return _timeDigitsRegex.hasMatch(text) ||
+        _timeDigitsLooseRegex.hasMatch(text);
+  }
+
+  bool _containsTimeWords(String text, TimeLexicon lexicon) {
+    if (text.trim().isEmpty) return false;
+    final tokens = _splitTokens(text);
+    for (final token in tokens) {
+      final normalized = token.normalized;
+      if (normalized.isEmpty) continue;
+      if (_isStrongTimeWord(normalized, lexicon)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _isStrongTimeWord(String word, TimeLexicon lexicon) {
+    return lexicon.quarterWords.contains(word) ||
+        lexicon.halfWords.contains(word) ||
+        lexicon.pastWords.contains(word) ||
+        lexicon.toWords.contains(word) ||
+        lexicon.oclockWords.contains(word);
+  }
+
+  _TimeParseResult? _parseTimeText(String text) {
+    final lexicon = _pack.timeLexicon;
+    final tokens = _filterTimeTokens(text, lexicon);
+    if (tokens.isEmpty) return null;
+
+    for (var i = 0; i < tokens.length; i += 1) {
+      final minutePhrase = _parseMinutePhrase(tokens, i, lexicon);
+      if (minutePhrase == null) continue;
+      var index = _skipTimeConnectors(tokens, i + minutePhrase.length, lexicon);
+      if (index >= tokens.length) continue;
+      final relation = tokens[index].normalized;
+      final isPast = lexicon.pastWords.contains(relation);
+      final isTo = lexicon.toWords.contains(relation);
+      if (!isPast && !isTo) continue;
+      index = _skipTimeConnectors(tokens, index + 1, lexicon);
+      final hourParse = _parseHourSequence(tokens, index);
+      if (hourParse == null) continue;
+      final result = _buildTime(
+        hour: hourParse.value,
+        minute: minutePhrase.value,
+        isTo: isTo,
+      );
+      if (result != null) return result;
+    }
+
+    for (var i = 0; i < tokens.length; i += 1) {
+      final hourParse = _parseHourSequence(tokens, i);
+      if (hourParse == null) continue;
+      var index = _skipTimeConnectors(tokens, i + hourParse.length, lexicon);
+      if (index >= tokens.length) {
+        return _buildTime(hour: hourParse.value, minute: 0, isTo: false);
+      }
+      final relation = tokens[index].normalized;
+      final isPast = lexicon.pastWords.contains(relation);
+      final isTo = lexicon.toWords.contains(relation);
+      if (isPast || isTo) {
+        index = _skipTimeConnectors(tokens, index + 1, lexicon);
+        final minutePhrase = _parseMinutePhrase(tokens, index, lexicon);
+        if (minutePhrase == null) continue;
+        final result = _buildTime(
+          hour: hourParse.value,
+          minute: minutePhrase.value,
+          isTo: isTo,
+        );
+        if (result != null) return result;
+        continue;
+      }
+
+      if (lexicon.oclockWords.contains(relation)) {
+        final nextIndex = _skipTimeConnectors(tokens, index + 1, lexicon);
+        final minutePhrase = _parseMinutePhrase(tokens, nextIndex, lexicon);
+        if (minutePhrase != null) {
+          final result = _buildTime(
+            hour: hourParse.value,
+            minute: minutePhrase.value,
+            isTo: false,
+          );
+          if (result != null) return result;
+        }
+        return _buildTime(hour: hourParse.value, minute: 0, isTo: false);
+      }
+
+      final minutePhrase = _parseMinutePhrase(tokens, index, lexicon);
+      if (minutePhrase != null) {
+        final result = _buildTime(
+          hour: hourParse.value,
+          minute: minutePhrase.value,
+          isTo: false,
+        );
+        if (result != null) return result;
+      }
+    }
+
+    return null;
+  }
+
+  List<_RawToken> _filterTimeTokens(String text, TimeLexicon lexicon) {
+    final rawTokens = _splitTokens(text);
+    final tokens = <_RawToken>[];
+    for (final token in rawTokens) {
+      if (token.isOperatorSymbol) continue;
+      final normalized = token.normalized;
+      if (normalized.isEmpty) continue;
+      if (_pack.ignoredWords.contains(normalized)) continue;
+      if (lexicon.fillerWords.contains(normalized)) continue;
+      tokens.add(token);
+    }
+    return tokens;
+  }
+
+  int _skipTimeConnectors(
+    List<_RawToken> tokens,
+    int start,
+    TimeLexicon lexicon,
+  ) {
+    var index = start;
+    while (index < tokens.length) {
+      final word = tokens[index].normalized;
+      if (word.isEmpty || lexicon.connectorWords.contains(word)) {
+        index += 1;
+        continue;
+      }
+      break;
+    }
+    return index;
+  }
+
+  _TimeMinuteParse? _parseMinutePhrase(
+    List<_RawToken> tokens,
+    int start,
+    TimeLexicon lexicon,
+  ) {
+    if (start >= tokens.length) return null;
+    final word = tokens[start].normalized;
+    if (lexicon.quarterWords.contains(word)) {
+      return const _TimeMinuteParse(value: 15, length: 1);
+    }
+    if (lexicon.halfWords.contains(word)) {
+      return const _TimeMinuteParse(value: 30, length: 1);
+    }
+    final numberParse = _parseNumberSequence(tokens, start);
+    if (numberParse == null) return null;
+    if (numberParse.value < 0 || numberParse.value > 59) return null;
+    return _TimeMinuteParse(
+      value: numberParse.value,
+      length: numberParse.length,
+    );
+  }
+
+  _NumberParseResult? _parseHourSequence(List<_RawToken> tokens, int start) {
+    final numberParse = _parseNumberSequence(tokens, start);
+    if (numberParse == null) return null;
+    if (numberParse.value < 0 || numberParse.value > 23) return null;
+    return numberParse;
+  }
+
+  _TimeParseResult? _buildTime({
+    required int hour,
+    required int minute,
+    required bool isTo,
+  }) {
+    if (minute < 0 || minute > 59) return null;
+    var resolvedHour = hour;
+    var resolvedMinute = minute;
+    if (isTo) {
+      if (minute == 0) return null;
+      resolvedMinute = 60 - minute;
+      resolvedHour = hour - 1;
+    }
+    if (resolvedMinute < 0 || resolvedMinute > 59) return null;
+    resolvedHour = resolvedHour % 24;
+    if (resolvedHour < 0) {
+      resolvedHour += 24;
+    }
+    return _TimeParseResult(hour: resolvedHour, minute: resolvedMinute);
+  }
+
   String? _operatorKeyFromWord(String word) {
     return _pack.operatorWords[word];
   }
@@ -407,6 +620,20 @@ class _NumberParseResult {
   const _NumberParseResult({required this.value, required this.length});
 }
 
+class _TimeParseResult {
+  final int hour;
+  final int minute;
+
+  const _TimeParseResult({required this.hour, required this.minute});
+}
+
+class _TimeMinuteParse {
+  final int value;
+  final int length;
+
+  const _TimeMinuteParse({required this.value, required this.length});
+}
+
 
 const _operatorSymbols = {
   '+': 'PLUS',
@@ -415,6 +642,9 @@ const _operatorSymbols = {
   '/': 'DIVIDE',
   '=': 'EQUALS',
 };
+
+final _timeDigitsRegex = RegExp(r'\b\d{1,2}\s*[:.]\s*\d{2}\b');
+final _timeDigitsLooseRegex = RegExp(r'\b\d{1,2}\s+\d{2}\b');
 
 
 String? _operatorKeyFromSymbol(String symbol) {

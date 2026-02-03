@@ -40,6 +40,16 @@ extension TrainingTaskKindX on TrainingTaskKind {
   Set<TrainingItemType> get supportedItemTypes {
     switch (this) {
       case TrainingTaskKind.numberPronunciation:
+        return const {
+          TrainingItemType.digits,
+          TrainingItemType.base,
+          TrainingItemType.hundreds,
+          TrainingItemType.thousands,
+          TrainingItemType.timeExact,
+          TrainingItemType.timeQuarter,
+          TrainingItemType.timeHalf,
+          TrainingItemType.timeRandom,
+        };
       case TrainingTaskKind.numberToWord:
       case TrainingTaskKind.wordToNumber:
       case TrainingTaskKind.listeningNumbers:

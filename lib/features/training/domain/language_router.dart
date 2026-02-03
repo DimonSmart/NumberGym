@@ -5,6 +5,7 @@ import '../languages/phrase_template.dart';
 import '../languages/registry.dart';
 import 'learning_language.dart';
 import 'repositories.dart';
+import 'time_value.dart';
 
 class LanguageRouter {
   LanguageRouter({
@@ -24,8 +25,17 @@ class LanguageRouter {
     return LanguageRegistry.of(selected).numberWordsConverter;
   }
 
+  TimeWordsConverter timeWordsConverter([LearningLanguage? language]) {
+    final selected = language ?? currentLanguage;
+    return LanguageRegistry.of(selected).timeWordsConverter;
+  }
+
   String numberToWords(int value, {LearningLanguage? language}) {
     return numberWordsConverter(language)(value);
+  }
+
+  String timeToWords(TimeValue value, {LearningLanguage? language}) {
+    return timeWordsConverter(language)(value);
   }
 
   List<String> numberAnswers(int value, {LearningLanguage? language}) {

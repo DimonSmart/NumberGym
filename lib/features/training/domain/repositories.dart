@@ -29,4 +29,6 @@ abstract class SettingsRepositoryBase {
   Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId);
   TrainingTaskKind? readDebugForcedTaskKind();
   Future<void> setDebugForcedTaskKind(TrainingTaskKind? kind);
+  TrainingItemType? readDebugForcedItemType();
+  Future<void> setDebugForcedItemType(TrainingItemType? type);
 }

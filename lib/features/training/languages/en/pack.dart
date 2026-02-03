@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import '../../domain/learning_language.dart';
+import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
 import '../phrase_template.dart';
+import '../time_lexicon.dart';
 
 LanguagePack buildEnglishPack() {
   return LanguagePack(
@@ -14,8 +16,10 @@ LanguagePack buildEnglishPack() {
     locale: 'en-US',
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToEnglish,
+    timeWordsConverter: _timeToEnglish,
     phraseTemplates: _englishPhrases,
     numberLexicon: _englishLexicon,
+    timeLexicon: _englishTimeLexicon,
     operatorWords: _englishOperatorWords,
     ignoredWords: _englishIgnoredWords,
     ttsPreviewText: 'Hi! I’m your new voice. How do I sound?',
@@ -89,6 +93,26 @@ String _numberToEnglish(int value) {
   return value.toString();
 }
 
+String _timeToEnglish(TimeValue time) {
+  final hourWords = _numberToEnglish(time.hour);
+  final minute = time.minute;
+  if (minute == 0) {
+    return '$hourWords o clock';
+  }
+  if (minute == 15) {
+    return 'quarter past $hourWords';
+  }
+  if (minute == 30) {
+    return 'half past $hourWords';
+  }
+  if (minute == 45) {
+    final nextHour = (time.hour + 1) % 24;
+    return 'quarter to ${_numberToEnglish(nextHour)}';
+  }
+  final minuteWords = _numberToEnglish(minute);
+  return '$hourWords $minuteWords';
+}
+
 const _englishLexicon = NumberLexicon(
   units: {
     'zero': 0,
@@ -128,6 +152,16 @@ const _englishLexicon = NumberLexicon(
     'million': 1000000,
   },
   conjunctions: {'and'},
+);
+
+const _englishTimeLexicon = TimeLexicon(
+  quarterWords: {'quarter'},
+  halfWords: {'half'},
+  pastWords: {'past'},
+  toWords: {'to'},
+  oclockWords: {'clock', 'oclock'},
+  connectorWords: {'and'},
+  fillerWords: {'a', 'the', 'o'},
 );
 
 const _englishOperatorWords = {

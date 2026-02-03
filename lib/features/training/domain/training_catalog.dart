@@ -1,6 +1,8 @@
 import '../data/number_cards.dart';
+import '../data/time_cards.dart';
 import 'learning_language.dart';
 import 'training_task.dart';
+import '../languages/registry.dart';
 
 abstract class TrainingCardProvider {
   const TrainingCardProvider();
@@ -22,6 +24,7 @@ class TrainingCatalog {
     return TrainingCatalog(
       providers: const [
         NumberTrainingCardProvider(),
+        TimeTrainingCardProvider(),
       ],
     );
   }
@@ -54,6 +57,22 @@ class NumberTrainingCardProvider extends TrainingCardProvider {
     return buildNumberCards(
       language: language,
       toWords: toWords,
+    );
+  }
+}
+
+class TimeTrainingCardProvider extends TrainingCardProvider {
+  const TimeTrainingCardProvider();
+
+  @override
+  List<PronunciationTaskData> buildCards({
+    required LearningLanguage language,
+    String Function(int)? toWords,
+  }) {
+    final converter = LanguageRegistry.of(language).timeWordsConverter;
+    return buildTimeCards(
+      language: language,
+      toWords: converter,
     );
   }
 }
