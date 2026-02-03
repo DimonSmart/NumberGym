@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'learning_language.dart';
+import 'time_value.dart';
 import 'training_item.dart';
 
 enum TrainingTaskKind {
@@ -51,6 +54,16 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeRandom,
         };
       case TrainingTaskKind.numberToWord:
+        return const {
+          TrainingItemType.digits,
+          TrainingItemType.base,
+          TrainingItemType.hundreds,
+          TrainingItemType.thousands,
+          TrainingItemType.timeExact,
+          TrainingItemType.timeQuarter,
+          TrainingItemType.timeHalf,
+          TrainingItemType.timeRandom,
+        };
       case TrainingTaskKind.wordToNumber:
       case TrainingTaskKind.listeningNumbers:
       case TrainingTaskKind.phrasePronunciation:
@@ -91,6 +104,29 @@ abstract class PronunciationTaskData {
   String get prompt;
   List<String> get answers;
   LearningLanguage get language;
+  MultipleChoiceSpec buildNumberToWordSpec(MultipleChoiceBuildContext context);
+}
+
+class MultipleChoiceSpec {
+  MultipleChoiceSpec({
+    required this.prompt,
+    required this.correctOption,
+    required List<String> options,
+    required this.numberValue,
+  }) : options = List<String>.unmodifiable(options);
+
+  final String prompt;
+  final String correctOption;
+  final List<String> options;
+  final int? numberValue;
+}
+
+abstract class MultipleChoiceBuildContext {
+  LearningLanguage get language;
+  List<TrainingItemId> get cardIds;
+  String Function(int) get toWords;
+  String Function(TimeValue) get timeToWords;
+  Random get random;
 }
 
 abstract class NumberTrainingTask extends TrainingTask {

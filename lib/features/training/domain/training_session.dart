@@ -336,32 +336,14 @@ class TrainingSession {
   }
 
   TaskRuntime _buildNumberToWordRuntime(TaskBuildContext context) {
-    final numberValue = _requireNumberValue(context.card);
-    final correct = context.toWords(numberValue);
-    final options = <String>{correct};
-    final candidateIds = _candidateIdsFor(context);
-
-    while (options.length < numberToWordOptionCount) {
-      final candidateId =
-          candidateIds[context.random.nextInt(candidateIds.length)];
-      final candidateValue = candidateId.number!;
-      if (candidateValue == numberValue) continue;
-      try {
-        final option = context.toWords(candidateValue);
-        options.add(option);
-      } catch (_) {
-        // Skip invalid conversions and try another number.
-      }
-    }
-
-    final shuffled = options.toList()..shuffle(context.random);
+    final spec = context.card.buildNumberToWordSpec(context);
     return MultipleChoiceRuntime(
       kind: TrainingTaskKind.numberToWord,
       taskId: context.card.id,
-      numberValue: numberValue,
-      prompt: context.card.prompt,
-      correctOption: correct,
-      options: shuffled,
+      numberValue: spec.numberValue,
+      prompt: spec.prompt,
+      correctOption: spec.correctOption,
+      options: spec.options,
       cardDuration: context.cardDuration,
       cardTimer: context.services.timer,
     );

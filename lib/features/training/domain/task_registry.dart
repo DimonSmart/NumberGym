@@ -6,8 +6,9 @@ import 'task_runtime.dart';
 import 'training_item.dart';
 import 'training_services.dart';
 import 'training_task.dart';
+import 'time_value.dart';
 
-class TaskBuildContext {
+class TaskBuildContext implements MultipleChoiceBuildContext {
   TaskBuildContext({
     required this.card,
     required this.language,
@@ -21,14 +22,22 @@ class TaskBuildContext {
   });
 
   final PronunciationTaskData card;
+  @override
   final LearningLanguage language;
+  @override
   final List<TrainingItemId> cardIds;
+  @override
   final String Function(int) toWords;
   final Duration cardDuration;
   final LanguageRouter languageRouter;
+  @override
   final Random random;
   final TrainingServices services;
   final String? hintText;
+
+  @override
+  String Function(TimeValue) get timeToWords =>
+      (value) => languageRouter.timeToWords(value, language: language);
 }
 
 typedef TaskFactory = TaskRuntime Function(TaskBuildContext context);

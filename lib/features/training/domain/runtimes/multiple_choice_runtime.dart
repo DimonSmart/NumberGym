@@ -10,7 +10,7 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
   MultipleChoiceRuntime({
     required TrainingTaskKind kind,
     required TrainingItemId taskId,
-    required int numberValue,
+    required int? numberValue,
     required String prompt,
     required String correctOption,
     required List<String> options,
