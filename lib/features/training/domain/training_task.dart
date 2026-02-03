@@ -1,3 +1,4 @@
+import 'learning_language.dart';
 import 'training_item.dart';
 
 enum TrainingTaskKind {
@@ -70,6 +71,15 @@ abstract class TrainingTask {
 
   /// Text shown to the learner.
   String get displayText;
+}
+
+abstract class PronunciationTaskData {
+  TrainingItemId get id;
+  TrainingItemId get progressId;
+  String get displayText;
+  String get prompt;
+  List<String> get answers;
+  LearningLanguage get language;
 }
 
 abstract class NumberTrainingTask extends TrainingTask {

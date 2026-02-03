@@ -6,9 +6,8 @@ import 'progress_manager.dart';
 import 'session_helpers.dart';
 import 'task_availability.dart';
 import 'training_services.dart';
-import 'training_task.dart';
-import 'tasks/number_pronunciation_task.dart';
 import 'training_item.dart';
+import 'training_task.dart';
 
 sealed class TaskScheduleResult {
   const TaskScheduleResult();
@@ -20,7 +19,7 @@ final class TaskScheduleReady extends TaskScheduleResult {
     required this.kind,
   });
 
-  final NumberPronunciationTask card;
+  final PronunciationTaskData card;
   final TrainingTaskKind kind;
 }
 
@@ -144,7 +143,9 @@ class TaskScheduler {
           return false;
         }
         if (requirePhrase) {
-          return _hasPhraseTemplate(language, card.numberValue);
+          final numberValue = _resolveNumberValue(card);
+          if (numberValue == null) return false;
+          return _hasPhraseTemplate(language, numberValue);
         }
         return true;
       },
@@ -165,11 +166,13 @@ class TaskScheduler {
 
     final card = picked.card;
     final itemType = card.id.type;
+    final numberValue = _resolveNumberValue(card);
     final canUsePhrase =
         allowPhrase &&
         TrainingTaskKind.phrasePronunciation.supportedItemTypes
             .contains(itemType) &&
-        _hasPhraseTemplate(language, card.numberValue);
+        numberValue != null &&
+        _hasPhraseTemplate(language, numberValue);
     if (requirePhrase && !canUsePhrase) {
       return const TaskSchedulePaused(
         'Phrase pronunciation tasks are not available for the selected language.',
@@ -256,5 +259,12 @@ class TaskScheduler {
 
   bool _hasPhraseTemplate(LearningLanguage language, int numberValue) {
     return _languageRouter.hasTemplate(numberValue, language: language);
+  }
+
+  int? _resolveNumberValue(PronunciationTaskData card) {
+    if (card is NumberTrainingTask) {
+      return card.numberValue;
+    }
+    return null;
   }
 }

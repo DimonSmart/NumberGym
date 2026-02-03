@@ -1,7 +1,8 @@
 import '../learning_language.dart';
 import '../training_task.dart';
 
-class NumberPronunciationTask extends NumberTrainingTask {
+class NumberPronunciationTask extends NumberTrainingTask
+    implements PronunciationTaskData {
   final String prompt;
   final LearningLanguage language;
   final List<String> answers;
