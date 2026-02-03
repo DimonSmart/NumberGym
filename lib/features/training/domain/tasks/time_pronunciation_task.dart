@@ -1,5 +1,6 @@
 import '../learning_language.dart';
 import '../time_value.dart';
+import '../training_item.dart';
 import '../training_task.dart';
 
 class TimePronunciationTask extends TrainingTask implements PronunciationTaskData {

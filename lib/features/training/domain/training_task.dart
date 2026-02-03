@@ -76,6 +76,7 @@ abstract class TrainingTask {
 abstract class PronunciationTaskData {
   TrainingItemId get id;
   TrainingItemId get progressId;
+  int? get numberValue;
   String get displayText;
   String get prompt;
   List<String> get answers;

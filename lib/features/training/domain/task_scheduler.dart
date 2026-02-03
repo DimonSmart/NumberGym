@@ -262,9 +262,6 @@ class TaskScheduler {
   }
 
   int? _resolveNumberValue(PronunciationTaskData card) {
-    if (card is NumberTrainingTask) {
-      return card.numberValue;
-    }
-    return null;
+    return card.numberValue;
   }
 }

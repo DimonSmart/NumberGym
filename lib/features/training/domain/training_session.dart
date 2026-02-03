@@ -325,8 +325,8 @@ class TrainingSession {
   }
 
   TaskRuntime _buildNumberToWordRuntime(TaskBuildContext context) {
-    final numberCard = _requireNumberTask(context.card);
-    final correct = context.toWords(numberCard.numberValue);
+    final numberValue = _requireNumberValue(context.card);
+    final correct = context.toWords(numberValue);
     final options = <String>{correct};
     final candidateIds = _candidateIdsFor(context);
 
@@ -334,7 +334,7 @@ class TrainingSession {
       final candidateId =
           candidateIds[context.random.nextInt(candidateIds.length)];
       final candidateValue = candidateId.number!;
-      if (candidateValue == numberCard.numberValue) continue;
+      if (candidateValue == numberValue) continue;
       try {
         final option = context.toWords(candidateValue);
         options.add(option);
@@ -347,7 +347,7 @@ class TrainingSession {
     return MultipleChoiceRuntime(
       kind: TrainingTaskKind.numberToWord,
       taskId: context.card.id,
-      numberValue: numberCard.numberValue,
+      numberValue: numberValue,
       prompt: context.card.prompt,
       correctOption: correct,
       options: shuffled,
@@ -357,9 +357,9 @@ class TrainingSession {
   }
 
   TaskRuntime _buildWordToNumberRuntime(TaskBuildContext context) {
-    final numberCard = _requireNumberTask(context.card);
-    final correctWord = context.toWords(numberCard.numberValue);
-    final correctOption = numberCard.numberValue.toString();
+    final numberValue = _requireNumberValue(context.card);
+    final correctWord = context.toWords(numberValue);
+    final correctOption = numberValue.toString();
     final options = <String>{correctOption};
     final candidateIds = _candidateIdsFor(context);
 
@@ -367,7 +367,7 @@ class TrainingSession {
       final candidateId =
           candidateIds[context.random.nextInt(candidateIds.length)];
       final candidateValue = candidateId.number!;
-      if (candidateValue == numberCard.numberValue) continue;
+      if (candidateValue == numberValue) continue;
       options.add(candidateValue.toString());
     }
 
@@ -375,7 +375,7 @@ class TrainingSession {
     return MultipleChoiceRuntime(
       kind: TrainingTaskKind.wordToNumber,
       taskId: context.card.id,
-      numberValue: numberCard.numberValue,
+      numberValue: numberValue,
       prompt: correctWord,
       correctOption: correctOption,
       options: shuffled,
@@ -385,8 +385,8 @@ class TrainingSession {
   }
 
   TaskRuntime _buildListeningNumbersRuntime(TaskBuildContext context) {
-    final numberCard = _requireNumberTask(context.card);
-    final correctOption = numberCard.numberValue.toString();
+    final numberValue = _requireNumberValue(context.card);
+    final correctOption = numberValue.toString();
     final options = <String>{correctOption};
     final candidateIds = _candidateIdsFor(context);
 
@@ -394,14 +394,14 @@ class TrainingSession {
       final candidateId =
           candidateIds[context.random.nextInt(candidateIds.length)];
       final candidateValue = candidateId.number!;
-      if (candidateValue == numberCard.numberValue) continue;
+      if (candidateValue == numberValue) continue;
       options.add(candidateValue.toString());
     }
 
     final shuffled = options.toList()..shuffle(context.random);
     String speechText;
     try {
-      speechText = context.toWords(numberCard.numberValue);
+      speechText = context.toWords(numberValue);
     } catch (_) {
       speechText = correctOption;
     }
@@ -409,7 +409,7 @@ class TrainingSession {
     final voiceId = _settingsRepository.readTtsVoiceId(context.language);
     return ListeningNumbersRuntime(
       taskId: context.card.id,
-      numberValue: numberCard.numberValue,
+      numberValue: numberValue,
       options: shuffled,
       speechText: speechText,
       cardDuration: context.cardDuration,
@@ -421,16 +421,16 @@ class TrainingSession {
   }
 
   TaskRuntime _buildPhrasePronunciationRuntime(TaskBuildContext context) {
-    final numberCard = _requireNumberTask(context.card);
+    final numberValue = _requireNumberValue(context.card);
     final template = _languageRouter.pickTemplate(
-      numberCard.numberValue,
+      numberValue,
       language: context.language,
     );
     if (template == null) {
       return _buildFallbackPronunciationRuntime(context);
     }
     final task = template.toTask(
-      value: numberCard.numberValue,
+      value: numberValue,
       taskId: context.card.id,
     );
     return PhrasePronunciationRuntime(
@@ -521,11 +521,12 @@ class TrainingSession {
         .toList();
   }
 
-  NumberTrainingTask _requireNumberTask(PronunciationTaskData card) {
-    if (card is NumberTrainingTask) {
-      return card;
+  int _requireNumberValue(PronunciationTaskData card) {
+    final numberValue = card.numberValue;
+    if (numberValue == null) {
+      throw StateError('Expected a number-based pronunciation card.');
     }
-    throw StateError('Expected a number-based pronunciation card.');
+    return numberValue;
   }
 
   NumberPronunciationTask _requireNumberPronunciationTask(
