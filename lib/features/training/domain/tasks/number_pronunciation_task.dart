@@ -3,8 +3,11 @@ import '../training_task.dart';
 
 class NumberPronunciationTask extends NumberTrainingTask
     implements PronunciationTaskData {
+  @override
   final String prompt;
+  @override
   final LearningLanguage language;
+  @override
   final List<String> answers;
 
   NumberPronunciationTask({

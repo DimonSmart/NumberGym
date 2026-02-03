@@ -45,13 +45,13 @@ class TrainingItemId implements Comparable<TrainingItemId> {
   int compareTo(TrainingItemId other) {
     final typeCompare = type.index.compareTo(other.type.index);
     if (typeCompare != 0) return typeCompare;
-    if (time != null || other.time != null) {
-      final left = time ?? const TimeValue(hour: -1, minute: -1);
-      final right = other.time ?? const TimeValue(hour: -1, minute: -1);
+    if (time == null && other.time == null) {
+      final left = number ?? -1;
+      final right = other.number ?? -1;
       return left.compareTo(right);
     }
-    final left = number ?? -1;
-    final right = other.number ?? -1;
-    return left.compareTo(right);
+    if (time == null) return -1;
+    if (other.time == null) return 1;
+    return time!.compareTo(other.time!);
   }
 }
