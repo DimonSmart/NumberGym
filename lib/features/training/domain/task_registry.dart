@@ -6,7 +6,6 @@ import 'task_runtime.dart';
 import 'training_item.dart';
 import 'training_services.dart';
 import 'training_task.dart';
-import 'tasks/number_pronunciation_task.dart';
 
 class TaskBuildContext {
   TaskBuildContext({
@@ -21,7 +20,7 @@ class TaskBuildContext {
     required this.hintText,
   });
 
-  final NumberPronunciationTask card;
+  final PronunciationTaskData card;
   final LearningLanguage language;
   final List<TrainingItemId> cardIds;
   final String Function(int) toWords;

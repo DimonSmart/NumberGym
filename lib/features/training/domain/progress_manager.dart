@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import '../data/card_progress.dart';
-import '../data/number_cards.dart';
 import 'learning_language.dart';
 import 'learning_strategy/learning_params.dart';
 import 'learning_strategy/learning_queue.dart';
@@ -9,15 +8,16 @@ import 'learning_strategy/learning_state.dart';
 import 'learning_strategy/learning_strategy.dart';
 import 'language_router.dart';
 import 'repositories.dart';
-import 'tasks/number_pronunciation_task.dart';
+import 'training_catalog.dart';
 import 'training_item.dart';
+import 'training_task.dart';
 
 class PickedCard {
   const PickedCard({
     required this.card,
   });
 
-  final NumberPronunciationTask card;
+  final PronunciationTaskData card;
 }
 
 class ProgressAttemptResult {
@@ -51,10 +51,12 @@ class ProgressManager {
   ProgressManager({
     required ProgressRepositoryBase progressRepository,
     required LanguageRouter languageRouter,
+    TrainingCatalog? catalog,
     LearningParams? learningParams,
     Random? random,
   })  : _progressRepository = progressRepository,
         _languageRouter = languageRouter,
+        _catalog = catalog ?? TrainingCatalog.defaults(),
         _random = random ?? Random(),
         _learningParams = learningParams ?? LearningParams.defaults() {
     _queue = LearningQueue(
@@ -69,12 +71,13 @@ class ProgressManager {
 
   final ProgressRepositoryBase _progressRepository;
   final LanguageRouter _languageRouter;
+  final TrainingCatalog _catalog;
   final Random _random;
   final LearningParams _learningParams;
   late LearningQueue _queue;
   late LearningStrategy _learningStrategy;
 
-  Map<TrainingItemId, NumberPronunciationTask> _cardsById = {};
+  Map<TrainingItemId, PronunciationTaskData> _cardsById = {};
   List<TrainingItemId> _cardIds = [];
   LearningLanguage? _cardsLanguage;
 
@@ -92,17 +95,16 @@ class ProgressManager {
   int get remainingCount => totalCards - learnedCount;
   bool get hasRemainingCards => _queue.hasRemaining;
 
-  NumberPronunciationTask? cardById(TrainingItemId id) => _cardsById[id];
+  PronunciationTaskData? cardById(TrainingItemId id) => _cardsById[id];
 
   void refreshCardsIfNeeded(LearningLanguage language) {
     if (_cardsLanguage == language && _cardsById.isNotEmpty) return;
     _cardsLanguage = language;
-    final toWords = _languageRouter.numberWordsConverter(language);
-    final cards = buildNumberCards(
+    final cards = _catalog.buildCards(
       language: language,
-      toWords: toWords,
+      toWords: _languageRouter.numberWordsConverter(language),
     );
-    _cardsById = {for (final card in cards) card.id: card};
+    _cardsById = {for (final card in cards) card.progressId: card};
     _cardIds = _cardsById.keys.toList()..sort();
   }
 
@@ -143,7 +145,7 @@ class ProgressManager {
   }
 
   PickedCard? pickNextCard({
-    required bool Function(NumberPronunciationTask card) isEligible,
+    required bool Function(PronunciationTaskData card) isEligible,
     DateTime? now,
   }) {
     if (_cardIds.isEmpty) return null;
