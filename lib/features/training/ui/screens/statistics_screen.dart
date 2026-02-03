@@ -1784,6 +1784,14 @@ String _typeLabel(TrainingItemType type) {
       return 'Hundreds';
     case TrainingItemType.thousands:
       return 'Thousands';
+    case TrainingItemType.timeExact:
+      return 'Time (exact)';
+    case TrainingItemType.timeQuarter:
+      return 'Time (quarter)';
+    case TrainingItemType.timeHalf:
+      return 'Time (half)';
+    case TrainingItemType.timeRandom:
+      return 'Time (random)';
   }
 }
 
@@ -1797,5 +1805,13 @@ String _typeRange(TrainingItemType type) {
       return '(100-900)';
     case TrainingItemType.thousands:
       return '(1000-9000)';
+    case TrainingItemType.timeExact:
+      return '(HH:00)';
+    case TrainingItemType.timeQuarter:
+      return '(HH:15, HH:45)';
+    case TrainingItemType.timeHalf:
+      return '(HH:30)';
+    case TrainingItemType.timeRandom:
+      return '(HH:MM)';
   }
 }
