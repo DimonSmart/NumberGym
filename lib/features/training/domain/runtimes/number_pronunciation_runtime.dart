@@ -380,7 +380,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         ? null
         : matchResult.normalizedText;
     _lastHeardTokens = matchResult.recognizedTokens;
-    _lastMatchedIndices = matchResult.matchedIndices;
+    _lastMatchedIndices = matchResult.matchedSegmentIndices;
     emitState(_buildState());
 
     if (_answerMatcher.isComplete) {
@@ -760,11 +760,11 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         ? null
         : preview.normalizedText;
     if (_previewHeardText == nextText &&
-        _previewMatchedIndices.length == preview.matchedIndices.length &&
+        _previewMatchedIndices.length == preview.matchedSegmentIndices.length &&
         _previewHeardTokens.length == preview.recognizedTokens.length) {
       var sameIndices = true;
       for (var i = 0; i < _previewMatchedIndices.length; i += 1) {
-        if (_previewMatchedIndices[i] != preview.matchedIndices[i]) {
+        if (_previewMatchedIndices[i] != preview.matchedSegmentIndices[i]) {
           sameIndices = false;
           break;
         }
@@ -782,7 +782,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     }
     _previewHeardText = nextText;
     _previewHeardTokens = preview.recognizedTokens;
-    _previewMatchedIndices = preview.matchedIndices;
+    _previewMatchedIndices = preview.matchedSegmentIndices;
     emitState(_buildState());
   }
 

@@ -14,6 +14,7 @@
 - Learned: Card state reached when spacedSuccessCount and intervalDays meet configured thresholds.
 - Training task (TrainingTaskKind): Specific exercise type applied to a card during training (for example, "Number pronunciation", "Select the word", "Select the number", "Listening numbers").
 - Number pronunciation: Speech-recognition task where the learner says the number aloud and matching is checked against accepted answers.
+- Etalon: Reference pattern string for speech matching; supports syntax for decorative text `(...)`, variants `[...]`, and optional tokens `{...}`.
 - Number to word ("Select the word"): Multiple-choice task where a number is shown and the correct written form is selected.
 - Word to number ("Select the number"): Multiple-choice task where a written form is shown and the correct number is selected.
 - Listening numbers: Audio comprehension task where a spoken number is played and the learner selects the matching option.

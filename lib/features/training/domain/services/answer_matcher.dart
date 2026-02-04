@@ -1,41 +1,52 @@
 import '../../languages/language_pack.dart';
-import '../../languages/number_lexicon.dart';
 import '../../languages/registry.dart';
-import '../../languages/time_lexicon.dart';
 import '../learning_language.dart';
-import '../time_value.dart';
+import 'matching/matching_token.dart';
+import 'matching/matcher_text_parser.dart';
 
 class MatchResult {
   final String normalizedText;
   final List<String> recognizedTokens;
-  final List<int> matchedIndices;
+  final List<int> matchedSegmentIndices;
   final bool acceptedAnswer;
 
   const MatchResult({
     required this.normalizedText,
     required this.recognizedTokens,
-    required this.matchedIndices,
+    required this.matchedSegmentIndices,
     required this.acceptedAnswer,
   });
 
-  bool get matchedAny => matchedIndices.isNotEmpty;
+  bool get matchedAny => matchedSegmentIndices.isNotEmpty;
 }
 
 class AnswerMatcher {
+  List<_EtalonAtom> _atoms = const [];
   List<String> _expectedTokens = const [];
-  List<String> _expectedKeys = const [];
   List<bool> _matchedTokens = const [];
-  int _matchedTokenCount = 0;
+  int _requiredAtomCount = 0;
   Set<String> _acceptedAnswers = {};
   LanguagePack _pack = LanguageRegistry.of(LearningLanguage.english);
-  bool _expectsTime = false;
+  late MatcherTextParser _parser = MatcherTextParser(_pack);
+  final _EtalonMatcher _matcher = const _EtalonMatcher();
 
   List<String> get expectedTokens => _expectedTokens;
   List<bool> get matchedTokens => _matchedTokens;
 
   bool get isComplete {
-    return _expectedTokens.isNotEmpty &&
-        _matchedTokenCount == _expectedTokens.length;
+    if (_atoms.isEmpty || _requiredAtomCount == 0) {
+      return false;
+    }
+    var matchedRequired = 0;
+    for (var i = 0; i < _atoms.length; i += 1) {
+      if (_atoms[i].isRequired && _matchedTokens[i]) {
+        matchedRequired += 1;
+        if (matchedRequired >= _requiredAtomCount) {
+          return true;
+        }
+      }
+    }
+    return matchedRequired >= _requiredAtomCount;
   }
 
   void reset({
@@ -44,41 +55,49 @@ class AnswerMatcher {
     required LearningLanguage language,
   }) {
     _pack = LanguageRegistry.of(language);
-    final expected = _tokenizeExpected(prompt);
-    _expectedTokens = expected.map((token) => token.display).toList();
-    _expectedKeys = expected.map((token) => token.key).toList();
-    _matchedTokens = List<bool>.filled(_expectedTokens.length, false);
-    _matchedTokenCount = 0;
+    _parser = MatcherTextParser(_pack);
+    _atoms = _EtalonParser(_parser).parse(prompt);
+    if (!_hasEtalonSyntax(prompt) &&
+        _atoms.length == 1 &&
+        _atoms.first.isMatchable &&
+        answers.isNotEmpty) {
+      final extraVariants = _buildVariantsFromTexts(_parser, answers);
+      if (extraVariants.isNotEmpty) {
+        final merged = _mergeVariants(_atoms.first.variants, extraVariants);
+        _atoms = <_EtalonAtom>[_atoms.first.copyWithVariants(merged)];
+      }
+    }
+    _expectedTokens = _atoms.map((atom) => atom.displayText).toList();
+    _matchedTokens = List<bool>.filled(_atoms.length, false);
+    _requiredAtomCount =
+        _atoms.where((atom) => atom.isRequired).length;
     final normalized = <String>{
       for (final answer in answers) _pack.normalizer(answer),
       if (prompt.isNotEmpty) _pack.normalizer(prompt),
     }..removeWhere((value) => value.isEmpty);
     _acceptedAnswers = normalized;
-    _expectsTime = _looksLikeTime(prompt, answers);
   }
 
   void clear() {
+    _atoms = const [];
     _expectedTokens = const [];
-    _expectedKeys = const [];
     _matchedTokens = const [];
-    _matchedTokenCount = 0;
+    _requiredAtomCount = 0;
     _acceptedAnswers = {};
     _pack = LanguageRegistry.of(LearningLanguage.english);
-    _expectsTime = false;
+    _parser = MatcherTextParser(_pack);
   }
 
   MatchResult applyRecognition(String recognizedText) {
-    final resolvedText = _maybeCanonicalizeTime(recognizedText);
-    final normalizedText = _pack.normalizer(resolvedText);
-    final tokenization = _tokenizeRecognition(resolvedText);
-    final recognizedTokens = tokenization.displayTokens;
-    final recognizedKeys = tokenization.keys;
+    final normalizedText = _pack.normalizer(recognizedText);
+    final tokens = _parser.tokenize(recognizedText);
+    final recognizedTokens = tokens.map((token) => token.display).toList();
 
-    if (normalizedText.isEmpty || _expectedKeys.isEmpty) {
+    if (normalizedText.isEmpty || _atoms.isEmpty) {
       return MatchResult(
         normalizedText: normalizedText,
         recognizedTokens: recognizedTokens,
-        matchedIndices: const <int>[],
+        matchedSegmentIndices: const <int>[],
         acceptedAnswer: false,
       );
     }
@@ -88,569 +107,470 @@ class AnswerMatcher {
       return MatchResult(
         normalizedText: normalizedText,
         recognizedTokens: recognizedTokens,
-        matchedIndices: indices,
+        matchedSegmentIndices: indices,
         acceptedAnswer: true,
       );
     }
 
-    if (recognizedKeys.isEmpty) {
+    if (tokens.isEmpty) {
       return MatchResult(
         normalizedText: normalizedText,
         recognizedTokens: recognizedTokens,
-        matchedIndices: const <int>[],
+        matchedSegmentIndices: const <int>[],
         acceptedAnswer: false,
       );
     }
 
-    final matchedIndices = _matchRemainingSlots(recognizedKeys);
-    for (final index in matchedIndices) {
-      if (!_matchedTokens[index]) {
-        _matchedTokens[index] = true;
-        _matchedTokenCount += 1;
-      }
+    final matchedIndices = _matcher.match(
+      atoms: _atoms,
+      tokens: tokens,
+      matched: _matchedTokens,
+    );
+    if (matchedIndices.isNotEmpty) {
+      _applyMatchedAtoms(matchedIndices);
     }
     return MatchResult(
       normalizedText: normalizedText,
       recognizedTokens: recognizedTokens,
-      matchedIndices: matchedIndices,
+      matchedSegmentIndices: matchedIndices,
       acceptedAnswer: false,
     );
   }
 
   MatchResult previewRecognition(String recognizedText) {
-    final resolvedText = _maybeCanonicalizeTime(recognizedText);
-    final normalizedText = _pack.normalizer(resolvedText);
-    final tokenization = _tokenizeRecognition(resolvedText);
-    final recognizedTokens = tokenization.displayTokens;
-    final recognizedKeys = tokenization.keys;
+    final normalizedText = _pack.normalizer(recognizedText);
+    final tokens = _parser.tokenize(recognizedText);
+    final recognizedTokens = tokens.map((token) => token.display).toList();
 
-    if (normalizedText.isEmpty || _expectedKeys.isEmpty) {
+    if (normalizedText.isEmpty || _atoms.isEmpty) {
       return MatchResult(
         normalizedText: normalizedText,
         recognizedTokens: recognizedTokens,
-        matchedIndices: const <int>[],
+        matchedSegmentIndices: const <int>[],
         acceptedAnswer: false,
       );
     }
-    if (recognizedKeys.isEmpty) {
+    if (tokens.isEmpty) {
       return MatchResult(
         normalizedText: normalizedText,
         recognizedTokens: recognizedTokens,
-        matchedIndices: const <int>[],
+        matchedSegmentIndices: const <int>[],
         acceptedAnswer: false,
       );
     }
-    final matchedIndices = _matchRemainingSlots(recognizedKeys);
+    final matchedIndices = _matcher.match(
+      atoms: _atoms,
+      tokens: tokens,
+      matched: _matchedTokens,
+    );
     return MatchResult(
       normalizedText: normalizedText,
       recognizedTokens: recognizedTokens,
-      matchedIndices: matchedIndices,
+      matchedSegmentIndices: matchedIndices,
       acceptedAnswer: false,
     );
   }
 
   List<int> _markAllMatched() {
-    if (_expectedTokens.isEmpty) {
+    if (_atoms.isEmpty) {
       return const <int>[];
     }
     final indices = <int>[];
     for (var i = 0; i < _matchedTokens.length; i += 1) {
       if (!_matchedTokens[i]) {
-        _matchedTokens[i] = true;
         indices.add(i);
       }
     }
-    _matchedTokenCount = _expectedTokens.length;
+    _matchedTokens = List<bool>.filled(_atoms.length, true);
     return indices;
   }
 
-  List<int> _matchRemainingSlots(List<String> recognizedKeys) {
-    final remainingIndices = <int>[];
-    final remainingKeys = <String>[];
-    for (var i = 0; i < _expectedKeys.length; i += 1) {
-      if (!_matchedTokens[i]) {
-        remainingIndices.add(i);
-        remainingKeys.add(_expectedKeys[i]);
+  void _applyMatchedAtoms(List<int> indices) {
+    if (indices.isEmpty) return;
+    for (final index in indices) {
+      if (index >= 0 && index < _matchedTokens.length) {
+        _matchedTokens[index] = true;
       }
     }
-    if (recognizedKeys.isEmpty || remainingKeys.isEmpty) {
+  }
+
+  bool _hasEtalonSyntax(String text) {
+    return text.contains('(') || text.contains('[') || text.contains('{');
+  }
+
+  List<_AtomVariant> _mergeVariants(
+    List<_AtomVariant> base,
+    List<_AtomVariant> extra,
+  ) {
+    final merged = <_AtomVariant>[];
+    final seen = <String>{};
+
+    void addAll(List<_AtomVariant> variants) {
+      for (final variant in variants) {
+        final signature = variant.signature();
+        if (seen.add(signature)) {
+          merged.add(variant);
+        }
+      }
+    }
+
+    addAll(base);
+    addAll(extra);
+    merged.sort((a, b) => b.tokens.length.compareTo(a.tokens.length));
+    return merged;
+  }
+}
+
+class _EtalonAtom {
+  final String displayText;
+  final List<_AtomVariant> variants;
+  final bool isMatchable;
+  final bool isOptional;
+
+  const _EtalonAtom._({
+    required this.displayText,
+    required this.variants,
+    required this.isMatchable,
+    required this.isOptional,
+  });
+
+  bool get isRequired => isMatchable && !isOptional;
+
+  factory _EtalonAtom.literal({
+    required String displayText,
+    required List<_AtomVariant> variants,
+  }) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: true,
+      isOptional: false,
+    );
+  }
+
+  factory _EtalonAtom.optional({
+    required String displayText,
+    required List<_AtomVariant> variants,
+  }) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: true,
+      isOptional: true,
+    );
+  }
+
+  factory _EtalonAtom.decorative(String displayText) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: const <_AtomVariant>[],
+      isMatchable: false,
+      isOptional: true,
+    );
+  }
+
+  _EtalonAtom copyWithVariants(List<_AtomVariant> variants) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: isMatchable,
+      isOptional: isOptional,
+    );
+  }
+}
+
+class _AtomVariant {
+  final List<_AtomToken> tokens;
+
+  const _AtomVariant({required this.tokens});
+
+  String signature() {
+    return tokens.map((token) => token.signature()).join('|');
+  }
+}
+
+class _AtomToken {
+  final String normalized;
+  final int? numberValue;
+  final String? operatorKey;
+
+  const _AtomToken({
+    required this.normalized,
+    this.numberValue,
+    this.operatorKey,
+  });
+
+  factory _AtomToken.fromMatchingToken(MatchingToken token) {
+    return _AtomToken(
+      normalized: token.normalized,
+      numberValue: token.numberValue,
+      operatorKey: token.operatorKey,
+    );
+  }
+
+  String signature() {
+    if (operatorKey != null) return 'op:$operatorKey';
+    if (numberValue != null) return 'num:$numberValue';
+    return 'lit:$normalized';
+  }
+
+  static _AtomToken literal(String normalized) {
+    return _AtomToken(normalized: normalized);
+  }
+}
+
+class _EtalonParser {
+  _EtalonParser(this._parser);
+
+  final MatcherTextParser _parser;
+
+  List<_EtalonAtom> parse(String pattern) {
+    if (pattern.trim().isEmpty) return const <_EtalonAtom>[];
+
+    final atoms = <_EtalonAtom>[];
+    final literal = StringBuffer();
+
+    void flushLiteral() {
+      if (literal.isEmpty) return;
+      atoms.addAll(_atomsFromLiteral(literal.toString()));
+      literal.clear();
+    }
+
+    for (var i = 0; i < pattern.length; i += 1) {
+      final ch = pattern[i];
+
+      if (ch == '(') {
+        flushLiteral();
+        final end = pattern.indexOf(')', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final inner = pattern.substring(i + 1, end).trim();
+        if (inner.isNotEmpty) {
+          atoms.add(_EtalonAtom.decorative(inner));
+        }
+        i = end;
+        continue;
+      }
+
+      if (ch == '[') {
+        flushLiteral();
+        final end = pattern.indexOf(']', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final inner = pattern.substring(i + 1, end);
+        final atom = _buildVariantAtom(inner, isOptional: false);
+        if (atom != null) {
+          atoms.add(atom);
+        }
+        i = end;
+        continue;
+      }
+
+      if (ch == '{') {
+        flushLiteral();
+        final end = pattern.indexOf('}', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final inner = pattern.substring(i + 1, end);
+        final atom = _buildVariantAtom(inner, isOptional: true);
+        if (atom != null) {
+          atoms.add(atom);
+        }
+        i = end;
+        continue;
+      }
+
+      literal.write(ch);
+    }
+
+    flushLiteral();
+    return atoms;
+  }
+
+  List<_EtalonAtom> _atomsFromLiteral(String text) {
+    final atoms = <_EtalonAtom>[];
+    for (final part in _splitLiteral(text)) {
+      if (part.trim().isEmpty) continue;
+      if (_containsLettersOrDigits(part)) {
+        final variants = _buildVariantsFromTexts(_parser, [part]);
+        if (variants.isEmpty) {
+          continue;
+        }
+        atoms.add(
+          _EtalonAtom.literal(displayText: part, variants: variants),
+        );
+        continue;
+      }
+      atoms.add(_EtalonAtom.decorative(part));
+    }
+    return atoms;
+  }
+
+  _EtalonAtom? _buildVariantAtom(String raw, {required bool isOptional}) {
+    final options = raw
+        .split('|')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    if (options.isEmpty) {
+      return null;
+    }
+    final variants = _buildVariantsFromTexts(_parser, options);
+    if (variants.isEmpty) {
+      return null;
+    }
+    final display = options.first;
+    return isOptional
+        ? _EtalonAtom.optional(displayText: display, variants: variants)
+        : _EtalonAtom.literal(displayText: display, variants: variants);
+  }
+
+  List<String> _splitLiteral(String text) {
+    final matches = _literalChunkRegex.allMatches(text);
+    if (matches.isEmpty) return const <String>[];
+    return matches
+        .map((match) => match.group(0) ?? '')
+        .where((part) => part.isNotEmpty)
+        .toList();
+  }
+
+  bool _containsLettersOrDigits(String text) {
+    return _letterDigitRegex.hasMatch(text);
+  }
+}
+
+class _EtalonMatcher {
+  const _EtalonMatcher();
+
+  List<int> match({
+    required List<_EtalonAtom> atoms,
+    required List<MatchingToken> tokens,
+    required List<bool> matched,
+  }) {
+    if (atoms.isEmpty || tokens.isEmpty) {
       return const <int>[];
     }
-    final matchedInRemaining = _lcsMatches(recognizedKeys, remainingKeys);
-    return [for (final index in matchedInRemaining) remainingIndices[index]];
-  }
 
-  List<int> _lcsMatches(List<String> left, List<String> right) {
-    final m = left.length;
-    final n = right.length;
-    final dp = List.generate(m + 1, (_) => List<int>.filled(n + 1, 0));
-    for (var i = m - 1; i >= 0; i -= 1) {
-      for (var j = n - 1; j >= 0; j -= 1) {
-        if (left[i] == right[j]) {
-          dp[i][j] = dp[i + 1][j + 1] + 1;
-        } else {
-          dp[i][j] = dp[i + 1][j] >= dp[i][j + 1] ? dp[i + 1][j] : dp[i][j + 1];
-        }
-      }
-    }
-    final matches = <int>[];
-    var i = 0;
-    var j = 0;
-    while (i < m && j < n) {
-      if (left[i] == right[j]) {
-        matches.add(j);
-        i += 1;
-        j += 1;
-      } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-        i += 1;
-      } else {
-        j += 1;
-      }
-    }
-    return matches;
-  }
+    final used = List<bool>.filled(tokens.length, false);
+    final matchedNow = <int>[];
+    final matchedLocal = List<bool>.from(matched);
 
-  List<_SemanticToken> _tokenizeExpected(String text) {
-    return _tokenizeToSemanticTokens(text);
-  }
+    while (true) {
+      _MatchCandidate? best;
 
-  _TokenizationResult _tokenizeRecognition(String text) {
-    final tokens = _tokenizeToSemanticTokens(text);
-    return _TokenizationResult(tokens);
-  }
+      for (var atomIndex = 0; atomIndex < atoms.length; atomIndex += 1) {
+        final atom = atoms[atomIndex];
+        if (!atom.isMatchable || matchedLocal[atomIndex]) continue;
 
-  List<_SemanticToken> _tokenizeToSemanticTokens(String text) {
-    if (text.trim().isEmpty) {
-      return const <_SemanticToken>[];
-    }
-    final rawTokens = _splitTokens(text);
-    final tokens = <_SemanticToken>[];
-    var index = 0;
-    while (index < rawTokens.length) {
-      final rawToken = rawTokens[index];
-      if (rawToken.isOperatorSymbol) {
-        final key = _operatorKeyFromSymbol(rawToken.raw);
-        if (key != null) {
-          tokens.add(_SemanticToken(display: rawToken.raw, key: key));
-        }
-        index += 1;
-        continue;
-      }
+        for (final variant in atom.variants) {
+          final consumed = _tryMatch(tokens, used, variant.tokens);
+          if (consumed == null) continue;
 
-      final normalized = rawToken.normalized;
-      if (normalized.isEmpty || _pack.ignoredWords.contains(normalized)) {
-        index += 1;
-        continue;
-      }
-
-      final operatorKey = _operatorKeyFromWord(normalized);
-      if (operatorKey != null) {
-        tokens.add(_SemanticToken(display: rawToken.raw, key: operatorKey));
-        index += 1;
-        continue;
-      }
-
-      final numberParse = _parseNumberSequence(rawTokens, index);
-      if (numberParse != null) {
-        final display = rawTokens
-            .sublist(index, index + numberParse.length)
-            .map((token) => token.raw)
-            .join(' ');
-        tokens.add(
-          _SemanticToken(display: display, key: _numKey(numberParse.value)),
-        );
-        index += numberParse.length;
-        continue;
-      }
-
-      tokens.add(
-        _SemanticToken(display: rawToken.raw, key: _wordKey(normalized)),
-      );
-      index += 1;
-    }
-    return tokens;
-  }
-
-  _NumberParseResult? _parseNumberSequence(List<_RawToken> tokens, int start) {
-    if (start >= tokens.length) return null;
-    final first = tokens[start];
-    if (first.isOperatorSymbol) return null;
-    final firstNormalized = first.normalized;
-    if (firstNormalized.isEmpty) return null;
-
-    final direct = int.tryParse(firstNormalized);
-    if (direct != null) {
-      return _NumberParseResult(value: direct, length: 1);
-    }
-
-    final lexicon = _pack.numberLexicon;
-    if (!lexicon.isNumberWord(firstNormalized)) {
-      return null;
-    }
-
-    var total = 0;
-    var current = 0;
-    var index = start;
-    var consumed = false;
-    while (index < tokens.length) {
-      final token = tokens[index];
-      if (token.isOperatorSymbol) break;
-      final word = token.normalized;
-      if (word.isEmpty) {
-        index += 1;
-        continue;
-      }
-      if (lexicon.conjunctions.contains(word)) {
-        final nextWord = _nextNumberWord(tokens, index + 1, lexicon);
-        if (nextWord == null || !consumed) {
-          break;
-        }
-        index += 1;
-        continue;
-      }
-      final unit = lexicon.units[word];
-      if (unit != null) {
-        current += unit;
-        consumed = true;
-        index += 1;
-        continue;
-      }
-      final tens = lexicon.tens[word];
-      if (tens != null) {
-        current += tens;
-        consumed = true;
-        index += 1;
-        continue;
-      }
-      final scale = lexicon.scales[word];
-      if (scale != null) {
-        consumed = true;
-        if (scale == 100) {
-          if (current == 0) {
-            current = 1;
+          final candidate = _MatchCandidate(atomIndex, consumed);
+          if (best == null ||
+              candidate.consumed.length > best.consumed.length) {
+            best = candidate;
           }
-          current *= scale;
-        } else {
-          if (current == 0) {
-            current = 1;
-          }
-          total += current * scale;
-          current = 0;
         }
-        index += 1;
-        continue;
       }
-      break;
+
+      if (best == null) break;
+      if (matchedLocal[best.atomIndex]) break;
+
+      matchedLocal[best.atomIndex] = true;
+      for (final index in best.consumed) {
+        used[index] = true;
+      }
+      matchedNow.add(best.atomIndex);
     }
-    if (!consumed) return null;
-    return _NumberParseResult(value: total + current, length: index - start);
+
+    matchedNow.sort();
+    return matchedNow;
   }
 
-  String? _nextNumberWord(
-    List<_RawToken> tokens,
-    int start,
-    NumberLexicon lexicon,
+  List<int>? _tryMatch(
+    List<MatchingToken> tokens,
+    List<bool> used,
+    List<_AtomToken> needTokens,
   ) {
-    for (var i = start; i < tokens.length; i += 1) {
-      final token = tokens[i];
-      if (token.isOperatorSymbol) return null;
-      final word = token.normalized;
-      if (word.isEmpty) {
-        continue;
-      }
-      if (lexicon.isNumberWord(word)) {
-        return word;
-      }
-      return null;
-    }
-    return null;
-  }
+    if (needTokens.isEmpty) return null;
 
-  List<_RawToken> _splitTokens(String text) {
-    final tokenRegex = RegExp(r"[\p{L}\p{N}']+|[=+\-*/]", unicode: true);
-    return tokenRegex.allMatches(text).map((match) {
-      final raw = match.group(0) ?? '';
-      final isOperator = _operatorSymbols.containsKey(raw);
-      final normalized = isOperator ? '' : _pack.normalizer(raw);
-      return _RawToken(raw, normalized, isOperator);
-    }).toList();
-  }
-
-  String _maybeCanonicalizeTime(String text) {
-    if (!_expectsTime) return text;
-    final parsed = _parseTimeText(text);
-    if (parsed == null) return text;
-    return _pack.timeWordsConverter(
-      TimeValue(hour: parsed.hour, minute: parsed.minute),
-    );
-  }
-
-  bool _looksLikeTime(String prompt, List<String> answers) {
-    final lexicon = _pack.timeLexicon;
-    if (_containsTimeDigits(prompt) ||
-        _containsTimeWords(prompt, lexicon)) {
-      return true;
-    }
-    for (final answer in answers) {
-      if (_containsTimeDigits(answer) ||
-          _containsTimeWords(answer, lexicon)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool _containsTimeDigits(String text) {
-    return _timeDigitsRegex.hasMatch(text) ||
-        _timeDigitsLooseRegex.hasMatch(text);
-  }
-
-  bool _containsTimeWords(String text, TimeLexicon lexicon) {
-    if (text.trim().isEmpty) return false;
-    final tokens = _splitTokens(text);
-    for (final token in tokens) {
-      final normalized = token.normalized;
-      if (normalized.isEmpty) continue;
-      if (_isStrongTimeWord(normalized, lexicon)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool _isStrongTimeWord(String word, TimeLexicon lexicon) {
-    return lexicon.quarterWords.contains(word) ||
-        lexicon.halfWords.contains(word) ||
-        lexicon.pastWords.contains(word) ||
-        lexicon.toWords.contains(word) ||
-        lexicon.oclockWords.contains(word);
-  }
-
-  _TimeParseResult? _parseTimeText(String text) {
-    final lexicon = _pack.timeLexicon;
-    final tokens = _filterTimeTokens(text, lexicon);
-    if (tokens.isEmpty) return null;
-
-    for (var i = 0; i < tokens.length; i += 1) {
-      final minutePhrase = _parseMinutePhrase(tokens, i, lexicon);
-      if (minutePhrase == null) continue;
-      var index = _skipTimeConnectors(tokens, i + minutePhrase.length, lexicon);
-      if (index >= tokens.length) continue;
-      final relation = tokens[index].normalized;
-      final isPast = lexicon.pastWords.contains(relation);
-      final isTo = lexicon.toWords.contains(relation);
-      if (!isPast && !isTo) continue;
-      index = _skipTimeConnectors(tokens, index + 1, lexicon);
-      final hourParse = _parseHourSequence(tokens, index);
-      if (hourParse == null) continue;
-      final result = _buildTime(
-        hour: hourParse.value,
-        minute: minutePhrase.value,
-        isTo: isTo,
-      );
-      if (result != null) return result;
+    final need = <String, int>{};
+    for (final token in needTokens) {
+      final key = token.signature();
+      need[key] = (need[key] ?? 0) + 1;
     }
 
-    for (var i = 0; i < tokens.length; i += 1) {
-      final hourParse = _parseHourSequence(tokens, i);
-      if (hourParse == null) continue;
-      var index = _skipTimeConnectors(tokens, i + hourParse.length, lexicon);
-      if (index >= tokens.length) {
-        return _buildTime(hour: hourParse.value, minute: 0, isTo: false);
-      }
-      final relation = tokens[index].normalized;
-      final isPast = lexicon.pastWords.contains(relation);
-      final isTo = lexicon.toWords.contains(relation);
-      if (isPast || isTo) {
-        index = _skipTimeConnectors(tokens, index + 1, lexicon);
-        final minutePhrase = _parseMinutePhrase(tokens, index, lexicon);
-        if (minutePhrase == null) continue;
-        final result = _buildTime(
-          hour: hourParse.value,
-          minute: minutePhrase.value,
-          isTo: isTo,
-        );
-        if (result != null) return result;
-        continue;
-      }
+    final picked = <int>[];
+    for (var i = tokens.length - 1; i >= 0; i -= 1) {
+      if (used[i]) continue;
+      final key = _AtomToken.fromMatchingToken(tokens[i]).signature();
+      final count = need[key];
+      if (count == null || count <= 0) continue;
+      need[key] = count - 1;
+      picked.add(i);
+    }
 
-      if (lexicon.oclockWords.contains(relation)) {
-        final nextIndex = _skipTimeConnectors(tokens, index + 1, lexicon);
-        final minutePhrase = _parseMinutePhrase(tokens, nextIndex, lexicon);
-        if (minutePhrase != null) {
-          final result = _buildTime(
-            hour: hourParse.value,
-            minute: minutePhrase.value,
-            isTo: false,
-          );
-          if (result != null) return result;
-        }
-        return _buildTime(hour: hourParse.value, minute: 0, isTo: false);
-      }
-
-      final minutePhrase = _parseMinutePhrase(tokens, index, lexicon);
-      if (minutePhrase != null) {
-        final result = _buildTime(
-          hour: hourParse.value,
-          minute: minutePhrase.value,
-          isTo: false,
-        );
-        if (result != null) return result;
+    for (final count in need.values) {
+      if (count > 0) {
+        return null;
       }
     }
 
-    return null;
-  }
-
-  List<_RawToken> _filterTimeTokens(String text, TimeLexicon lexicon) {
-    final rawTokens = _splitTokens(text);
-    final tokens = <_RawToken>[];
-    for (final token in rawTokens) {
-      if (token.isOperatorSymbol) continue;
-      final normalized = token.normalized;
-      if (normalized.isEmpty) continue;
-      if (_pack.ignoredWords.contains(normalized)) continue;
-      if (lexicon.fillerWords.contains(normalized)) continue;
-      tokens.add(token);
-    }
-    return tokens;
-  }
-
-  int _skipTimeConnectors(
-    List<_RawToken> tokens,
-    int start,
-    TimeLexicon lexicon,
-  ) {
-    var index = start;
-    while (index < tokens.length) {
-      final word = tokens[index].normalized;
-      if (word.isEmpty || lexicon.connectorWords.contains(word)) {
-        index += 1;
-        continue;
-      }
-      break;
-    }
-    return index;
-  }
-
-  _TimeMinuteParse? _parseMinutePhrase(
-    List<_RawToken> tokens,
-    int start,
-    TimeLexicon lexicon,
-  ) {
-    if (start >= tokens.length) return null;
-    final word = tokens[start].normalized;
-    if (lexicon.quarterWords.contains(word)) {
-      return const _TimeMinuteParse(value: 15, length: 1);
-    }
-    if (lexicon.halfWords.contains(word)) {
-      return const _TimeMinuteParse(value: 30, length: 1);
-    }
-    final numberParse = _parseNumberSequence(tokens, start);
-    if (numberParse == null) return null;
-    if (numberParse.value < 0 || numberParse.value > 59) return null;
-    return _TimeMinuteParse(
-      value: numberParse.value,
-      length: numberParse.length,
-    );
-  }
-
-  _NumberParseResult? _parseHourSequence(List<_RawToken> tokens, int start) {
-    final numberParse = _parseNumberSequence(tokens, start);
-    if (numberParse == null) return null;
-    if (numberParse.value < 0 || numberParse.value > 23) return null;
-    return numberParse;
-  }
-
-  _TimeParseResult? _buildTime({
-    required int hour,
-    required int minute,
-    required bool isTo,
-  }) {
-    if (minute < 0 || minute > 59) return null;
-    var resolvedHour = hour;
-    var resolvedMinute = minute;
-    if (isTo) {
-      if (minute == 0) return null;
-      resolvedMinute = 60 - minute;
-      resolvedHour = hour - 1;
-    }
-    if (resolvedMinute < 0 || resolvedMinute > 59) return null;
-    resolvedHour = resolvedHour % 24;
-    if (resolvedHour < 0) {
-      resolvedHour += 24;
-    }
-    return _TimeParseResult(hour: resolvedHour, minute: resolvedMinute);
-  }
-
-  String? _operatorKeyFromWord(String word) {
-    return _pack.operatorWords[word];
+    picked.sort();
+    return picked;
   }
 }
 
-class _TokenizationResult {
-  final List<_SemanticToken> tokens;
+class _MatchCandidate {
+  final int atomIndex;
+  final List<int> consumed;
 
-  const _TokenizationResult(this.tokens);
-
-  List<String> get keys => [for (final token in tokens) token.key];
-
-  List<String> get displayTokens => [for (final token in tokens) token.display];
+  const _MatchCandidate(this.atomIndex, this.consumed);
 }
 
-class _SemanticToken {
-  final String display;
-  final String key;
+final _literalChunkRegex = RegExp(r'\s+|[^\s]+', unicode: true);
+final _letterDigitRegex = RegExp(r'[\p{L}\p{N}]', unicode: true);
 
-  const _SemanticToken({required this.display, required this.key});
+List<_AtomVariant> _buildVariantsFromTexts(
+  MatcherTextParser parser,
+  Iterable<String> texts,
+) {
+  final variants = <_AtomVariant>[];
+  final seen = <String>{};
+  for (final text in texts) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) continue;
+    final tokens = parser.tokenize(trimmed);
+    if (tokens.isEmpty) continue;
+    final variantTokens = _variantTokensForText(trimmed, tokens);
+    final variant = _AtomVariant(tokens: variantTokens);
+    final signature = variant.signature();
+    if (seen.add(signature)) {
+      variants.add(variant);
+    }
+  }
+  variants.sort((a, b) => b.tokens.length.compareTo(a.tokens.length));
+  return variants;
 }
 
-class _RawToken {
-  final String raw;
-  final String normalized;
-  final bool isOperatorSymbol;
-
-  const _RawToken(this.raw, this.normalized, this.isOperatorSymbol);
+List<_AtomToken> _variantTokensForText(
+  String text,
+  List<MatchingToken> tokens,
+) {
+  if (tokens.length == 1) {
+    final token = tokens.first;
+    if (token.numberValue != null &&
+        text.trim().contains(' ') &&
+        token.normalized.contains(' ')) {
+      return <_AtomToken>[_AtomToken.literal(token.normalized)];
+    }
+  }
+  return tokens.map(_AtomToken.fromMatchingToken).toList();
 }
-
-class _NumberParseResult {
-  final int value;
-  final int length;
-
-  const _NumberParseResult({required this.value, required this.length});
-}
-
-class _TimeParseResult {
-  final int hour;
-  final int minute;
-
-  const _TimeParseResult({required this.hour, required this.minute});
-}
-
-class _TimeMinuteParse {
-  final int value;
-  final int length;
-
-  const _TimeMinuteParse({required this.value, required this.length});
-}
-
-
-const _operatorSymbols = {
-  '+': 'PLUS',
-  '-': 'MINUS',
-  '*': 'MULTIPLY',
-  '/': 'DIVIDE',
-  '=': 'EQUALS',
-};
-
-final _timeDigitsRegex = RegExp(r'\b\d{1,2}\s*[:.]\s*\d{2}\b');
-final _timeDigitsLooseRegex = RegExp(r'\b\d{1,2}\s+\d{2}\b');
-
-
-String? _operatorKeyFromSymbol(String symbol) {
-  return _operatorSymbols[symbol];
-}
-
-String _numKey(int value) => 'NUM:$value';
-
-String _wordKey(String value) => 'WORD:$value';
