@@ -94,8 +94,11 @@ String _numberToEnglish(int value) {
 }
 
 String _timeToEnglish(TimeValue time) {
-  final hourWords = _numberToEnglish(time.hour);
   final minute = time.minute;
+  if (time.hour == 0 && minute == 0) {
+    return 'midnight';
+  }
+  final hourWords = _numberToEnglish(time.hour);
   if (minute == 0) {
     return '$hourWords o clock';
   }
