@@ -108,8 +108,14 @@ class SettingsRepository implements SettingsRepositoryBase {
     if (rawValue == null || rawValue.trim().isEmpty) {
       return null;
     }
+    final normalized = switch (rawValue) {
+      'numberToWord' => 'valueToText',
+      'wordToNumber' => 'textToValue',
+      'wordToTime' => 'textToValue',
+      _ => rawValue,
+    };
     for (final kind in TrainingTaskKind.values) {
-      if (kind.name == rawValue) {
+      if (kind.name == normalized) {
         return kind;
       }
     }

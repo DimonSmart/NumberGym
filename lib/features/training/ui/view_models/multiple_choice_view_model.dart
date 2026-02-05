@@ -38,26 +38,22 @@ class MultipleChoiceViewModel {
     required MultipleChoiceState task,
     required TrainingFeedbackViewModel feedback,
   }) {
-    final isWordToNumber = task.kind == TrainingTaskKind.wordToNumber;
-    final isWordToTime = task.kind == TrainingTaskKind.wordToTime;
-    final isNumericMode = isWordToNumber || isWordToTime;
-    final title = isWordToNumber
-        ? 'Choose the correct number'
-        : isWordToTime
-            ? 'Choose the correct time'
-            : 'Choose the correct spelling';
+    final isTextToValue = task.kind == TrainingTaskKind.textToValue;
+    final isNumericMode = isTextToValue;
+    final isTimeOptions =
+        isTextToValue && task.options.any((option) => option.contains(':'));
+    final title =
+        isTextToValue ? 'Choose the correct value' : 'Choose the correct wording';
     final promptStyle = theme.textTheme.displaySmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: theme.colorScheme.onSurface,
       fontSize: isNumericMode ? 42 : null,
     );
-    final optionStyle =
-        isNumericMode ? theme.textTheme.headlineSmall : theme.textTheme.titleMedium;
-    final optionWidth = isWordToNumber
-        ? 100.0
-        : isWordToTime
-            ? 110.0
-            : 220.0;
+    final optionStyle = isNumericMode
+        ? theme.textTheme.headlineSmall
+        : theme.textTheme.titleMedium;
+    final optionWidth =
+        isTextToValue ? (isTimeOptions ? 110.0 : 100.0) : 220.0;
 
     return MultipleChoiceViewModel(
       title: title,

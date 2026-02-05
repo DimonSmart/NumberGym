@@ -319,9 +319,8 @@ class TrainingSession {
           onSpeechReady: _handleSpeechReady,
         );
       },
-      TrainingTaskKind.numberToWord: _buildNumberToWordRuntime,
-      TrainingTaskKind.wordToNumber: _buildWordToNumberRuntime,
-      TrainingTaskKind.wordToTime: _buildWordToTimeRuntime,
+      TrainingTaskKind.valueToText: _buildValueToTextRuntime,
+      TrainingTaskKind.textToValue: _buildTextToValueRuntime,
       TrainingTaskKind.listeningNumbers: _buildListeningNumbersRuntime,
       TrainingTaskKind.phrasePronunciation: _buildPhrasePronunciationRuntime,
     });
@@ -337,10 +336,10 @@ class TrainingSession {
     _syncState();
   }
 
-  TaskRuntime _buildNumberToWordRuntime(TaskBuildContext context) {
-    final spec = context.card.buildNumberToWordSpec(context);
+  TaskRuntime _buildValueToTextRuntime(TaskBuildContext context) {
+    final spec = context.card.buildValueToTextSpec(context);
     return MultipleChoiceRuntime(
-      kind: TrainingTaskKind.numberToWord,
+      kind: TrainingTaskKind.valueToText,
       taskId: context.card.id,
       numberValue: spec.numberValue,
       prompt: spec.prompt,
@@ -351,14 +350,45 @@ class TrainingSession {
     );
   }
 
-  TaskRuntime _buildWordToNumberRuntime(TaskBuildContext context) {
+  TaskRuntime _buildTextToValueRuntime(TaskBuildContext context) {
+    final timeValue = context.card.timeValue;
+    if (timeValue != null) {
+      final correctWord = context.timeToWords(timeValue);
+      final correctOption = timeValue.displayText;
+      final options = <String>{correctOption};
+      final candidateTimes = _candidateTimeValuesFor(context);
+
+      final maxAttempts = candidateTimes.length * 3 + 5;
+      var attempts = 0;
+      while (options.length < valueToTextOptionCount &&
+          attempts < maxAttempts) {
+        final candidate =
+            candidateTimes[context.random.nextInt(candidateTimes.length)];
+        attempts += 1;
+        if (candidate == timeValue) continue;
+        options.add(candidate.displayText);
+      }
+
+      final shuffled = options.toList()..shuffle(context.random);
+      return MultipleChoiceRuntime(
+        kind: TrainingTaskKind.textToValue,
+        taskId: context.card.id,
+        numberValue: null,
+        prompt: correctWord,
+        correctOption: correctOption,
+        options: shuffled,
+        cardDuration: context.cardDuration,
+        cardTimer: context.services.timer,
+      );
+    }
+
     final numberValue = _requireNumberValue(context.card);
     final correctWord = context.toWords(numberValue);
     final correctOption = numberValue.toString();
     final options = <String>{correctOption};
     final candidateIds = _candidateIdsFor(context);
 
-    while (options.length < numberToWordOptionCount) {
+    while (options.length < valueToTextOptionCount) {
       final candidateId =
           candidateIds[context.random.nextInt(candidateIds.length)];
       final candidateValue = candidateId.number!;
@@ -368,40 +398,9 @@ class TrainingSession {
 
     final shuffled = options.toList()..shuffle(context.random);
     return MultipleChoiceRuntime(
-      kind: TrainingTaskKind.wordToNumber,
+      kind: TrainingTaskKind.textToValue,
       taskId: context.card.id,
       numberValue: numberValue,
-      prompt: correctWord,
-      correctOption: correctOption,
-      options: shuffled,
-      cardDuration: context.cardDuration,
-      cardTimer: context.services.timer,
-    );
-  }
-
-  TaskRuntime _buildWordToTimeRuntime(TaskBuildContext context) {
-    final timeValue = _requireTimeValue(context.card);
-    final correctWord = context.timeToWords(timeValue);
-    final correctOption = timeValue.displayText;
-    final options = <String>{correctOption};
-    final candidateTimes = _candidateTimeValuesFor(context);
-
-    final maxAttempts = candidateTimes.length * 3 + 5;
-    var attempts = 0;
-    while (options.length < numberToWordOptionCount &&
-        attempts < maxAttempts) {
-      final candidate =
-          candidateTimes[context.random.nextInt(candidateTimes.length)];
-      attempts += 1;
-      if (candidate == timeValue) continue;
-      options.add(candidate.displayText);
-    }
-
-    final shuffled = options.toList()..shuffle(context.random);
-    return MultipleChoiceRuntime(
-      kind: TrainingTaskKind.wordToTime,
-      taskId: context.card.id,
-      numberValue: null,
       prompt: correctWord,
       correctOption: correctOption,
       options: shuffled,
@@ -416,7 +415,7 @@ class TrainingSession {
     final options = <String>{correctOption};
     final candidateIds = _candidateIdsFor(context);
 
-    while (options.length < numberToWordOptionCount) {
+    while (options.length < valueToTextOptionCount) {
       final candidateId =
           candidateIds[context.random.nextInt(candidateIds.length)];
       final candidateValue = candidateId.number!;
@@ -575,14 +574,6 @@ class TrainingSession {
       throw StateError('Expected a number-based pronunciation card.');
     }
     return numberValue;
-  }
-
-  TimeValue _requireTimeValue(PronunciationTaskData card) {
-    final timeValue = card.timeValue;
-    if (timeValue == null) {
-      throw StateError('Expected a time-based pronunciation card.');
-    }
-    return timeValue;
   }
 
   void _handleRuntimeEvent(TaskEvent event) {

@@ -1,8 +1,8 @@
 import '../training_task.dart';
 
-/// Word-to-number multiple choice task (Inverse Stage 3).
-class WordToNumberTask extends NumberTrainingTask {
-  WordToNumberTask({
+/// Text-to-value multiple choice task (Inverse Stage 3).
+class TextToValueTask extends NumberTrainingTask {
+  TextToValueTask({
     required super.id,
     required super.numberValue,
     required this.prompt,
@@ -11,7 +11,7 @@ class WordToNumberTask extends NumberTrainingTask {
   })  : options = List<String>.unmodifiable(options),
         assert(id.number == numberValue),
         super(
-          kind: TrainingTaskKind.wordToNumber,
+          kind: TrainingTaskKind.textToValue,
         );
 
   final String prompt;

@@ -49,9 +49,8 @@ class TaskScheduler {
         _random = random ?? Random();
 
   static const int _numberPronunciationWeight = 70;
-  static const int _numberToWordWeight = 15;
-  static const int _wordToNumberWeight = 15;
-  static const int _wordToTimeWeight = 15;
+  static const int _valueToTextWeight = 15;
+  static const int _textToValueWeight = 15;
   static const int _listeningNumbersWeight = 15;
   static const int _phrasePronunciationWeight = 5;
 
@@ -210,18 +209,15 @@ class TaskScheduler {
         allowListening &&
         TrainingTaskKind.listeningNumbers.supportedItemTypes
             .contains(itemType);
-    final canUseNumberToWordKind =
-        TrainingTaskKind.numberToWord.supportedItemTypes.contains(itemType);
-    final canUseWordToNumberKind =
-        TrainingTaskKind.wordToNumber.supportedItemTypes.contains(itemType);
-    final canUseWordToTimeKind =
-        TrainingTaskKind.wordToTime.supportedItemTypes.contains(itemType);
+    final canUseValueToTextKind =
+        TrainingTaskKind.valueToText.supportedItemTypes.contains(itemType);
+    final canUseTextToValueKind =
+        TrainingTaskKind.textToValue.supportedItemTypes.contains(itemType);
 
     if (!canUseSpeechKind &&
         !canUseListeningKind &&
-        !canUseNumberToWordKind &&
-        !canUseWordToNumberKind &&
-        !canUseWordToTimeKind &&
+        !canUseValueToTextKind &&
+        !canUseTextToValueKind &&
         !canUsePhrase) {
       return TaskSchedulePaused(
         speechAvailability.message ??
@@ -269,20 +265,15 @@ class TaskScheduler {
           TrainingTaskKind.numberPronunciation,
           _numberPronunciationWeight,
         ),
-      if (TrainingTaskKind.numberToWord.supportedItemTypes.contains(itemType))
+      if (TrainingTaskKind.valueToText.supportedItemTypes.contains(itemType))
         const MapEntry(
-          TrainingTaskKind.numberToWord,
-          _numberToWordWeight,
+          TrainingTaskKind.valueToText,
+          _valueToTextWeight,
         ),
-      if (TrainingTaskKind.wordToNumber.supportedItemTypes.contains(itemType))
+      if (TrainingTaskKind.textToValue.supportedItemTypes.contains(itemType))
         const MapEntry(
-          TrainingTaskKind.wordToNumber,
-          _wordToNumberWeight,
-        ),
-      if (TrainingTaskKind.wordToTime.supportedItemTypes.contains(itemType))
-        const MapEntry(
-          TrainingTaskKind.wordToTime,
-          _wordToTimeWeight,
+          TrainingTaskKind.textToValue,
+          _textToValueWeight,
         ),
       if (canUseListening &&
           TrainingTaskKind.listeningNumbers.supportedItemTypes

@@ -15,8 +15,9 @@ class TrainingTimerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final animationKey = ValueKey('$taskKey:$isActive');
     return TweenAnimationBuilder<double>(
-      key: ValueKey(taskKey),
+      key: animationKey,
       tween: Tween<double>(begin: 1.0, end: 0.0),
       duration: isActive ? duration : Duration.zero,
       builder: (context, value, child) {

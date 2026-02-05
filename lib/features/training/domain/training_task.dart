@@ -6,9 +6,8 @@ import 'training_item.dart';
 
 enum TrainingTaskKind {
   numberPronunciation,
-  numberToWord, // Formerly numberReading
-  wordToNumber, // Inverse for number cards
-  wordToTime, // Inverse for time cards
+  valueToText, // Formerly numberReading
+  textToValue, // Inverse for number/time cards
   listeningNumbers,
   phrasePronunciation,
 }
@@ -18,12 +17,10 @@ extension TrainingTaskKindX on TrainingTaskKind {
     switch (this) {
       case TrainingTaskKind.numberPronunciation:
         return 'Number pronunciation';
-      case TrainingTaskKind.numberToWord:
-        return 'Select the word';
-      case TrainingTaskKind.wordToNumber:
-        return 'Select the number';
-      case TrainingTaskKind.wordToTime:
-        return 'Select the time';
+      case TrainingTaskKind.valueToText:
+        return 'Value to text';
+      case TrainingTaskKind.textToValue:
+        return 'Text to value';
       case TrainingTaskKind.listeningNumbers:
         return 'Listening numbers';
       case TrainingTaskKind.phrasePronunciation:
@@ -36,9 +33,8 @@ extension TrainingTaskKindX on TrainingTaskKind {
       case TrainingTaskKind.phrasePronunciation:
         return false;
       case TrainingTaskKind.numberPronunciation:
-      case TrainingTaskKind.numberToWord:
-      case TrainingTaskKind.wordToNumber:
-      case TrainingTaskKind.wordToTime:
+      case TrainingTaskKind.valueToText:
+      case TrainingTaskKind.textToValue:
       case TrainingTaskKind.listeningNumbers:
         return true;
     }
@@ -57,7 +53,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.numberToWord:
+      case TrainingTaskKind.valueToText:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -68,7 +64,17 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.wordToNumber:
+      case TrainingTaskKind.textToValue:
+        return const {
+          TrainingItemType.digits,
+          TrainingItemType.base,
+          TrainingItemType.hundreds,
+          TrainingItemType.thousands,
+          TrainingItemType.timeExact,
+          TrainingItemType.timeQuarter,
+          TrainingItemType.timeHalf,
+          TrainingItemType.timeRandom,
+        };
       case TrainingTaskKind.listeningNumbers:
       case TrainingTaskKind.phrasePronunciation:
         return const {
@@ -76,13 +82,6 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.base,
           TrainingItemType.hundreds,
           TrainingItemType.thousands,
-        };
-      case TrainingTaskKind.wordToTime:
-        return const {
-          TrainingItemType.timeExact,
-          TrainingItemType.timeQuarter,
-          TrainingItemType.timeHalf,
-          TrainingItemType.timeRandom,
         };
     }
   }
@@ -116,7 +115,7 @@ abstract class PronunciationTaskData {
   String get prompt;
   List<String> get answers;
   LearningLanguage get language;
-  MultipleChoiceSpec buildNumberToWordSpec(MultipleChoiceBuildContext context);
+  MultipleChoiceSpec buildValueToTextSpec(MultipleChoiceBuildContext context);
 }
 
 class MultipleChoiceSpec {

@@ -4,6 +4,7 @@ import '../training_task.dart';
 import 'number_to_word_task.dart';
 
 class NumberPronunciationTask extends NumberTrainingTask
+    with ValueToTextSpecBuilder
     implements PronunciationTaskData {
   @override
   final String prompt;
@@ -30,36 +31,31 @@ class NumberPronunciationTask extends NumberTrainingTask
   TimeValue? get timeValue => null;
 
   @override
-  MultipleChoiceSpec buildNumberToWordSpec(
+  int? get valueToTextNumberValue => numberValue;
+
+  @override
+  String valueToTextPrompt(MultipleChoiceBuildContext context) =>
+      numberValue.toString();
+
+  @override
+  String valueToTextCorrectOption(MultipleChoiceBuildContext context) =>
+      context.toWords(numberValue);
+
+  @override
+  List<String> valueToTextCandidateOptions(
     MultipleChoiceBuildContext context,
   ) {
-    final value = numberValue;
-    final correct = context.toWords(value);
-    final options = <String>{correct};
-    final candidateIds = context.cardIds
-        .where((itemId) => itemId.type == id.type && itemId.number != null)
-        .toList();
-
-    if (candidateIds.isNotEmpty) {
-      while (options.length < numberToWordOptionCount) {
-        final candidateId =
-            candidateIds[context.random.nextInt(candidateIds.length)];
-        final candidateValue = candidateId.number!;
-        if (candidateValue == value) continue;
-        try {
-          options.add(context.toWords(candidateValue));
-        } catch (_) {
-          // Skip invalid conversions and try another number.
-        }
+    final candidates = <String>[];
+    for (final itemId in context.cardIds) {
+      if (itemId.type != id.type || itemId.number == null) continue;
+      final candidateValue = itemId.number!;
+      if (candidateValue == numberValue) continue;
+      try {
+        candidates.add(context.toWords(candidateValue));
+      } catch (_) {
+        // Skip invalid conversions and try another number.
       }
     }
-
-    final shuffled = options.toList()..shuffle(context.random);
-    return MultipleChoiceSpec(
-      prompt: value.toString(),
-      correctOption: correct,
-      options: shuffled,
-      numberValue: value,
-    );
+    return candidates;
   }
 }

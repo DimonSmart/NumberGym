@@ -1,0 +1,10 @@
+.dart_tool/
+.build/
+build/
+ios/Pods/
+ios/.symlinks/
+android/.gradle/
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+coverage/

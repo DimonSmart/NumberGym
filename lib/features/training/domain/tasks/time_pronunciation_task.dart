@@ -4,7 +4,9 @@ import '../training_item.dart';
 import '../training_task.dart';
 import 'number_to_word_task.dart';
 
-class TimePronunciationTask extends TrainingTask implements PronunciationTaskData {
+class TimePronunciationTask extends TrainingTask
+    with ValueToTextSpecBuilder
+    implements PronunciationTaskData {
   @override
   final TimeValue timeValue;
   @override
@@ -34,35 +36,28 @@ class TimePronunciationTask extends TrainingTask implements PronunciationTaskDat
   String get displayText => prompt;
 
   @override
-  MultipleChoiceSpec buildNumberToWordSpec(
+  String valueToTextPrompt(MultipleChoiceBuildContext context) =>
+      timeValue.displayText;
+
+  @override
+  String valueToTextCorrectOption(MultipleChoiceBuildContext context) =>
+      context.timeToWords(timeValue);
+
+  @override
+  List<String> valueToTextCandidateOptions(
     MultipleChoiceBuildContext context,
   ) {
-    final value = timeValue;
-    final correct = context.timeToWords(value);
-    final options = <String>{correct};
-    final candidateTimes = _candidateTimeValues(context);
-
-    if (candidateTimes.isNotEmpty) {
-      final maxAttempts = candidateTimes.length * 3 + 5;
-      var attempts = 0;
-      while (options.length < numberToWordOptionCount &&
-          attempts < maxAttempts) {
-        final candidate =
-            candidateTimes[context.random.nextInt(candidateTimes.length)];
-        attempts += 1;
-        if (candidate == value) continue;
-        options.add(context.timeToWords(candidate));
-      }
+    final candidates = <String>[];
+    for (final candidate in _candidateTimeValues(context)) {
+      if (candidate == timeValue) continue;
+      candidates.add(context.timeToWords(candidate));
     }
-
-    final shuffled = options.toList()..shuffle(context.random);
-    return MultipleChoiceSpec(
-      prompt: value.displayText,
-      correctOption: correct,
-      options: shuffled,
-      numberValue: null,
-    );
+    return candidates;
   }
+
+  @override
+  int? valueToTextMaxAttempts(int candidateCount) =>
+      candidateCount * 3 + 5;
 
   List<TimeValue> _candidateTimeValues(MultipleChoiceBuildContext context) {
     final values = context.cardIds
