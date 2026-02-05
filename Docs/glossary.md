@@ -2,7 +2,7 @@
 
 - Card: A single training item representing a numeric concept, not just a raw number (for example, time, phone number, weight, price, dates, measurements), along with its accepted answers.
 - Card ID (TrainingItemId): Unique identifier built from item type and number; used as the progress key.
-- Item type: Number group used for scheduling and option generation (digits, base, hundreds, thousands).
+- Item type (TrainingItemType): Number group used for scheduling and option generation (digits, base, hundreds, thousands).
 - Active window (Active pool): Limited subset of unlearned cards eligible for selection; size is capped by activeLimit.
 - Backlog: Remaining unlearned cards waiting to enter the Active window.
 - Cluster: Aggregated attempts within a time gap, storing correct/wrong/skipped counts and lastAnswerAt.
