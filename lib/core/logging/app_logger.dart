@@ -92,6 +92,22 @@ class AppLogger {
     AppLogBuffer.instance.add(entry.toString());
 
     if (toConsole) {
+      // В режиме отладки выводим в консоль через print
+      if (kDebugMode) {
+        final levelLabel = level.name.toUpperCase();
+        // ignore: avoid_print
+        print('[$levelLabel] [$category] $message');
+        if (error != null) {
+          // ignore: avoid_print
+          print('  error: $error');
+        }
+        if (stackTrace != null) {
+          // ignore: avoid_print
+          print('  stack: $stackTrace');
+        }
+      }
+      
+      // Также используем dev.log для интеграции с DevTools
       dev.log(
         entry.message,
         name: 'app.$category',

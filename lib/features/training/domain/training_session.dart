@@ -37,11 +37,11 @@ class TrainingSession {
     TaskRegistry? taskRegistry,
     void Function()? onStateChanged,
     void Function()? onAutoStop,
-  })  : _settingsRepository = settingsRepository,
-        _progressRepository = progressRepository,
-        _services = services ?? TrainingServices.defaults(),
-        _onStateChanged = onStateChanged ?? _noop,
-        _onAutoStop = onAutoStop ?? _noop {
+  }) : _settingsRepository = settingsRepository,
+       _progressRepository = progressRepository,
+       _services = services ?? TrainingServices.defaults(),
+       _onStateChanged = onStateChanged ?? _noop,
+       _onAutoStop = onAutoStop ?? _noop {
     _languageRouter = LanguageRouter(
       settingsRepository: _settingsRepository,
       random: _random,
@@ -70,8 +70,8 @@ class TrainingSession {
       onEvent: _handleRuntimeEvent,
     );
     _refreshCardsIfNeeded();
-    _premiumPronunciationEnabled =
-        _settingsRepository.readPremiumPronunciationEnabled();
+    _premiumPronunciationEnabled = _settingsRepository
+        .readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
     _debugForcedItemType = _readDebugForcedItemType();
     _syncState();
@@ -139,8 +139,8 @@ class TrainingSession {
   Future<void> startTraining() async {
     if (_trainingActive) return;
 
-    _premiumPronunciationEnabled =
-        _settingsRepository.readPremiumPronunciationEnabled();
+    _premiumPronunciationEnabled = _settingsRepository
+        .readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
     _debugForcedItemType = _readDebugForcedItemType();
     if (_progressManager.cardsLanguage != _currentLanguage()) {
@@ -174,8 +174,8 @@ class TrainingSession {
     _trainingActive = false;
     _errorMessage = null;
     _progressManager.resetSelection();
-    _premiumPronunciationEnabled =
-        _settingsRepository.readPremiumPronunciationEnabled();
+    _premiumPronunciationEnabled = _settingsRepository
+        .readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
     _debugForcedItemType = _readDebugForcedItemType();
     _silentDetector.reset();
@@ -194,8 +194,8 @@ class TrainingSession {
 
   Future<void> restoreAfterOverlay() async {
     await _loadProgress();
-    _premiumPronunciationEnabled =
-        _settingsRepository.readPremiumPronunciationEnabled();
+    _premiumPronunciationEnabled = _settingsRepository
+        .readPremiumPronunciationEnabled();
     _debugForcedTaskKind = _readDebugForcedTaskKind();
     _debugForcedItemType = _readDebugForcedItemType();
     _progressManager.resetSelection();
@@ -413,11 +413,11 @@ class TrainingSession {
     final card = context.card;
     final numberValue = card.numberValue;
     final timeValue = card.timeValue;
-    
+
     String correctOption;
     String speechText;
     final options = <String>{};
-    
+
     if (numberValue != null) {
       // Number-based listening
       correctOption = numberValue.toString();
@@ -441,13 +441,12 @@ class TrainingSession {
       // Time-based listening
       correctOption = timeValue.displayText;
       options.add(correctOption);
-      final candidateIds = _candidateIdsFor(context);
+      final candidateTimes = _candidateTimeValuesFor(context);
 
       while (options.length < valueToTextOptionCount) {
-        final candidateId =
-            candidateIds[context.random.nextInt(candidateIds.length)];
-        final candidateTime = candidateId.time;
-        if (candidateTime == null || candidateTime == timeValue) continue;
+        final candidateTime =
+            candidateTimes[context.random.nextInt(candidateTimes.length)];
+        if (candidateTime == timeValue) continue;
         options.add(candidateTime.displayText);
       }
 
@@ -457,12 +456,14 @@ class TrainingSession {
         speechText = correctOption;
       }
     } else {
-      throw StateError('Expected either numberValue or timeValue for listening task.');
+      throw StateError(
+        'Expected either numberValue or timeValue for listening task.',
+      );
     }
 
     final shuffled = options.toList()..shuffle(context.random);
     final voiceId = _settingsRepository.readTtsVoiceId(context.language);
-    
+
     return ListeningRuntime(
       taskId: context.card.id,
       numberValue: numberValue,
@@ -487,10 +488,7 @@ class TrainingSession {
     if (template == null) {
       return _buildFallbackPronunciationRuntime(context);
     }
-    final task = template.toTask(
-      value: numberValue,
-      taskId: context.card.id,
-    );
+    final task = template.toTask(value: numberValue, taskId: context.card.id);
     return PhrasePronunciationRuntime(
       task: task,
       language: context.language,
@@ -502,7 +500,8 @@ class TrainingSession {
 
   TaskRuntime _buildFallbackPronunciationRuntime(TaskBuildContext context) {
     final card = context.card;
-    final hintText = context.hintText ??
+    final hintText =
+        context.hintText ??
         _resolveHintText(card, TrainingTaskKind.numberPronunciation);
     return NumberPronunciationRuntime(
       task: card,
@@ -631,36 +630,37 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
     final affectsProgress = taskState.affectsProgress;
-      if (affectsProgress) {
-        final isCorrect = outcome == TrainingOutcome.correct;
-        final isSkipped =
-            outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.skipped;
-        _streakTracker.record(isCorrect);
-        final attemptResult = await _progressManager.recordAttempt(
-          progressKey: taskState.taskId,
-          isCorrect: isCorrect,
-          isSkipped: isSkipped,
-          language: _currentLanguage(),
-        );
-        final clusterLabel = attemptResult.newCluster ? 'new' : 'existing';
-        appLogI(
-          'progress',
-          'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
-          'outcome=${outcome.name} correct=$isCorrect skipped=$isSkipped '
-          'cluster=$clusterLabel',
-        );
-        if (attemptResult.learned && attemptResult.poolEmpty) {
-          _trainingActive = false;
-          unawaited(_setKeepAwake(false));
-          _syncState();
-        }
-      } else {
-        appLogI(
-          'progress',
-          'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
-          'outcome=${outcome.name} affectsProgress=false',
-        );
+    if (affectsProgress) {
+      final isCorrect = outcome == TrainingOutcome.correct;
+      final isSkipped =
+          outcome == TrainingOutcome.timeout ||
+          outcome == TrainingOutcome.skipped;
+      _streakTracker.record(isCorrect);
+      final attemptResult = await _progressManager.recordAttempt(
+        progressKey: taskState.taskId,
+        isCorrect: isCorrect,
+        isSkipped: isSkipped,
+        language: _currentLanguage(),
+      );
+      final clusterLabel = attemptResult.newCluster ? 'new' : 'existing';
+      appLogI(
+        'progress',
+        'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
+            'outcome=${outcome.name} correct=$isCorrect skipped=$isSkipped '
+            'cluster=$clusterLabel',
+      );
+      if (attemptResult.learned && attemptResult.poolEmpty) {
+        _trainingActive = false;
+        unawaited(_setKeepAwake(false));
+        _syncState();
       }
+    } else {
+      appLogI(
+        'progress',
+        'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
+            'outcome=${outcome.name} affectsProgress=false',
+      );
+    }
 
     final feedbackHold = _feedbackCoordinator.show(outcome);
 
