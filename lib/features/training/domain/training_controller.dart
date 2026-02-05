@@ -60,7 +60,7 @@ class TrainingController extends ChangeNotifier {
   String? get errorMessage => _session.state.errorMessage;
   TrainingFeedback? get feedback => _session.state.feedback;
   String? get feedbackText => _session.state.feedback?.text;
-  TrainingFeedbackType? get feedbackType => _session.state.feedback?.type;
+  TrainingOutcome? get feedbackOutcome => _session.state.feedback?.outcome;
   TaskState? get currentTask => _session.state.currentTask;
   TrainingTaskKind? get currentTaskKind => _session.state.currentTask?.kind;
 

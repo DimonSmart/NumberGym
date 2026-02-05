@@ -384,7 +384,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     emitState(_buildState());
 
     if (_answerMatcher.isComplete) {
-      await _complete(TrainingOutcome.success);
+      await _complete(TrainingOutcome.correct);
       return;
     }
 

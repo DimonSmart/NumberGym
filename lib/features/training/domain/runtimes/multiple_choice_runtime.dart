@@ -60,8 +60,8 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
     final normalized = action.option.trim().toLowerCase();
     final correct = _correctOption.trim().toLowerCase();
     final outcome = normalized == correct
-        ? TrainingOutcome.success
-        : TrainingOutcome.fail;
+        ? TrainingOutcome.correct
+        : TrainingOutcome.wrong;
     appLogI(
       'task',
       'Answer: kind=${_kind.name} id=$_taskId '

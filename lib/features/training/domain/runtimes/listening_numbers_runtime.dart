@@ -79,15 +79,15 @@ class ListeningNumbersRuntime extends TaskRuntimeBase {
     final normalized = action.option.trim();
     final correct = _numberValue.toString();
     final outcome = normalized == correct
-        ? TrainingOutcome.success
-        : TrainingOutcome.fail;
+        ? TrainingOutcome.correct
+        : TrainingOutcome.wrong;
     appLogI(
       'task',
       'Answer: kind=${TrainingTaskKind.listeningNumbers.name} id=$_taskId '
       'selected="${action.option}" correct="$correct" '
       'outcome=${outcome.name}',
     );
-    if (outcome == TrainingOutcome.success) {
+    if (outcome == TrainingOutcome.correct) {
       _answerRevealed = true;
       emitState(_buildState());
     }

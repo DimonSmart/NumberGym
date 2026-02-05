@@ -42,7 +42,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
       'assets/animations/success/Success.json';
   static const String _failureAnimationAsset =
       'assets/animations/failure/Failure.json';
-  static const Duration _overlayTransition = Duration(milliseconds: 250);
+  static const Duration _overlayTransition = Duration(milliseconds: 200);
 
   @override
   void initState() {
@@ -247,10 +247,20 @@ class _TrainingScreenState extends State<TrainingScreen> {
                 successAssetPrefix: _successAnimationPrefix,
                 fallbackSuccessAsset: _fallbackSuccessAnimation,
                 failureAsset: _failureAnimationAsset,
+                animationSize: _resolveOverlayAnimationSize(context),
               )
             : const SizedBox.shrink(key: ValueKey('feedback-hidden')),
       ),
     );
+  }
+
+  double _resolveOverlayAnimationSize(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final shortest = size.shortestSide;
+    final base = shortest * 0.7;
+    final cap = size.height * 0.4;
+    final candidate = base < cap ? base : cap;
+    return candidate.clamp(260.0, 420.0).toDouble();
   }
 
   Future<void> _handleStopTraining() async {

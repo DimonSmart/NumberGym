@@ -190,7 +190,7 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
 
   Future<void> _completeReview() async {
     if (_flow != PhraseFlow.reviewing) return;
-    emitEvent(const TaskCompleted(TrainingOutcome.ignore));
+    emitEvent(const TaskCompleted(TrainingOutcome.skipped));
   }
 
   Future<void> _startRecordingSoundWave() async {

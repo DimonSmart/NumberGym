@@ -1,1 +1,1 @@
-enum TrainingOutcome { success, fail, timeout, ignore }
+enum TrainingOutcome { correct, wrong, timeout, skipped }

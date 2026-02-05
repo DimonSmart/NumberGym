@@ -6,7 +6,7 @@ import 'training_state.dart';
 class FeedbackCoordinator {
   FeedbackCoordinator({
     required void Function() onChanged,
-    Duration feedbackDuration = const Duration(milliseconds: 1500),
+    Duration feedbackDuration = const Duration(milliseconds: 900),
   })  : _onChanged = onChanged,
         _feedbackDuration = feedbackDuration;
 
@@ -24,38 +24,33 @@ class FeedbackCoordinator {
     _feedbackCompleter?.complete();
     _feedbackCompleter = null;
 
-    late final TrainingFeedbackType type;
     late final String text;
 
     switch (outcome) {
-      case TrainingOutcome.success:
-        type = TrainingFeedbackType.correct;
+      case TrainingOutcome.correct:
         text = 'Correct';
         break;
-      case TrainingOutcome.fail:
-        type = TrainingFeedbackType.wrong;
+      case TrainingOutcome.wrong:
         text = 'Wrong';
         break;
       case TrainingOutcome.timeout:
-        type = TrainingFeedbackType.timeout;
         text = 'Timeout';
         break;
-      case TrainingOutcome.ignore:
-        type = TrainingFeedbackType.skipped;
+      case TrainingOutcome.skipped:
         text = 'Skipped';
         break;
     }
 
-    _feedback = TrainingFeedback(type: type, text: text);
+    _feedback = TrainingFeedback(outcome: outcome, text: text);
     _onChanged();
 
     final completer = Completer<void>();
     _feedbackCompleter = completer;
     _feedbackTimer = Timer(_feedbackDuration, clear);
 
-    final shouldHold = type == TrainingFeedbackType.correct ||
-        type == TrainingFeedbackType.wrong ||
-        type == TrainingFeedbackType.timeout;
+    final shouldHold = outcome == TrainingOutcome.correct ||
+        outcome == TrainingOutcome.wrong ||
+        outcome == TrainingOutcome.timeout;
     if (!shouldHold) {
       return Future.value();
     }

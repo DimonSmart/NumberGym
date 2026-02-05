@@ -599,9 +599,9 @@ class TrainingSession {
 
     final affectsProgress = taskState.affectsProgress;
       if (affectsProgress) {
-        final isCorrect = outcome == TrainingOutcome.success;
+        final isCorrect = outcome == TrainingOutcome.correct;
         final isSkipped =
-            outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.ignore;
+            outcome == TrainingOutcome.timeout || outcome == TrainingOutcome.skipped;
         _streakTracker.record(isCorrect);
         final attemptResult = await _progressManager.recordAttempt(
           progressKey: taskState.taskId,

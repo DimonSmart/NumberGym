@@ -1,13 +1,12 @@
 import 'task_state.dart';
-
-enum TrainingFeedbackType { correct, wrong, timeout, skipped }
+import 'training_outcome.dart';
 
 class TrainingFeedback {
-  final TrainingFeedbackType type;
+  final TrainingOutcome outcome;
   final String text;
 
   const TrainingFeedback({
-    required this.type,
+    required this.outcome,
     required this.text,
   });
 }

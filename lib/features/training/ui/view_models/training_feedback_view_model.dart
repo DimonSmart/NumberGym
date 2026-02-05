@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/training_outcome.dart';
 import '../../domain/training_state.dart';
 
 class TrainingFeedbackViewModel {
@@ -25,11 +26,11 @@ class TrainingFeedbackViewModel {
   }) {
     final color = feedback == null
         ? null
-        : _resolveFeedbackColor(theme, feedback.type);
+        : _resolveFeedbackColor(theme, feedback.outcome);
     final showOverlay = feedback != null &&
-        (feedback.type == TrainingFeedbackType.correct ||
-            feedback.type == TrainingFeedbackType.wrong ||
-            feedback.type == TrainingFeedbackType.timeout);
+        (feedback.outcome == TrainingOutcome.correct ||
+            feedback.outcome == TrainingOutcome.wrong ||
+            feedback.outcome == TrainingOutcome.timeout);
 
     return TrainingFeedbackViewModel(
       feedback: feedback,
@@ -42,15 +43,15 @@ class TrainingFeedbackViewModel {
 
   static Color _resolveFeedbackColor(
     ThemeData theme,
-    TrainingFeedbackType type,
+    TrainingOutcome outcome,
   ) {
-    switch (type) {
-      case TrainingFeedbackType.correct:
+    switch (outcome) {
+      case TrainingOutcome.correct:
         return Colors.green.shade700;
-      case TrainingFeedbackType.wrong:
-      case TrainingFeedbackType.timeout:
+      case TrainingOutcome.wrong:
+      case TrainingOutcome.timeout:
         return Colors.red.shade700;
-      case TrainingFeedbackType.skipped:
+      case TrainingOutcome.skipped:
         return theme.colorScheme.onSurfaceVariant;
     }
   }
