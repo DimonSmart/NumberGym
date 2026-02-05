@@ -112,6 +112,12 @@ const _hebrewTo = '\u05dc\u05e4\u05e0\u05d9';
 
 String _timeToHebrew(TimeValue time) {
   final minute = time.minute;
+  if (time.hour == 0 && minute == 0) {
+    return 'חצות';
+  }
+  if (time.hour == 12 && minute == 0) {
+    return 'צהריים';
+  }
   final hourWords = _numberToHebrew(time.hour);
   if (minute == 0) {
     return hourWords;
@@ -185,6 +191,7 @@ const _hebrewTimeLexicon = TimeLexicon(
   oclockWords: {},
   connectorWords: {},
   fillerWords: {},
+  specialTimeWords: {'חצות', 'צהריים'},
 );
 
 const _hebrewOperatorWords = {

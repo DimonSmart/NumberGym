@@ -132,6 +132,12 @@ String _numberToSpanish(int value) {
 
 String _timeToSpanish(TimeValue time) {
   final minute = time.minute;
+  if (time.hour == 0 && minute == 0) {
+    return 'medianoche';
+  }
+  if (time.hour == 12 && minute == 0) {
+    return 'mediodia';
+  }
   final hourWords = _numberToSpanish(time.hour);
   if (minute == 0) {
     return '$hourWords en punto';
@@ -212,6 +218,7 @@ const _spanishTimeLexicon = TimeLexicon(
   oclockWords: {'punto'},
   connectorWords: {'y'},
   fillerWords: {'en', 'la', 'las'},
+  specialTimeWords: {'medianoche', 'mediodia'},
 );
 
 const _spanishOperatorWords = {

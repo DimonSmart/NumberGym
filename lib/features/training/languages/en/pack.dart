@@ -98,6 +98,9 @@ String _timeToEnglish(TimeValue time) {
   if (time.hour == 0 && minute == 0) {
     return 'midnight';
   }
+  if (time.hour == 12 && minute == 0) {
+    return 'noon';
+  }
   final hourWords = _numberToEnglish(time.hour);
   if (minute == 0) {
     return '$hourWords o clock';
@@ -165,6 +168,7 @@ const _englishTimeLexicon = TimeLexicon(
   oclockWords: {'clock', 'oclock'},
   connectorWords: {'and'},
   fillerWords: {'a', 'the', 'o'},
+  specialTimeWords: {'midnight', 'noon', 'midday'},
 );
 
 const _englishOperatorWords = {

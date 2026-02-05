@@ -95,6 +95,12 @@ String _numberToGerman(int value) {
 
 String _timeToGerman(TimeValue time) {
   final minute = time.minute;
+  if (time.hour == 0 && minute == 0) {
+    return 'Mitternacht';
+  }
+  if (time.hour == 12 && minute == 0) {
+    return 'Mittag';
+  }
   final hourWords = _numberToGerman(time.hour);
   if (minute == 0) {
     return '$hourWords uhr';
@@ -165,6 +171,7 @@ const _germanTimeLexicon = TimeLexicon(
   oclockWords: {'uhr'},
   connectorWords: {'und'},
   fillerWords: {'um'},
+  specialTimeWords: {'mitternacht', 'mittag'},
 );
 
 const _germanOperatorWords = {

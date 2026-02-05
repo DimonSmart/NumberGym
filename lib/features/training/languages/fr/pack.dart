@@ -104,6 +104,12 @@ String _numberToFrench(int value) {
 
 String _timeToFrench(TimeValue time) {
   final minute = time.minute;
+  if (time.hour == 0 && minute == 0) {
+    return 'minuit';
+  }
+  if (time.hour == 12 && minute == 0) {
+    return 'midi';
+  }
   final hourWords = time.hour == 1 ? 'une' : _numberToFrench(time.hour);
   final hourLabel = time.hour == 1 ? 'heure' : 'heures';
   if (minute == 0) {
@@ -171,6 +177,7 @@ const _frenchTimeLexicon = TimeLexicon(
   oclockWords: {'heure', 'heures'},
   connectorWords: {'et'},
   fillerWords: {'le', 'la', 'les'},
+  specialTimeWords: {'minuit', 'midi'},
 );
 
 const _frenchOperatorWords = {

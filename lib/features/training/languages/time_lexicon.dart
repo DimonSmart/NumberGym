@@ -6,6 +6,7 @@ class TimeLexicon {
   final Set<String> oclockWords;
   final Set<String> connectorWords;
   final Set<String> fillerWords;
+  final Set<String> specialTimeWords;
 
   const TimeLexicon({
     required this.quarterWords,
@@ -15,6 +16,7 @@ class TimeLexicon {
     required this.oclockWords,
     required this.connectorWords,
     required this.fillerWords,
+    this.specialTimeWords = const {},
   });
 
   bool isTimeWord(String word) {
@@ -24,6 +26,7 @@ class TimeLexicon {
         toWords.contains(word) ||
         oclockWords.contains(word) ||
         connectorWords.contains(word) ||
-        fillerWords.contains(word);
+        fillerWords.contains(word) ||
+        specialTimeWords.contains(word);
   }
 }
