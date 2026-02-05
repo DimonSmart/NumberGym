@@ -54,10 +54,10 @@ class MultipleChoiceViewModel {
     final optionStyle =
         isNumericMode ? theme.textTheme.headlineSmall : theme.textTheme.titleMedium;
     final optionWidth = isWordToNumber
-        ? 100
+        ? 100.0
         : isWordToTime
-            ? 110
-            : 220;
+            ? 110.0
+            : 220.0;
 
     return MultipleChoiceViewModel(
       title: title,

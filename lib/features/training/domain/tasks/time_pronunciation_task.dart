@@ -5,6 +5,7 @@ import '../training_task.dart';
 import 'number_to_word_task.dart';
 
 class TimePronunciationTask extends TrainingTask implements PronunciationTaskData {
+  @override
   final TimeValue timeValue;
   @override
   final String prompt;
