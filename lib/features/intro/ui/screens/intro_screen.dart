@@ -64,7 +64,7 @@ class _IntroScreenState extends State<IntroScreen> {
     final language = SettingsRepository(
       widget.settingsBox,
     ).readLearningLanguage();
-    final ids = buildNumberCardIds();
+    final ids = buildAllCardIds();
     final progress = await _progressRepository.loadAll(ids, language: language);
     final learnedCount = progress.values
         .where((progress) => progress.learned)

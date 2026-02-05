@@ -3,6 +3,14 @@ import '../domain/tasks/number_pronunciation_task.dart';
 import '../domain/training_item.dart';
 import '../languages/language_pack.dart';
 import '../languages/registry.dart';
+import 'time_cards.dart';
+
+List<TrainingItemId> buildAllCardIds() {
+  return [
+    ...buildNumberCardIds(),
+    ...buildTimeCardIds(),
+  ];
+}
 
 List<TrainingItemId> buildNumberCardIds() {
   final ids = <TrainingItemId>[];

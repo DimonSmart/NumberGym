@@ -42,7 +42,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Future<void> _load() async {
-    final ids = buildNumberCardIds();
+    final ids = buildAllCardIds();
     final progress = await _progressRepository.loadAll(
       ids,
       language: widget.language,
