@@ -101,7 +101,7 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
   bool? _cachedAvailable;
 
   @override
-  TrainingTaskKind get kind => TrainingTaskKind.listeningNumbers;
+  TrainingTaskKind get kind => TrainingTaskKind.listening;
 
   @override
   Future<TaskAvailability> check(

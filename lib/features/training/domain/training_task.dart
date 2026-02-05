@@ -8,7 +8,7 @@ enum TrainingTaskKind {
   numberPronunciation,
   valueToText, // Formerly numberReading
   textToValue, // Inverse for number/time cards
-  listeningNumbers,
+  listening,
   phrasePronunciation,
 }
 
@@ -21,8 +21,8 @@ extension TrainingTaskKindX on TrainingTaskKind {
         return 'Value to text';
       case TrainingTaskKind.textToValue:
         return 'Text to value';
-      case TrainingTaskKind.listeningNumbers:
-        return 'Listening numbers';
+      case TrainingTaskKind.listening:
+        return 'Listening';
       case TrainingTaskKind.phrasePronunciation:
         return 'Phrase pronunciation';
     }
@@ -35,7 +35,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
       case TrainingTaskKind.numberPronunciation:
       case TrainingTaskKind.valueToText:
       case TrainingTaskKind.textToValue:
-      case TrainingTaskKind.listeningNumbers:
+      case TrainingTaskKind.listening:
         return true;
     }
   }
@@ -75,7 +75,17 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.listeningNumbers:
+      case TrainingTaskKind.listening:
+        return const {
+          TrainingItemType.digits,
+          TrainingItemType.base,
+          TrainingItemType.hundreds,
+          TrainingItemType.thousands,
+          TrainingItemType.timeExact,
+          TrainingItemType.timeQuarter,
+          TrainingItemType.timeHalf,
+          TrainingItemType.timeRandom,
+        };
       case TrainingTaskKind.phrasePronunciation:
         return const {
           TrainingItemType.digits,

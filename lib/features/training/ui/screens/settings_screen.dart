@@ -164,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     final locale = LanguageRegistry.of(_language).locale;
     final availability = await _availabilityRegistry.check(
-      TrainingTaskKind.listeningNumbers,
+      TrainingTaskKind.listening,
       TaskAvailabilityContext(
         language: _language,
         premiumPronunciationEnabled: _premiumPronunciation,

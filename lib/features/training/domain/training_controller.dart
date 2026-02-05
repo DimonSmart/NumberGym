@@ -27,7 +27,7 @@ export 'task_state.dart'
         TaskState,
         NumberPronunciationState,
         MultipleChoiceState,
-        ListeningNumbersState,
+        ListeningState,
         PhrasePronunciationState,
         PhraseFlow,
         TimerState;
@@ -74,9 +74,9 @@ class TrainingController extends ChangeNotifier {
     return task is MultipleChoiceState ? task : null;
   }
 
-  ListeningNumbersState? get listeningNumbersState {
+  ListeningState? get listeningState {
     final task = _session.state.currentTask;
-    return task is ListeningNumbersState ? task : null;
+    return task is ListeningState ? task : null;
   }
 
   PhrasePronunciationState? get phrasePronunciationState {

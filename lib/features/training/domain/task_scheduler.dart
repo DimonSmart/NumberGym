@@ -51,7 +51,7 @@ class TaskScheduler {
   static const int _numberPronunciationWeight = 70;
   static const int _valueToTextWeight = 15;
   static const int _textToValueWeight = 15;
-  static const int _listeningNumbersWeight = 15;
+  static const int _listeningWeight = 15;
   static const int _phrasePronunciationWeight = 5;
 
   final LanguageRouter _languageRouter;
@@ -69,7 +69,7 @@ class TaskScheduler {
       premiumPronunciationEnabled: premiumPronunciationEnabled,
     );
     await _availabilityRegistry.check(
-      TrainingTaskKind.listeningNumbers,
+      TrainingTaskKind.listening,
       context,
       force: true,
     );
@@ -97,7 +97,7 @@ class TaskScheduler {
     final requirePhrase =
         forcedTaskKind == TrainingTaskKind.phrasePronunciation;
     final requireListening =
-        forcedTaskKind == TrainingTaskKind.listeningNumbers;
+        forcedTaskKind == TrainingTaskKind.listening;
     final requireSpeech =
         forcedTaskKind == TrainingTaskKind.numberPronunciation;
 
@@ -111,7 +111,7 @@ class TaskScheduler {
       force: requirePhrase,
     );
     final listeningAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.listeningNumbers,
+      TrainingTaskKind.listening,
       availabilityContext,
       force: requireListening,
     );
@@ -207,7 +207,7 @@ class TaskScheduler {
             .contains(itemType);
     final canUseListeningKind =
         allowListening &&
-        TrainingTaskKind.listeningNumbers.supportedItemTypes
+        TrainingTaskKind.listening.supportedItemTypes
             .contains(itemType);
     final canUseValueToTextKind =
         TrainingTaskKind.valueToText.supportedItemTypes.contains(itemType);
@@ -276,11 +276,11 @@ class TaskScheduler {
           _textToValueWeight,
         ),
       if (canUseListening &&
-          TrainingTaskKind.listeningNumbers.supportedItemTypes
+          TrainingTaskKind.listening.supportedItemTypes
               .contains(itemType))
         const MapEntry(
-          TrainingTaskKind.listeningNumbers,
-          _listeningNumbersWeight,
+          TrainingTaskKind.listening,
+          _listeningWeight,
         ),
       if (canUsePhrase &&
           TrainingTaskKind.phrasePronunciation.supportedItemTypes

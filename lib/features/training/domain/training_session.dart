@@ -11,7 +11,7 @@ import 'language_router.dart';
 import 'learning_language.dart';
 import 'progress_manager.dart';
 import 'repositories.dart';
-import 'runtimes/listening_numbers_runtime.dart';
+import 'runtimes/listening_runtime.dart';
 import 'runtimes/multiple_choice_runtime.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtimes/phrase_pronunciation_runtime.dart';
@@ -321,7 +321,7 @@ class TrainingSession {
       },
       TrainingTaskKind.valueToText: _buildValueToTextRuntime,
       TrainingTaskKind.textToValue: _buildTextToValueRuntime,
-      TrainingTaskKind.listeningNumbers: _buildListeningNumbersRuntime,
+      TrainingTaskKind.listening: _buildListeningRuntime,
       TrainingTaskKind.phrasePronunciation: _buildPhrasePronunciationRuntime,
     });
   }
@@ -409,32 +409,65 @@ class TrainingSession {
     );
   }
 
-  TaskRuntime _buildListeningNumbersRuntime(TaskBuildContext context) {
-    final numberValue = _requireNumberValue(context.card);
-    final correctOption = numberValue.toString();
-    final options = <String>{correctOption};
-    final candidateIds = _candidateIdsFor(context);
+  TaskRuntime _buildListeningRuntime(TaskBuildContext context) {
+    final card = context.card;
+    final numberValue = card.numberValue;
+    final timeValue = card.timeValue;
+    
+    String correctOption;
+    String speechText;
+    final options = <String>{};
+    
+    if (numberValue != null) {
+      // Number-based listening
+      correctOption = numberValue.toString();
+      options.add(correctOption);
+      final candidateIds = _candidateIdsFor(context);
 
-    while (options.length < valueToTextOptionCount) {
-      final candidateId =
-          candidateIds[context.random.nextInt(candidateIds.length)];
-      final candidateValue = candidateId.number!;
-      if (candidateValue == numberValue) continue;
-      options.add(candidateValue.toString());
+      while (options.length < valueToTextOptionCount) {
+        final candidateId =
+            candidateIds[context.random.nextInt(candidateIds.length)];
+        final candidateValue = candidateId.number;
+        if (candidateValue == null || candidateValue == numberValue) continue;
+        options.add(candidateValue.toString());
+      }
+
+      try {
+        speechText = context.toWords(numberValue);
+      } catch (_) {
+        speechText = correctOption;
+      }
+    } else if (timeValue != null) {
+      // Time-based listening
+      correctOption = timeValue.displayText;
+      options.add(correctOption);
+      final candidateIds = _candidateIdsFor(context);
+
+      while (options.length < valueToTextOptionCount) {
+        final candidateId =
+            candidateIds[context.random.nextInt(candidateIds.length)];
+        final candidateTime = candidateId.time;
+        if (candidateTime == null || candidateTime == timeValue) continue;
+        options.add(candidateTime.displayText);
+      }
+
+      try {
+        speechText = context.timeToWords(timeValue);
+      } catch (_) {
+        speechText = correctOption;
+      }
+    } else {
+      throw StateError('Expected either numberValue or timeValue for listening task.');
     }
 
     final shuffled = options.toList()..shuffle(context.random);
-    String speechText;
-    try {
-      speechText = context.toWords(numberValue);
-    } catch (_) {
-      speechText = correctOption;
-    }
-
     final voiceId = _settingsRepository.readTtsVoiceId(context.language);
-    return ListeningNumbersRuntime(
+    
+    return ListeningRuntime(
       taskId: context.card.id,
       numberValue: numberValue,
+      timeValue: timeValue,
+      correctAnswer: correctOption,
       options: shuffled,
       speechText: speechText,
       cardDuration: context.cardDuration,

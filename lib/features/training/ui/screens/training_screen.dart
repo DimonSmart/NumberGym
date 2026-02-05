@@ -5,14 +5,14 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/training_controller.dart';
-import '../view_models/listening_numbers_view_model.dart';
+import '../view_models/listening_view_model.dart';
 import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
 import '../view_models/phrase_pronunciation_view_model.dart';
 import '../view_models/training_feedback_view_model.dart';
 import '../view_models/training_status_view_model.dart';
 import '../widgets/feedback_overlay.dart';
-import '../widgets/listening_numbers_view.dart';
+import '../widgets/listening_view.dart';
 import '../widgets/multiple_choice_view.dart';
 import '../widgets/number_pronunciation_view.dart';
 import '../widgets/phrase_pronunciation_view.dart';
@@ -172,13 +172,13 @@ class _TrainingScreenState extends State<TrainingScreen> {
         onOptionSelected: _controller.selectOption,
       );
     }
-    if (task is ListeningNumbersState) {
-      final viewModel = ListeningNumbersViewModel.fromState(
+    if (task is ListeningState) {
+      final viewModel = ListeningViewModel.fromState(
         theme: theme,
         task: task,
         feedback: feedbackViewModel,
       );
-      return ListeningNumbersView(
+      return ListeningView(
         viewModel: viewModel,
         onOptionSelected: _controller.selectOption,
         onReplay: _controller.repeatListeningPrompt,

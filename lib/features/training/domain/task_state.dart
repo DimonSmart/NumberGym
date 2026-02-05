@@ -1,4 +1,5 @@
 import 'pronunciation_models.dart';
+import 'time_value.dart';
 import 'training_item.dart';
 import 'training_task.dart';
 
@@ -98,21 +99,23 @@ final class MultipleChoiceState extends TaskState {
   final List<String> options;
 }
 
-final class ListeningNumbersState extends TaskState {
-  ListeningNumbersState({
+final class ListeningState extends TaskState {
+  ListeningState({
     required super.taskId,
-    required super.numberValue,
+    super.numberValue,
+    this.timeValue,
     required super.displayText,
     required super.timer,
     required List<String> options,
     required this.isAnswerRevealed,
   }) : options = List<String>.unmodifiable(options),
        super(
-         kind: TrainingTaskKind.listeningNumbers,
+         kind: TrainingTaskKind.listening,
          affectsProgress: true,
          usesTimer: true,
        );
 
+  final TimeValue? timeValue;
   final List<String> options;
   final bool isAnswerRevealed;
 }

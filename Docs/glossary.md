@@ -1,8 +1,8 @@
 # Domain glossary
 
 - Card: A single training item representing a numeric concept, not just a raw number (for example, time, phone number, weight, price, dates, measurements), along with its accepted answers.
-- Card ID (TrainingItemId): Unique identifier built from item type and number; used as the progress key.
-- Item type (TrainingItemType): Number group used for scheduling and option generation (digits, base, hundreds, thousands).
+- Card ID (TrainingItemId): Unique identifier built from item type and number/time value; used as the progress key.
+- Item type (TrainingItemType): **Content category** defining what is being trained — numbers (digits, base, hundreds, thousands) or time (timeExact, timeQuarter, timeHalf, timeRandom). Used for scheduling and option generation.
 - Active window (Active pool): Limited subset of unlearned cards eligible for selection; size is capped by activeLimit.
 - Backlog: Remaining unlearned cards waiting to enter the Active window.
 - Cluster: Aggregated attempts within a time gap, storing correct/wrong/skipped counts and lastAnswerAt.
@@ -12,9 +12,10 @@
 - nextDue: Due timestamp (ms since epoch) when a card becomes eligible again.
 - Ease: Spacing multiplier that grows on success and shrinks on failure.
 - Learned: Card state reached when spacedSuccessCount and intervalDays meet configured thresholds.
-- Training task (TrainingTaskKind): Specific exercise type applied to a card during training (for example, "Number pronunciation", "Value to text", "Text to value", "Listening numbers").
+- Training task (TrainingTaskKind): **Training method** defining how the learner interacts with a card (for example, pronunciation with speech recognition, listening comprehension, multiple choice).
 - Number pronunciation: Speech-recognition task where the learner says the number aloud and matching is checked against accepted answers.
 - Etalon: Reference pattern string for speech matching; supports syntax for decorative text `(...)`, variants `[...]`, and optional tokens `{...}`.
 - Value to text: Multiple-choice task where a number/time display is shown and the correct written form is selected.
 - Text to value: Multiple-choice task where a written form is shown and the correct number/time display is selected.
-- Listening numbers: Audio comprehension task where a spoken number is played and the learner selects the matching option.
+- Listening: Audio comprehension task where a spoken number or time is played via TTS and the learner selects the matching option from choices. Works with both numbers and time values.
+- Phrase pronunciation: Premium speech task where the learner records a phrase containing the number; recording is analyzed but does not affect progress.

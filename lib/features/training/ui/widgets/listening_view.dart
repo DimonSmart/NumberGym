@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../view_models/listening_numbers_view_model.dart';
+import '../view_models/listening_view_model.dart';
 import 'training_timer_bar.dart';
 
-class ListeningNumbersView extends StatelessWidget {
-  const ListeningNumbersView({
+class ListeningView extends StatelessWidget {
+  const ListeningView({
     super.key,
     required this.viewModel,
     required this.onOptionSelected,
     required this.onReplay,
   });
 
-  final ListeningNumbersViewModel viewModel;
+  final ListeningViewModel viewModel;
   final ValueChanged<String> onOptionSelected;
   final VoidCallback onReplay;
 

@@ -121,6 +121,21 @@ The system must include cards for:
 
 ### 4.4. Exercises
 
+The training system uses two orthogonal dimensions:
+
+**Content (WHAT)** — defined by `TrainingItemType`:
+- Numbers: digits (0-9), base (10-99), hundreds (100-900), thousands (1000-9000)
+- Time: timeExact (on the hour), timeQuarter (:15/:45), timeHalf (:30), timeRandom (any time)
+
+**Method (HOW)** — defined by `TrainingTaskKind`:
+- Number pronunciation (speech recognition)
+- Value to text (multiple choice: number → words)
+- Text to value (multiple choice: words → number)
+- Listening (audio comprehension with TTS)
+- Phrase pronunciation (premium, speech analysis)
+
+Not all methods support all content types. See `itemtype_trainingtaskkind.md` for the compatibility matrix.
+
 #### 4.4.1. Number pronunciation
 - Show the numeric prompt.
 - The learner speaks the number.
@@ -140,10 +155,10 @@ The system must include cards for:
 - Options are numeric values.
 - Correct when the selected number matches the expected value.
 
-#### 4.4.4. Listening numbers
-- The system speaks the number with TTS.
-- The learner selects the correct numeric option.
-- On correct selection, the number is revealed on screen.
+#### 4.4.4. Listening
+- The system speaks the number or time with TTS.
+- The learner selects the correct option from the choices.
+- On correct selection, the answer is revealed on screen.
 - The learner can replay the audio during the task.
 
 #### 4.4.5. Phrase pronunciation (premium)

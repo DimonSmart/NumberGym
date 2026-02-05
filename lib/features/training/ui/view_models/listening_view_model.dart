@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../domain/task_state.dart';
 import 'training_feedback_view_model.dart';
 
-class ListeningNumbersViewModel {
-  const ListeningNumbersViewModel({
+class ListeningViewModel {
+  const ListeningViewModel({
     required this.title,
     required this.displayText,
     required this.showReplayHint,
@@ -34,7 +34,7 @@ class ListeningNumbersViewModel {
 
   bool get showFeedback => feedbackText != null;
 
-  factory ListeningNumbersViewModel.fromState({
+  factory ListeningViewModel.fromState({
     required ThemeData theme,
     required ListeningState task,
     required TrainingFeedbackViewModel feedback,
@@ -44,7 +44,7 @@ class ListeningNumbersViewModel {
         ? 'Listen and choose the time'
         : 'Listen and choose the number';
     
-    return ListeningNumbersViewModel(
+    return ListeningViewModel(
       title: title,
       displayText: displayText,
       showReplayHint: !task.isAnswerRevealed,
