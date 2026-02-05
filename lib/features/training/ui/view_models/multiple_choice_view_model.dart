@@ -39,15 +39,25 @@ class MultipleChoiceViewModel {
     required TrainingFeedbackViewModel feedback,
   }) {
     final isWordToNumber = task.kind == TrainingTaskKind.wordToNumber;
-    final title =
-        isWordToNumber ? 'Choose the correct number' : 'Choose the correct spelling';
+    final isWordToTime = task.kind == TrainingTaskKind.wordToTime;
+    final isNumericMode = isWordToNumber || isWordToTime;
+    final title = isWordToNumber
+        ? 'Choose the correct number'
+        : isWordToTime
+            ? 'Choose the correct time'
+            : 'Choose the correct spelling';
     final promptStyle = theme.textTheme.displaySmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: theme.colorScheme.onSurface,
-      fontSize: isWordToNumber ? 42 : null,
+      fontSize: isNumericMode ? 42 : null,
     );
     final optionStyle =
-        isWordToNumber ? theme.textTheme.headlineSmall : theme.textTheme.titleMedium;
+        isNumericMode ? theme.textTheme.headlineSmall : theme.textTheme.titleMedium;
+    final optionWidth = isWordToNumber
+        ? 100
+        : isWordToTime
+            ? 110
+            : 220;
 
     return MultipleChoiceViewModel(
       title: title,
@@ -55,7 +65,7 @@ class MultipleChoiceViewModel {
       promptStyle: promptStyle,
       optionStyle: optionStyle,
       options: task.options,
-      optionWidth: isWordToNumber ? 100 : 220,
+      optionWidth: optionWidth,
       feedbackText: feedback.text,
       feedbackColor: feedback.color,
       timer: task.timer,

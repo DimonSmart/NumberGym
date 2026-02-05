@@ -7,7 +7,8 @@ import 'training_item.dart';
 enum TrainingTaskKind {
   numberPronunciation,
   numberToWord, // Formerly numberReading
-  wordToNumber, // New inverse variant
+  wordToNumber, // Inverse for number cards
+  wordToTime, // Inverse for time cards
   listeningNumbers,
   phrasePronunciation,
 }
@@ -21,6 +22,8 @@ extension TrainingTaskKindX on TrainingTaskKind {
         return 'Select the word';
       case TrainingTaskKind.wordToNumber:
         return 'Select the number';
+      case TrainingTaskKind.wordToTime:
+        return 'Select the time';
       case TrainingTaskKind.listeningNumbers:
         return 'Listening numbers';
       case TrainingTaskKind.phrasePronunciation:
@@ -35,6 +38,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
       case TrainingTaskKind.numberPronunciation:
       case TrainingTaskKind.numberToWord:
       case TrainingTaskKind.wordToNumber:
+      case TrainingTaskKind.wordToTime:
       case TrainingTaskKind.listeningNumbers:
         return true;
     }
@@ -73,6 +77,13 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.hundreds,
           TrainingItemType.thousands,
         };
+      case TrainingTaskKind.wordToTime:
+        return const {
+          TrainingItemType.timeExact,
+          TrainingItemType.timeQuarter,
+          TrainingItemType.timeHalf,
+          TrainingItemType.timeRandom,
+        };
     }
   }
 }
@@ -100,6 +111,7 @@ abstract class PronunciationTaskData {
   TrainingItemId get id;
   TrainingItemId get progressId;
   int? get numberValue;
+  TimeValue? get timeValue;
   String get displayText;
   String get prompt;
   List<String> get answers;

@@ -1,4 +1,5 @@
 import '../learning_language.dart';
+import '../time_value.dart';
 import '../training_task.dart';
 import 'number_to_word_task.dart';
 
@@ -24,6 +25,9 @@ class NumberPronunciationTask extends NumberTrainingTask
 
   @override
   String get displayText => prompt;
+
+  @override
+  TimeValue? get timeValue => null;
 
   @override
   MultipleChoiceSpec buildNumberToWordSpec(

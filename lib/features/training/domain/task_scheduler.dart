@@ -51,6 +51,7 @@ class TaskScheduler {
   static const int _numberPronunciationWeight = 70;
   static const int _numberToWordWeight = 15;
   static const int _wordToNumberWeight = 15;
+  static const int _wordToTimeWeight = 15;
   static const int _listeningNumbersWeight = 15;
   static const int _phrasePronunciationWeight = 5;
 
@@ -213,11 +214,14 @@ class TaskScheduler {
         TrainingTaskKind.numberToWord.supportedItemTypes.contains(itemType);
     final canUseWordToNumberKind =
         TrainingTaskKind.wordToNumber.supportedItemTypes.contains(itemType);
+    final canUseWordToTimeKind =
+        TrainingTaskKind.wordToTime.supportedItemTypes.contains(itemType);
 
     if (!canUseSpeechKind &&
         !canUseListeningKind &&
         !canUseNumberToWordKind &&
         !canUseWordToNumberKind &&
+        !canUseWordToTimeKind &&
         !canUsePhrase) {
       return TaskSchedulePaused(
         speechAvailability.message ??
@@ -274,6 +278,11 @@ class TaskScheduler {
         const MapEntry(
           TrainingTaskKind.wordToNumber,
           _wordToNumberWeight,
+        ),
+      if (TrainingTaskKind.wordToTime.supportedItemTypes.contains(itemType))
+        const MapEntry(
+          TrainingTaskKind.wordToTime,
+          _wordToTimeWeight,
         ),
       if (canUseListening &&
           TrainingTaskKind.listeningNumbers.supportedItemTypes

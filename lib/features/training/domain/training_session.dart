@@ -27,6 +27,7 @@ import 'training_services.dart';
 import 'training_state.dart';
 import 'training_item.dart';
 import 'training_task.dart';
+import 'time_value.dart';
 
 class TrainingSession {
   TrainingSession({
@@ -320,6 +321,7 @@ class TrainingSession {
       },
       TrainingTaskKind.numberToWord: _buildNumberToWordRuntime,
       TrainingTaskKind.wordToNumber: _buildWordToNumberRuntime,
+      TrainingTaskKind.wordToTime: _buildWordToTimeRuntime,
       TrainingTaskKind.listeningNumbers: _buildListeningNumbersRuntime,
       TrainingTaskKind.phrasePronunciation: _buildPhrasePronunciationRuntime,
     });
@@ -369,6 +371,37 @@ class TrainingSession {
       kind: TrainingTaskKind.wordToNumber,
       taskId: context.card.id,
       numberValue: numberValue,
+      prompt: correctWord,
+      correctOption: correctOption,
+      options: shuffled,
+      cardDuration: context.cardDuration,
+      cardTimer: context.services.timer,
+    );
+  }
+
+  TaskRuntime _buildWordToTimeRuntime(TaskBuildContext context) {
+    final timeValue = _requireTimeValue(context.card);
+    final correctWord = context.timeToWords(timeValue);
+    final correctOption = timeValue.displayText;
+    final options = <String>{correctOption};
+    final candidateTimes = _candidateTimeValuesFor(context);
+
+    final maxAttempts = candidateTimes.length * 3 + 5;
+    var attempts = 0;
+    while (options.length < numberToWordOptionCount &&
+        attempts < maxAttempts) {
+      final candidate =
+          candidateTimes[context.random.nextInt(candidateTimes.length)];
+      attempts += 1;
+      if (candidate == timeValue) continue;
+      options.add(candidate.displayText);
+    }
+
+    final shuffled = options.toList()..shuffle(context.random);
+    return MultipleChoiceRuntime(
+      kind: TrainingTaskKind.wordToTime,
+      taskId: context.card.id,
+      numberValue: null,
       prompt: correctWord,
       correctOption: correctOption,
       options: shuffled,
@@ -516,12 +549,40 @@ class TrainingSession {
         .toList();
   }
 
+  List<TimeValue> _candidateTimeValuesFor(TaskBuildContext context) {
+    final currentType = context.card.id.type;
+    final values = context.cardIds
+        .where((itemId) => itemId.type == currentType && itemId.time != null)
+        .map((itemId) => itemId.time!)
+        .toList();
+    if (values.isNotEmpty) return values;
+
+    final generated = <TimeValue>{};
+    while (generated.length < 24) {
+      generated.add(
+        TimeValue(
+          hour: context.random.nextInt(24),
+          minute: context.random.nextInt(60),
+        ),
+      );
+    }
+    return generated.toList();
+  }
+
   int _requireNumberValue(PronunciationTaskData card) {
     final numberValue = card.numberValue;
     if (numberValue == null) {
       throw StateError('Expected a number-based pronunciation card.');
     }
     return numberValue;
+  }
+
+  TimeValue _requireTimeValue(PronunciationTaskData card) {
+    final timeValue = card.timeValue;
+    if (timeValue == null) {
+      throw StateError('Expected a time-based pronunciation card.');
+    }
+    return timeValue;
   }
 
   void _handleRuntimeEvent(TaskEvent event) {
