@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import '../../../../core/theme/app_palette.dart';
 import '../../../training/data/card_progress.dart';
 import '../../../training/data/number_cards.dart';
 import '../../../training/data/progress_repository.dart';
@@ -182,7 +183,7 @@ class _IntroScreenState extends State<IntroScreen> {
                               icon: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.62),
+                                  color: AppPalette.deepBlue,
                                   shape: BoxShape.circle,
                                   boxShadow: const [
                                     BoxShadow(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_palette.dart';
 import '../../domain/pronunciation_models.dart';
 import '../view_models/phrase_pronunciation_view_model.dart';
 import 'sound_wave_indicator.dart';
@@ -251,7 +252,7 @@ class PhrasePronunciationView extends StatelessWidget {
       runSpacing: 8,
       children: [
         _LegendItem(color: Colors.green.shade600, label: 'Correct'),
-        _LegendItem(color: Colors.orange.shade600, label: 'Almost'),
+        const _LegendItem(color: AppPalette.warmOrange, label: 'Almost'),
         _LegendItem(color: theme.colorScheme.error, label: 'Wrong'),
       ],
     );
@@ -301,7 +302,7 @@ class PhrasePronunciationView extends StatelessWidget {
       return Colors.green.shade600;
     }
     if (score >= 60) {
-      return Colors.orange.shade600;
+      return AppPalette.warmOrange;
     }
     return theme.colorScheme.error;
   }
