@@ -136,6 +136,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       notStarted: notStartedCount,
     );
     final typeStats = _resolveTypeStats(gridProgress);
+    final idsByType = _groupIdsByType(_gridIds);
     final dailyStats = _buildDailyStats(gridProgress, _chartDays);
     final forecast = _buildForecastStats(
       remaining: remainingCount,
@@ -164,25 +165,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const SizedBox(height: 24),
           _buildActivitySection(theme, dailyStats),
           const SizedBox(height: 24),
-          _buildTypeBreakdown(theme, typeStats),
-          const SizedBox(height: 24),
-          Text(
-            'Streak grid',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+          _buildTypeSections(
+            theme,
+            typeStats,
+            idsByType,
+            gridProgress,
+            hotIds,
+            successThreshold,
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Color shows learning progress; below is the current successful cluster streak.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildLegend(theme),
-          const SizedBox(height: 14),
-          _buildGrid(theme, _gridIds, gridProgress, hotIds, successThreshold),
         ],
       ),
     );
@@ -340,10 +330,44 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTypeBreakdown(
+  Widget _buildTypeSections(
     ThemeData theme,
     List<_TypeStats> typeStats,
+    Map<TrainingItemType, List<TrainingItemId>> idsByType,
+    Map<TrainingItemId, CardProgress> progressById,
+    Set<TrainingItemId> hotIds,
+    double successThreshold,
   ) {
+    final showLegend = typeStats.any((stats) {
+      final ids = idsByType[stats.type] ?? const <TrainingItemId>[];
+      return _shouldShowTypeStreak(stats.type, ids.length);
+    });
+    final sections = <Widget>[];
+    for (var i = 0; i < typeStats.length; i += 1) {
+      final stats = typeStats[i];
+      final ids = idsByType[stats.type] ?? const <TrainingItemId>[];
+      final showStreak = _shouldShowTypeStreak(stats.type, ids.length);
+      final streakGrid = showStreak
+          ? _buildGrid(
+              theme,
+              ids,
+              progressById,
+              hotIds,
+              successThreshold,
+              columns: _gridColumnsForType(stats.type, ids.length),
+            )
+          : null;
+      sections.add(
+        _TypeCard(
+          stats: stats,
+          streakGrid: streakGrid,
+        ),
+      );
+      if (i != typeStats.length - 1) {
+        sections.add(const SizedBox(height: 18));
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -354,27 +378,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            const spacing = 12.0;
-            final width = constraints.maxWidth;
-            final columns = width >= 900 ? 2 : 1;
-            final cardWidth = columns == 1
-                ? width
-                : (width - spacing * (columns - 1)) / columns;
-            return Wrap(
-              spacing: spacing,
-              runSpacing: spacing,
-              children: [
-                for (final stats in typeStats)
-                  _TypeCard(
-                    width: cardWidth,
-                    stats: stats,
-                  ),
-              ],
-            );
-          },
-        ),
+        if (showLegend) ...[
+          Text(
+            'Progress legend',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Color shows learning progress; number below is the current successful cluster run.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 10),
+          _buildLegend(theme),
+          const SizedBox(height: 16),
+        ],
+        ...sections,
       ],
     );
   }
@@ -423,10 +445,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     Map<TrainingItemId, CardProgress> progressById,
     Set<TrainingItemId> hotIds,
     double successThreshold,
+    {int columns = 10}
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const columns = 10;
         const spacing = 6.0;
         final width = constraints.maxWidth;
         final innerWidth = width > 24 ? width - 24 : width;
@@ -454,7 +476,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             itemCount: gridIds.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               mainAxisSpacing: spacing,
               crossAxisSpacing: spacing,
@@ -623,6 +645,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               runSpacing: 10,
               children: [
                 _DetailPill(
+                  label: 'Clusters',
+                  value: progress.clusters.length.toString(),
+                ),
+                _DetailPill(
                   label: 'Attempts',
                   value: totalAttempts.toString(),
                 ),
@@ -635,7 +661,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   value: '${(accuracy * 100).toStringAsFixed(1)}%',
                 ),
                 _DetailPill(
-                  label: 'Streak',
+                  label: 'Run',
                   value: 'x$streak',
                 ),
                 _DetailPill(
@@ -718,10 +744,60 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       }
       stats.attempts += progress.totalAttempts;
       stats.correct += progress.totalCorrect;
+      stats.sessions += progress.clusters.length;
     }
     final items = statsByType.values.toList()
       ..sort((a, b) => a.type.index.compareTo(b.type.index));
     return items;
+  }
+
+  Map<TrainingItemType, List<TrainingItemId>> _groupIdsByType(
+    List<TrainingItemId> ids,
+  ) {
+    final grouped = <TrainingItemType, List<TrainingItemId>>{
+      for (final type in TrainingItemType.values) type: <TrainingItemId>[],
+    };
+    for (final id in ids) {
+      grouped[id.type]!.add(id);
+    }
+    return grouped;
+  }
+
+  bool _shouldShowTypeStreak(TrainingItemType type, int count) {
+    if (type == TrainingItemType.timeRandom) return false;
+    return count > 1;
+  }
+
+  int _gridColumnsForType(TrainingItemType type, int count) {
+    final safeCount = count <= 0 ? 1 : count;
+    int preferred;
+    switch (type) {
+      case TrainingItemType.digits:
+        preferred = 10;
+        break;
+      case TrainingItemType.base:
+        preferred = 10;
+        break;
+      case TrainingItemType.hundreds:
+        preferred = 9;
+        break;
+      case TrainingItemType.thousands:
+        preferred = 5;
+        break;
+      case TrainingItemType.timeExact:
+        preferred = 8;
+        break;
+      case TrainingItemType.timeQuarter:
+        preferred = 8;
+        break;
+      case TrainingItemType.timeHalf:
+        preferred = 8;
+        break;
+      case TrainingItemType.timeRandom:
+        preferred = 1;
+        break;
+    }
+    return preferred > safeCount ? safeCount : preferred;
   }
 
   List<_DailyStats> _buildDailyStats(
@@ -765,6 +841,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final attemptsRemaining = attemptsPerLearned == null
         ? null
         : (remaining * attemptsPerLearned).round();
+    final attemptsHint = attemptsRemaining == null
+        ? learnedCount == 0
+            ? 'Learn 1+ cards to estimate'
+            : 'Not enough data yet'
+        : null;
     final totalAttemptsWindow = dailyStats.fold<int>(
       0,
       (sum, stat) => sum + stat.attempts,
@@ -780,6 +861,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       attemptsRemaining: attemptsRemaining,
       daysRemaining: daysRemaining,
       avgAttemptsPerDay: avgAttemptsPerDay,
+      attemptsHint: attemptsHint,
     );
   }
 
@@ -1062,6 +1144,7 @@ class _CoverageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final isCompact = width < 230;
     final total = coverage.total == 0 ? 1 : coverage.total;
     final notStartedValue =
         coverage.total == 0 ? 1.0 : coverage.notStarted.toDouble();
@@ -1100,69 +1183,186 @@ class _CoverageCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            SizedBox(
-              width: 64,
-              height: 64,
-              child: PieChart(
-                PieChartData(
-                  startDegreeOffset: -90,
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 22,
-                  sections: [
-                    PieChartSectionData(
-                      value: notStartedValue,
-                      color: notStartedColor,
-                      title: '',
-                      radius: 12,
-                    ),
-                    PieChartSectionData(
-                      value: inProgressValue,
-                      color: inProgressColor,
-                      title: '',
-                      radius: 12,
-                    ),
-                    PieChartSectionData(
-                      value: learnedValue,
-                      color: learnedColor,
-                      title: '',
-                      radius: 12,
-                    ),
-                  ],
+            if (!isCompact) ...[
+              _coverageChart(
+                notStartedValue,
+                inProgressValue,
+                learnedValue,
+                notStartedColor,
+                inProgressColor,
+                learnedColor,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _coverageLegend(
+                  theme,
+                  scheme,
+                  total,
+                  notStartedColor,
+                  inProgressColor,
+                  learnedColor,
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Coverage',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _LegendItem(
-                    color: learnedColor,
-                    label: 'Learned',
-                    value: '${coverage.learned}/$total',
-                  ),
-                  const SizedBox(height: 4),
-                  _LegendItem(
-                    color: inProgressColor,
-                    label: 'In progress',
-                    value: '${coverage.inProgress}/$total',
-                  ),
-                  const SizedBox(height: 4),
-                  _LegendItem(
-                    color: notStartedColor,
-                    label: 'Not started',
-                    value: '${coverage.notStarted}/$total',
-                  ),
-                ],
+            ] else ...[
+              Expanded(
+                child: _coverageCompact(
+                  theme,
+                  scheme,
+                  total,
+                  notStartedValue,
+                  inProgressValue,
+                  learnedValue,
+                  notStartedColor,
+                  inProgressColor,
+                  learnedColor,
+                ),
               ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _coverageCompact(
+    ThemeData theme,
+    ColorScheme scheme,
+    int total,
+    double notStartedValue,
+    double inProgressValue,
+    double learnedValue,
+    Color notStartedColor,
+    Color inProgressColor,
+    Color learnedColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Coverage',
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Center(
+          child: _coverageChart(
+            notStartedValue,
+            inProgressValue,
+            learnedValue,
+            notStartedColor,
+            inProgressColor,
+            learnedColor,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _coverageLegendItems(
+          theme,
+          total,
+          notStartedColor,
+          inProgressColor,
+          learnedColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _coverageLegend(
+    ThemeData theme,
+    ColorScheme scheme,
+    int total,
+    Color notStartedColor,
+    Color inProgressColor,
+    Color learnedColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Coverage',
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _coverageLegendItems(
+          theme,
+          total,
+          notStartedColor,
+          inProgressColor,
+          learnedColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _coverageLegendItems(
+    ThemeData theme,
+    int total,
+    Color notStartedColor,
+    Color inProgressColor,
+    Color learnedColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _LegendItem(
+          color: learnedColor,
+          label: 'Learned',
+          value: '${coverage.learned}/$total',
+        ),
+        const SizedBox(height: 4),
+        _LegendItem(
+          color: inProgressColor,
+          label: 'In progress',
+          value: '${coverage.inProgress}/$total',
+        ),
+        const SizedBox(height: 4),
+        _LegendItem(
+          color: notStartedColor,
+          label: 'Not started',
+          value: '${coverage.notStarted}/$total',
+        ),
+      ],
+    );
+  }
+
+  Widget _coverageChart(
+    double notStartedValue,
+    double inProgressValue,
+    double learnedValue,
+    Color notStartedColor,
+    Color inProgressColor,
+    Color learnedColor,
+  ) {
+    return SizedBox(
+      width: 64,
+      height: 64,
+      child: PieChart(
+        PieChartData(
+          startDegreeOffset: -90,
+          sectionsSpace: 2,
+          centerSpaceRadius: 22,
+          sections: [
+            PieChartSectionData(
+              value: notStartedValue,
+              color: notStartedColor,
+              title: '',
+              radius: 12,
+            ),
+            PieChartSectionData(
+              value: inProgressValue,
+              color: inProgressColor,
+              title: '',
+              radius: 12,
+            ),
+            PieChartSectionData(
+              value: learnedValue,
+              color: learnedColor,
+              title: '',
+              radius: 12,
             ),
           ],
         ),
@@ -1189,7 +1389,7 @@ class _InsightCard extends StatelessWidget {
     final attemptsRemaining = forecast.attemptsRemaining;
     final daysRemaining = forecast.daysRemaining;
     final forecastLine = attemptsRemaining == null
-        ? 'Not enough data'
+        ? (forecast.attemptsHint ?? 'Not enough data')
         : '~$attemptsRemaining attempts';
     final daysLine = daysRemaining == null
         ? null
@@ -1441,12 +1641,12 @@ class _MiniChartCard extends StatelessWidget {
 }
 
 class _TypeCard extends StatelessWidget {
-  final double width;
   final _TypeStats stats;
+  final Widget? streakGrid;
 
   const _TypeCard({
-    required this.width,
     required this.stats,
+    this.streakGrid,
   });
 
   @override
@@ -1459,7 +1659,7 @@ class _TypeCard extends StatelessWidget {
         stats.attempts == 0 ? 0.0 : stats.correct / stats.attempts;
 
     return SizedBox(
-      width: width,
+      width: double.infinity,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -1490,40 +1690,84 @@ class _TypeCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  'Learned',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${stats.learned}/${stats.total} | ${(learnedRatio * 100).toStringAsFixed(0)}%',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
                 value: learnedRatio,
-                minHeight: 8,
+                minHeight: 6,
                 backgroundColor: scheme.surfaceContainerHighest,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${stats.learned}/${stats.total} learned | '
-              '${(learnedRatio * 100).toStringAsFixed(0)}%',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  'Started',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${stats.started}/${stats.total} | Acc. ${(accuracy * 100).toStringAsFixed(0)}%',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              '${stats.started}/${stats.total} started | '
-              'Accuracy ${(accuracy * 100).toStringAsFixed(1)}%',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             LinearProgressIndicator(
               value: startedRatio,
-              minHeight: 4,
+              minHeight: 6,
               color: scheme.secondary,
               backgroundColor: scheme.surfaceContainerHighest,
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  'Sessions: ${stats.sessions}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Attempts: ${stats.attempts}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            if (streakGrid != null) ...[
+              const SizedBox(height: 14),
+              streakGrid!,
+            ],
           ],
         ),
       ),
@@ -1730,12 +1974,14 @@ class _ForecastStats {
   final int? attemptsRemaining;
   final double? daysRemaining;
   final double avgAttemptsPerDay;
+  final String? attemptsHint;
 
   const _ForecastStats({
     required this.remaining,
     required this.attemptsRemaining,
     required this.daysRemaining,
     required this.avgAttemptsPerDay,
+    required this.attemptsHint,
   });
 }
 
@@ -1768,6 +2014,7 @@ class _TypeStats {
   int started = 0;
   int attempts = 0;
   int correct = 0;
+  int sessions = 0;
 
   _TypeStats({
     required this.type,
