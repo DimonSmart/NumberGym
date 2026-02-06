@@ -23,7 +23,7 @@ class TimePronunciationTask extends TrainingTask
     required this.language,
     required this.answers,
   }) : super(
-         kind: TrainingTaskKind.numberPronunciation,
+         kind: LearningMethod.numberPronunciation,
        );
 
   factory TimePronunciationTask.forTime({

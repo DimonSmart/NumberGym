@@ -38,7 +38,7 @@ class MultipleChoiceViewModel {
     required MultipleChoiceState task,
     required TrainingFeedbackViewModel feedback,
   }) {
-    final isTextToValue = task.kind == TrainingTaskKind.textToValue;
+    final isTextToValue = task.kind == LearningMethod.textToValue;
     final isNumericMode = isTextToValue;
     final isTimeOptions =
         isTextToValue && task.options.any((option) => option.contains(':'));

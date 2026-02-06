@@ -17,7 +17,7 @@ class PhrasePronunciationTask extends NumberTrainingTask {
     required this.text,
   })  : assert(id.number == numberValue),
         super(
-          kind: TrainingTaskKind.phrasePronunciation,
+          kind: LearningMethod.phrasePronunciation,
         );
 
   bool get isInRange => numberValue >= minValue && numberValue <= maxValue;

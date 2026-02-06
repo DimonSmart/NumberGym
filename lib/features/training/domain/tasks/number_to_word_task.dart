@@ -11,7 +11,7 @@ class ValueToTextTask extends NumberTrainingTask {
   })  : options = List<String>.unmodifiable(options),
         assert(id.number == numberValue),
         super(
-          kind: TrainingTaskKind.valueToText,
+          kind: LearningMethod.valueToText,
         );
 
   final String prompt;

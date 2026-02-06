@@ -27,8 +27,8 @@ abstract class SettingsRepositoryBase {
   Future<void> setPremiumPronunciationEnabled(bool enabled);
   String? readTtsVoiceId(LearningLanguage language);
   Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId);
-  TrainingTaskKind? readDebugForcedTaskKind();
-  Future<void> setDebugForcedTaskKind(TrainingTaskKind? kind);
+  LearningMethod? readDebugForcedLearningMethod();
+  Future<void> setDebugForcedLearningMethod(LearningMethod? method);
   TrainingItemType? readDebugForcedItemType();
   Future<void> setDebugForcedItemType(TrainingItemType? type);
 }

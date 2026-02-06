@@ -4,7 +4,7 @@ import 'learning_language.dart';
 import 'time_value.dart';
 import 'training_item.dart';
 
-enum TrainingTaskKind {
+enum LearningMethod {
   numberPronunciation,
   valueToText, // Formerly numberReading
   textToValue, // Inverse for number/time cards
@@ -12,37 +12,37 @@ enum TrainingTaskKind {
   phrasePronunciation,
 }
 
-extension TrainingTaskKindX on TrainingTaskKind {
+extension LearningMethodX on LearningMethod {
   String get label {
     switch (this) {
-      case TrainingTaskKind.numberPronunciation:
+      case LearningMethod.numberPronunciation:
         return 'Number pronunciation';
-      case TrainingTaskKind.valueToText:
+      case LearningMethod.valueToText:
         return 'Value to text';
-      case TrainingTaskKind.textToValue:
+      case LearningMethod.textToValue:
         return 'Text to value';
-      case TrainingTaskKind.listening:
+      case LearningMethod.listening:
         return 'Listening';
-      case TrainingTaskKind.phrasePronunciation:
+      case LearningMethod.phrasePronunciation:
         return 'Phrase pronunciation';
     }
   }
 
   bool get usesTimer {
     switch (this) {
-      case TrainingTaskKind.phrasePronunciation:
+      case LearningMethod.phrasePronunciation:
         return false;
-      case TrainingTaskKind.numberPronunciation:
-      case TrainingTaskKind.valueToText:
-      case TrainingTaskKind.textToValue:
-      case TrainingTaskKind.listening:
+      case LearningMethod.numberPronunciation:
+      case LearningMethod.valueToText:
+      case LearningMethod.textToValue:
+      case LearningMethod.listening:
         return true;
     }
   }
 
   Set<TrainingItemType> get supportedItemTypes {
     switch (this) {
-      case TrainingTaskKind.numberPronunciation:
+      case LearningMethod.numberPronunciation:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -53,7 +53,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.valueToText:
+      case LearningMethod.valueToText:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -64,7 +64,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.textToValue:
+      case LearningMethod.textToValue:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -75,7 +75,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.listening:
+      case LearningMethod.listening:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -86,7 +86,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
         };
-      case TrainingTaskKind.phrasePronunciation:
+      case LearningMethod.phrasePronunciation:
         return const {
           TrainingItemType.digits,
           TrainingItemType.base,
@@ -99,7 +99,7 @@ extension TrainingTaskKindX on TrainingTaskKind {
 
 abstract class TrainingTask {
   final TrainingItemId id;
-  final TrainingTaskKind kind;
+  final LearningMethod kind;
 
   const TrainingTask({
     required this.id,

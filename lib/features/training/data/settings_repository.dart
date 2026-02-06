@@ -9,7 +9,8 @@ const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
-const String debugForcedTaskKindKey = 'debugForcedTaskKind';
+// Keep stored key name for backward compatibility with older builds.
+const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
 const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
@@ -103,8 +104,8 @@ class SettingsRepository implements SettingsRepositoryBase {
   }
 
   @override
-  TrainingTaskKind? readDebugForcedTaskKind() {
-    final rawValue = settingsBox.get(debugForcedTaskKindKey);
+  LearningMethod? readDebugForcedLearningMethod() {
+    final rawValue = settingsBox.get(debugForcedLearningMethodKey);
     if (rawValue == null || rawValue.trim().isEmpty) {
       return null;
     }
@@ -114,21 +115,21 @@ class SettingsRepository implements SettingsRepositoryBase {
       'wordToTime' => 'textToValue',
       _ => rawValue,
     };
-    for (final kind in TrainingTaskKind.values) {
-      if (kind.name == normalized) {
-        return kind;
+    for (final method in LearningMethod.values) {
+      if (method.name == normalized) {
+        return method;
       }
     }
     return null;
   }
 
   @override
-  Future<void> setDebugForcedTaskKind(TrainingTaskKind? kind) async {
-    if (kind == null) {
-      await settingsBox.delete(debugForcedTaskKindKey);
+  Future<void> setDebugForcedLearningMethod(LearningMethod? method) async {
+    if (method == null) {
+      await settingsBox.delete(debugForcedLearningMethodKey);
       return;
     }
-    await settingsBox.put(debugForcedTaskKindKey, kind.name);
+    await settingsBox.put(debugForcedLearningMethodKey, method.name);
   }
 
   @override

@@ -33,7 +33,7 @@ export 'task_state.dart'
         TimerState;
 export 'training_outcome.dart' show TrainingOutcome;
 export 'training_state.dart';
-export 'training_task.dart' show TrainingTaskKind;
+export 'training_task.dart' show LearningMethod;
 
 class TrainingController extends ChangeNotifier {
   TrainingController({
@@ -62,7 +62,8 @@ class TrainingController extends ChangeNotifier {
   String? get feedbackText => _session.state.feedback?.text;
   TrainingOutcome? get feedbackOutcome => _session.state.feedback?.outcome;
   TaskState? get currentTask => _session.state.currentTask;
-  TrainingTaskKind? get currentTaskKind => _session.state.currentTask?.kind;
+  LearningMethod? get currentLearningMethod =>
+      _session.state.currentTask?.kind;
 
   NumberPronunciationState? get numberPronunciationState {
     final task = _session.state.currentTask;

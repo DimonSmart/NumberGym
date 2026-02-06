@@ -8,7 +8,7 @@ import '../training_task.dart';
 
 class MultipleChoiceRuntime extends TaskRuntimeBase {
   MultipleChoiceRuntime({
-    required TrainingTaskKind kind,
+    required LearningMethod kind,
     required TrainingItemId taskId,
     required int? numberValue,
     required String prompt,
@@ -37,7 +37,7 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
           ),
         );
 
-  final TrainingTaskKind _kind;
+  final LearningMethod _kind;
   final TrainingItemId _taskId;
   final String _correctOption;
   final Duration _cardDuration;

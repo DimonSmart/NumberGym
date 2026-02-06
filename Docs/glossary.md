@@ -12,7 +12,7 @@
 - nextDue: Due timestamp (ms since epoch) when a card becomes eligible again.
 - Ease: Spacing multiplier that grows on success and shrinks on failure.
 - Learned: Card state reached when spacedSuccessCount and intervalDays meet configured thresholds.
-- Training task (TrainingTaskKind): **Training method** defining how the learner interacts with a card (for example, pronunciation with speech recognition, listening comprehension, multiple choice).
+- Learning method (LearningMethod): Defines how the learner interacts with a card (for example, pronunciation with speech recognition, listening comprehension, multiple choice).
 - Number pronunciation: Speech-recognition task where the learner says the number aloud and matching is checked against accepted answers.
 - Etalon: Reference pattern string for speech matching; supports syntax for decorative text `(...)`, variants `[...]`, and optional tokens `{...}`.
 - Value to text: Multiple-choice task where a number/time display is shown and the correct written form is selected.

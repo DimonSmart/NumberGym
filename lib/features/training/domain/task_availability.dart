@@ -37,7 +37,7 @@ class TaskAvailabilityContext {
 }
 
 abstract interface class TaskAvailabilityProvider {
-  TrainingTaskKind get kind;
+  LearningMethod get kind;
 
   Future<TaskAvailability> check(
     TaskAvailabilityContext context, {
@@ -51,10 +51,10 @@ class TaskAvailabilityRegistry {
           for (final provider in providers) provider.kind: provider,
         };
 
-  final Map<TrainingTaskKind, TaskAvailabilityProvider> _providers;
+  final Map<LearningMethod, TaskAvailabilityProvider> _providers;
 
   Future<TaskAvailability> check(
-    TrainingTaskKind kind,
+    LearningMethod kind,
     TaskAvailabilityContext context, {
     bool force = false,
   }) async {
@@ -72,7 +72,7 @@ class SpeechTaskAvailabilityProvider implements TaskAvailabilityProvider {
   final SpeechServiceBase _speechService;
 
   @override
-  TrainingTaskKind get kind => TrainingTaskKind.numberPronunciation;
+  LearningMethod get kind => LearningMethod.numberPronunciation;
 
   @override
   Future<TaskAvailability> check(
@@ -101,7 +101,7 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
   bool? _cachedAvailable;
 
   @override
-  TrainingTaskKind get kind => TrainingTaskKind.listening;
+  LearningMethod get kind => LearningMethod.listening;
 
   @override
   Future<TaskAvailability> check(
@@ -133,7 +133,7 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
 
 class PhraseTaskAvailabilityProvider implements TaskAvailabilityProvider {
   @override
-  TrainingTaskKind get kind => TrainingTaskKind.phrasePronunciation;
+  LearningMethod get kind => LearningMethod.phrasePronunciation;
 
   @override
   Future<TaskAvailability> check(

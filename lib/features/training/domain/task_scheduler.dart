@@ -16,11 +16,11 @@ sealed class TaskScheduleResult {
 final class TaskScheduleReady extends TaskScheduleResult {
   const TaskScheduleReady({
     required this.card,
-    required this.kind,
+    required this.method,
   });
 
   final PronunciationTaskData card;
-  final TrainingTaskKind kind;
+  final LearningMethod method;
 }
 
 final class TaskSchedulePaused extends TaskScheduleResult {
@@ -69,7 +69,7 @@ class TaskScheduler {
       premiumPronunciationEnabled: premiumPronunciationEnabled,
     );
     await _availabilityRegistry.check(
-      TrainingTaskKind.listening,
+      LearningMethod.listening,
       context,
       force: true,
     );
@@ -79,44 +79,44 @@ class TaskScheduler {
     required ProgressManager progressManager,
     required LearningLanguage language,
     required bool premiumPronunciationEnabled,
-    TrainingTaskKind? forcedTaskKind,
+    LearningMethod? forcedLearningMethod,
     TrainingItemType? forcedItemType,
   }) async {
     if (!progressManager.hasRemainingCards) {
       return const TaskScheduleFinished();
     }
 
-    if (forcedTaskKind != null &&
+    if (forcedLearningMethod != null &&
         forcedItemType != null &&
-        !forcedTaskKind.supportedItemTypes.contains(forcedItemType)) {
+        !forcedLearningMethod.supportedItemTypes.contains(forcedItemType)) {
       return const TaskSchedulePaused(
-        'Selected task does not support the selected card type.',
+        'Selected learning method does not support the selected card type.',
       );
     }
 
     final requirePhrase =
-        forcedTaskKind == TrainingTaskKind.phrasePronunciation;
+        forcedLearningMethod == LearningMethod.phrasePronunciation;
     final requireListening =
-        forcedTaskKind == TrainingTaskKind.listening;
+        forcedLearningMethod == LearningMethod.listening;
     final requireSpeech =
-        forcedTaskKind == TrainingTaskKind.numberPronunciation;
+        forcedLearningMethod == LearningMethod.numberPronunciation;
 
     final availabilityContext = _availabilityContext(
       language: language,
       premiumPronunciationEnabled: premiumPronunciationEnabled,
     );
     final phraseAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.phrasePronunciation,
+      LearningMethod.phrasePronunciation,
       availabilityContext,
       force: requirePhrase,
     );
     final listeningAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.listening,
+      LearningMethod.listening,
       availabilityContext,
       force: requireListening,
     );
     final speechAvailability = await _availabilityRegistry.check(
-      TrainingTaskKind.numberPronunciation,
+      LearningMethod.numberPronunciation,
       availabilityContext,
       force: requireSpeech,
     );
@@ -150,8 +150,8 @@ class TaskScheduler {
         if (forcedItemType != null && card.id.type != forcedItemType) {
           return false;
         }
-        if (forcedTaskKind != null &&
-            !forcedTaskKind.supportedItemTypes.contains(card.id.type)) {
+        if (forcedLearningMethod != null &&
+            !forcedLearningMethod.supportedItemTypes.contains(card.id.type)) {
           return false;
         }
         if (requirePhrase) {
@@ -168,9 +168,9 @@ class TaskScheduler {
           'Phrase pronunciation tasks are not available for the selected language.',
         );
       }
-      if (forcedItemType != null && forcedTaskKind != null) {
+      if (forcedItemType != null && forcedLearningMethod != null) {
         return const TaskSchedulePaused(
-          'Selected card type is not supported by the forced task.',
+          'Selected card type is not supported by the forced learning method.',
         );
       }
       if (forcedItemType != null) {
@@ -178,9 +178,9 @@ class TaskScheduler {
           'Selected card type has no available cards.',
         );
       }
-      if (forcedTaskKind != null) {
+      if (forcedLearningMethod != null) {
         return const TaskSchedulePaused(
-          'Selected task is not available for this item.',
+          'Selected learning method is not available for this item.',
         );
       }
       return const TaskScheduleFinished();
@@ -191,7 +191,7 @@ class TaskScheduler {
     final numberValue = _resolveNumberValue(card);
     final canUsePhrase =
         allowPhrase &&
-        TrainingTaskKind.phrasePronunciation.supportedItemTypes
+        LearningMethod.phrasePronunciation.supportedItemTypes
             .contains(itemType) &&
         numberValue != null &&
         _hasPhraseTemplate(language, numberValue);
@@ -203,16 +203,16 @@ class TaskScheduler {
 
     final canUseSpeechKind =
         allowSpeech &&
-        TrainingTaskKind.numberPronunciation.supportedItemTypes
+        LearningMethod.numberPronunciation.supportedItemTypes
             .contains(itemType);
     final canUseListeningKind =
         allowListening &&
-        TrainingTaskKind.listening.supportedItemTypes
+        LearningMethod.listening.supportedItemTypes
             .contains(itemType);
     final canUseValueToTextKind =
-        TrainingTaskKind.valueToText.supportedItemTypes.contains(itemType);
+        LearningMethod.valueToText.supportedItemTypes.contains(itemType);
     final canUseTextToValueKind =
-        TrainingTaskKind.textToValue.supportedItemTypes.contains(itemType);
+        LearningMethod.textToValue.supportedItemTypes.contains(itemType);
 
     if (!canUseSpeechKind &&
         !canUseListeningKind &&
@@ -225,16 +225,16 @@ class TaskScheduler {
       );
     }
 
-    final taskKind =
-        forcedTaskKind ??
-        _pickTaskKind(
+    final learningMethod =
+        forcedLearningMethod ??
+        _pickLearningMethod(
           canUsePhrase: canUsePhrase,
           canUseListening: canUseListeningKind,
           canUseSpeech: canUseSpeechKind,
           itemType: itemType,
         );
 
-    return TaskScheduleReady(card: card, kind: taskKind);
+    return TaskScheduleReady(card: card, method: learningMethod);
   }
 
   TaskAvailabilityContext _availabilityContext({
@@ -251,42 +251,42 @@ class TaskScheduler {
     );
   }
 
-  TrainingTaskKind _pickTaskKind({
+  LearningMethod _pickLearningMethod({
     required bool canUsePhrase,
     required bool canUseListening,
     required bool canUseSpeech,
     required TrainingItemType itemType,
   }) {
-    final weightedKinds = <MapEntry<TrainingTaskKind, int>>[
+    final weightedKinds = <MapEntry<LearningMethod, int>>[
       if (canUseSpeech &&
-          TrainingTaskKind.numberPronunciation.supportedItemTypes
+          LearningMethod.numberPronunciation.supportedItemTypes
               .contains(itemType))
         const MapEntry(
-          TrainingTaskKind.numberPronunciation,
+          LearningMethod.numberPronunciation,
           _numberPronunciationWeight,
         ),
-      if (TrainingTaskKind.valueToText.supportedItemTypes.contains(itemType))
+      if (LearningMethod.valueToText.supportedItemTypes.contains(itemType))
         const MapEntry(
-          TrainingTaskKind.valueToText,
+          LearningMethod.valueToText,
           _valueToTextWeight,
         ),
-      if (TrainingTaskKind.textToValue.supportedItemTypes.contains(itemType))
+      if (LearningMethod.textToValue.supportedItemTypes.contains(itemType))
         const MapEntry(
-          TrainingTaskKind.textToValue,
+          LearningMethod.textToValue,
           _textToValueWeight,
         ),
       if (canUseListening &&
-          TrainingTaskKind.listening.supportedItemTypes
+          LearningMethod.listening.supportedItemTypes
               .contains(itemType))
         const MapEntry(
-          TrainingTaskKind.listening,
+          LearningMethod.listening,
           _listeningWeight,
         ),
       if (canUsePhrase &&
-          TrainingTaskKind.phrasePronunciation.supportedItemTypes
+          LearningMethod.phrasePronunciation.supportedItemTypes
               .contains(itemType))
         const MapEntry(
-          TrainingTaskKind.phrasePronunciation,
+          LearningMethod.phrasePronunciation,
           _phrasePronunciationWeight,
         ),
     ];

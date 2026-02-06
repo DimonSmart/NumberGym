@@ -90,7 +90,7 @@ class ListeningRuntime extends TaskRuntimeBase {
         : TrainingOutcome.wrong;
     appLogI(
       'task',
-      'Answer: kind=${TrainingTaskKind.listening.name} id=$_taskId '
+      'Answer: kind=${LearningMethod.listening.name} id=$_taskId '
       'selected="${action.option}" correct="$_correctAnswer" '
       'outcome=${outcome.name}',
     );

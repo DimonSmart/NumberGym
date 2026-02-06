@@ -32,7 +32,7 @@ sealed class TaskState {
     required this.timer,
   });
 
-  final TrainingTaskKind kind;
+  final LearningMethod kind;
   final TrainingItemId taskId;
   final int? numberValue;
   final String displayText;
@@ -65,7 +65,7 @@ final class NumberPronunciationState extends TaskState {
        previewHeardTokens = List<String>.unmodifiable(previewHeardTokens),
        previewMatchedIndices = List<int>.unmodifiable(previewMatchedIndices),
        super(
-         kind: TrainingTaskKind.numberPronunciation,
+         kind: LearningMethod.numberPronunciation,
          affectsProgress: true,
          usesTimer: true,
        );
@@ -110,7 +110,7 @@ final class ListeningState extends TaskState {
     required this.isAnswerRevealed,
   }) : options = List<String>.unmodifiable(options),
        super(
-         kind: TrainingTaskKind.listening,
+         kind: LearningMethod.listening,
          affectsProgress: true,
          usesTimer: true,
        );
@@ -132,7 +132,7 @@ final class PhrasePronunciationState extends TaskState {
     required this.result,
     required this.isWaveVisible,
   }) : super(
-         kind: TrainingTaskKind.phrasePronunciation,
+         kind: LearningMethod.phrasePronunciation,
          affectsProgress: false,
          usesTimer: false,
          timer: TimerState.zero,

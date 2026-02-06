@@ -50,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _speechAvailable = true;
   bool _speechLoading = false;
   String? _speechStatusMessage;
-  TrainingTaskKind? _debugForcedTaskKind;
+  LearningMethod? _debugForcedLearningMethod;
   TrainingItemType? _debugForcedItemType;
   Timer? _internetTimer;
   bool _hasInternet = true;
@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       (_) => _refreshInternetStatus(),
     );
     if (kDebugMode) {
-      _debugForcedTaskKind = _settingsRepository.readDebugForcedTaskKind();
+      _debugForcedLearningMethod = _settingsRepository.readDebugForcedLearningMethod();
       _debugForcedItemType = _settingsRepository.readDebugForcedItemType();
     }
   }
@@ -164,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     final locale = LanguageRegistry.of(_language).locale;
     final availability = await _availabilityRegistry.check(
-      TrainingTaskKind.listening,
+      LearningMethod.listening,
       TaskAvailabilityContext(
         language: _language,
         premiumPronunciationEnabled: _premiumPronunciation,
@@ -197,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _speechLoading = true;
     });
     final availability = await _availabilityRegistry.check(
-      TrainingTaskKind.numberPronunciation,
+      LearningMethod.numberPronunciation,
       TaskAvailabilityContext(
         language: _language,
         premiumPronunciationEnabled: _premiumPronunciation,
@@ -272,11 +272,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  Future<void> _updateDebugForcedTaskKind(TrainingTaskKind? kind) async {
+  Future<void> _updateDebugForcedLearningMethod(LearningMethod? method) async {
     setState(() {
-      _debugForcedTaskKind = kind;
+      _debugForcedLearningMethod = method;
     });
-    await _settingsRepository.setDebugForcedTaskKind(kind);
+    await _settingsRepository.setDebugForcedLearningMethod(method);
   }
 
   Future<void> _updateDebugForcedItemType(TrainingItemType? type) async {
@@ -573,29 +573,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            DropdownButtonFormField<TrainingTaskKind?>(
-              initialValue: _debugForcedTaskKind,
-              onChanged: _updateDebugForcedTaskKind,
+            DropdownButtonFormField<LearningMethod?>(
+              initialValue: _debugForcedLearningMethod,
+              onChanged: _updateDebugForcedLearningMethod,
               items: [
-                const DropdownMenuItem<TrainingTaskKind?>(
+                const DropdownMenuItem<LearningMethod?>(
                   value: null,
-                  child: Text('No forced task'),
+                  child: Text('No forced learning method'),
                 ),
-                ...TrainingTaskKind.values.map(
-                  (kind) => DropdownMenuItem<TrainingTaskKind?>(
-                    value: kind,
-                    child: Text(kind.label),
+                ...LearningMethod.values.map(
+                  (method) => DropdownMenuItem<LearningMethod?>(
+                    value: method,
+                    child: Text(method.label),
                   ),
                 ),
               ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Force task type',
+                labelText: 'Force learning method',
               ),
             ),
             const SizedBox(height: 6),
             Text(
-              'Forces the trainer to show only the selected task type.',
+              'Forces the trainer to use only the selected learning method.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

@@ -33,7 +33,7 @@ The system must allow switching the learning language. All content and progress 
 3. The next task appears after a short delay.
 
 **Done criteria:**
-- Each task type has clear UI and controls.
+- Each learning method has clear UI and controls.
 - Feedback is shown for every answer.
 
 ### 3.3. Stop training
@@ -127,7 +127,7 @@ The training system uses two orthogonal dimensions:
 - Numbers: digits (0-9), base (10-99), hundreds (100-900), thousands (1000-9000)
 - Time: timeExact (on the hour), timeQuarter (:15/:45), timeHalf (:30), timeRandom (any time)
 
-**Method (HOW)** — defined by `TrainingTaskKind`:
+**Method (HOW)** — defined by `LearningMethod`:
 - Number pronunciation (speech recognition)
 - Value to text (multiple choice: number → words)
 - Text to value (multiple choice: words → number)
@@ -181,7 +181,7 @@ The system stores:
 - hint streak threshold,
 - premium pronunciation flag,
 - selected TTS voice per language.
-- debug-only forced task kind (for QA/testing).
+- debug-only forced learning method (for QA/testing).
 
 ### 5.2. Progress
 For each card and language, store:
@@ -231,7 +231,7 @@ A standalone HTTP service accepts recorded audio and the expected text, then ret
 - The service must handle invalid or incomplete payloads with predictable errors.
 
 ## 8. Definition of Done
-- Users can complete training with any supported task type.
+- Users can complete training with any supported learning method.
 - Progress persists and is restored after restart.
 - Settings are available and affect training.
 - Premium pronunciation works only online and shows pronunciation results correctly.

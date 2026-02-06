@@ -21,7 +21,7 @@ class NumberPronunciationTask extends NumberTrainingTask
     required this.answers,
   })  : assert(id.number == numberValue),
         super(
-          kind: TrainingTaskKind.numberPronunciation,
+          kind: LearningMethod.numberPronunciation,
         );
 
   @override

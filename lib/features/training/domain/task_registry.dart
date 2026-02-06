@@ -45,9 +45,9 @@ typedef TaskFactory = TaskRuntime Function(TaskBuildContext context);
 class TaskRegistry {
   TaskRegistry(this._factories);
 
-  final Map<TrainingTaskKind, TaskFactory> _factories;
+  final Map<LearningMethod, TaskFactory> _factories;
 
-  TaskRuntime create(TrainingTaskKind kind, TaskBuildContext context) {
+  TaskRuntime create(LearningMethod kind, TaskBuildContext context) {
     final factory = _factories[kind];
     if (factory == null) {
       throw StateError('No task factory registered for $kind');

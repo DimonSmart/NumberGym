@@ -73,7 +73,7 @@ class TrainingSession {
     _refreshCardsIfNeeded();
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
-    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
     _syncState();
   }
@@ -94,7 +94,7 @@ class TrainingSession {
   late final RuntimeCoordinator _runtimeCoordinator;
 
   bool _premiumPronunciationEnabled = false;
-  TrainingTaskKind? _debugForcedTaskKind;
+  LearningMethod? _debugForcedLearningMethod;
   TrainingItemType? _debugForcedItemType;
 
   String? _errorMessage;
@@ -142,7 +142,7 @@ class TrainingSession {
 
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
-    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
     if (_progressManager.cardsLanguage != _currentLanguage()) {
       await _loadProgress();
@@ -177,7 +177,7 @@ class TrainingSession {
     _progressManager.resetSelection();
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
-    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
     _silentDetector.reset();
     _streakTracker.reset();
@@ -197,7 +197,7 @@ class TrainingSession {
     await _loadProgress();
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
-    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
     _progressManager.resetSelection();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
@@ -264,11 +264,11 @@ class TrainingSession {
     return _languageRouter.currentLanguage;
   }
 
-  TrainingTaskKind? _readDebugForcedTaskKind() {
+  LearningMethod? _readDebugForcedLearningMethod() {
     if (!kDebugMode) {
       return null;
     }
-    return _settingsRepository.readDebugForcedTaskKind();
+    return _settingsRepository.readDebugForcedLearningMethod();
   }
 
   TrainingItemType? _readDebugForcedItemType() {
@@ -283,8 +283,8 @@ class TrainingSession {
     return Duration(seconds: seconds);
   }
 
-  String? _resolveHintText(PronunciationTaskData card, TrainingTaskKind kind) {
-    if (kind != TrainingTaskKind.numberPronunciation) return null;
+  String? _resolveHintText(PronunciationTaskData card, LearningMethod kind) {
+    if (kind != LearningMethod.numberPronunciation) return null;
     final maxStreak = _settingsRepository.readHintStreakCount();
     if (maxStreak <= 0 || _streakTracker.streak >= maxStreak) {
       return null;
@@ -308,7 +308,7 @@ class TrainingSession {
 
   TaskRegistry _buildDefaultRegistry() {
     return TaskRegistry({
-      TrainingTaskKind.numberPronunciation: (context) {
+      LearningMethod.numberPronunciation: (context) {
         final card = context.card;
         return NumberPronunciationRuntime(
           task: card,
@@ -320,10 +320,10 @@ class TrainingSession {
           onSpeechReady: _handleSpeechReady,
         );
       },
-      TrainingTaskKind.valueToText: _buildValueToTextRuntime,
-      TrainingTaskKind.textToValue: _buildTextToValueRuntime,
-      TrainingTaskKind.listening: _buildListeningRuntime,
-      TrainingTaskKind.phrasePronunciation: _buildPhrasePronunciationRuntime,
+      LearningMethod.valueToText: _buildValueToTextRuntime,
+      LearningMethod.textToValue: _buildTextToValueRuntime,
+      LearningMethod.listening: _buildListeningRuntime,
+      LearningMethod.phrasePronunciation: _buildPhrasePronunciationRuntime,
     });
   }
 
@@ -340,7 +340,7 @@ class TrainingSession {
   TaskRuntime _buildValueToTextRuntime(TaskBuildContext context) {
     final spec = context.card.buildValueToTextSpec(context);
     return MultipleChoiceRuntime(
-      kind: TrainingTaskKind.valueToText,
+      kind: LearningMethod.valueToText,
       taskId: context.card.id,
       numberValue: spec.numberValue,
       prompt: spec.prompt,
@@ -372,7 +372,7 @@ class TrainingSession {
 
       final shuffled = options.toList()..shuffle(context.random);
       return MultipleChoiceRuntime(
-        kind: TrainingTaskKind.textToValue,
+        kind: LearningMethod.textToValue,
         taskId: context.card.id,
         numberValue: null,
         prompt: correctWord,
@@ -399,7 +399,7 @@ class TrainingSession {
 
     final shuffled = options.toList()..shuffle(context.random);
     return MultipleChoiceRuntime(
-      kind: TrainingTaskKind.textToValue,
+      kind: LearningMethod.textToValue,
       taskId: context.card.id,
       numberValue: numberValue,
       prompt: correctWord,
@@ -503,7 +503,7 @@ class TrainingSession {
     final card = context.card;
     final hintText =
         context.hintText ??
-        _resolveHintText(card, TrainingTaskKind.numberPronunciation);
+        _resolveHintText(card, LearningMethod.numberPronunciation);
     return NumberPronunciationRuntime(
       task: card,
       speechService: context.services.speech,
@@ -527,13 +527,13 @@ class TrainingSession {
     }
 
     final language = _currentLanguage();
-    _debugForcedTaskKind = _readDebugForcedTaskKind();
+    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
     final scheduleResult = await _taskScheduler.scheduleNext(
       progressManager: _progressManager,
       language: language,
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
-      forcedTaskKind: _debugForcedTaskKind,
+      forcedLearningMethod: _debugForcedLearningMethod,
       forcedItemType: _debugForcedItemType,
     );
     if (scheduleResult is TaskScheduleFinished) {
@@ -552,7 +552,7 @@ class TrainingSession {
     }
 
     final card = _resolveRandomTimeCard(scheduleResult.card, language);
-    final taskKind = scheduleResult.kind;
+    final taskKind = scheduleResult.method;
 
     _services.soundWave.reset();
     _errorMessage = null;
