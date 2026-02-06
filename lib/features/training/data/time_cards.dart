@@ -53,8 +53,7 @@ List<TimePronunciationTask> buildTimeCards({
     final value = id.time ?? _randomTime(rng);
     final numeric = value.displayText;
     final words = toWords?.call(value) ?? numeric;
-    final prompt =
-        id.type == TrainingItemType.timeExact ? numeric : words;
+    final prompt = numeric;
     final answers = <String>[];
     void addAnswer(String text) {
       if (text.trim().isEmpty) return;
