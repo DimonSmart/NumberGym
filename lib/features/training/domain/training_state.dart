@@ -11,17 +11,31 @@ class TrainingFeedback {
   });
 }
 
+class SessionStats {
+  final int cardsCompleted;
+  final Duration duration;
+  final DateTime recommendedReturn;
+
+  const SessionStats({
+    required this.cardsCompleted,
+    required this.duration,
+    required this.recommendedReturn,
+  });
+}
+
 class TrainingState {
   final bool speechReady;
   final String? errorMessage;
   final TrainingFeedback? feedback;
   final TaskState? currentTask;
+  final SessionStats? sessionStats;
 
   const TrainingState({
     required this.speechReady,
     required this.errorMessage,
     required this.feedback,
     required this.currentTask,
+    this.sessionStats,
   });
 
   factory TrainingState.initial() {
@@ -30,6 +44,7 @@ class TrainingState {
       errorMessage: null,
       feedback: null,
       currentTask: null,
+      sessionStats: null,
     );
   }
 }

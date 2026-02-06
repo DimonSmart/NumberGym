@@ -104,6 +104,12 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
+  
+  // Session limits
+  static const int _sessionCardLimit = 50;
+  static const Duration _sessionTimeLimit = Duration(minutes: 10);
+  DateTime? _sessionStartTime;
+  int _sessionCardsCompleted = 0;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -165,6 +171,28 @@ class TrainingSession {
     _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(true));
+    _resetSessionCounters();
+    await _startNextCard();
+  }
+
+  void _resetSessionCounters() {
+    _sessionStartTime = DateTime.now();
+    _sessionCardsCompleted = 0;
+  }
+
+  Future<void> continueSession() async {
+    // Allows the user to ignore the limit and continue
+    _resetSessionCounters();
+    // Clear the stats from state
+    _state = TrainingState(
+      speechReady: _state.speechReady,
+      errorMessage: _state.errorMessage,
+      feedback: _state.feedback,
+      currentTask: _state.currentTask,
+      sessionStats: null,
+    );
+     // Note: we don't call _syncState here to avoid flicker, just proceed
+    _onStateChanged();
     await _startNextCard();
   }
 
@@ -217,6 +245,15 @@ class TrainingSession {
     await _handleTaskCompleted(outcome);
   }
 
+  bool _checkSessionLimits() {
+    if (_sessionCardsCompleted >= _sessionCardLimit) return true;
+    if (_sessionStartTime != null) {
+      final elapsed = DateTime.now().difference(_sessionStartTime!);
+      if (elapsed >= _sessionTimeLimit) return true;
+    }
+    return false;
+  }
+
   void _syncState() {
     if (_disposed) return;
     _state = TrainingState(
@@ -224,6 +261,7 @@ class TrainingSession {
       errorMessage: _errorMessage,
       feedback: _feedbackCoordinator.feedback,
       currentTask: _runtimeCoordinator.currentTask,
+      sessionStats: _state.sessionStats,
     );
     _onStateChanged();
   }
@@ -515,10 +553,60 @@ class TrainingSession {
     );
   }
 
+  Future<void> _handleSessionLimitReached() async {
+    // 1. Calculate recommendation
+    final now = DateTime.now();
+    final earliestDue = _progressManager.getEarliestNextDue() ?? now;
+    
+    // Constraints: Not sooner than 2 hours, not later than 1 day
+    final minReturn = now.add(const Duration(hours: 2));
+    final maxReturn = now.add(const Duration(days: 1));
+    
+    DateTime recommendation = earliestDue;
+    if (recommendation.isBefore(minReturn)) {
+      recommendation = minReturn;
+    } else if (recommendation.isAfter(maxReturn)) {
+      recommendation = maxReturn;
+    }
+
+    // 2. Prepare stats
+    final elapsed = _sessionStartTime == null 
+        ? Duration.zero 
+        : now.difference(_sessionStartTime!);
+    
+    final stats = SessionStats(
+      cardsCompleted: _sessionCardsCompleted,
+      duration: elapsed,
+      recommendedReturn: recommendation,
+    );
+    
+    // 3. Update state
+    await _runtimeCoordinator.disposeRuntime(clearState: true);
+    // Don't set _trainingActive = false yet, allow "continue"
+    // But stop keep awake? Maybe.
+    unawaited(_setKeepAwake(false));
+    
+    _state = TrainingState(
+      speechReady: _state.speechReady,
+      errorMessage: null,
+      feedback: null,
+      currentTask: null, // Clear task so UI can show overlay
+      sessionStats: stats,
+    );
+    _onStateChanged();
+  }
+
   Future<void> _startNextCard() async {
     if (!_trainingActive) {
       return;
     }
+    
+    // Check session limits
+    if (_checkSessionLimits()) {
+      await _handleSessionLimitReached();
+      return;
+    }
+
     if (!_progressManager.hasRemainingCards) {
       _trainingActive = false;
       unawaited(_setKeepAwake(false));
@@ -657,6 +745,8 @@ class TrainingSession {
           outcome == TrainingOutcome.timeout ||
           outcome == TrainingOutcome.skipped;
       _streakTracker.record(isCorrect);
+      _sessionCardsCompleted++;
+
       final attemptResult = await _progressManager.recordAttempt(
         progressKey: taskState.taskId,
         isCorrect: isCorrect,

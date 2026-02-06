@@ -292,4 +292,29 @@ class ProgressManager {
   void resetSelection() {
     // No-op: selection is handled by the learning strategy.
   }
+
+  DateTime? getEarliestNextDue() {
+    if (_queue.active.isEmpty && _queue.backlog.isEmpty) return null;
+    
+    // If we have items in active queue, check their due time
+    // If we have backlog, it technically means "due now" (or never practiced)
+    if (_queue.backlog.isNotEmpty) {
+      // Backlog items are effectively due "now"
+      return DateTime.now();
+    }
+
+    int? minDue;
+    for (final id in _queue.active) {
+      final progress = _progressById[id];
+      if (progress == null) continue;
+      // If nextDue is 0 or negative, it's effectively now
+      final due = progress.nextDue;
+      if (minDue == null || due < minDue) {
+        minDue = due;
+      }
+    }
+
+    if (minDue == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(minDue);
+  }
 }
