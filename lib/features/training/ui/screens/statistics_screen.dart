@@ -12,6 +12,10 @@ import '../../domain/learning_language.dart';
 import '../../domain/training_item.dart';
 import '../../../../core/theme/app_palette.dart';
 import '../widgets/training_background.dart';
+import 'statistics_utils.dart';
+import 'training_item_type_x.dart';
+import 'widgets/stats_card_surface.dart';
+import 'widgets/stats_colors.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final Box<CardProgress> progressBox;
@@ -341,13 +345,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   ) {
     final showLegend = typeStats.any((stats) {
       final ids = idsByType[stats.type] ?? const <TrainingItemId>[];
-      return _shouldShowTypeStreak(stats.type, ids.length);
+      return stats.type.supportsStreak && ids.length > 1;
     });
     final sections = <Widget>[];
     for (var i = 0; i < typeStats.length; i += 1) {
       final stats = typeStats[i];
       final ids = idsByType[stats.type] ?? const <TrainingItemId>[];
-      final showStreak = _shouldShowTypeStreak(stats.type, ids.length);
+      final showStreak = stats.type.supportsStreak && ids.length > 1;
       final streakGrid = showStreak
           ? _buildGrid(
               theme,
@@ -355,7 +359,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               progressById,
               hotIds,
               successThreshold,
-              columns: _gridColumnsForType(stats.type, ids.length),
+              columns: stats.type.preferredColumns(ids.length),
             )
           : null;
       sections.add(
@@ -403,10 +407,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildLegend(ThemeData theme) {
-    final scheme = theme.colorScheme;
-    final notStartedColor = _notStartedColor(scheme);
-    final startedColor = _startedColor(scheme);
-    final learnedColor = _learnedColor(scheme);
+    final colors = StatsColors(theme.colorScheme);
+    final notStartedColor = colors.notStarted;
+    final startedColor = colors.started;
+    final learnedColor = colors.learned;
 
     return Wrap(
       spacing: 12,
@@ -448,6 +452,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     double successThreshold,
     {int columns = 10}
   ) {
+    final statsColors = StatsColors(theme.colorScheme);
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 6.0;
@@ -487,8 +492,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               final progress = progressById[id] ?? CardProgress.empty;
               final streak =
                   _clusterSuccessStreak(progress, successThreshold);
-              final baseColor =
-                  _progressColor(theme.colorScheme, progress, streak);
+              final baseColor = statsColors.progressColor(
+                progress,
+                streak,
+                _learnedStreakTarget,
+              );
               final isHot = hotIds.contains(id);
               final displayText = _cardDisplayText(id);
               final borderColor = isHot
@@ -591,9 +599,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         : totalAttempts == 0
             ? 'Not started'
             : 'In progress';
-    final nextDueLabel = _formatNextDue(progress.nextDue);
-    final typeLabel = _typeLabel(id.type);
-    final typeRange = _typeRange(id.type);
+    final nextDueLabel = formatDueFromMillis(
+      progress.nextDue,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    final typeLabel = id.type.label;
+    final typeRange = id.type.range;
     final displayText = _cardDisplayText(id);
     final clusters = progress.clusters.reversed.toList();
 
@@ -680,7 +691,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 if (progress.learnedAt > 0)
                   _DetailPill(
                     label: 'Learned at',
-                    value: _formatDateTime(
+                    value: formatDateTimeYmdHm(
                       DateTime.fromMillisecondsSinceEpoch(progress.learnedAt),
                     ),
                   ),
@@ -712,8 +723,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     : DateTime.fromMillisecondsSinceEpoch(
                         cluster.lastAnswerAt,
                       );
-                final dateLabel =
-                    timestamp == null ? 'Legacy' : _formatDateTime(timestamp);
+                final dateLabel = timestamp == null
+                    ? 'Legacy'
+                    : formatDateTimeYmdHm(timestamp);
                 return _ClusterRow(
                   dateLabel: dateLabel,
                   cluster: cluster,
@@ -764,43 +776,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return grouped;
   }
 
-  bool _shouldShowTypeStreak(TrainingItemType type, int count) {
-    if (type == TrainingItemType.timeRandom) return false;
-    return count > 1;
-  }
-
-  int _gridColumnsForType(TrainingItemType type, int count) {
-    final safeCount = count <= 0 ? 1 : count;
-    int preferred;
-    switch (type) {
-      case TrainingItemType.digits:
-        preferred = 10;
-        break;
-      case TrainingItemType.base:
-        preferred = 10;
-        break;
-      case TrainingItemType.hundreds:
-        preferred = 9;
-        break;
-      case TrainingItemType.thousands:
-        preferred = 5;
-        break;
-      case TrainingItemType.timeExact:
-        preferred = 8;
-        break;
-      case TrainingItemType.timeQuarter:
-        preferred = 8;
-        break;
-      case TrainingItemType.timeHalf:
-        preferred = 8;
-        break;
-      case TrainingItemType.timeRandom:
-        preferred = 1;
-        break;
-    }
-    return preferred > safeCount ? safeCount : preferred;
-  }
-
   List<_DailyStats> _buildDailyStats(
     Map<TrainingItemId, CardProgress> progressById,
     int days,
@@ -811,14 +786,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final stats = <int, _DailyStats>{};
     for (var i = 0; i < days; i += 1) {
       final day = start.add(Duration(days: i));
-      stats[_dayKey(day)] = _DailyStats(day: day);
+      stats[dayKey(day)] = _DailyStats(day: day);
     }
 
     for (final progress in progressById.values) {
       for (final cluster in progress.clusters) {
         if (cluster.lastAnswerAt <= 0) continue;
         final day = DateTime.fromMillisecondsSinceEpoch(cluster.lastAnswerAt);
-        final key = _dayKey(day);
+        final key = dayKey(day);
         final stat = stats[key];
         if (stat == null) continue;
         stat.attempts += cluster.totalAttempts;
@@ -889,42 +864,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  int _dayKey(DateTime date) {
-    return date.year * 10000 + date.month * 100 + date.day;
-  }
-
-  String _formatNextDue(int nextDue) {
-    if (nextDue <= 0) return 'Ready now';
-    final nowMillis = DateTime.now().millisecondsSinceEpoch;
-    if (nextDue <= nowMillis) return 'Ready now';
-    final diff = Duration(milliseconds: nextDue - nowMillis);
-    return 'in ${_formatDuration(diff)}';
-  }
-
-  String _formatDuration(Duration duration) {
-    final totalMinutes = duration.inMinutes;
-    if (totalMinutes < 60) {
-      return '${totalMinutes}m';
-    }
-    final totalHours = duration.inHours;
-    if (totalHours < 24) {
-      final minutes = totalMinutes % 60;
-      return minutes == 0 ? '${totalHours}h' : '${totalHours}h ${minutes}m';
-    }
-    final days = duration.inDays;
-    final hours = totalHours % 24;
-    return hours == 0 ? '${days}d' : '${days}d ${hours}h';
-  }
-
-  String _formatDateTime(DateTime date) {
-    final year = date.year.toString().padLeft(4, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
-    return '$year-$month-$day $hour:$minute';
-  }
-
   Set<TrainingItemId> _resolveHotIds(
     Map<TrainingItemId, CardProgress> progressById,
   ) {
@@ -962,39 +901,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     if (total == 0) return false;
     return (cluster.correctCount / total) >= threshold;
   }
-
-  Color _progressColor(
-    ColorScheme scheme,
-    CardProgress progress,
-    int streak,
-  ) {
-    if (progress.totalAttempts == 0) {
-      return _notStartedColor(scheme);
-    }
-    if (progress.learned) {
-      return _learnedColor(scheme);
-    }
-    final startedColor = _startedColor(scheme);
-    if (streak <= 0) {
-      return startedColor;
-    }
-    final t = (streak / _learnedStreakTarget).clamp(0.0, 1.0);
-    return Color.lerp(startedColor, _learnedColor(scheme), t)!;
-  }
-
-  Color _notStartedColor(ColorScheme scheme) {
-    return scheme.surfaceContainerHighest;
-  }
-
-  Color _startedColor(ColorScheme scheme) {
-    return scheme.brightness == Brightness.dark
-        ? Colors.amber.shade400
-        : Colors.amber.shade200;
-  }
-
-  Color _learnedColor(ColorScheme scheme) {
-    return AppPalette.deepBlue;
-  }
 }
 
 class _StatCard extends StatelessWidget {
@@ -1017,66 +923,44 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return SizedBox(
+    return StatsCardSurface(
       width: width,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              scheme.surfaceContainerLow,
-              accent.withValues(alpha: 0.12),
-            ],
-          ),
-          border: Border.all(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 18, color: accent),
-                const SizedBox(width: 6),
-                Text(
-                  title,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              value,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: scheme.onSurface,
-              ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 4),
+      accent: accent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: accent),
+              const SizedBox(width: 6),
               Text(
-                subtitle!,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
+                title,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle!,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -1143,45 +1027,53 @@ class _CoverageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final statsColors = StatsColors(scheme);
     final isCompact = width < 230;
     final total = coverage.total == 0 ? 1 : coverage.total;
     final notStartedValue =
         coverage.total == 0 ? 1.0 : coverage.notStarted.toDouble();
     final inProgressValue = coverage.inProgress.toDouble();
     final learnedValue = coverage.learned.toDouble();
-    final notStartedColor = scheme.surfaceContainerHighest;
-    final inProgressColor = scheme.brightness == Brightness.dark
-        ? Colors.amber.shade400
-        : Colors.amber.shade200;
-    final learnedColor = AppPalette.deepBlue;
+    final notStartedColor = statsColors.notStarted;
+    final inProgressColor = statsColors.started;
+    final learnedColor = statsColors.learned;
 
-    return SizedBox(
+    return StatsCardSurface(
       width: width,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              scheme.surfaceContainerLow,
-              scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            ],
-          ),
-          border: Border.all(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
+      gradient: LinearGradient(
+        colors: [
+          scheme.surfaceContainerLow,
+          scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        ],
+      ),
+      child: Row(
+        children: [
+          if (!isCompact) ...[
+            _coverageChart(
+              notStartedValue,
+              inProgressValue,
+              learnedValue,
+              notStartedColor,
+              inProgressColor,
+              learnedColor,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            if (!isCompact) ...[
-              _coverageChart(
+            const SizedBox(width: 12),
+            Expanded(
+              child: _coverageLegend(
+                theme,
+                scheme,
+                total,
+                notStartedColor,
+                inProgressColor,
+                learnedColor,
+              ),
+            ),
+          ] else ...[
+            Expanded(
+              child: _coverageCompact(
+                theme,
+                scheme,
+                total,
                 notStartedValue,
                 inProgressValue,
                 learnedValue,
@@ -1189,34 +1081,9 @@ class _CoverageCard extends StatelessWidget {
                 inProgressColor,
                 learnedColor,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _coverageLegend(
-                  theme,
-                  scheme,
-                  total,
-                  notStartedColor,
-                  inProgressColor,
-                  learnedColor,
-                ),
-              ),
-            ] else ...[
-              Expanded(
-                child: _coverageCompact(
-                  theme,
-                  scheme,
-                  total,
-                  notStartedValue,
-                  inProgressValue,
-                  learnedValue,
-                  notStartedColor,
-                  inProgressColor,
-                  learnedColor,
-                ),
-              ),
-            ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -1395,113 +1262,81 @@ class _InsightCard extends StatelessWidget {
         ? 'Ready now (${nextDueInfo.readyNowCount})'
         : nextDueInfo.nextDue == null
             ? 'No upcoming due'
-            : _formatDueLabel(nextDueInfo.nextDue!);
+            : formatDueFromDate(nextDueInfo.nextDue!, DateTime.now());
 
-    return SizedBox(
+    return StatsCardSurface(
       width: width,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              scheme.surfaceContainerLow,
-              scheme.secondaryContainer.withValues(alpha: 0.18),
-            ],
-          ),
-          border: Border.all(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.timeline,
-                  size: 18,
-                  color: scheme.secondary,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'Forecast',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              forecast.remaining == 0
-                  ? 'All learned'
-                  : '${forecast.remaining} remaining',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+      gradient: LinearGradient(
+        colors: [
+          scheme.surfaceContainerLow,
+          scheme.secondaryContainer.withValues(alpha: 0.18),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.timeline,
+                size: 18,
+                color: scheme.secondary,
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              forecastLine,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (daysLine != null) ...[
-              const SizedBox(height: 2),
+              const SizedBox(width: 6),
               Text(
-                daysLine,
-                style: theme.textTheme.labelSmall?.copyWith(
+                'Forecast',
+                style: theme.textTheme.labelMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
-            const SizedBox(height: 10),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            forecast.remaining == 0
+                ? 'All learned'
+                : '${forecast.remaining} remaining',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            forecastLine,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          if (daysLine != null) ...[
+            const SizedBox(height: 2),
             Text(
-              'Next due',
+              daysLine,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              nextDueLine,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ],
-        ),
+          const SizedBox(height: 10),
+          Text(
+            'Next due',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            nextDueLine,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  String _formatDueLabel(DateTime due) {
-    final now = DateTime.now();
-    final diff = due.difference(now);
-    if (diff.isNegative) return 'Ready now';
-    final minutes = diff.inMinutes;
-    if (minutes < 60) return 'in ${minutes}m';
-    final hours = diff.inHours;
-    if (hours < 24) {
-      final rem = minutes % 60;
-      return rem == 0 ? 'in ${hours}h' : 'in ${hours}h ${rem}m';
-    }
-    final days = diff.inDays;
-    final remHours = hours % 24;
-    return remHours == 0 ? 'in ${days}d' : 'in ${days}d ${remHours}h';
   }
 }
 
@@ -1529,91 +1364,69 @@ class _MiniChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final resolvedMax = _resolveMaxY(values);
     final resolvedMin = minY ?? 0;
     final resolvedMaxY = maxY ?? resolvedMax;
 
-    return SizedBox(
+    return StatsCardSurface(
       width: width,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              scheme.surfaceContainerLow,
-              accent.withValues(alpha: 0.12),
-            ],
+      accent: accent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          border: Border.all(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 70,
-              child: LineChart(
-                LineChartData(
-                  minX: 0.0,
-                  maxX: values.length > 1
-                      ? (values.length - 1).toDouble()
-                      : 1.0,
-                  minY: resolvedMin,
-                  maxY: resolvedMaxY,
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  titlesData: FlTitlesData(show: false),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _buildSpots(values),
-                      isCurved: true,
-                      color: accent,
-                      barWidth: 2,
-                      dotData: FlDotData(show: false),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: accent.withValues(alpha: 0.15),
-                      ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 70,
+            child: LineChart(
+              LineChartData(
+                minX: 0.0,
+                maxX: values.length > 1
+                    ? (values.length - 1).toDouble()
+                    : 1.0,
+                minY: resolvedMin,
+                maxY: resolvedMaxY,
+                gridData: FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                titlesData: FlTitlesData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: _buildSpots(values),
+                    isCurved: true,
+                    color: accent,
+                    barWidth: 2,
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: accent.withValues(alpha: 0.15),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -1655,118 +1468,102 @@ class _TypeCard extends StatelessWidget {
     final accuracy =
         stats.attempts == 0 ? 0.0 : stats.correct / stats.attempts;
 
-    return SizedBox(
+    return StatsCardSurface(
       width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              scheme.surfaceContainerLow,
-              scheme.primaryContainer.withValues(alpha: 0.12),
+      gradient: LinearGradient(
+        colors: [
+          scheme.surfaceContainerLow,
+          scheme.primaryContainer.withValues(alpha: 0.12),
+        ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${stats.type.label} ${stats.type.range}',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                'Learned',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${stats.learned}/${stats.total} | ${(learnedRatio * 100).toStringAsFixed(0)}%',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
-          border: Border.all(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${_typeLabel(stats.type)} ${_typeRange(stats.type)}',
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Text(
-                  'Learned',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${stats.learned}/${stats.total} | ${(learnedRatio * 100).toStringAsFixed(0)}%',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: learnedRatio,
-                minHeight: 6,
-                backgroundColor: scheme.surfaceContainerHighest,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Text(
-                  'Started',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${stats.started}/${stats.total} | Acc. ${(accuracy * 100).toStringAsFixed(0)}%',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            LinearProgressIndicator(
-              value: startedRatio,
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: learnedRatio,
               minHeight: 6,
-              color: scheme.secondary,
               backgroundColor: scheme.surfaceContainerHighest,
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Text(
-                  'Sessions: ${stats.sessions}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                'Started',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  'Attempts: ${stats.attempts}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              const Spacer(),
+              Text(
+                '${stats.started}/${stats.total} | Acc. ${(accuracy * 100).toStringAsFixed(0)}%',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurfaceVariant,
                 ),
-              ],
-            ),
-            if (streakGrid != null) ...[
-              const SizedBox(height: 14),
-              streakGrid!,
+              ),
             ],
+          ),
+          const SizedBox(height: 6),
+          LinearProgressIndicator(
+            value: startedRatio,
+            minHeight: 6,
+            color: scheme.secondary,
+            backgroundColor: scheme.surfaceContainerHighest,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                'Sessions: ${stats.sessions}',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Attempts: ${stats.attempts}',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (streakGrid != null) ...[
+            const SizedBox(height: 14),
+            streakGrid!,
           ],
-        ),
+        ],
       ),
     );
   }
@@ -2018,51 +1815,9 @@ class _TypeStats {
   });
 }
 
-String _typeLabel(TrainingItemType type) {
-  switch (type) {
-    case TrainingItemType.digits:
-      return 'Digits';
-    case TrainingItemType.base:
-      return 'Base';
-    case TrainingItemType.hundreds:
-      return 'Hundreds';
-    case TrainingItemType.thousands:
-      return 'Thousands';
-    case TrainingItemType.timeExact:
-      return 'Time (exact)';
-    case TrainingItemType.timeQuarter:
-      return 'Time (quarter)';
-    case TrainingItemType.timeHalf:
-      return 'Time (half)';
-    case TrainingItemType.timeRandom:
-      return 'Time (random)';
-  }
-}
-
-String _typeRange(TrainingItemType type) {
-  switch (type) {
-    case TrainingItemType.digits:
-      return '(0-9)';
-    case TrainingItemType.base:
-      return '(10-99)';
-    case TrainingItemType.hundreds:
-      return '(100-900)';
-    case TrainingItemType.thousands:
-      return '(1000-9000)';
-    case TrainingItemType.timeExact:
-      return '(HH:00)';
-    case TrainingItemType.timeQuarter:
-      return '(HH:15, HH:45)';
-    case TrainingItemType.timeHalf:
-      return '(HH:30)';
-    case TrainingItemType.timeRandom:
-      return '(HH:MM)';
-  }
-}
-
 String _cardDisplayText(TrainingItemId id) {
   if (id.type == TrainingItemType.timeRandom) {
-    return _typeLabel(id.type);
+    return id.type.label;
   }
   final number = id.number;
   if (number != null) return number.toString();
