@@ -467,7 +467,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               final baseColor =
                   _progressColor(theme.colorScheme, progress, streak);
               final isHot = hotIds.contains(id);
-              final displayText = id.number?.toString() ?? id.storageKey;
+              final displayText = _cardDisplayText(id);
               final borderColor = isHot
                   ? theme.colorScheme.error
                   : theme.colorScheme.outlineVariant.withValues(alpha: 0.6);
@@ -571,7 +571,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final nextDueLabel = _formatNextDue(progress.nextDue);
     final typeLabel = _typeLabel(id.type);
     final typeRange = _typeRange(id.type);
-    final displayText = id.number?.toString() ?? id.storageKey;
+    final displayText = _cardDisplayText(id);
     final clusters = progress.clusters.reversed.toList();
 
     return DraggableScrollableSheet(
@@ -1814,4 +1814,15 @@ String _typeRange(TrainingItemType type) {
     case TrainingItemType.timeRandom:
       return '(HH:MM)';
   }
+}
+
+String _cardDisplayText(TrainingItemId id) {
+  if (id.type == TrainingItemType.timeRandom) {
+    return _typeLabel(id.type);
+  }
+  final number = id.number;
+  if (number != null) return number.toString();
+  final time = id.time;
+  if (time != null) return time.displayText;
+  return id.storageKey;
 }

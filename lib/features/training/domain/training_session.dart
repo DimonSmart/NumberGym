@@ -22,6 +22,7 @@ import 'task_registry.dart';
 import 'task_runtime.dart';
 import 'task_scheduler.dart';
 import 'tasks/number_to_word_task.dart';
+import 'tasks/time_pronunciation_task.dart';
 import 'training_outcome.dart';
 import 'training_services.dart';
 import 'training_state.dart';
@@ -550,7 +551,7 @@ class TrainingSession {
       return;
     }
 
-    final card = scheduleResult.card;
+    final card = _resolveRandomTimeCard(scheduleResult.card, language);
     final taskKind = scheduleResult.kind;
 
     _services.soundWave.reset();
@@ -578,6 +579,26 @@ class TrainingSession {
     return context.cardIds
         .where((itemId) => itemId.type == currentType && itemId.number != null)
         .toList();
+  }
+
+  PronunciationTaskData _resolveRandomTimeCard(
+    PronunciationTaskData card,
+    LearningLanguage language,
+  ) {
+    if (card.id.type != TrainingItemType.timeRandom) return card;
+    final timeValue = TimeValue(
+      hour: _random.nextInt(24),
+      minute: _random.nextInt(60),
+    );
+    return TimePronunciationTask.forTime(
+      id: card.id,
+      timeValue: timeValue,
+      language: language,
+      toWords: (value) => _languageRouter.timeToWords(
+        value,
+        language: language,
+      ),
+    );
   }
 
   List<TimeValue> _candidateTimeValuesFor(TaskBuildContext context) {

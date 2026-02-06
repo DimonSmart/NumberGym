@@ -26,6 +26,36 @@ class TimePronunciationTask extends TrainingTask
          kind: TrainingTaskKind.numberPronunciation,
        );
 
+  factory TimePronunciationTask.forTime({
+    required TrainingItemId id,
+    required TimeValue timeValue,
+    required LearningLanguage language,
+    String Function(TimeValue time)? toWords,
+  }) {
+    final numeric = timeValue.displayText;
+    final words = toWords?.call(timeValue) ?? numeric;
+    final prompt = numeric;
+    final answers = <String>[];
+    void addAnswer(String text) {
+      if (text.trim().isEmpty) return;
+      if (answers.any((answer) => answer.toLowerCase() == text.toLowerCase())) {
+        return;
+      }
+      answers.add(text);
+    }
+
+    addAnswer(prompt);
+    addAnswer(words);
+    addAnswer(numeric);
+    return TimePronunciationTask(
+      id: id,
+      timeValue: timeValue,
+      prompt: prompt,
+      language: language,
+      answers: answers,
+    );
+  }
+
   @override
   int? get numberValue => null;
 
