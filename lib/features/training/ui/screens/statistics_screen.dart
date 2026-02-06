@@ -10,6 +10,7 @@ import '../../data/progress_repository.dart';
 import '../../domain/learning_strategy/learning_params.dart';
 import '../../domain/learning_language.dart';
 import '../../domain/training_item.dart';
+import '../../../../core/theme/app_palette.dart';
 import '../widgets/training_background.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -992,9 +993,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Color _learnedColor(ColorScheme scheme) {
-    return scheme.brightness == Brightness.dark
-        ? Colors.green.shade400
-        : Colors.green.shade500;
+    return AppPalette.deepBlue;
   }
 }
 
@@ -1154,9 +1153,7 @@ class _CoverageCard extends StatelessWidget {
     final inProgressColor = scheme.brightness == Brightness.dark
         ? Colors.amber.shade400
         : Colors.amber.shade200;
-    final learnedColor = scheme.brightness == Brightness.dark
-        ? Colors.green.shade400
-        : Colors.green.shade500;
+    final learnedColor = AppPalette.deepBlue;
 
     return SizedBox(
       width: width,
@@ -1840,7 +1837,7 @@ class _ClusterRow extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: isSuccess ? Colors.green : scheme.error,
+              color: isSuccess ? AppPalette.deepBlue : scheme.error,
               shape: BoxShape.circle,
             ),
           ),

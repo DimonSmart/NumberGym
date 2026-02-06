@@ -16,7 +16,8 @@ import '../../domain/task_availability.dart';
 import '../../domain/training_item.dart';
 import '../../domain/training_task.dart';
 import '../../languages/registry.dart';
-import 'package:number_gym/core/logging/app_log_buffer.dart';
+import '../../../../core/logging/app_log_buffer.dart';
+import '../../../../core/theme/app_palette.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Box<String> settingsBox;
@@ -362,7 +363,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Icons.record_voice_over,
                   size: 18,
                   color: _ttsAvailable
-                      ? Colors.green.shade600
+                      ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                 ),
               const SizedBox(width: 8),
@@ -372,7 +373,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     : 'TTS: ${_ttsAvailable ? 'Available' : 'Unavailable'}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: _ttsAvailable
-                      ? Colors.green.shade700
+                      ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                   fontWeight: FontWeight.w600,
                 ),
@@ -472,7 +473,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _speechAvailable ? Icons.mic : Icons.mic_off,
                   size: 18,
                   color: _speechAvailable
-                      ? Colors.green.shade600
+                      ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                 ),
               const SizedBox(width: 8),
@@ -482,7 +483,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     : 'Speech recognition: ${_speechAvailable ? 'Available' : 'Unavailable'}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: _speechAvailable
-                      ? Colors.green.shade700
+                      ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                   fontWeight: FontWeight.w600,
                 ),
@@ -522,15 +523,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _hasInternet ? Icons.wifi : Icons.wifi_off,
                   size: 18,
                   color: _hasInternet
-                      ? Colors.green.shade600
+                      ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: _hasInternet
-                        ? Colors.green.shade700
+              const SizedBox(width: 8),
+              Text(
+                'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: _hasInternet
+                      ? AppPalette.deepBlue
                         : theme.colorScheme.error,
                     fontWeight: FontWeight.w600,
                   ),

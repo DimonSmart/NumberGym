@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_palette.dart';
 import '../../domain/training_outcome.dart';
 import '../../domain/training_state.dart';
 
@@ -47,7 +48,7 @@ class TrainingFeedbackViewModel {
   ) {
     switch (outcome) {
       case TrainingOutcome.correct:
-        return Colors.green.shade700;
+        return AppPalette.deepBlue;
       case TrainingOutcome.wrong:
       case TrainingOutcome.timeout:
         return Colors.red.shade700;

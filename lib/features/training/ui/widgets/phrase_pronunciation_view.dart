@@ -251,7 +251,7 @@ class PhrasePronunciationView extends StatelessWidget {
       spacing: 12,
       runSpacing: 8,
       children: [
-        _LegendItem(color: Colors.green.shade600, label: 'Correct'),
+        const _LegendItem(color: AppPalette.primaryBlue, label: 'Correct'),
         const _LegendItem(color: AppPalette.warmOrange, label: 'Almost'),
         _LegendItem(color: theme.colorScheme.error, label: 'Wrong'),
       ],
@@ -299,7 +299,7 @@ class PhrasePronunciationView extends StatelessWidget {
 
   Color _wordScoreColor(ThemeData theme, double score) {
     if (score >= 80) {
-      return Colors.green.shade600;
+      return AppPalette.primaryBlue;
     }
     if (score >= 60) {
       return AppPalette.warmOrange;
