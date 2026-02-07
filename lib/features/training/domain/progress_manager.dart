@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../data/card_progress.dart';
+import 'daily_study_summary.dart';
 import 'learning_language.dart';
 import 'learning_strategy/learning_params.dart';
 import 'learning_strategy/learning_queue.dart';
@@ -94,6 +95,12 @@ class ProgressManager {
       _progressById.values.where((progress) => progress.learned).length;
   int get remainingCount => totalCards - learnedCount;
   bool get hasRemainingCards => _queue.hasRemaining;
+  DailyStudySummary dailySummary({DateTime? now}) {
+    return DailyStudySummary.fromProgress(
+      _progressById.values,
+      now: now,
+    );
+  }
 
   PronunciationTaskData? cardById(TrainingItemId id) => _cardsById[id];
 

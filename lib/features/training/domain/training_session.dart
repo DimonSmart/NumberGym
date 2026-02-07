@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -10,6 +10,7 @@ import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
 import 'progress_manager.dart';
+import 'daily_study_summary.dart';
 import 'repositories.dart';
 import 'runtimes/listening_runtime.dart';
 import 'runtimes/multiple_choice_runtime.dart';
@@ -80,7 +81,7 @@ class TrainingSession {
 
   static void _noop() {}
 
-  final Random _random = Random();
+  final math.Random _random = math.Random();
   final TrainingServices _services;
   final SettingsRepositoryBase _settingsRepository;
   final ProgressRepositoryBase _progressRepository;
@@ -106,8 +107,6 @@ class TrainingSession {
   bool _trainingActive = false;
   
   // Session limits
-  static const int _sessionCardLimit = 50;
-  static const Duration _sessionTimeLimit = Duration(minutes: 10);
   DateTime? _sessionStartTime;
   int _sessionCardsCompleted = 0;
 
@@ -120,6 +119,11 @@ class TrainingSession {
   int get learnedCount => _progressManager.learnedCount;
   int get remainingCount => _progressManager.remainingCount;
   bool get hasRemainingCards => _progressManager.hasRemainingCards;
+  int get dailyGoalCards => _progressManager.dailySummary().targetToday;
+  int get dailyRemainingCards =>
+      _progressManager.dailySummary().remainingToday;
+  DateTime? get dailyRecommendedReturn =>
+      _progressManager.dailySummary().nextDue;
 
   bool get premiumPronunciationEnabled => _premiumPronunciationEnabled;
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
@@ -246,10 +250,10 @@ class TrainingSession {
   }
 
   bool _checkSessionLimits() {
-    if (_sessionCardsCompleted >= _sessionCardLimit) return true;
+    if (_sessionCardsCompleted >= DailyStudyPlan.cardLimit) return true;
     if (_sessionStartTime != null) {
       final elapsed = DateTime.now().difference(_sessionStartTime!);
-      if (elapsed >= _sessionTimeLimit) return true;
+      if (elapsed >= DailyStudyPlan.sessionTimeLimit) return true;
     }
     return false;
   }
@@ -557,11 +561,11 @@ class TrainingSession {
     // 1. Calculate recommendation
     final now = DateTime.now();
     final earliestDue = _progressManager.getEarliestNextDue() ?? now;
-    
+
     // Constraints: Not sooner than 2 hours, not later than 1 day
     final minReturn = now.add(const Duration(hours: 2));
     final maxReturn = now.add(const Duration(days: 1));
-    
+
     DateTime recommendation = earliestDue;
     if (recommendation.isBefore(minReturn)) {
       recommendation = minReturn;
@@ -570,22 +574,23 @@ class TrainingSession {
     }
 
     // 2. Prepare stats
-    final elapsed = _sessionStartTime == null 
-        ? Duration.zero 
-        : now.difference(_sessionStartTime!);
-    
+    final elapsed =
+        _sessionStartTime == null
+            ? Duration.zero
+            : now.difference(_sessionStartTime!);
+
     final stats = SessionStats(
       cardsCompleted: _sessionCardsCompleted,
       duration: elapsed,
       recommendedReturn: recommendation,
     );
-    
+
     // 3. Update state
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     // Don't set _trainingActive = false yet, allow "continue"
     // But stop keep awake? Maybe.
     unawaited(_setKeepAwake(false));
-    
+
     _state = TrainingState(
       speechReady: _state.speechReady,
       errorMessage: null,
