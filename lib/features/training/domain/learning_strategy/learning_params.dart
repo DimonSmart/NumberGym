@@ -1,4 +1,7 @@
 class LearningParams {
+  static const double maxReviewIntervalDays = 7.0;
+  static const int minSpacedSuccessClustersToLearn = 3;
+
   final int activeLimit;
   final double clusterSuccessAccuracy;
   final int clusterMaxGapMinutes;
@@ -33,19 +36,19 @@ class LearningParams {
     required this.easeMax,
     required this.initialEase,
     required this.initialIntervalDays,
-  })  : assert(activeLimit > 0),
-        assert(clusterSuccessAccuracy >= 0 && clusterSuccessAccuracy <= 1),
-        assert(clusterMaxGapMinutes >= 0),
-        assert(maxStoredClusters > 0),
-        assert(minDaysBetweenCountedSuccesses >= 0),
-        assert(minSpacedSuccessClusters >= 0),
-        assert(learnedIntervalDays >= 0),
-        assert(minIntervalDays > 0),
-        assert(maxIntervalDays >= minIntervalDays),
-        assert(easeMin > 0),
-        assert(easeMax >= easeMin),
-        assert(initialEase > 0),
-        assert(initialIntervalDays > 0);
+  }) : assert(activeLimit > 0),
+       assert(clusterSuccessAccuracy >= 0 && clusterSuccessAccuracy <= 1),
+       assert(clusterMaxGapMinutes >= 0),
+       assert(maxStoredClusters > 0),
+       assert(minDaysBetweenCountedSuccesses >= 0),
+       assert(minSpacedSuccessClusters >= 0),
+       assert(learnedIntervalDays >= 0),
+       assert(minIntervalDays > 0),
+       assert(maxIntervalDays >= minIntervalDays),
+       assert(easeMin > 0),
+       assert(easeMax >= easeMin),
+       assert(initialEase > 0),
+       assert(initialIntervalDays > 0);
 
   factory LearningParams.defaults() {
     return const LearningParams(
@@ -54,16 +57,16 @@ class LearningParams {
       clusterMaxGapMinutes: 30,
       maxStoredClusters: 10,
       minDaysBetweenCountedSuccesses: 1,
-      minSpacedSuccessClusters: 3,
-      learnedIntervalDays: 14,
-      easeUpOnSuccess: 0.15,
-      easeDownOnFail: 0.2,
-      failIntervalFactor: 0.5,
+      minSpacedSuccessClusters: minSpacedSuccessClustersToLearn,
+      learnedIntervalDays: maxReviewIntervalDays,
+      easeUpOnSuccess: 0.04,
+      easeDownOnFail: 0.1,
+      failIntervalFactor: 0.6,
       minIntervalDays: 1,
-      maxIntervalDays: 365,
-      easeMin: 1.3,
-      easeMax: 2.6,
-      initialEase: 2.0,
+      maxIntervalDays: maxReviewIntervalDays,
+      easeMin: 1.2,
+      easeMax: 1.8,
+      initialEase: 1.3,
       initialIntervalDays: 1.0,
     );
   }

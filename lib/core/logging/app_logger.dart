@@ -92,28 +92,31 @@ class AppLogger {
     AppLogBuffer.instance.add(entry.toString());
 
     if (toConsole) {
-      // В режиме отладки выводим в консоль через print
+      // In debug mode also print to the console
       if (kDebugMode) {
         final levelLabel = level.name.toUpperCase();
+        final timestamp = entry.time.toIso8601String();
+        final prefix = '[$timestamp][$levelLabel][$category]';
         // ignore: avoid_print
-        print('[$levelLabel] [$category] $message');
+        print('$prefix $message');
         if (error != null) {
           // ignore: avoid_print
-          print('  error: $error');
+          print('$prefix error: $error');
         }
         if (stackTrace != null) {
           // ignore: avoid_print
-          print('  stack: $stackTrace');
+          print('$prefix stack: $stackTrace');
         }
       }
       
-      // Также используем dev.log для интеграции с DevTools
+      // Also pipe to dev.log for DevTools integration
       dev.log(
-        entry.message,
+        '[${entry.time.toIso8601String()}] ${entry.message}',
         name: 'app.$category',
         level: _toDevLevel(level),
         error: error,
         stackTrace: stackTrace,
+        time: entry.time,
       );
     }
   }

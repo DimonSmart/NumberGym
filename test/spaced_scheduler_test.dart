@@ -96,4 +96,38 @@ void main() {
     expect(result.progress.intervalDays >= 5, isTrue);
     expect(result.progress.learned, isTrue);
   });
+
+  test(
+    'defaults cap interval to one week and require about six daily wins',
+    () {
+      final scheduler = SpacedScheduler(LearningParams.defaults());
+      var progress = CardProgress.empty;
+      final start = DateTime(2026, 1, 1, 9, 0);
+
+      for (var day = 0; day < 5; day += 1) {
+        final now = start.add(Duration(days: day));
+        final result = scheduler.applyClusterResult(
+          progress: progress,
+          accuracy: 1.0,
+          now: now,
+        );
+        progress = result.progress;
+        expect(progress.intervalDays, lessThanOrEqualTo(7.0));
+        expect(progress.learned, isFalse);
+      }
+
+      final daySixResult = scheduler.applyClusterResult(
+        progress: progress,
+        accuracy: 1.0,
+        now: start.add(const Duration(days: 5)),
+      );
+
+      expect(daySixResult.progress.intervalDays, closeTo(7.0, 0.0001));
+      expect(daySixResult.progress.learned, isTrue);
+      expect(
+        daySixResult.progress.spacedSuccessCount,
+        greaterThanOrEqualTo(LearningParams.minSpacedSuccessClustersToLearn),
+      );
+    },
+  );
 }

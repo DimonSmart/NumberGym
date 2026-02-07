@@ -42,11 +42,11 @@ class DailyStudySummary {
     int? earliestFutureDue;
 
     for (final progress in progressItems) {
-      final lastAnswerAt = progress.lastCluster?.lastAnswerAt ?? 0;
-      if (lastAnswerAt >= startOfDayMillis &&
-          lastAnswerAt <= endOfDayMillis) {
-        completedToday += 1;
-      }
+      completedToday += _attemptsInDayWindow(
+        progress,
+        startOfDayMillis: startOfDayMillis,
+        endOfDayMillis: endOfDayMillis,
+      );
 
       if (progress.learned) {
         continue;
@@ -65,10 +65,9 @@ class DailyStudySummary {
 
     final targetToday = math.min(dueToday, dailyLimit);
     final remainingToday = math.max(0, targetToday - completedToday);
-    final nextDue =
-        remainingToday == 0 && earliestFutureDue != null
-            ? DateTime.fromMillisecondsSinceEpoch(earliestFutureDue)
-            : null;
+    final nextDue = remainingToday == 0 && earliestFutureDue != null
+        ? DateTime.fromMillisecondsSinceEpoch(earliestFutureDue)
+        : null;
 
     return DailyStudySummary(
       dueToday: dueToday,
@@ -77,5 +76,21 @@ class DailyStudySummary {
       remainingToday: remainingToday,
       nextDue: nextDue,
     );
+  }
+
+  static int _attemptsInDayWindow(
+    CardProgress progress, {
+    required int startOfDayMillis,
+    required int endOfDayMillis,
+  }) {
+    var attempts = 0;
+    for (final cluster in progress.clusters) {
+      final lastAnswerAt = cluster.lastAnswerAt;
+      if (lastAnswerAt < startOfDayMillis || lastAnswerAt > endOfDayMillis) {
+        continue;
+      }
+      attempts += cluster.totalAttempts;
+    }
+    return attempts;
   }
 }

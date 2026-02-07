@@ -14,9 +14,7 @@ import 'training_item.dart';
 import 'training_task.dart';
 
 class PickedCard {
-  const PickedCard({
-    required this.card,
-  });
+  const PickedCard({required this.card});
 
   final PronunciationTaskData card;
 }
@@ -55,11 +53,11 @@ class ProgressManager {
     TrainingCatalog? catalog,
     LearningParams? learningParams,
     Random? random,
-  })  : _progressRepository = progressRepository,
-        _languageRouter = languageRouter,
-        _catalog = catalog ?? TrainingCatalog.defaults(),
-        _random = random ?? Random(),
-        _learningParams = learningParams ?? LearningParams.defaults() {
+  }) : _progressRepository = progressRepository,
+       _languageRouter = languageRouter,
+       _catalog = catalog ?? TrainingCatalog.defaults(),
+       _random = random ?? Random(),
+       _learningParams = learningParams ?? LearningParams.defaults() {
     _queue = LearningQueue(
       allCards: const <TrainingItemId>[],
       activeLimit: _learningParams.activeLimit,
@@ -95,11 +93,22 @@ class ProgressManager {
       _progressById.values.where((progress) => progress.learned).length;
   int get remainingCount => totalCards - learnedCount;
   bool get hasRemainingCards => _queue.hasRemaining;
-  DailyStudySummary dailySummary({DateTime? now}) {
-    return DailyStudySummary.fromProgress(
-      _progressById.values,
-      now: now,
+
+  LearningQueueDebugSnapshot debugQueueSnapshot() {
+    return LearningQueueDebugSnapshot(
+      language: _cardsLanguage,
+      activeLimit: _learningParams.activeLimit,
+      active: _queue.active,
+      backlog: _queue.backlog,
+      all: _queue.allCards,
+      progressById: Map<TrainingItemId, CardProgress>.unmodifiable(
+        _progressById,
+      ),
     );
+  }
+
+  DailyStudySummary dailySummary({DateTime? now}) {
+    return DailyStudySummary.fromProgress(_progressById.values, now: now);
   }
 
   PronunciationTaskData? cardById(TrainingItemId id) => _cardsById[id];
@@ -207,10 +216,9 @@ class ProgressManager {
     final updatedLastAnswerAt = timestamp.millisecondsSinceEpoch;
     var createdNewCluster = true;
     if (lastCluster != null && lastCluster.lastAnswerAt > 0) {
-      final withinGap = timestamp.difference(
-            DateTime.fromMillisecondsSinceEpoch(
-              lastCluster.lastAnswerAt,
-            ),
+      final withinGap =
+          timestamp.difference(
+            DateTime.fromMillisecondsSinceEpoch(lastCluster.lastAnswerAt),
           ) <=
           Duration(minutes: gapMinutes);
       if (withinGap) {
@@ -250,35 +258,51 @@ class ProgressManager {
       updatedClusters.removeRange(0, overflow);
     }
 
-    final attemptAccuracy = isCorrect ? 1.0 : 0.0;
-    final result = _learningStrategy.applyClusterResult(
-      itemId: progressKey,
-      progress: progress,
-      accuracy: attemptAccuracy,
-      now: timestamp,
-    );
-    progress = result.progress;
-    if (result.learnedNow && progress.learnedAt == 0) {
-      progress = progress.copyWith(
-        learnedAt: timestamp.millisecondsSinceEpoch,
+    var learnedNow = false;
+    var clusterApplied = false;
+    var clusterSuccess = false;
+    var countedSuccess = false;
+    if (createdNewCluster) {
+      final attemptAccuracy = isCorrect ? 1.0 : 0.0;
+      final result = _learningStrategy.applyClusterResult(
+        itemId: progressKey,
+        progress: progress,
+        accuracy: attemptAccuracy,
+        now: timestamp,
       );
+      progress = result.progress;
+      learnedNow = result.learnedNow;
+      clusterApplied = true;
+      clusterSuccess = result.clusterSuccess;
+      countedSuccess = result.countedSuccess;
+      if (learnedNow && progress.learnedAt == 0) {
+        progress = progress.copyWith(
+          learnedAt: timestamp.millisecondsSinceEpoch,
+        );
+      }
+    } else {
+      // Keep spacing parameters unchanged inside the cluster window,
+      // but move due time relative to the latest attempt timestamp.
+      final intervalDays = progress.intervalDays > 0
+          ? progress.intervalDays
+          : _learningParams.initialIntervalDays;
+      final shiftedNextDue =
+          timestamp.millisecondsSinceEpoch +
+          (intervalDays * Duration.millisecondsPerDay).round();
+      progress = progress.copyWith(nextDue: shiftedNextDue);
     }
     final attemptResult = ProgressAttemptResult(
-      learned: result.learnedNow,
+      learned: learnedNow,
       poolEmpty: !_queue.hasRemaining,
-      clusterApplied: true,
-      clusterSuccess: result.clusterSuccess,
-      countedSuccess: result.countedSuccess,
+      clusterApplied: clusterApplied,
+      clusterSuccess: clusterSuccess,
+      countedSuccess: countedSuccess,
       newCluster: createdNewCluster,
     );
 
     final updated = progress.copyWith(clusters: updatedClusters);
     _progressById[progressKey] = updated;
-    await _progressRepository.save(
-      progressKey,
-      updated,
-      language: language,
-    );
+    await _progressRepository.save(progressKey, updated, language: language);
     return attemptResult;
   }
 
@@ -302,7 +326,7 @@ class ProgressManager {
 
   DateTime? getEarliestNextDue() {
     if (_queue.active.isEmpty && _queue.backlog.isEmpty) return null;
-    
+
     // If we have items in active queue, check their due time
     // If we have backlog, it technically means "due now" (or never practiced)
     if (_queue.backlog.isNotEmpty) {
@@ -324,4 +348,22 @@ class ProgressManager {
     if (minDue == null) return null;
     return DateTime.fromMillisecondsSinceEpoch(minDue);
   }
+}
+
+class LearningQueueDebugSnapshot {
+  const LearningQueueDebugSnapshot({
+    required this.language,
+    required this.activeLimit,
+    required this.active,
+    required this.backlog,
+    required this.all,
+    required this.progressById,
+  });
+
+  final LearningLanguage? language;
+  final int activeLimit;
+  final List<TrainingItemId> active;
+  final List<TrainingItemId> backlog;
+  final List<TrainingItemId> all;
+  final Map<TrainingItemId, CardProgress> progressById;
 }

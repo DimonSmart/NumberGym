@@ -9,6 +9,9 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
+import '../../domain/learning_strategy/learning_params.dart';
+import '../../domain/language_router.dart';
+import '../../domain/progress_manager.dart';
 import '../../domain/services/internet_checker.dart';
 import '../../domain/services/speech_service.dart';
 import '../../domain/services/tts_service.dart';
@@ -36,6 +39,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
+  late final LearningParams _learningParams;
   late final TtsServiceBase _ttsService;
   late final SpeechServiceBase _speechService;
   late final TaskAvailabilityRegistry _availabilityRegistry;
@@ -53,6 +57,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _speechStatusMessage;
   LearningMethod? _debugForcedLearningMethod;
   TrainingItemType? _debugForcedItemType;
+  List<TrainingItemId> _debugCardIds = const [];
+  TrainingItemId? _debugSelectedCardId;
+  bool _debugCardsLoading = false;
+  bool _debugMarkingAlmostLearned = false;
+  bool _queueLoading = false;
+  String? _queuePreview;
   Timer? _internetTimer;
   bool _hasInternet = true;
 
@@ -61,6 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
+    _learningParams = LearningParams.defaults();
     _ttsService = TtsService();
     _speechService = SpeechService();
     _availabilityRegistry = TaskAvailabilityRegistry(
@@ -72,8 +83,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _language = _settingsRepository.readLearningLanguage();
     _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
     _hintStreakCount = _settingsRepository.readHintStreakCount();
-    _premiumPronunciation =
-      _settingsRepository.readPremiumPronunciationEnabled();
+    _premiumPronunciation = _settingsRepository
+        .readPremiumPronunciationEnabled();
     _loadTtsData();
     _loadSpeechAvailability();
     _refreshInternetStatus();
@@ -82,8 +93,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       (_) => _refreshInternetStatus(),
     );
     if (kDebugMode) {
-      _debugForcedLearningMethod = _settingsRepository.readDebugForcedLearningMethod();
+      _debugForcedLearningMethod = _settingsRepository
+          .readDebugForcedLearningMethod();
       _debugForcedItemType = _settingsRepository.readDebugForcedItemType();
+      _loadDebugCardIds();
     }
   }
 
@@ -135,6 +148,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setLearningLanguage(value);
     await _loadTtsData();
     await _loadSpeechAvailability();
+    if (kDebugMode) {
+      await _loadDebugCardIds();
+    }
   }
 
   Future<void> _updateAnswerSeconds(int seconds) async {
@@ -175,8 +191,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final voices = await _ttsService.listVoices();
     final filtered = filterVoicesByLocale(voices, locale);
     String? selected = _settingsRepository.readTtsVoiceId(_language);
-    if (selected != null &&
-        filtered.every((voice) => voice.id != selected)) {
+    if (selected != null && filtered.every((voice) => voice.id != selected)) {
       selected = null;
     }
     if (selected == null && filtered.isNotEmpty) {
@@ -260,9 +275,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showSnack(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _refreshInternetStatus() async {
@@ -287,6 +302,103 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setDebugForcedItemType(type);
   }
 
+  Future<void> _loadDebugCardIds() async {
+    if (!mounted) return;
+    setState(() {
+      _debugCardsLoading = true;
+    });
+    try {
+      final snapshot = await _loadQueueSnapshot();
+      if (!mounted) return;
+      final ids = List<TrainingItemId>.from(snapshot.all);
+      final selected = ids.contains(_debugSelectedCardId)
+          ? _debugSelectedCardId
+          : (ids.isEmpty ? null : ids.first);
+      setState(() {
+        _debugCardIds = ids;
+        _debugSelectedCardId = selected;
+      });
+    } catch (error) {
+      _showSnack('Failed to load cards for debug: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _debugCardsLoading = false;
+        });
+      }
+    }
+  }
+
+  void _selectDebugCard(TrainingItemId? id) {
+    if (id == null) return;
+    setState(() {
+      _debugSelectedCardId = id;
+    });
+  }
+
+  String _debugCardLabel(TrainingItemId id) {
+    if (id.time != null) {
+      return '${_itemTypeLabel(id.type)} | ${id.time!.displayText}';
+    }
+    if (id.number != null) {
+      return '${_itemTypeLabel(id.type)} | ${id.number}';
+    }
+    return _itemTypeLabel(id.type);
+  }
+
+  CardProgress _almostLearnedProgress(CardProgress source) {
+    final requiredSuccesses = _learningParams.minSpacedSuccessClusters;
+    final almostLearnedSuccesses = requiredSuccesses > 0
+        ? requiredSuccesses - 1
+        : 0;
+    final updatedClusters = List<CardCluster>.from(source.clusters);
+    if (updatedClusters.isNotEmpty) {
+      final lastIndex = updatedClusters.length - 1;
+      updatedClusters[lastIndex] = updatedClusters[lastIndex].copyWith(
+        // Force the next answer into a new cluster so scheduler runs.
+        lastAnswerAt: 0,
+      );
+    }
+    return source.copyWith(
+      learned: false,
+      learnedAt: 0,
+      clusters: updatedClusters,
+      intervalDays: _learningParams.learnedIntervalDays,
+      nextDue: 0,
+      ease: _learningParams.easeMax,
+      spacedSuccessCount: almostLearnedSuccesses,
+      lastCountedSuccessDay: -1,
+    );
+  }
+
+  Future<void> _markSelectedCardAlmostLearned() async {
+    final selected = _debugSelectedCardId;
+    if (selected == null || _debugMarkingAlmostLearned) return;
+    setState(() {
+      _debugMarkingAlmostLearned = true;
+    });
+    try {
+      final progressById = await _progressRepository.loadAll(<TrainingItemId>[
+        selected,
+      ], language: _language);
+      final current = progressById[selected] ?? CardProgress.empty;
+      final updated = _almostLearnedProgress(current);
+      await _progressRepository.save(selected, updated, language: _language);
+      _showSnack(
+        'Card ${_formatQueueId(selected)} is almost learned. '
+        'One new correct answer should move it to learned.',
+      );
+    } catch (error) {
+      _showSnack('Failed to mark card almost learned: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _debugMarkingAlmostLearned = false;
+        });
+      }
+    }
+  }
+
   String _itemTypeLabel(TrainingItemType type) {
     switch (type) {
       case TrainingItemType.digits:
@@ -305,6 +417,258 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return 'Time (half)';
       case TrainingItemType.timeRandom:
         return 'Time (random)';
+    }
+  }
+
+  String _formatQueueId(TrainingItemId id) {
+    if (id.time != null) {
+      return '${id.type.name}:${id.time!.displayText}';
+    }
+    final number = id.number;
+    final suffix = number != null ? number.toString() : '*';
+    return '${id.type.name}:$suffix';
+  }
+
+  CardProgress _progressFor(
+    LearningQueueDebugSnapshot snapshot,
+    TrainingItemId id,
+  ) {
+    return snapshot.progressById[id] ?? CardProgress.empty;
+  }
+
+  int _totalWrong(CardProgress progress) {
+    var total = 0;
+    for (final cluster in progress.clusters) {
+      total += cluster.wrongCount;
+    }
+    return total;
+  }
+
+  int _countDueNow(
+    Iterable<TrainingItemId> ids,
+    LearningQueueDebugSnapshot snapshot,
+    int nowMillis,
+  ) {
+    var count = 0;
+    for (final id in ids) {
+      final due = _progressFor(snapshot, id).nextDue;
+      if (due <= 0 || due <= nowMillis) {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  int _sumAttempts(
+    Iterable<TrainingItemId> ids,
+    LearningQueueDebugSnapshot snapshot,
+  ) {
+    var total = 0;
+    for (final id in ids) {
+      total += _progressFor(snapshot, id).totalAttempts;
+    }
+    return total;
+  }
+
+  int _sumCorrect(
+    Iterable<TrainingItemId> ids,
+    LearningQueueDebugSnapshot snapshot,
+  ) {
+    var total = 0;
+    for (final id in ids) {
+      total += _progressFor(snapshot, id).totalCorrect;
+    }
+    return total;
+  }
+
+  int _sumWrong(
+    Iterable<TrainingItemId> ids,
+    LearningQueueDebugSnapshot snapshot,
+  ) {
+    var total = 0;
+    for (final id in ids) {
+      total += _totalWrong(_progressFor(snapshot, id));
+    }
+    return total;
+  }
+
+  int _sumSkipped(
+    Iterable<TrainingItemId> ids,
+    LearningQueueDebugSnapshot snapshot,
+  ) {
+    var total = 0;
+    for (final id in ids) {
+      total += _progressFor(snapshot, id).totalSkipped;
+    }
+    return total;
+  }
+
+  String _formatDurationShort(Duration duration) {
+    final totalMinutes = duration.inMinutes;
+    if (totalMinutes < 60) {
+      return '${totalMinutes}m';
+    }
+    final totalHours = duration.inHours;
+    if (totalHours < 24) {
+      final minutes = totalMinutes % 60;
+      return minutes == 0 ? '${totalHours}h' : '${totalHours}h ${minutes}m';
+    }
+    final days = duration.inDays;
+    final hours = totalHours % 24;
+    return hours == 0 ? '${days}d' : '${days}d ${hours}h';
+  }
+
+  String _formatDateTime(DateTime value) {
+    final local = value.toLocal();
+    final y = local.year.toString().padLeft(4, '0');
+    final m = local.month.toString().padLeft(2, '0');
+    final d = local.day.toString().padLeft(2, '0');
+    final hh = local.hour.toString().padLeft(2, '0');
+    final mm = local.minute.toString().padLeft(2, '0');
+    return '$y-$m-$d $hh:$mm';
+  }
+
+  String _formatDueLabel(int dueMillis, int nowMillis) {
+    if (dueMillis <= 0 || dueMillis <= nowMillis) {
+      return 'ready now';
+    }
+    final due = DateTime.fromMillisecondsSinceEpoch(dueMillis);
+    final diff = Duration(milliseconds: dueMillis - nowMillis);
+    return '${_formatDateTime(due)} (in ${_formatDurationShort(diff)})';
+  }
+
+  String _formatQueueCardLine(
+    TrainingItemId id,
+    LearningQueueDebugSnapshot snapshot,
+    int nowMillis,
+  ) {
+    final progress = _progressFor(snapshot, id);
+    final lastAnswerAt = progress.lastCluster?.lastAnswerAt ?? 0;
+    final lastAnswerText = lastAnswerAt <= 0
+        ? '-'
+        : _formatDateTime(DateTime.fromMillisecondsSinceEpoch(lastAnswerAt));
+    final dueText = _formatDueLabel(progress.nextDue, nowMillis);
+    final correct = progress.totalCorrect;
+    final wrong = _totalWrong(progress);
+    final skipped = progress.totalSkipped;
+    return '${_formatQueueId(id)} | due: $dueText | c/w/s: '
+        '$correct/$wrong/$skipped | attempts: ${progress.totalAttempts} '
+        '| last: $lastAnswerText';
+  }
+
+  String _formatQueuePreview(LearningQueueDebugSnapshot snapshot) {
+    final language = snapshot.language ?? _language;
+    final languageLabel = LanguageRegistry.of(language).label;
+    final nowMillis = DateTime.now().millisecondsSinceEpoch;
+    final activeHead = snapshot.active.take(5).map(_formatQueueId).join(', ');
+    final backlogHead = snapshot.backlog.take(5).map(_formatQueueId).join(', ');
+    final activeSuffix = snapshot.active.length > 5 ? ', ...' : '';
+    final backlogSuffix = snapshot.backlog.length > 5 ? ', ...' : '';
+    final dueNowActive = _countDueNow(snapshot.active, snapshot, nowMillis);
+    final dueNowBacklog = _countDueNow(snapshot.backlog, snapshot, nowMillis);
+    final totalAttempts = _sumAttempts(snapshot.all, snapshot);
+    final totalCorrect = _sumCorrect(snapshot.all, snapshot);
+    final totalWrong = _sumWrong(snapshot.all, snapshot);
+    final totalSkipped = _sumSkipped(snapshot.all, snapshot);
+    return [
+      'Language: $languageLabel',
+      'Active ${snapshot.active.length}/${snapshot.activeLimit}: '
+          '${activeHead.isEmpty ? 'empty' : '$activeHead$activeSuffix'}',
+      'Backlog ${snapshot.backlog.length}: '
+          '${backlogHead.isEmpty ? 'empty' : '$backlogHead$backlogSuffix'}',
+      'Due now: active $dueNowActive, backlog $dueNowBacklog',
+      'Answers: $totalAttempts (correct $totalCorrect, '
+          'wrong $totalWrong, skipped $totalSkipped)',
+    ].join('\n');
+  }
+
+  String _formatQueueClipboard(LearningQueueDebugSnapshot snapshot) {
+    final language = snapshot.language ?? _language;
+    final languageLabel = LanguageRegistry.of(language).label;
+    final now = DateTime.now();
+    final nowMillis = now.millisecondsSinceEpoch;
+    final dueNowActive = _countDueNow(snapshot.active, snapshot, nowMillis);
+    final dueNowBacklog = _countDueNow(snapshot.backlog, snapshot, nowMillis);
+    final totalAttempts = _sumAttempts(snapshot.all, snapshot);
+    final totalCorrect = _sumCorrect(snapshot.all, snapshot);
+    final totalWrong = _sumWrong(snapshot.all, snapshot);
+    final totalSkipped = _sumSkipped(snapshot.all, snapshot);
+    const backlogCopyLimit = 500;
+    final buffer = StringBuffer()
+      ..writeln('Generated at: ${_formatDateTime(now)}')
+      ..writeln('Language: $languageLabel')
+      ..writeln('Active limit: ${snapshot.activeLimit}')
+      ..writeln('Total cards: ${snapshot.all.length}')
+      ..writeln('Due now: active $dueNowActive, backlog $dueNowBacklog')
+      ..writeln(
+        'Answers total: $totalAttempts '
+        '(correct: $totalCorrect, wrong: $totalWrong, skipped: $totalSkipped)',
+      )
+      ..writeln('Active (${snapshot.active.length}):');
+    for (var i = 0; i < snapshot.active.length; i++) {
+      buffer.writeln(
+        '  ${i + 1}. '
+        '${_formatQueueCardLine(snapshot.active[i], snapshot, nowMillis)}',
+      );
+    }
+    buffer.writeln('Backlog (${snapshot.backlog.length}):');
+    final backlogItems = snapshot.backlog.take(backlogCopyLimit).toList();
+    for (var i = 0; i < backlogItems.length; i++) {
+      buffer.writeln(
+        '  ${i + 1}. '
+        '${_formatQueueCardLine(backlogItems[i], snapshot, nowMillis)}',
+      );
+    }
+    final remaining = snapshot.backlog.length - backlogItems.length;
+    if (remaining > 0) {
+      buffer.writeln('  ... +$remaining more');
+    }
+    return buffer.toString();
+  }
+
+  Future<LearningQueueDebugSnapshot> _loadQueueSnapshot() async {
+    final languageRouter = LanguageRouter(
+      settingsRepository: _settingsRepository,
+    );
+    final language = languageRouter.currentLanguage;
+    final manager = ProgressManager(
+      progressRepository: _progressRepository,
+      languageRouter: languageRouter,
+    );
+    await manager.loadProgress(language);
+    return manager.debugQueueSnapshot();
+  }
+
+  Future<void> _copyQueueToClipboard() async {
+    if (_queueLoading) return;
+    setState(() {
+      _queueLoading = true;
+    });
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final snapshot = await _loadQueueSnapshot();
+      final preview = _formatQueuePreview(snapshot);
+      final clipboardText = _formatQueueClipboard(snapshot);
+      await Clipboard.setData(ClipboardData(text: clipboardText));
+      if (!mounted) return;
+      setState(() {
+        _queuePreview = preview;
+      });
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Card queue copied to clipboard.')),
+      );
+    } catch (error) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Failed to copy queue: $error')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _queueLoading = false;
+        });
+      }
     }
   }
 
@@ -337,9 +701,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 )
                 .toList(),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-            ),
+            decoration: const InputDecoration(border: OutlineInputBorder()),
           ),
           const SizedBox(height: 24),
           const Text(
@@ -435,8 +797,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(width: 12),
                 FilledButton.tonalIcon(
-                  onPressed:
-                      _ttsAvailable && !_ttsPreviewing ? _previewTtsVoice : null,
+                  onPressed: _ttsAvailable && !_ttsPreviewing
+                      ? _previewTtsVoice
+                      : null,
                   icon: _ttsPreviewing
                       ? SizedBox(
                           width: 16,
@@ -526,12 +889,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ? AppPalette.deepBlue
                       : theme.colorScheme.error,
                 ),
-              const SizedBox(width: 8),
-              Text(
-                'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: _hasInternet
-                      ? AppPalette.deepBlue
+                const SizedBox(width: 8),
+                Text(
+                  'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: _hasInternet
+                        ? AppPalette.deepBlue
                         : theme.colorScheme.error,
                     fontWeight: FontWeight.w600,
                   ),
@@ -541,10 +904,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           if (kDebugMode) ...[
             const SizedBox(height: 16),
-            const Text(
-              'Debug',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            const Text('Debug', style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             DropdownButtonFormField<TrainingItemType?>(
               initialValue: _debugForcedItemType,
@@ -601,6 +961,109 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
+            const SizedBox(height: 12),
+            if (_debugCardsLoading)
+              const LinearProgressIndicator()
+            else if (_debugCardIds.isEmpty)
+              Text(
+                'No cards found for debug actions.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              )
+            else ...[
+              DropdownButtonFormField<TrainingItemId>(
+                initialValue: _debugSelectedCardId,
+                onChanged: _selectDebugCard,
+                isExpanded: true,
+                items: _debugCardIds
+                    .map(
+                      (id) => DropdownMenuItem<TrainingItemId>(
+                        value: id,
+                        child: Text(
+                          _debugCardLabel(id),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                    .toList(),
+                selectedItemBuilder: (context) => _debugCardIds
+                    .map(
+                      (id) => Text(
+                        _debugCardLabel(id),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )
+                    .toList(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Select card',
+                ),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.tonalIcon(
+                onPressed: _debugMarkingAlmostLearned
+                    ? null
+                    : _markSelectedCardAlmostLearned,
+                icon: _debugMarkingAlmostLearned
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: theme.colorScheme.onSecondaryContainer,
+                        ),
+                      )
+                    : const Icon(Icons.school),
+                label: Text(
+                  _debugMarkingAlmostLearned
+                      ? 'Updating...'
+                      : 'Set selected card almost learned',
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Bypasses normal domain flow. The next correct answer '
+                'for this card should move it to learned.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              onPressed: _queueLoading ? null : _copyQueueToClipboard,
+              icon: _queueLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: theme.colorScheme.onSecondaryContainer,
+                      ),
+                    )
+                  : const Icon(Icons.copy_all),
+              label: Text(_queueLoading ? 'Copying...' : 'Copy card queue'),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Copies current training queue (active + backlog) to clipboard.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            if (_queuePreview != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                _queuePreview!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontFamily: 'monospace',
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
           ],
           const SizedBox(height: 12),
           Row(
@@ -618,7 +1081,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: _answerSeconds.toDouble(),
             min: answerDurationMinSeconds.toDouble(),
             max: answerDurationMaxSeconds.toDouble(),
-            divisions: (answerDurationMaxSeconds - answerDurationMinSeconds) ~/
+            divisions:
+                (answerDurationMaxSeconds - answerDurationMinSeconds) ~/
                 answerDurationStepSeconds,
             label: '${_answerSeconds}s',
             onChanged: (value) {
@@ -657,10 +1121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Logs',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
+          const Text('Logs', style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           Text(
             'In-memory buffer (last ${(logBuffer.byteLength / 1024).toStringAsFixed(1)} KB).',
@@ -679,7 +1140,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                     if (!mounted) return;
                     messenger.showSnackBar(
-                      const SnackBar(content: Text('Logs copied to clipboard.')),
+                      const SnackBar(
+                        content: Text('Logs copied to clipboard.'),
+                      ),
                     );
                   },
             icon: const Icon(Icons.copy),

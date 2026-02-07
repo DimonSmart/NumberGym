@@ -214,9 +214,13 @@ The system must include cards for:
 
   within a time gap threshold.
 
-- The scheduler is updated on every attempt; cluster gaps only split stored clusters.
+- A cluster aggregates attempts within the configured time gap (`clusterMaxGapMinutes`).
 
-- Each attempt updates interval, ease, and `nextDue` based on the current outcome.
+- The scheduler is updated once per cluster (on cluster start). Additional attempts inside the same cluster update only cluster counters, not interval growth.
+
+- Interval, ease, and `nextDue` are updated only when a new cluster is created.
+
+- Inside an active cluster window, `nextDue` is shifted from the current attempt time (`now + currentInterval`) without multiplying interval/ease again.
 
 - A cluster is successful if its accuracy is above the configured threshold.
 
@@ -227,6 +231,31 @@ The system must include cards for:
   - minimum spaced successes,
 
   - minimum interval length.
+
+- Default interval ceiling is one week: `LearningParams.maxReviewIntervalDays = 7`.
+
+
+#### 4.3.1. Default spaced parameters and daily learning estimate
+
+Default values:
+- `maxReviewIntervalDays = 7`
+- `minSpacedSuccessClustersToLearn = 3`
+- `minDaysBetweenCountedSuccesses = 1`
+- `initialIntervalDays = 1.0`
+- `initialEase = 1.3`
+- `easeUpOnSuccess = 0.04`
+
+If the learner studies one successful cluster per day, interval growth is:
+1. Day 1: `1.34` days
+2. Day 2: `1.85` days
+3. Day 3: `2.63` days
+4. Day 4: `3.83` days
+5. Day 5: `5.75` days
+6. Day 6: `7.00` days (clamped by max)
+
+With these defaults, a card becomes learned in about **6 days** of successful daily practice:
+- by Day 3 it reaches the required spaced-success count (`>= 3`),
+- by Day 6 it reaches the required interval (`>= 7` days).
 
 - Statistics must expose:
 
@@ -468,4 +497,3 @@ A standalone HTTP service accepts recorded audio and the expected text, then ret
 - Premium pronunciation works only online and shows pronunciation results correctly.
 
 - The backend contract is implemented and handles both success and failure cases.
-
