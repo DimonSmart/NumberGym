@@ -38,6 +38,7 @@ class _IntroScreenState extends State<IntroScreen> {
   late LearningLanguage _language;
   StreamSubscription? _progressSubscription;
   StreamSubscription? _settingsSubscription;
+  int _progressLoadRequestId = 0;
   bool _allLearned = false;
   bool _loadingProgress = true;
   int _dailyRemainingCards = 0;
@@ -66,6 +67,7 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> _loadProgress() async {
+    final requestId = ++_progressLoadRequestId;
     final settingsRepository = SettingsRepository(widget.settingsBox);
     final language = settingsRepository.readLearningLanguage();
     final ids = buildAllCardIds();
@@ -74,11 +76,9 @@ class _IntroScreenState extends State<IntroScreen> {
         .where((progress) => progress.learned)
         .length;
     final allLearned = ids.isNotEmpty && learnedCount == ids.length;
-    final dailySummary = DailyStudySummary.fromProgress(
-      progress.values,
-    );
+    final dailySummary = DailyStudySummary.fromProgress(progress.values);
 
-    if (!mounted) return;
+    if (!mounted || requestId != _progressLoadRequestId) return;
     setState(() {
       _language = language;
       _allLearned = allLearned;
@@ -111,7 +111,9 @@ class _IntroScreenState extends State<IntroScreen> {
               final contentWidth =
                   constraints.maxWidth - (horizontalPadding * 2);
               final contentHeight =
-                  constraints.maxHeight - verticalPaddingTop - verticalPaddingBottom;
+                  constraints.maxHeight -
+                  verticalPaddingTop -
+                  verticalPaddingBottom;
               final effectiveWidth = math.min(contentWidth, maxContentWidth);
               final availableImageHeight = math.max(
                 0.0,
@@ -124,8 +126,10 @@ class _IntroScreenState extends State<IntroScreen> {
               );
               final maxWidthByHeight =
                   availableImageHeight / (1 + logoAspectRatio);
-              final heroImageWidth =
-                  math.max(0.0, math.min(effectiveWidth * 0.9, maxWidthByHeight));
+              final heroImageWidth = math.max(
+                0.0,
+                math.min(effectiveWidth * 0.9, maxWidthByHeight),
+              );
 
               return Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -136,7 +140,9 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                    constraints: const BoxConstraints(
+                      maxWidth: maxContentWidth,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -266,14 +272,13 @@ class _IntroScreenState extends State<IntroScreen> {
       color: Colors.black87,
       fontWeight: FontWeight.w600,
     );
-    final subStyle = theme.textTheme.bodySmall?.copyWith(
-      color: Colors.black54,
-    );
+    final subStyle = theme.textTheme.bodySmall?.copyWith(color: Colors.black54);
     final remaining = _dailyRemainingCards;
     final goal = _dailyGoalCards;
     final recommendation = _dailyRecommendedReturn;
-    final recommendationText =
-        recommendation == null ? null : _formatTime(recommendation);
+    final recommendationText = recommendation == null
+        ? null
+        : _formatTime(recommendation);
 
     return Container(
       width: double.infinity,
@@ -282,11 +287,7 @@ class _IntroScreenState extends State<IntroScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Column(
@@ -384,6 +385,7 @@ class _IntroScreenState extends State<IntroScreen> {
             builder: (context) => SettingsScreen(
               settingsBox: widget.settingsBox,
               progressBox: widget.progressBox,
+              onProgressChanged: _loadProgress,
             ),
           ),
         )

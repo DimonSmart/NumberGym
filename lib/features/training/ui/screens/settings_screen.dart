@@ -25,11 +25,13 @@ import '../../../../core/theme/app_palette.dart';
 class SettingsScreen extends StatefulWidget {
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+  final VoidCallback? onProgressChanged;
 
   const SettingsScreen({
     super.key,
     required this.settingsBox,
     required this.progressBox,
+    this.onProgressChanged,
   });
 
   @override
@@ -131,6 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (confirmed != true) return;
     await _progressRepository.reset(language: _language);
+    widget.onProgressChanged?.call();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -384,6 +387,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final current = progressById[selected] ?? CardProgress.empty;
       final updated = _almostLearnedProgress(current);
       await _progressRepository.save(selected, updated, language: _language);
+      widget.onProgressChanged?.call();
       _showSnack(
         'Card ${_formatQueueId(selected)} is almost learned. '
         'One new correct answer should move it to learned.',
