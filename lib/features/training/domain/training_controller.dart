@@ -126,6 +126,9 @@ class TrainingController extends ChangeNotifier {
   int get learnedCount => _session.learnedCount;
   int get remainingCount => _session.remainingCount;
   bool get hasRemainingCards => _session.hasRemainingCards;
+  int get dailyGoalCards => _session.dailyGoalCards;
+  int get dailyRemainingCards => _session.dailyRemainingCards;
+  DateTime? get dailyRecommendedReturn => _session.dailyRecommendedReturn;
 
   Future<void> initialize() => _session.initialize();
   Future<void> retryInitSpeech() => _session.retryInitSpeech();

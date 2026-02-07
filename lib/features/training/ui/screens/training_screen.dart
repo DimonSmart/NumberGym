@@ -5,6 +5,7 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/training_controller.dart';
+import '../../domain/training_task.dart';
 import '../view_models/listening_view_model.dart';
 import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
@@ -83,8 +84,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
       animation: _controller,
       builder: (context, child) {
         final theme = Theme.of(context);
-        final learnedCount = _controller.learnedCount;
-        final remainingCount = _controller.remainingCount;
+        final dailyRemaining = _controller.dailyRemainingCards;
+        final dailyGoal = _controller.dailyGoalCards;
+        final methodLabel =
+            _controller.currentLearningMethod?.label ?? 'Training';
         final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
           theme: theme,
           feedback: _controller.feedback,
@@ -106,19 +109,14 @@ class _TrainingScreenState extends State<TrainingScreen> {
                         child: Row(
                           children: [
                             Text(
-                              'Numbers Gym',
+                              methodLabel,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             const Spacer(),
                             Text(
-                              '$learnedCount learned',
-                              style: theme.textTheme.labelMedium,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              '$remainingCount remaining',
+                              'Today: $dailyRemaining/$dailyGoal',
                               style: theme.textTheme.labelMedium,
                             ),
                           ],

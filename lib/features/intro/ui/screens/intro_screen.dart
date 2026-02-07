@@ -9,6 +9,7 @@ import '../../../training/data/card_progress.dart';
 import '../../../training/data/number_cards.dart';
 import '../../../training/data/progress_repository.dart';
 import '../../../training/data/settings_repository.dart';
+import '../../../training/domain/daily_study_summary.dart';
 import '../../../training/domain/learning_language.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
@@ -39,6 +40,9 @@ class _IntroScreenState extends State<IntroScreen> {
   StreamSubscription? _settingsSubscription;
   bool _allLearned = false;
   bool _loadingProgress = true;
+  int _dailyRemainingCards = 0;
+  int _dailyGoalCards = 0;
+  DateTime? _dailyRecommendedReturn;
 
   @override
   void initState() {
@@ -62,21 +66,26 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> _loadProgress() async {
-    final language = SettingsRepository(
-      widget.settingsBox,
-    ).readLearningLanguage();
+    final settingsRepository = SettingsRepository(widget.settingsBox);
+    final language = settingsRepository.readLearningLanguage();
     final ids = buildAllCardIds();
     final progress = await _progressRepository.loadAll(ids, language: language);
     final learnedCount = progress.values
         .where((progress) => progress.learned)
         .length;
     final allLearned = ids.isNotEmpty && learnedCount == ids.length;
+    final dailySummary = DailyStudySummary.fromProgress(
+      progress.values,
+    );
 
     if (!mounted) return;
     setState(() {
       _language = language;
       _allLearned = allLearned;
       _loadingProgress = false;
+      _dailyRemainingCards = dailySummary.remainingToday;
+      _dailyGoalCards = dailySummary.targetToday;
+      _dailyRecommendedReturn = dailySummary.nextDue;
     });
   }
 
@@ -242,9 +251,64 @@ class _IntroScreenState extends State<IntroScreen> {
           filterQuality: FilterQuality.high,
         ),
         const SizedBox(height: 16),
+        _buildDailyPlanCard(theme),
+        const SizedBox(height: 16),
         _buildCallToAction(theme, context),
       ],
     );
+  }
+
+  Widget _buildDailyPlanCard(ThemeData theme) {
+    if (_loadingProgress) {
+      return const SizedBox.shrink();
+    }
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: Colors.black87,
+      fontWeight: FontWeight.w600,
+    );
+    final subStyle = theme.textTheme.bodySmall?.copyWith(
+      color: Colors.black54,
+    );
+    final remaining = _dailyRemainingCards;
+    final goal = _dailyGoalCards;
+    final recommendation = _dailyRecommendedReturn;
+    final recommendationText =
+        recommendation == null ? null : _formatTime(recommendation);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Today\'s plan', style: textStyle),
+          const SizedBox(height: 4),
+          Text('$remaining cards left of $goal', style: subStyle),
+          if (recommendationText != null) ...[
+            const SizedBox(height: 4),
+            Text('Recommended return: $recommendationText', style: subStyle),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatTime(DateTime time) {
+    final localTime = time.toLocal();
+    final hour = localTime.hour.toString().padLeft(2, '0');
+    final minute = localTime.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   Widget _buildCallToAction(ThemeData theme, BuildContext context) {
