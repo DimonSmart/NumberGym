@@ -136,6 +136,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                               TrainingStatusView(
                                 viewModel: statusViewModel,
                                 onRetry: _handleRetry,
+                                onContinue: _handleContinueSession,
                               ),
                             ],
                           ),
@@ -161,6 +162,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
     TrainingFeedbackViewModel feedbackViewModel,
   ) {
     final task = _controller.currentTask;
+    if (task == null) {
+      return const SizedBox.shrink();
+    }
     if (task is MultipleChoiceState) {
       final viewModel = MultipleChoiceViewModel.fromState(
         theme: theme,
@@ -295,5 +299,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
   void _handleAutoStop() {
     if (!mounted) return;
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> _handleContinueSession() async {
+    await _controller.continueSession();
   }
 }
