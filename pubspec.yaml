@@ -44,6 +44,8 @@ dependencies:
   url_launcher: ^6.3.0
   fl_chart: ^1.1.1
   web: ^1.1.1
+  video_player: ^2.10.0
+  audioplayers: ^6.5.1
 
 dependency_overrides:
   # Use newer linux implementation that supports startStream from platform interface.
@@ -82,6 +84,8 @@ flutter:
     - assets/animations/success/
     - assets/animations/failure/
     - assets/images/
+    - assets/images/goal_rewards/
+    - assets/audio/goal_rewards/
 
   fonts:
     - family: SpaceGrotesk

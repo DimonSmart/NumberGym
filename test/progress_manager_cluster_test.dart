@@ -113,6 +113,7 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   int _answerSeconds = 10;
   int _hintStreak = 3;
   bool _premium = false;
+  int _celebrationCounter = 0;
   LearningMethod? _forcedMethod;
   TrainingItemType? _forcedItemType;
   final Map<LearningLanguage, String?> _voiceByLanguage =
@@ -148,6 +149,14 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
     _premium = enabled;
+  }
+
+  @override
+  int readCelebrationCounter() => _celebrationCounter;
+
+  @override
+  Future<void> setCelebrationCounter(int counter) async {
+    _celebrationCounter = counter;
   }
 
   @override

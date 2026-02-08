@@ -25,6 +25,8 @@ abstract class SettingsRepositoryBase {
   Future<void> setHintStreakCount(int count);
   bool readPremiumPronunciationEnabled();
   Future<void> setPremiumPronunciationEnabled(bool enabled);
+  int readCelebrationCounter();
+  Future<void> setCelebrationCounter(int counter);
   String? readTtsVoiceId(LearningLanguage language);
   Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId);
   LearningMethod? readDebugForcedLearningMethod();

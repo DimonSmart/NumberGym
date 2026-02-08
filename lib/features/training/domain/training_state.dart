@@ -5,10 +5,7 @@ class TrainingFeedback {
   final TrainingOutcome outcome;
   final String text;
 
-  const TrainingFeedback({
-    required this.outcome,
-    required this.text,
-  });
+  const TrainingFeedback({required this.outcome, required this.text});
 }
 
 class SessionStats {
@@ -23,12 +20,20 @@ class SessionStats {
   });
 }
 
+class TrainingCelebration {
+  const TrainingCelebration({required this.eventId, required this.counter});
+
+  final int eventId;
+  final int counter;
+}
+
 class TrainingState {
   final bool speechReady;
   final String? errorMessage;
   final TrainingFeedback? feedback;
   final TaskState? currentTask;
   final SessionStats? sessionStats;
+  final TrainingCelebration? celebration;
 
   const TrainingState({
     required this.speechReady,
@@ -36,6 +41,7 @@ class TrainingState {
     required this.feedback,
     required this.currentTask,
     this.sessionStats,
+    this.celebration,
   });
 
   factory TrainingState.initial() {
@@ -45,6 +51,7 @@ class TrainingState {
       feedback: null,
       currentTask: null,
       sessionStats: null,
+      celebration: null,
     );
   }
 }

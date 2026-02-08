@@ -93,6 +93,8 @@ class TrainingSession {
   late final ProgressManager _progressManager;
   late final FeedbackCoordinator _feedbackCoordinator;
   late final RuntimeCoordinator _runtimeCoordinator;
+  TrainingCelebration? _pendingCelebration;
+  int _celebrationEventId = 0;
 
   bool _premiumPronunciationEnabled = false;
   LearningMethod? _debugForcedLearningMethod;
@@ -105,7 +107,7 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
-  
+
   // Session limits
   DateTime? _sessionStartTime;
   int _sessionCardsCompleted = 0;
@@ -120,8 +122,7 @@ class TrainingSession {
   int get remainingCount => _progressManager.remainingCount;
   bool get hasRemainingCards => _progressManager.hasRemainingCards;
   int get dailyGoalCards => _progressManager.dailySummary().targetToday;
-  int get dailyRemainingCards =>
-      _progressManager.dailySummary().remainingToday;
+  int get dailyRemainingCards => _progressManager.dailySummary().remainingToday;
   DateTime? get dailyRecommendedReturn =>
       _progressManager.dailySummary().nextDue;
 
@@ -149,6 +150,7 @@ class TrainingSession {
 
   Future<void> startTraining() async {
     if (_trainingActive) return;
+    _pendingCelebration = null;
 
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
@@ -194,9 +196,18 @@ class TrainingSession {
       feedback: _state.feedback,
       currentTask: _state.currentTask,
       sessionStats: null,
+      celebration: _pendingCelebration,
     );
-     // Note: we don't call _syncState here to avoid flicker, just proceed
+    // Note: we don't call _syncState here to avoid flicker, just proceed
     _onStateChanged();
+    await _startNextCard();
+  }
+
+  Future<void> continueAfterCelebration() async {
+    if (_pendingCelebration == null) return;
+    _pendingCelebration = null;
+    _syncState();
+    if (!_trainingActive || _disposed) return;
     await _startNextCard();
   }
 
@@ -211,6 +222,7 @@ class TrainingSession {
         .readPremiumPronunciationEnabled();
     _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
+    _pendingCelebration = null;
     _silentDetector.reset();
     _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
@@ -221,6 +233,7 @@ class TrainingSession {
   Future<void> pauseForOverlay() async {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
+    _pendingCelebration = null;
     await _setKeepAwake(false);
     _syncState();
   }
@@ -233,6 +246,7 @@ class TrainingSession {
     _debugForcedItemType = _readDebugForcedItemType();
     _progressManager.resetSelection();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
+    _pendingCelebration = null;
     _silentDetector.reset();
     _runtimeCoordinator.resetInteraction();
     _trainingActive = false;
@@ -266,6 +280,7 @@ class TrainingSession {
       feedback: _feedbackCoordinator.feedback,
       currentTask: _runtimeCoordinator.currentTask,
       sessionStats: _state.sessionStats,
+      celebration: _pendingCelebration,
     );
     _onStateChanged();
   }
@@ -574,10 +589,9 @@ class TrainingSession {
     }
 
     // 2. Prepare stats
-    final elapsed =
-        _sessionStartTime == null
-            ? Duration.zero
-            : now.difference(_sessionStartTime!);
+    final elapsed = _sessionStartTime == null
+        ? Duration.zero
+        : now.difference(_sessionStartTime!);
 
     final stats = SessionStats(
       cardsCompleted: _sessionCardsCompleted,
@@ -597,6 +611,7 @@ class TrainingSession {
       feedback: null,
       currentTask: null, // Clear task so UI can show overlay
       sessionStats: stats,
+      celebration: _pendingCelebration,
     );
     _onStateChanged();
   }
@@ -605,7 +620,7 @@ class TrainingSession {
     if (!_trainingActive) {
       return;
     }
-    
+
     // Check session limits
     if (_checkSessionLimits()) {
       await _handleSessionLimitReached();
@@ -687,10 +702,8 @@ class TrainingSession {
       id: card.id,
       timeValue: timeValue,
       language: language,
-      toWords: (value) => _languageRouter.timeToWords(
-        value,
-        language: language,
-      ),
+      toWords: (value) =>
+          _languageRouter.timeToWords(value, language: language),
     );
   }
 
@@ -744,6 +757,8 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
     final affectsProgress = taskState.affectsProgress;
+    var learnedNow = false;
+    var poolEmptyAfterLearn = false;
     if (affectsProgress) {
       final isCorrect = outcome == TrainingOutcome.correct;
       final isSkipped =
@@ -765,7 +780,12 @@ class TrainingSession {
             'outcome=${outcome.name} correct=$isCorrect skipped=$isSkipped '
             'cluster=$clusterLabel',
       );
-      if (attemptResult.learned && attemptResult.poolEmpty) {
+      learnedNow = attemptResult.learned;
+      poolEmptyAfterLearn = attemptResult.poolEmpty;
+      if (learnedNow) {
+        await _queueCelebration();
+      }
+      if (learnedNow && poolEmptyAfterLearn) {
         _trainingActive = false;
         unawaited(_setKeepAwake(false));
         _syncState();
@@ -792,11 +812,34 @@ class TrainingSession {
 
     await feedbackHold;
     if (_disposed) return;
+    if (_pendingCelebration != null) {
+      return;
+    }
     if (!_trainingActive) {
       return;
     }
 
     await _startNextCard();
+  }
+
+  Future<void> _queueCelebration() async {
+    try {
+      final nextCounter = _settingsRepository.readCelebrationCounter() + 1;
+      await _settingsRepository.setCelebrationCounter(nextCounter);
+      _celebrationEventId += 1;
+      _pendingCelebration = TrainingCelebration(
+        eventId: _celebrationEventId,
+        counter: nextCounter,
+      );
+      _syncState();
+    } catch (error, st) {
+      appLogW(
+        'celebration',
+        'Failed to queue celebration reward',
+        error: error,
+        st: st,
+      );
+    }
   }
 
   Future<void> _pauseTraining() async {

@@ -11,6 +11,7 @@ import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
 import '../view_models/phrase_pronunciation_view_model.dart';
 import '../view_models/training_feedback_view_model.dart';
+import '../widgets/celebration_overlay.dart';
 import '../view_models/training_status_view_model.dart';
 import '../widgets/feedback_overlay.dart';
 import '../widgets/listening_view.dart';
@@ -147,6 +148,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                   ),
                 ),
                 _buildFeedbackOverlay(feedbackViewModel),
+                _buildCelebrationOverlay(),
               ],
             ),
           ),
@@ -256,6 +258,20 @@ class _TrainingScreenState extends State<TrainingScreen> {
     );
   }
 
+  Widget _buildCelebrationOverlay() {
+    final celebration = _controller.celebration;
+    if (celebration == null) {
+      return const SizedBox.shrink();
+    }
+    return Positioned.fill(
+      child: CelebrationOverlay(
+        key: ValueKey(celebration.eventId),
+        celebration: celebration,
+        onContinue: _handleContinueAfterCelebration,
+      ),
+    );
+  }
+
   double _resolveOverlayAnimationSize(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final shortest = size.shortestSide;
@@ -301,5 +317,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Future<void> _handleContinueSession() async {
     await _controller.continueSession();
+  }
+
+  Future<void> _handleContinueAfterCelebration() async {
+    await _controller.continueAfterCelebration();
   }
 }

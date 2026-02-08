@@ -1,0 +1,3 @@
+﻿Place reward media here with numeric names:
+1.png, 2.png, 3.mp4, ...
+Display priority for a number: N.png, then N.mp4.

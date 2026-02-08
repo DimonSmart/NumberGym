@@ -63,10 +63,10 @@ class TrainingController extends ChangeNotifier {
   TrainingOutcome? get feedbackOutcome => _session.state.feedback?.outcome;
   TaskState? get currentTask => _session.state.currentTask;
   SessionStats? get sessionStats => _session.state.sessionStats;
+  TrainingCelebration? get celebration => _session.state.celebration;
   bool get isSessionFinished => _session.state.sessionStats != null;
 
-  LearningMethod? get currentLearningMethod =>
-      _session.state.currentTask?.kind;
+  LearningMethod? get currentLearningMethod => _session.state.currentTask?.kind;
 
   NumberPronunciationState? get numberPronunciationState {
     final task = _session.state.currentTask;
@@ -137,6 +137,8 @@ class TrainingController extends ChangeNotifier {
   Future<void> pauseForOverlay() => _session.pauseForOverlay();
   Future<void> restoreAfterOverlay() => _session.restoreAfterOverlay();
   Future<void> continueSession() => _session.continueSession();
+  Future<void> continueAfterCelebration() =>
+      _session.continueAfterCelebration();
 
   Future<void> setPremiumPronunciationEnabled(bool enabled) =>
       _session.setPremiumPronunciationEnabled(enabled);

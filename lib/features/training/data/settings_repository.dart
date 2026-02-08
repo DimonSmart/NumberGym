@@ -9,6 +9,7 @@ const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
+const String celebrationCounterKey = 'celebrationCounter';
 // Keep stored key name for backward compatibility with older builds.
 const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
@@ -83,6 +84,22 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
     await settingsBox.put(premiumPronunciationKey, enabled.toString());
+  }
+
+  @override
+  int readCelebrationCounter() {
+    final rawValue = settingsBox.get(celebrationCounterKey);
+    final parsed = int.tryParse(rawValue ?? '');
+    if (parsed == null || parsed < 0) {
+      return 0;
+    }
+    return parsed;
+  }
+
+  @override
+  Future<void> setCelebrationCounter(int counter) async {
+    final normalized = counter < 0 ? 0 : counter;
+    await settingsBox.put(celebrationCounterKey, normalized.toString());
   }
 
   @override
