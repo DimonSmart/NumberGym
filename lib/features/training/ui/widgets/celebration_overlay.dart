@@ -41,6 +41,7 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   _CelebrationMediaSelection? _selection;
   Object? _loadError;
   bool _loading = true;
+  int _loadVersion = 0;
   VideoPlayerController? _videoController;
   AudioPlayer? _audioPlayer;
 
@@ -53,20 +54,25 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   @override
   void didUpdateWidget(covariant CelebrationOverlay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.celebration.eventId != widget.celebration.eventId) {
+    final oldCelebration = oldWidget.celebration;
+    final newCelebration = widget.celebration;
+    if (oldCelebration.eventId != newCelebration.eventId ||
+        oldCelebration.counter != newCelebration.counter) {
       unawaited(_prepareMedia());
     }
   }
 
   @override
   void dispose() {
+    _loadVersion += 1;
     unawaited(_disposePlayback());
     super.dispose();
   }
 
   Future<void> _prepareMedia() async {
+    final loadVersion = ++_loadVersion;
     await _disposePlayback();
-    if (!mounted) return;
+    if (!_isLoadActive(loadVersion)) return;
 
     setState(() {
       _loading = true;
@@ -76,43 +82,68 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
 
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      if (!_isLoadActive(loadVersion)) return;
+
       final selection = _resolveSelection(
         assets: manifest.listAssets(),
         counter: widget.celebration.counter,
       );
-      if (!mounted) return;
+      if (!_isLoadActive(loadVersion)) return;
 
       if (selection != null) {
         if (selection.kind == _CelebrationMediaKind.video) {
           final controller = VideoPlayerController.asset(selection.mediaAsset);
           _videoController = controller;
           await controller.initialize();
-          if (!mounted || _videoController != controller) {
-            await controller.dispose();
+          if (!_isLoadActive(loadVersion) || _videoController != controller) {
+            if (_videoController == controller) {
+              _videoController = null;
+              await controller.dispose();
+            }
             return;
           }
+
           await controller.play();
+          if (!_isLoadActive(loadVersion) || _videoController != controller) {
+            if (_videoController == controller) {
+              _videoController = null;
+              await controller.dispose();
+            }
+            return;
+          }
         } else if (selection.soundAsset != null) {
           final player = _audioPlayer ??= AudioPlayer();
           await player.stop();
+          if (!_isLoadActive(loadVersion)) return;
+
           await player.play(
             AssetSource(_assetSourcePath(selection.soundAsset!)),
           );
+          if (!_isLoadActive(loadVersion)) return;
         }
       }
 
-      if (!mounted) return;
+      if (!_isLoadActive(loadVersion)) return;
       setState(() {
         _selection = selection;
         _loading = false;
       });
-    } catch (error) {
-      if (!mounted) return;
+    } catch (error, stackTrace) {
+      assert(() {
+        debugPrint('CelebrationOverlay load error: $error');
+        debugPrintStack(stackTrace: stackTrace);
+        return true;
+      }());
+      if (!_isLoadActive(loadVersion)) return;
       setState(() {
         _loadError = error;
         _loading = false;
       });
     }
+  }
+
+  bool _isLoadActive(int loadVersion) {
+    return mounted && loadVersion == _loadVersion;
   }
 
   Future<void> _disposePlayback() async {
@@ -138,94 +169,118 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
     final primaryMasteredText = _resolvePrimaryMasteredText();
     final categoryLabel = widget.celebration.categoryLabel.trim();
     return ColoredBox(
-      color: theme.colorScheme.surface.withValues(alpha: 0.95),
+      color: theme.colorScheme.surface,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Center(
-                        child: Text(
-                          'Milestone reached',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Text(
-                          'You mastered',
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Center(
-                        child: Text(
-                          primaryMasteredText,
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w800,
-                            height: 1.05,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      if (hasConcreteMasteredValue &&
-                          categoryLabel.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        Center(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest
-                                  .withValues(alpha: 0.85),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
+                      _buildTopMetaRow(theme),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Center(
                               child: Text(
-                                categoryLabel,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.w600,
+                                'Milestone reached',
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Center(
+                              child: Text(
+                                'You mastered',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant
+                                      .withValues(alpha: 0.9),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Center(
+                              child: Text(
+                                primaryMasteredText,
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w900,
+                                  height: 1.0,
+                                  shadows: [
+                                    Shadow(
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.28),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            if (hasConcreteMasteredValue &&
+                                categoryLabel.isNotEmpty) ...[
+                              const SizedBox(height: 14),
+                              Center(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primaryContainer
+                                        .withValues(alpha: 0.75),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 6,
+                                    ),
+                                    child: Text(
+                                      categoryLabel,
+                                      style: theme.textTheme.labelLarge
+                                          ?.copyWith(
+                                            color: theme
+                                                .colorScheme
+                                                .onPrimaryContainer,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
+                                  ),
                                 ),
                               ),
+                            ],
+                            const SizedBox(height: 24),
+                            Center(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: mediaSize,
+                                  maxHeight: mediaSize,
+                                ),
+                                child: _buildMediaContent(theme),
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 22),
-                      Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: mediaSize,
-                            maxHeight: mediaSize,
-                          ),
-                          child: _buildMediaContent(theme),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: FilledButton(
-                          onPressed: widget.onContinue,
-                          child: const Text('Continue'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: FilledButton(
+                            onPressed: widget.onContinue,
+                            child: const Text('Continue'),
+                          ),
                         ),
                       ),
                     ],
@@ -237,6 +292,40 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
         ),
       ),
     );
+  }
+
+  Widget _buildTopMetaRow(ThemeData theme) {
+    final methodLabel = widget.celebration.learningMethodLabel.trim();
+    final leftText = methodLabel.isEmpty ? 'Training' : methodLabel;
+    final sessionText = _resolveSessionText();
+    final textStyle = theme.textTheme.labelLarge?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.92),
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.1,
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            leftText,
+            style: textStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(sessionText, style: textStyle),
+      ],
+    );
+  }
+
+  String _resolveSessionText() {
+    final celebration = widget.celebration;
+    final target = celebration.sessionTargetCards <= 0
+        ? celebration.sessionCardsCompleted
+        : celebration.sessionTargetCards;
+    return 'Session: ${celebration.sessionCardsCompleted}/$target';
   }
 
   bool _hasConcreteMasteredValue() {
