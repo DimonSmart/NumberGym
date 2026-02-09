@@ -176,6 +176,7 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
                         child: Text(
                           primaryMasteredText,
                           style: theme.textTheme.displaySmall?.copyWith(
+                            color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w800,
                             height: 1.05,
                           ),
@@ -208,9 +209,7 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
                           ),
                         ),
                       ],
-                      const SizedBox(height: 14),
-                      _buildSummaryCard(theme),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 22),
                       Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
@@ -240,63 +239,6 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
     );
   }
 
-  Widget _buildSummaryCard(ThemeData theme) {
-    final celebration = widget.celebration;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSummaryLine(theme, 'Method', celebration.learningMethodLabel),
-            _buildSummaryLine(
-              theme,
-              'Session progress',
-              _sessionProgressText(),
-            ),
-            _buildSummaryLine(theme, 'Today progress', _todayProgressText()),
-            _buildSummaryLine(
-              theme,
-              'Total mastered',
-              '${celebration.cardsLearnedTotal} cards',
-            ),
-            _buildSummaryLine(
-              theme,
-              'Remaining',
-              '${celebration.cardsRemainingTotal} cards',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryLine(ThemeData theme, String label, String value) {
-    final labelStyle = theme.textTheme.bodyMedium?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant,
-      fontWeight: FontWeight.w600,
-    );
-    final valueStyle = theme.textTheme.bodyMedium?.copyWith(
-      color: theme.colorScheme.onSurface,
-      fontWeight: FontWeight.w700,
-    );
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(text: '$label: ', style: labelStyle),
-            TextSpan(text: value, style: valueStyle),
-          ],
-        ),
-      ),
-    );
-  }
-
   bool _hasConcreteMasteredValue() {
     return widget.celebration.masteredText.trim().isNotEmpty;
   }
@@ -313,22 +255,6 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
     }
 
     return 'New card';
-  }
-
-  String _sessionProgressText() {
-    final celebration = widget.celebration;
-    final target = celebration.sessionTargetCards <= 0
-        ? celebration.sessionCardsCompleted
-        : celebration.sessionTargetCards;
-    return '${celebration.sessionCardsCompleted}/$target cards';
-  }
-
-  String _todayProgressText() {
-    final celebration = widget.celebration;
-    final target = celebration.cardsTargetToday <= 0
-        ? celebration.cardsCompletedToday
-        : celebration.cardsTargetToday;
-    return '${celebration.cardsCompletedToday}/$target attempts';
   }
 
   Widget _buildMediaContent(ThemeData theme) {
