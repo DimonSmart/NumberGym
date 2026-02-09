@@ -14,6 +14,7 @@ import '../../../training/domain/daily_session_stats.dart';
 import '../../../training/domain/daily_study_summary.dart';
 import '../../../training/domain/learning_language.dart';
 import '../../../training/domain/session_progress_plan.dart';
+import '../../../training/domain/study_streak_service.dart';
 import '../../../training/ui/screens/debug_settings_screen.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
@@ -48,6 +49,7 @@ class _IntroScreenState extends State<IntroScreen> {
   int _cardsCompletedToday = 0;
   int _cardsTargetToday = DailyStudyPlan.cardLimit;
   int _sessionCardGoal = DailyStudyPlan.cardLimit;
+  int _currentStreakDays = 0;
   DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
     DateTime.now(),
   );
@@ -76,6 +78,10 @@ class _IntroScreenState extends State<IntroScreen> {
   Future<void> _loadProgress() async {
     final requestId = ++_progressLoadRequestId;
     final settingsRepository = SettingsRepository(widget.settingsBox);
+    final streakService = StudyStreakService(
+      settingsRepository: settingsRepository,
+    );
+    final now = DateTime.now();
     final language = settingsRepository.readLearningLanguage();
     final ids = buildAllCardIds();
     final progress = await _progressRepository.loadAll(ids, language: language);
@@ -85,8 +91,9 @@ class _IntroScreenState extends State<IntroScreen> {
     final allLearned = ids.isNotEmpty && learnedCount == ids.length;
     final dailySummary = DailyStudySummary.fromProgress(progress.values);
     final dailySessionStats = settingsRepository.readDailySessionStats(
-      now: DateTime.now(),
+      now: now,
     );
+    final currentStreakDays = streakService.readCurrentStreakDays(now: now);
     final sessionCardGoal = SessionProgressPlan.normalizeSessionSize(
       dailySummary.targetToday,
     );
@@ -107,6 +114,7 @@ class _IntroScreenState extends State<IntroScreen> {
       _cardsCompletedToday = cardsCompletedToday;
       _cardsTargetToday = cardsTargetToday;
       _sessionCardGoal = sessionCardGoal;
+      _currentStreakDays = currentStreakDays;
       _dailySessionStats = dailySessionStats;
     });
   }
@@ -355,10 +363,21 @@ class _IntroScreenState extends State<IntroScreen> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxWidth < 360;
+          final streakIndicator = _buildStreakIndicator(
+            theme: theme,
+            labelStyle: subStyle,
+          );
           final infoColumn = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Today\'s plan', style: textStyle),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: Text('Today\'s plan', style: textStyle)),
+                  const SizedBox(width: 10),
+                  streakIndicator,
+                ],
+              ),
               const SizedBox(height: 4),
               Text('$completed of $goal cards', style: subStyle),
               Text(statusText, style: subStyle),
@@ -388,6 +407,37 @@ class _IntroScreenState extends State<IntroScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildStreakIndicator({
+    required ThemeData theme,
+    required TextStyle? labelStyle,
+  }) {
+    final streakDays = _currentStreakDays;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$streakDays',
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppPalette.warmOrange,
+            fontWeight: FontWeight.w800,
+            height: 1.0,
+          ),
+        ),
+        Text(
+          'streak',
+          style: labelStyle?.copyWith(
+            color: Colors.black54,
+            fontWeight: FontWeight.w600,
+            height: 1.1,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      ],
     );
   }
 
