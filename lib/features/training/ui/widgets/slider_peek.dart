@@ -54,6 +54,30 @@ SliderPeekAsset pickRandomSliderPeekAsset({
   return assets[random.nextInt(assets.length)];
 }
 
+List<SliderPeekAsset> sliderPeekAssetsForClockPosition({
+  required List<SliderPeekAsset> assets,
+  required int clockPosition,
+}) {
+  return assets
+      .where((asset) => asset.clockPosition == clockPosition)
+      .toList(growable: false);
+}
+
+SliderPeekAsset? pickRandomSliderPeekAssetForClockPosition({
+  required List<SliderPeekAsset> assets,
+  required int clockPosition,
+  required math.Random random,
+}) {
+  final matching = sliderPeekAssetsForClockPosition(
+    assets: assets,
+    clockPosition: clockPosition,
+  );
+  if (matching.isEmpty) {
+    return null;
+  }
+  return matching[random.nextInt(matching.length)];
+}
+
 SliderPeekPlacement sliderPeekPlacementForClockPosition(int clockPosition) {
   switch (clockPosition) {
     case 0:

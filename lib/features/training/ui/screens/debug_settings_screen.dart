@@ -92,6 +92,21 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  List<int> _availableSliderPeekClockPositions() {
+    final positions =
+        _sliderPeekAssets.map((asset) => asset.clockPosition).toSet().toList()
+          ..sort();
+    return positions;
+  }
+
+  String _availableSliderPeekClockPositionsLabel() {
+    final positions = _availableSliderPeekClockPositions();
+    if (positions.isEmpty) {
+      return 'none';
+    }
+    return positions.join(', ');
+  }
+
   Future<void> _updateDebugForcedLearningMethod(LearningMethod? method) async {
     setState(() {
       _debugForcedLearningMethod = method;
@@ -151,11 +166,20 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
       return;
     }
 
-    final selected = pickRandomSliderPeekAsset(
+    final clockPosition = _sliderPeekClockPosition;
+    final selected = pickRandomSliderPeekAssetForClockPosition(
       assets: _sliderPeekAssets,
+      clockPosition: clockPosition,
       random: _random,
     );
-    final clockPosition = _sliderPeekClockPosition;
+    if (selected == null) {
+      _showSnack(
+        'No slider image found for position $clockPosition. '
+        'Available positions: ${_availableSliderPeekClockPositionsLabel()}.',
+      );
+      return;
+    }
+
     final animation = createSliderPeekAnimation(
       controller: _sliderPeekController,
       clockPosition: clockPosition,
@@ -163,7 +187,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
 
     setState(() {
       _activeSliderPeekAsset = selected;
-      _activeSliderPeekClockPosition = clockPosition;
+      _activeSliderPeekClockPosition = selected.clockPosition;
       _activeSliderPeekAnimation = animation;
       _sliderPeekRunning = true;
     });
@@ -619,7 +643,8 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
               const SizedBox(height: 6),
               Text(
                 'Uses the same slide sequence as training. Position sets entry side '
-                '(0 top, 3 right, 6 bottom, 9 left). Assets found: ${_sliderPeekAssets.length}.',
+                '(0 top, 3 right, 6 bottom, 9 left). Assets found: ${_sliderPeekAssets.length}. '
+                'Available positions: ${_availableSliderPeekClockPositionsLabel()}.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
