@@ -85,16 +85,15 @@ String _numberToFrench(int value) {
   if (value < 1000) {
     final hundreds = value ~/ 100;
     final remainder = value % 100;
-    final prefix = hundreds == 1
-        ? 'cent'
-        : '${_numberToFrench(hundreds)} cent';
+    final prefix = hundreds == 1 ? 'cent' : '${_numberToFrench(hundreds)} cent';
     return remainder == 0 ? prefix : '$prefix ${_numberToFrench(remainder)}';
   }
   if (value < 1000000) {
     final thousands = value ~/ 1000;
     final remainder = value % 1000;
-    final prefix =
-        thousands == 1 ? 'mille' : '${_numberToFrench(thousands)} mille';
+    final prefix = thousands == 1
+        ? 'mille'
+        : '${_numberToFrench(thousands)} mille';
     return remainder == 0 ? prefix : '$prefix ${_numberToFrench(remainder)}';
   }
   if (value == 1000000) return 'un million';
@@ -123,6 +122,9 @@ String _timeToFrench(TimeValue time) {
   }
   if (minute == 45) {
     final nextHour = (time.hour + 1) % 24;
+    if (nextHour == 0) {
+      return 'minuit moins le quart';
+    }
     final nextWords = nextHour == 1 ? 'une' : _numberToFrench(nextHour);
     final nextLabel = nextHour == 1 ? 'heure' : 'heures';
     return '$nextWords $nextLabel moins le quart';
@@ -160,12 +162,7 @@ const _frenchLexicon = NumberLexicon(
     'cinquante': 50,
     'soixante': 60,
   },
-  scales: {
-    'cent': 100,
-    'mille': 1000,
-    'million': 1000000,
-    'millions': 1000000,
-  },
+  scales: {'cent': 100, 'mille': 1000, 'million': 1000000, 'millions': 1000000},
   conjunctions: {'et'},
 );
 
@@ -191,9 +188,7 @@ const _frenchOperatorWords = {
   'x': 'MULTIPLY',
 };
 
-const _frenchIgnoredWords = {
-  'svp',
-};
+const _frenchIgnoredWords = {'svp'};
 
 const _frenchPhrases = <PhraseTemplate>[
   PhraseTemplate(

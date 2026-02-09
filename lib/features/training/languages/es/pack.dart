@@ -101,8 +101,10 @@ String _numberToSpanish(int value) {
         prefix = 'novecientos';
         break;
       default:
-        prefix = '${_numberToSpanish(hundreds)}cientos'
-            .replaceAll('unocientos', 'cientos');
+        prefix = '${_numberToSpanish(hundreds)}cientos'.replaceAll(
+          'unocientos',
+          'cientos',
+        );
     }
     const hundredsMap = {
       2: 'doscientos',
@@ -121,8 +123,9 @@ String _numberToSpanish(int value) {
   if (value < 1000000) {
     final thousands = value ~/ 1000;
     final remainder = value % 1000;
-    final prefix =
-        thousands == 1 ? 'mil' : '${_numberToSpanish(thousands)} mil';
+    final prefix = thousands == 1
+        ? 'mil'
+        : '${_numberToSpanish(thousands)} mil';
     return remainder == 0 ? prefix : '$prefix ${_numberToSpanish(remainder)}';
   }
   if (value == 1000000) return 'un millón';
@@ -150,6 +153,9 @@ String _timeToSpanish(TimeValue time) {
   }
   if (minute == 45) {
     final nextHour = (time.hour + 1) % 24;
+    if (nextHour == 0) {
+      return 'medianoche menos cuarto';
+    }
     return '${_numberToSpanish(nextHour)} menos cuarto';
   }
   final minuteWords = _numberToSpanish(minute);
@@ -231,10 +237,7 @@ const _spanishOperatorWords = {
   'x': 'MULTIPLY',
 };
 
-const _spanishIgnoredWords = {
-  'porfavor',
-  'favor',
-};
+const _spanishIgnoredWords = {'porfavor', 'favor'};
 
 const _spanishPhrases = <PhraseTemplate>[
   PhraseTemplate(

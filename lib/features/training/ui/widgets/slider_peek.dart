@@ -206,7 +206,7 @@ class SliderPeekOverlay extends StatelessWidget {
             position: animation,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(assetPath, fit: BoxFit.cover),
+              child: Image.asset(assetPath, fit: BoxFit.contain),
             ),
           ),
         ),

@@ -113,6 +113,9 @@ String _timeToEnglish(TimeValue time) {
   }
   if (minute == 45) {
     final nextHour = (time.hour + 1) % 24;
+    if (nextHour == 0) {
+      return 'quarter to midnight';
+    }
     return 'quarter to ${_numberToEnglish(nextHour)}';
   }
   final minuteWords = _numberToEnglish(minute);
@@ -152,11 +155,7 @@ const _englishLexicon = NumberLexicon(
     'eighty': 80,
     'ninety': 90,
   },
-  scales: {
-    'hundred': 100,
-    'thousand': 1000,
-    'million': 1000000,
-  },
+  scales: {'hundred': 100, 'thousand': 1000, 'million': 1000000},
   conjunctions: {'and'},
 );
 
@@ -191,14 +190,7 @@ const _englishOperatorWords = {
   'x': 'MULTIPLY',
 };
 
-const _englishIgnoredWords = {
-  'um',
-  'uh',
-  'erm',
-  'ah',
-  'eh',
-  'please',
-};
+const _englishIgnoredWords = {'um', 'uh', 'erm', 'ah', 'eh', 'please'};
 
 const _englishPhrases = <PhraseTemplate>[
   PhraseTemplate(

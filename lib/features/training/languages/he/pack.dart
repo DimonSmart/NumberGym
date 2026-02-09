@@ -130,6 +130,9 @@ String _timeToHebrew(TimeValue time) {
   }
   if (minute == 45) {
     final nextHour = (time.hour + 1) % 24;
+    if (nextHour == 0) {
+      return '$_hebrewQuarter $_hebrewTo חצות';
+    }
     final nextWords = _numberToHebrew(nextHour);
     return '$_hebrewQuarter $_hebrewTo $nextWords';
   }
@@ -204,9 +207,7 @@ const _hebrewOperatorWords = {
   'x': 'MULTIPLY',
 };
 
-const _hebrewIgnoredWords = {
-  'בבקשה',
-};
+const _hebrewIgnoredWords = {'בבקשה'};
 
 const _hebrewPhrases = <PhraseTemplate>[
   PhraseTemplate(

@@ -77,15 +77,17 @@ String _numberToGerman(int value) {
   if (value < 1000) {
     final hundreds = value ~/ 100;
     final remainder = value % 100;
-    final prefix =
-        hundreds == 1 ? 'einhundert' : '${_numberToGerman(hundreds)}hundert';
+    final prefix = hundreds == 1
+        ? 'einhundert'
+        : '${_numberToGerman(hundreds)}hundert';
     return remainder == 0 ? prefix : '$prefix${_numberToGerman(remainder)}';
   }
   if (value < 1000000) {
     final thousands = value ~/ 1000;
     final remainder = value % 1000;
-    final prefix =
-        thousands == 1 ? 'eintausend' : '${_numberToGerman(thousands)}tausend';
+    final prefix = thousands == 1
+        ? 'eintausend'
+        : '${_numberToGerman(thousands)}tausend';
     return remainder == 0 ? prefix : '$prefix${_numberToGerman(remainder)}';
   }
   if (value == 1000000) return 'eine Million';
@@ -113,6 +115,9 @@ String _timeToGerman(TimeValue time) {
   }
   if (minute == 45) {
     final nextHour = (time.hour + 1) % 24;
+    if (nextHour == 0) {
+      return 'viertel vor Mitternacht';
+    }
     return 'viertel vor ${_numberToGerman(nextHour)}';
   }
   final minuteWords = _numberToGerman(minute);
@@ -186,9 +191,7 @@ const _germanOperatorWords = {
   'x': 'MULTIPLY',
 };
 
-const _germanIgnoredWords = {
-  'bitte',
-};
+const _germanIgnoredWords = {'bitte'};
 
 const _germanPhrases = <PhraseTemplate>[
   PhraseTemplate(
