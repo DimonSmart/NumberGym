@@ -5,11 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:number_gym/tts/voices_ready.dart';
 
 class TtsVoice {
-  const TtsVoice({
-    required this.id,
-    required this.name,
-    required this.locale,
-  });
+  const TtsVoice({required this.id, required this.name, required this.locale});
 
   final String id;
   final String name;
@@ -48,9 +44,7 @@ class TtsService implements TtsServiceBase {
     await _ensureVoicesLoaded();
     bool? available;
     try {
-      available = _parseAvailability(
-        await _tts.isLanguageAvailable(locale),
-      );
+      available = _parseAvailability(await _tts.isLanguageAvailable(locale));
     } on MissingPluginException {
       available = null;
     } on PlatformException {
@@ -120,6 +114,15 @@ class TtsService implements TtsServiceBase {
   Future<void> speak(String text) async {
     if (_disposed) return;
     if (text.trim().isEmpty) return;
+    try {
+      await _tts.awaitSpeakCompletion(true);
+    } on MissingPluginException {
+      // Keep default behavior when plugin hooks are unavailable.
+    } on PlatformException {
+      // Some platforms may not support await-completion flag.
+    } catch (_) {
+      // Best effort only.
+    }
     await _tts.stop();
     await _tts.speak(text);
   }
@@ -166,8 +169,9 @@ TtsVoice? _parseVoice(Map<dynamic, dynamic> voice) {
   if (resolvedId == null || resolvedId.isEmpty) {
     return null;
   }
-  final resolvedName =
-      (name?.trim().isNotEmpty ?? false) ? name!.trim() : resolvedId;
+  final resolvedName = (name?.trim().isNotEmpty ?? false)
+      ? name!.trim()
+      : resolvedId;
   return TtsVoice(
     id: resolvedId,
     name: resolvedName,

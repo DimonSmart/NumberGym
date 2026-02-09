@@ -5,17 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
 import '../../../core/logging/app_logger.dart';
-import '../languages/registry.dart';
 import 'daily_session_stats.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
 import 'progress_manager.dart';
 import 'repositories.dart';
-import 'runtimes/listening_runtime.dart';
-import 'runtimes/multiple_choice_runtime.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
-import 'runtimes/phrase_pronunciation_runtime.dart';
 import 'runtime_coordinator.dart';
 import 'session_progress_plan.dart';
 import 'session_helpers.dart';
@@ -23,8 +19,9 @@ import 'study_streak_service.dart';
 import 'task_availability.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
+import 'task_runtime_factory.dart';
 import 'task_scheduler.dart';
-import 'tasks/number_to_word_task.dart';
+import 'task_state.dart';
 import 'tasks/time_pronunciation_task.dart';
 import 'training_outcome.dart';
 import 'training_services.dart';
@@ -39,6 +36,7 @@ class TrainingSession {
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
     TaskRegistry? taskRegistry,
+    TaskRuntimeFactory? runtimeFactory,
     void Function()? onStateChanged,
     void Function()? onAutoStop,
   }) : _settingsRepository = settingsRepository,
@@ -50,7 +48,15 @@ class TrainingSession {
       settingsRepository: _settingsRepository,
       random: _random,
     );
-    _taskRegistry = taskRegistry ?? _buildDefaultRegistry();
+    final resolvedRuntimeFactory =
+        runtimeFactory ??
+        TaskRuntimeFactory(
+          settingsRepository: _settingsRepository,
+          languageRouter: _languageRouter,
+          onSpeechReady: _handleSpeechReady,
+        );
+    _taskRegistry =
+        taskRegistry ?? resolvedRuntimeFactory.buildDefaultRegistry();
     final availabilityRegistry = TaskAvailabilityRegistry(
       providers: [
         SpeechTaskAvailabilityProvider(_services.speech),
@@ -265,9 +271,15 @@ class TrainingSession {
     await _runtimeCoordinator.handleAction(action);
   }
 
-  Future<void> completeCurrentTaskWithOutcome(TrainingOutcome outcome) async {
+  Future<void> completeCurrentTaskWithOutcome(
+    TrainingOutcome outcome, {
+    bool simulatedUserInteraction = false,
+  }) async {
     if (_runtimeCoordinator.currentTask == null) return;
-    await _handleTaskCompleted(outcome);
+    await _handleTaskCompleted(
+      outcome,
+      simulatedUserInteraction: simulatedUserInteraction,
+    );
   }
 
   Future<void> pauseTaskTimer() async {
@@ -384,27 +396,6 @@ class TrainingSession {
     return fallback.isEmpty ? null : fallback;
   }
 
-  TaskRegistry _buildDefaultRegistry() {
-    return TaskRegistry({
-      LearningMethod.numberPronunciation: (context) {
-        final card = context.card;
-        return NumberPronunciationRuntime(
-          task: card,
-          speechService: context.services.speech,
-          soundWaveService: context.services.soundWave,
-          cardTimer: context.services.timer,
-          cardDuration: context.cardDuration,
-          hintText: context.hintText,
-          onSpeechReady: _handleSpeechReady,
-        );
-      },
-      LearningMethod.valueToText: _buildValueToTextRuntime,
-      LearningMethod.textToValue: _buildTextToValueRuntime,
-      LearningMethod.listening: _buildListeningRuntime,
-      LearningMethod.phrasePronunciation: _buildPhrasePronunciationRuntime,
-    });
-  }
-
   void _handleSpeechReady(bool ready, String? errorMessage) {
     _runtimeCoordinator.updateSpeechReady(ready);
     if (ready) {
@@ -413,184 +404,6 @@ class TrainingSession {
       _errorMessage = errorMessage;
     }
     _syncState();
-  }
-
-  TaskRuntime _buildValueToTextRuntime(TaskBuildContext context) {
-    final spec = context.card.buildValueToTextSpec(context);
-    return MultipleChoiceRuntime(
-      kind: LearningMethod.valueToText,
-      taskId: context.card.id,
-      numberValue: spec.numberValue,
-      prompt: spec.prompt,
-      correctOption: spec.correctOption,
-      options: spec.options,
-      cardDuration: context.cardDuration,
-      cardTimer: context.services.timer,
-    );
-  }
-
-  TaskRuntime _buildTextToValueRuntime(TaskBuildContext context) {
-    final timeValue = context.card.timeValue;
-    if (timeValue != null) {
-      final correctWord = context.timeToWords(timeValue);
-      final correctOption = timeValue.displayText;
-      final options = <String>{correctOption};
-      final candidateTimes = _candidateTimeValuesFor(context);
-
-      final maxAttempts = candidateTimes.length * 3 + 5;
-      var attempts = 0;
-      while (options.length < valueToTextOptionCount &&
-          attempts < maxAttempts) {
-        final candidate =
-            candidateTimes[context.random.nextInt(candidateTimes.length)];
-        attempts += 1;
-        if (candidate == timeValue) continue;
-        options.add(candidate.displayText);
-      }
-
-      final shuffled = options.toList()..shuffle(context.random);
-      return MultipleChoiceRuntime(
-        kind: LearningMethod.textToValue,
-        taskId: context.card.id,
-        numberValue: null,
-        prompt: correctWord,
-        correctOption: correctOption,
-        options: shuffled,
-        cardDuration: context.cardDuration,
-        cardTimer: context.services.timer,
-      );
-    }
-
-    final numberValue = _requireNumberValue(context.card);
-    final correctWord = context.toWords(numberValue);
-    final correctOption = numberValue.toString();
-    final options = <String>{correctOption};
-    final candidateIds = _candidateIdsFor(context);
-
-    while (options.length < valueToTextOptionCount) {
-      final candidateId =
-          candidateIds[context.random.nextInt(candidateIds.length)];
-      final candidateValue = candidateId.number!;
-      if (candidateValue == numberValue) continue;
-      options.add(candidateValue.toString());
-    }
-
-    final shuffled = options.toList()..shuffle(context.random);
-    return MultipleChoiceRuntime(
-      kind: LearningMethod.textToValue,
-      taskId: context.card.id,
-      numberValue: numberValue,
-      prompt: correctWord,
-      correctOption: correctOption,
-      options: shuffled,
-      cardDuration: context.cardDuration,
-      cardTimer: context.services.timer,
-    );
-  }
-
-  TaskRuntime _buildListeningRuntime(TaskBuildContext context) {
-    final card = context.card;
-    final numberValue = card.numberValue;
-    final timeValue = card.timeValue;
-
-    String correctOption;
-    String speechText;
-    final options = <String>{};
-
-    if (numberValue != null) {
-      // Number-based listening
-      correctOption = numberValue.toString();
-      options.add(correctOption);
-      final candidateIds = _candidateIdsFor(context);
-
-      while (options.length < valueToTextOptionCount) {
-        final candidateId =
-            candidateIds[context.random.nextInt(candidateIds.length)];
-        final candidateValue = candidateId.number;
-        if (candidateValue == null || candidateValue == numberValue) continue;
-        options.add(candidateValue.toString());
-      }
-
-      try {
-        speechText = context.toWords(numberValue);
-      } catch (_) {
-        speechText = correctOption;
-      }
-    } else if (timeValue != null) {
-      // Time-based listening
-      correctOption = timeValue.displayText;
-      options.add(correctOption);
-      final candidateTimes = _candidateTimeValuesFor(context);
-
-      while (options.length < valueToTextOptionCount) {
-        final candidateTime =
-            candidateTimes[context.random.nextInt(candidateTimes.length)];
-        if (candidateTime == timeValue) continue;
-        options.add(candidateTime.displayText);
-      }
-
-      try {
-        speechText = context.timeToWords(timeValue);
-      } catch (_) {
-        speechText = correctOption;
-      }
-    } else {
-      throw StateError(
-        'Expected either numberValue or timeValue for listening task.',
-      );
-    }
-
-    final shuffled = options.toList()..shuffle(context.random);
-    final voiceId = _settingsRepository.readTtsVoiceId(context.language);
-
-    return ListeningRuntime(
-      taskId: context.card.id,
-      numberValue: numberValue,
-      timeValue: timeValue,
-      correctAnswer: correctOption,
-      options: shuffled,
-      speechText: speechText,
-      cardDuration: context.cardDuration,
-      cardTimer: context.services.timer,
-      ttsService: context.services.tts,
-      locale: LanguageRegistry.of(context.language).locale,
-      voiceId: voiceId,
-    );
-  }
-
-  TaskRuntime _buildPhrasePronunciationRuntime(TaskBuildContext context) {
-    final numberValue = _requireNumberValue(context.card);
-    final template = _languageRouter.pickTemplate(
-      numberValue,
-      language: context.language,
-    );
-    if (template == null) {
-      return _buildFallbackPronunciationRuntime(context);
-    }
-    final task = template.toTask(value: numberValue, taskId: context.card.id);
-    return PhrasePronunciationRuntime(
-      task: task,
-      language: context.language,
-      audioRecorder: context.services.audioRecorder,
-      soundWaveService: context.services.soundWave,
-      azureSpeechService: context.services.azure,
-    );
-  }
-
-  TaskRuntime _buildFallbackPronunciationRuntime(TaskBuildContext context) {
-    final card = context.card;
-    final hintText =
-        context.hintText ??
-        _resolveHintText(card, LearningMethod.numberPronunciation);
-    return NumberPronunciationRuntime(
-      task: card,
-      speechService: context.services.speech,
-      soundWaveService: context.services.soundWave,
-      cardTimer: context.services.timer,
-      cardDuration: context.cardDuration,
-      hintText: hintText,
-      onSpeechReady: _handleSpeechReady,
-    );
   }
 
   Future<void> _handleSessionLimitReached() async {
@@ -694,7 +507,11 @@ class TrainingSession {
     _services.soundWave.reset();
     _errorMessage = null;
 
-    final hintText = _resolveHintText(card, taskKind);
+    final hintText =
+        _resolveHintText(card, taskKind) ??
+        (taskKind == LearningMethod.phrasePronunciation
+            ? _resolveHintText(card, LearningMethod.numberPronunciation)
+            : null);
     final context = TaskBuildContext(
       card: card,
       language: language,
@@ -709,13 +526,6 @@ class TrainingSession {
 
     final runtime = _taskRegistry.create(taskKind, context);
     await _runtimeCoordinator.attach(runtime);
-  }
-
-  List<TrainingItemId> _candidateIdsFor(TaskBuildContext context) {
-    final currentType = context.card.id.type;
-    return context.cardIds
-        .where((itemId) => itemId.type == currentType && itemId.number != null)
-        .toList();
   }
 
   PronunciationTaskData _resolveRandomTimeCard(
@@ -736,34 +546,6 @@ class TrainingSession {
     );
   }
 
-  List<TimeValue> _candidateTimeValuesFor(TaskBuildContext context) {
-    final currentType = context.card.id.type;
-    final values = context.cardIds
-        .where((itemId) => itemId.type == currentType && itemId.time != null)
-        .map((itemId) => itemId.time!)
-        .toList();
-    if (values.isNotEmpty) return values;
-
-    final generated = <TimeValue>{};
-    while (generated.length < 24) {
-      generated.add(
-        TimeValue(
-          hour: context.random.nextInt(24),
-          minute: context.random.nextInt(60),
-        ),
-      );
-    }
-    return generated.toList();
-  }
-
-  int _requireNumberValue(PronunciationTaskData card) {
-    final numberValue = card.numberValue;
-    if (numberValue == null) {
-      throw StateError('Expected a number-based pronunciation card.');
-    }
-    return numberValue;
-  }
-
   void _handleRuntimeEvent(TaskEvent event) {
     if (_disposed) return;
     if (event is TaskError) {
@@ -780,14 +562,16 @@ class TrainingSession {
     }
   }
 
-  Future<void> _handleTaskCompleted(TrainingOutcome outcome) async {
+  Future<void> _handleTaskCompleted(
+    TrainingOutcome outcome, {
+    bool simulatedUserInteraction = false,
+  }) async {
     final taskState = _runtimeCoordinator.currentTask;
     if (taskState == null) return;
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
     final affectsProgress = taskState.affectsProgress;
     var learnedNow = false;
-    var poolEmptyAfterLearn = false;
     if (affectsProgress) {
       final isCorrect = outcome == TrainingOutcome.correct;
       final isSkipped =
@@ -810,14 +594,8 @@ class TrainingSession {
             'cluster=$clusterLabel',
       );
       learnedNow = attemptResult.learned;
-      poolEmptyAfterLearn = attemptResult.poolEmpty;
       if (learnedNow) {
-        await _queueCelebration();
-      }
-      if (learnedNow && poolEmptyAfterLearn) {
-        _trainingActive = false;
-        unawaited(_setKeepAwake(false));
-        _syncState();
+        await _queueCelebration(taskState: taskState);
       }
     } else {
       appLogI(
@@ -830,7 +608,9 @@ class TrainingSession {
     final feedbackHold = _feedbackCoordinator.show(outcome);
 
     _silentDetector.record(
-      interacted: _runtimeCoordinator.taskHadUserInteraction,
+      interacted:
+          simulatedUserInteraction ||
+          _runtimeCoordinator.taskHadUserInteraction,
       affectsProgress: affectsProgress,
     );
     if (_silentDetector.shouldStop) {
@@ -851,14 +631,63 @@ class TrainingSession {
     await _startNextCard();
   }
 
-  Future<void> _queueCelebration() async {
+  String _resolveMasteredText(TaskState taskState) {
+    final text = taskState.displayText.trim();
+    if (text.isNotEmpty) {
+      return text;
+    }
+
+    final numberValue = taskState.numberValue;
+    if (numberValue != null) {
+      return numberValue.toString();
+    }
+
+    return taskState.taskId.storageKey;
+  }
+
+  String _describeCategoryLabel(TrainingItemType type) {
+    switch (type) {
+      case TrainingItemType.digits:
+        return 'Single digits';
+      case TrainingItemType.base:
+        return 'Base numbers';
+      case TrainingItemType.hundreds:
+        return 'Hundreds';
+      case TrainingItemType.thousands:
+        return 'Thousands';
+      case TrainingItemType.timeExact:
+        return 'Exact time';
+      case TrainingItemType.timeQuarter:
+        return 'Quarter-hour time';
+      case TrainingItemType.timeHalf:
+        return 'Half-hour time';
+      case TrainingItemType.timeRandom:
+        return 'Random time';
+    }
+  }
+
+  Future<void> _queueCelebration({required TaskState taskState}) async {
     try {
+      final now = DateTime.now();
+      final dailySummary = _progressManager.dailySummary(now: now);
+      final sessionTargetCards = _sessionTargetCards <= 0
+          ? math.max(1, _sessionCardsCompleted)
+          : _sessionTargetCards;
       final nextCounter = _settingsRepository.readCelebrationCounter() + 1;
       await _settingsRepository.setCelebrationCounter(nextCounter);
       _celebrationEventId += 1;
       _pendingCelebration = TrainingCelebration(
         eventId: _celebrationEventId,
         counter: nextCounter,
+        masteredText: _resolveMasteredText(taskState),
+        learningMethodLabel: taskState.kind.label,
+        categoryLabel: _describeCategoryLabel(taskState.taskId.type),
+        sessionCardsCompleted: _sessionCardsCompleted,
+        sessionTargetCards: sessionTargetCards,
+        cardsLearnedTotal: _progressManager.learnedCount,
+        cardsRemainingTotal: _progressManager.remainingCount,
+        cardsCompletedToday: dailySummary.completedToday,
+        cardsTargetToday: dailySummary.targetToday,
       );
       _syncState();
     } catch (error, st) {

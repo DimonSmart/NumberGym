@@ -22,9 +22,7 @@ class TimePronunciationTask extends TrainingTask
     required this.prompt,
     required this.language,
     required this.answers,
-  }) : super(
-         kind: LearningMethod.numberPronunciation,
-       );
+  }) : super(kind: LearningMethod.numberPronunciation);
 
   factory TimePronunciationTask.forTime({
     required TrainingItemId id,
@@ -74,9 +72,7 @@ class TimePronunciationTask extends TrainingTask
       context.timeToWords(timeValue);
 
   @override
-  List<String> valueToTextCandidateOptions(
-    MultipleChoiceBuildContext context,
-  ) {
+  List<String> valueToTextCandidateOptions(MultipleChoiceBuildContext context) {
     final candidates = <String>[];
     for (final candidate in _candidateTimeValues(context)) {
       if (candidate == timeValue) continue;
@@ -86,8 +82,7 @@ class TimePronunciationTask extends TrainingTask
   }
 
   @override
-  int? valueToTextMaxAttempts(int candidateCount) =>
-      candidateCount * 3 + 5;
+  int? valueToTextMaxAttempts(int candidateCount) => candidateCount * 3 + 5;
 
   List<TimeValue> _candidateTimeValues(MultipleChoiceBuildContext context) {
     final values = context.cardIds
@@ -96,15 +91,13 @@ class TimePronunciationTask extends TrainingTask
         .toList();
     if (values.isNotEmpty) return values;
 
-    final generated = <TimeValue>{};
-    while (generated.length < 24) {
-      generated.add(
-        TimeValue(
-          hour: context.random.nextInt(24),
-          minute: context.random.nextInt(60),
-        ),
+    final hourOffset = context.random.nextInt(24);
+    final minuteOffset = context.random.nextInt(60);
+    return List<TimeValue>.generate(24, (index) {
+      return TimeValue(
+        hour: (hourOffset + index) % 24,
+        minute: (minuteOffset + index * 13) % 60,
       );
-    }
-    return generated.toList();
+    });
   }
 }

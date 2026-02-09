@@ -21,32 +21,33 @@ class ListeningRuntime extends TaskRuntimeBase {
     required TtsServiceBase ttsService,
     required String locale,
     String? voiceId,
-  })  : _taskId = taskId,
-        _numberValue = numberValue,
-        _timeValue = timeValue,
-        _correctAnswer = correctAnswer,
-        _options = List<String>.unmodifiable(options),
-        _speechText = speechText,
-        _cardDuration = cardDuration,
-        _cardTimer = cardTimer,
-        _ttsService = ttsService,
-        _locale = locale,
-        _voiceId = voiceId,
-        super(
-          ListeningState(
-            taskId: taskId,
-            numberValue: numberValue,
-            timeValue: timeValue,
-            displayText: _hiddenPrompt,
-            timer: TimerState(
-              isRunning: false,
-              duration: cardDuration,
-              remaining: cardDuration,
-            ),
-            options: options,
-            isAnswerRevealed: false,
-          ),
-        );
+  }) : _taskId = taskId,
+       _numberValue = numberValue,
+       _timeValue = timeValue,
+       _correctAnswer = correctAnswer,
+       _options = List<String>.unmodifiable(options),
+       _speechText = speechText,
+       _cardDuration = cardDuration,
+       _cardTimer = cardTimer,
+       _ttsService = ttsService,
+       _locale = locale,
+       _voiceId = voiceId,
+       super(
+         ListeningState(
+           taskId: taskId,
+           numberValue: numberValue,
+           timeValue: timeValue,
+           displayText: _hiddenPrompt,
+           timer: TimerState(
+             isRunning: false,
+             duration: cardDuration,
+             remaining: cardDuration,
+           ),
+           options: options,
+           isAnswerRevealed: false,
+           isPromptPlaying: false,
+         ),
+       );
 
   static const String _hiddenPrompt = '?';
 
@@ -64,6 +65,7 @@ class ListeningRuntime extends TaskRuntimeBase {
 
   bool _completed = false;
   bool _answerRevealed = false;
+  bool _isPromptPlaying = false;
   Future<void>? _voicePreparation;
 
   @override
@@ -91,8 +93,8 @@ class ListeningRuntime extends TaskRuntimeBase {
     appLogI(
       'task',
       'Answer: kind=${LearningMethod.listening.name} id=$_taskId '
-      'selected="${action.option}" correct="$_correctAnswer" '
-      'outcome=${outcome.name}',
+          'selected="${action.option}" correct="$_correctAnswer" '
+          'outcome=${outcome.name}',
     );
     if (outcome == TrainingOutcome.correct) {
       _answerRevealed = true;
@@ -126,6 +128,7 @@ class ListeningRuntime extends TaskRuntimeBase {
       ),
       options: _options,
       isAnswerRevealed: _answerRevealed,
+      isPromptPlaying: _isPromptPlaying,
     );
   }
 
@@ -170,6 +173,13 @@ class ListeningRuntime extends TaskRuntimeBase {
 
   Future<void> _speak() async {
     await _prepareVoice();
-    await _ttsService.speak(_speechText);
+    _isPromptPlaying = true;
+    emitState(_buildState());
+    try {
+      await _ttsService.speak(_speechText);
+    } finally {
+      _isPromptPlaying = false;
+      emitState(_buildState());
+    }
   }
 }

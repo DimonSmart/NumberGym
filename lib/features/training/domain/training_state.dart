@@ -25,10 +25,31 @@ class SessionStats {
 }
 
 class TrainingCelebration {
-  const TrainingCelebration({required this.eventId, required this.counter});
+  const TrainingCelebration({
+    required this.eventId,
+    required this.counter,
+    required this.masteredText,
+    required this.learningMethodLabel,
+    required this.categoryLabel,
+    required this.sessionCardsCompleted,
+    required this.sessionTargetCards,
+    required this.cardsLearnedTotal,
+    required this.cardsRemainingTotal,
+    required this.cardsCompletedToday,
+    required this.cardsTargetToday,
+  });
 
   final int eventId;
   final int counter;
+  final String masteredText;
+  final String learningMethodLabel;
+  final String categoryLabel;
+  final int sessionCardsCompleted;
+  final int sessionTargetCards;
+  final int cardsLearnedTotal;
+  final int cardsRemainingTotal;
+  final int cardsCompletedToday;
+  final int cardsTargetToday;
 }
 
 class TrainingState {

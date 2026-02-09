@@ -19,28 +19,11 @@ class PickedCard {
 class ProgressAttemptResult {
   const ProgressAttemptResult({
     required this.learned,
-    required this.poolEmpty,
-    required this.clusterApplied,
-    required this.clusterSuccess,
-    required this.countedSuccess,
     required this.newCluster,
   });
 
   final bool learned;
-  final bool poolEmpty;
-  final bool clusterApplied;
-  final bool clusterSuccess;
-  final bool countedSuccess;
   final bool newCluster;
-
-  static const ProgressAttemptResult none = ProgressAttemptResult(
-    learned: false,
-    poolEmpty: false,
-    clusterApplied: false,
-    clusterSuccess: false,
-    countedSuccess: false,
-    newCluster: false,
-  );
 }
 
 class ProgressManager {
@@ -293,10 +276,6 @@ class ProgressManager {
 
     return ProgressAttemptResult(
       learned: !wasLearned && isLearnedNow,
-      poolEmpty: false,
-      clusterApplied: createdNewCluster,
-      clusterSuccess: isCorrect && !isSkipped,
-      countedSuccess: isCorrect && !isSkipped,
       newCluster: createdNewCluster,
     );
   }

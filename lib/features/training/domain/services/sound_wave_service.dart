@@ -103,49 +103,47 @@ class SoundWaveService implements SoundWaveServiceBase {
   }
 
   void _pushSoundSample(double normalized) {
-  if (_soundHistory.isEmpty) return;
+    if (_soundHistory.isEmpty) return;
 
-  // время в секундах, чтобы скорость не зависела от tick
-  _phase += _soundHistoryTick.inMilliseconds / 1000.0;
+    // Time in seconds, so movement speed does not depend on tick interval.
+    _phase += _soundHistoryTick.inMilliseconds / 1000.0;
 
-  final center = _soundHistory.length ~/ 2;
-  final safeCenter = center == 0 ? 1 : center;
+    final center = _soundHistory.length ~/ 2;
+    final safeCenter = center == 0 ? 1 : center;
 
-  final baseAmplitude = 0.15;
-  final totalAmplitude = baseAmplitude + normalized * 0.85;
+    final baseAmplitude = 0.15;
+    final totalAmplitude = baseAmplitude + normalized * 0.85;
 
-  // частоты изменения "характера" волны (во времени)
-  final t = _phase;
+    // Harmonic amplitudes change over time to vary the wave character.
+    final t = _phase;
 
-  final a1 = 0.55 + 0.45 * sin(t * 2.2);
-  final a2 = 0.35 + 0.30 * sin(t * 2.9 + 1.0);
-  final a3 = 0.20 + 0.20 * sin(t * 3.7 + 2.0);
-  final norm = (a1 + a2 + a3);
+    final a1 = 0.55 + 0.45 * sin(t * 2.2);
+    final a2 = 0.35 + 0.30 * sin(t * 2.9 + 1.0);
+    final a3 = 0.20 + 0.20 * sin(t * 3.7 + 2.0);
+    final norm = (a1 + a2 + a3);
 
-  for (var i = 0; i < _soundHistory.length; i++) {
-    final offset = i - center;
-    final distance = offset.abs() / safeCenter;
+    for (var i = 0; i < _soundHistory.length; i++) {
+      final offset = i - center;
+      final distance = offset.abs() / safeCenter;
 
-    // x фиксирован, от -pi до +pi
-    final x = (offset / safeCenter) * pi;
+      // X is fixed from -pi to +pi.
+      final x = (offset / safeCenter) * pi;
 
-    // форма по X фиксирована (стоит на месте)
-    final s1 = sin(1.0 * x + 0.2);
-    final s2 = sin(2.0 * x + 1.1);
-    final s3 = sin(3.0 * x + 2.0);
+      // Shape over X is fixed; only amplitudes vary over time.
+      final s1 = sin(1.0 * x + 0.2);
+      final s2 = sin(2.0 * x + 1.1);
+      final s3 = sin(3.0 * x + 2.0);
 
-    // меняется только амплитуда гармоник во времени
-    final wave = ((a1 * s1 + a2 * s2 + a3 * s3).abs() / norm)
-        .clamp(0.0, 1.0)
-        .toDouble();
+      final wave = ((a1 * s1 + a2 * s2 + a3 * s3).abs() / norm)
+          .clamp(0.0, 1.0)
+          .toDouble();
 
-    final centerBias = 1.0 - (distance * 0.3);
-    _soundHistory[i] = totalAmplitude * wave * centerBias;
+      final centerBias = 1.0 - (distance * 0.3);
+      _soundHistory[i] = totalAmplitude * wave * centerBias;
+    }
+
+    _publishSoundHistory();
   }
-
-  _publishSoundHistory();
-}
-
 
   void _publishSoundHistory() {
     if (_streamController.isClosed) {

@@ -41,6 +41,7 @@ class TrainingScreen extends StatefulWidget {
 
 class _TrainingScreenState extends State<TrainingScreen>
     with SingleTickerProviderStateMixin {
+  late final SettingsRepository _settingsRepository;
   late final TrainingController _controller;
   bool _startingTraining = false;
 
@@ -50,6 +51,16 @@ class _TrainingScreenState extends State<TrainingScreen>
   static const String _failureAnimationAsset =
       'assets/animations/failure/Failure.json';
   static const Duration _overlayTransition = Duration(milliseconds: 200);
+  static const Duration _autoSimulationTickDelay = Duration(milliseconds: 90);
+  static const Duration _autoSimulationAfterFeedbackDelay = Duration(
+    milliseconds: 260,
+  );
+  static const Duration _autoSimulationCelebrationDelay = Duration(
+    milliseconds: 1800,
+  );
+  static const Duration _autoSimulationSessionSummaryDelay = Duration(
+    milliseconds: 900,
+  );
 
   final math.Random _random = math.Random();
   late final AnimationController _sliderPeekController;
@@ -61,15 +72,24 @@ class _TrainingScreenState extends State<TrainingScreen>
   int _lastObservedSessionCards = -1;
   int _lastShownPeekMilestone = 0;
   int _pendingPeekMilestone = 0;
+  bool _autoSimulationEnabled = false;
+  int _autoSimulationContinueLimit = 0;
+  int _autoSimulationContinuesUsed = 0;
+  bool _autoSimulationActionRunning = false;
+  DateTime? _feedbackClearedAt;
+  DateTime? _celebrationVisibleSince;
+  DateTime? _sessionSummaryVisibleSince;
 
   @override
   void initState() {
     super.initState();
+    _settingsRepository = SettingsRepository(widget.settingsBox);
     _controller = TrainingController(
-      settingsRepository: SettingsRepository(widget.settingsBox),
+      settingsRepository: _settingsRepository,
       progressRepository: ProgressRepository(widget.progressBox),
       onAutoStop: _handleAutoStop,
     );
+    _loadAutoSimulationSettings();
     _sliderPeekController = AnimationController(
       vsync: this,
       duration: sliderPeekMoveDuration,
@@ -86,9 +106,19 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   Future<void> _initializeAndStart() async {
+    _autoSimulationContinuesUsed = 0;
+    _feedbackClearedAt = null;
+    _celebrationVisibleSince = null;
+    _sessionSummaryVisibleSince = null;
     await _controller.initialize();
     if (!mounted) return;
     await _ensureTrainingStarted();
+  }
+
+  void _loadAutoSimulationSettings() {
+    _autoSimulationEnabled = _settingsRepository.readAutoSimulationEnabled();
+    _autoSimulationContinueLimit = _settingsRepository
+        .readAutoSimulationContinueCount();
   }
 
   Future<void> _ensureTrainingStarted() async {
@@ -213,6 +243,7 @@ class _TrainingScreenState extends State<TrainingScreen>
           cardsCompleted: sessionCardsCompleted,
           canShowPeek: canShowPeek,
         );
+        _scheduleAutoSimulation();
 
         if (statusViewModel.sessionFinished) {
           return Scaffold(
@@ -292,6 +323,93 @@ class _TrainingScreenState extends State<TrainingScreen>
         );
       },
     );
+  }
+
+  void _scheduleAutoSimulation() {
+    if (!_autoSimulationEnabled || _autoSimulationActionRunning) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_tryRunAutoSimulation());
+    });
+  }
+
+  Future<void> _tryRunAutoSimulation() async {
+    if (!_autoSimulationEnabled || _autoSimulationActionRunning) {
+      return;
+    }
+
+    _autoSimulationActionRunning = true;
+    try {
+      await Future<void>.delayed(_autoSimulationTickDelay);
+      if (!mounted) return;
+
+      final state = _controller.state;
+      final now = DateTime.now();
+
+      if (state.feedback != null) {
+        _feedbackClearedAt = null;
+        return;
+      }
+
+      _feedbackClearedAt ??= now;
+      if (now.difference(_feedbackClearedAt!) <
+          _autoSimulationAfterFeedbackDelay) {
+        return;
+      }
+
+      if (state.celebration != null) {
+        _sessionSummaryVisibleSince = null;
+        _celebrationVisibleSince ??= now;
+        if (now.difference(_celebrationVisibleSince!) <
+            _autoSimulationCelebrationDelay) {
+          return;
+        }
+        _celebrationVisibleSince = null;
+        await _controller.continueAfterCelebration();
+        return;
+      }
+      _celebrationVisibleSince = null;
+
+      if (state.sessionStats != null) {
+        _sessionSummaryVisibleSince ??= now;
+        if (now.difference(_sessionSummaryVisibleSince!) <
+            _autoSimulationSessionSummaryDelay) {
+          return;
+        }
+        if (_autoSimulationContinuesUsed >= _autoSimulationContinueLimit) {
+          return;
+        }
+        _sessionSummaryVisibleSince = null;
+        _autoSimulationContinuesUsed += 1;
+        await _controller.continueSession();
+        return;
+      }
+      _sessionSummaryVisibleSince = null;
+
+      if (_sliderPeekRunning) {
+        return;
+      }
+
+      final task = state.currentTask;
+      if (task == null) {
+        return;
+      }
+      if (task is ListeningState && task.isPromptPlaying) {
+        return;
+      }
+
+      final outcome = _random.nextDouble() < 0.999
+          ? TrainingOutcome.correct
+          : TrainingOutcome.wrong;
+      await _controller.completeCurrentTaskWithOutcome(
+        outcome,
+        simulatedUserInteraction: true,
+      );
+    } finally {
+      _autoSimulationActionRunning = false;
+    }
   }
 
   Widget _buildTaskView(

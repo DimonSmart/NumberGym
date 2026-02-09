@@ -11,6 +11,8 @@ const String learningLanguageKey = 'learningLanguage';
 const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
+const String autoSimulationEnabledKey = 'autoSimulationEnabled';
+const String autoSimulationContinueCountKey = 'autoSimulationContinueCount';
 const String celebrationCounterKey = 'celebrationCounter';
 const String dailySessionStatsKeyPrefix = 'dailySessionStats';
 const String studyStreakKeyPrefix = 'studyStreak';
@@ -31,6 +33,10 @@ const int hintStreakMinCount = 0;
 const int hintStreakMaxCount = 6;
 const int hintStreakDefaultCount = 3;
 const bool premiumPronunciationDefault = false;
+const bool autoSimulationEnabledDefault = false;
+const int autoSimulationContinueCountMin = 0;
+const int autoSimulationContinueCountMax = 500;
+const int autoSimulationContinueCountDefault = 0;
 
 class SettingsRepository implements SettingsRepositoryBase {
   final Box<String> settingsBox;
@@ -91,6 +97,39 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
     await settingsBox.put(premiumPronunciationKey, enabled.toString());
+  }
+
+  @override
+  bool readAutoSimulationEnabled() {
+    final rawValue = settingsBox.get(autoSimulationEnabledKey);
+    if (rawValue == null) return autoSimulationEnabledDefault;
+    if (rawValue == 'true') return true;
+    if (rawValue == 'false') return false;
+    return autoSimulationEnabledDefault;
+  }
+
+  @override
+  Future<void> setAutoSimulationEnabled(bool enabled) async {
+    await settingsBox.put(autoSimulationEnabledKey, enabled.toString());
+  }
+
+  @override
+  int readAutoSimulationContinueCount() {
+    final rawValue = settingsBox.get(autoSimulationContinueCountKey);
+    final parsed = int.tryParse(rawValue ?? '');
+    if (parsed == null) {
+      return autoSimulationContinueCountDefault;
+    }
+    return _normalizeAutoSimulationContinueCount(parsed);
+  }
+
+  @override
+  Future<void> setAutoSimulationContinueCount(int count) async {
+    final normalized = _normalizeAutoSimulationContinueCount(count);
+    await settingsBox.put(
+      autoSimulationContinueCountKey,
+      normalized.toString(),
+    );
   }
 
   @override
@@ -262,6 +301,12 @@ class SettingsRepository implements SettingsRepositoryBase {
 
   int _normalizeHintStreakCount(int count) {
     return count.clamp(hintStreakMinCount, hintStreakMaxCount).toInt();
+  }
+
+  int _normalizeAutoSimulationContinueCount(int count) {
+    return count
+        .clamp(autoSimulationContinueCountMin, autoSimulationContinueCountMax)
+        .toInt();
   }
 
   String _ttsVoiceKey(LearningLanguage language) {

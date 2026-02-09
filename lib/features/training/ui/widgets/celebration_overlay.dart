@@ -134,35 +134,146 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final mediaSize = _resolveMediaSize(context);
+    final masteredText = _resolveMasteredText();
     return ColoredBox(
       color: theme.colorScheme.surface.withValues(alpha: 0.95),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-          child: Column(
-            children: [
-              const Spacer(),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: mediaSize,
-                  maxHeight: mediaSize,
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Milestone reached',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'You mastered: $masteredText',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSummaryCard(theme),
+                      const SizedBox(height: 18),
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: mediaSize,
+                            maxHeight: mediaSize,
+                          ),
+                          child: _buildMediaContent(theme),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: FilledButton(
+                          onPressed: widget.onContinue,
+                          child: const Text('Continue'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Center(child: _buildMediaContent(theme)),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: FilledButton(
-                  onPressed: widget.onContinue,
-                  child: const Text('\u0414\u0430\u043B\u044C\u0448\u0435'),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildSummaryCard(ThemeData theme) {
+    final celebration = widget.celebration;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSummaryLine(theme, 'Category', celebration.categoryLabel),
+            _buildSummaryLine(theme, 'Method', celebration.learningMethodLabel),
+            _buildSummaryLine(
+              theme,
+              'Session progress',
+              _sessionProgressText(),
+            ),
+            _buildSummaryLine(theme, 'Today progress', _todayProgressText()),
+            _buildSummaryLine(
+              theme,
+              'Total mastered',
+              '${celebration.cardsLearnedTotal} cards',
+            ),
+            _buildSummaryLine(
+              theme,
+              'Remaining',
+              '${celebration.cardsRemainingTotal} cards',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryLine(ThemeData theme, String label, String value) {
+    final labelStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w600,
+    );
+    final valueStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.colorScheme.onSurface,
+      fontWeight: FontWeight.w700,
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: '$label: ', style: labelStyle),
+            TextSpan(text: value, style: valueStyle),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _resolveMasteredText() {
+    final text = widget.celebration.masteredText.trim();
+    if (text.isNotEmpty) {
+      return text;
+    }
+    return 'new card';
+  }
+
+  String _sessionProgressText() {
+    final celebration = widget.celebration;
+    final target = celebration.sessionTargetCards <= 0
+        ? celebration.sessionCardsCompleted
+        : celebration.sessionTargetCards;
+    return '${celebration.sessionCardsCompleted}/$target cards';
+  }
+
+  String _todayProgressText() {
+    final celebration = widget.celebration;
+    final target = celebration.cardsTargetToday <= 0
+        ? celebration.cardsCompletedToday
+        : celebration.cardsTargetToday;
+    return '${celebration.cardsCompletedToday}/$target attempts';
   }
 
   Widget _buildMediaContent(ThemeData theme) {

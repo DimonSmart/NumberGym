@@ -1,27 +1,5 @@
 import '../training_task.dart';
 
-/// Value-to-text multiple choice task (Stage 3).
-class ValueToTextTask extends NumberTrainingTask {
-  ValueToTextTask({
-    required super.id,
-    required super.numberValue,
-    required this.prompt,
-    required this.correctOption,
-    required List<String> options,
-  })  : options = List<String>.unmodifiable(options),
-        assert(id.number == numberValue),
-        super(
-          kind: LearningMethod.valueToText,
-        );
-
-  final String prompt;
-  final String correctOption;
-  final List<String> options;
-
-  @override
-  String get displayText => prompt;
-}
-
 /// Shared builder for value-to-text multiple choice specs.
 mixin ValueToTextSpecBuilder {
   int? get valueToTextNumberValue => null;
@@ -29,11 +7,9 @@ mixin ValueToTextSpecBuilder {
   String valueToTextCorrectOption(MultipleChoiceBuildContext context);
   List<String> valueToTextCandidateOptions(MultipleChoiceBuildContext context);
 
-  int? valueToTextMaxAttempts(int candidateCount) => null;
+  int? valueToTextMaxAttempts(int candidateCount) => candidateCount * 3 + 5;
 
-  MultipleChoiceSpec buildValueToTextSpec(
-    MultipleChoiceBuildContext context,
-  ) {
+  MultipleChoiceSpec buildValueToTextSpec(MultipleChoiceBuildContext context) {
     final correct = valueToTextCorrectOption(context);
     final options = <String>{correct};
     final candidates = valueToTextCandidateOptions(context);
@@ -46,8 +22,7 @@ mixin ValueToTextSpecBuilder {
           break;
         }
         attempts += 1;
-        final candidate =
-            candidates[context.random.nextInt(candidates.length)];
+        final candidate = candidates[context.random.nextInt(candidates.length)];
         if (candidate.trim().isNotEmpty) {
           options.add(candidate);
         }

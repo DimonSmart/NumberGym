@@ -341,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           if (!_ttsAvailable && !_ttsLoading) ...[
             const SizedBox(height: 6),
             Text(
-              'Скачайте голос в настройках устройства.',
+              'Install a voice pack in your device speech settings.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,
               ),
@@ -498,7 +498,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -35,6 +35,26 @@ void main() {
     expect(repository.readCelebrationCounter(), 0);
   });
 
+  test('auto simulation settings have safe defaults', () {
+    final repository = SettingsRepository(box);
+    expect(repository.readAutoSimulationEnabled(), isFalse);
+    expect(repository.readAutoSimulationContinueCount(), 0);
+  });
+
+  test('auto simulation settings are persisted and normalized', () async {
+    final repository = SettingsRepository(box);
+    await repository.setAutoSimulationEnabled(true);
+    await repository.setAutoSimulationContinueCount(-5);
+    expect(repository.readAutoSimulationEnabled(), isTrue);
+    expect(repository.readAutoSimulationContinueCount(), 0);
+
+    await repository.setAutoSimulationContinueCount(9999);
+    expect(
+      repository.readAutoSimulationContinueCount(),
+      autoSimulationContinueCountMax,
+    );
+  });
+
   test('celebration counter is persisted as non-negative value', () async {
     final repository = SettingsRepository(box);
     await repository.setCelebrationCounter(-3);

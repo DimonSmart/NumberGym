@@ -27,6 +27,10 @@ abstract class SettingsRepositoryBase {
   Future<void> setHintStreakCount(int count);
   bool readPremiumPronunciationEnabled();
   Future<void> setPremiumPronunciationEnabled(bool enabled);
+  bool readAutoSimulationEnabled();
+  Future<void> setAutoSimulationEnabled(bool enabled);
+  int readAutoSimulationContinueCount();
+  Future<void> setAutoSimulationContinueCount(int count);
   int readCelebrationCounter();
   Future<void> setCelebrationCounter(int counter);
   DailySessionStats readDailySessionStats({DateTime? now});

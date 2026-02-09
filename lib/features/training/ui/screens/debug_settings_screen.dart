@@ -16,6 +16,7 @@ import '../../domain/progress_manager.dart';
 import '../../domain/training_item.dart';
 import '../../domain/training_task.dart';
 import '../../languages/registry.dart';
+import 'training_item_type_x.dart';
 import '../widgets/slider_peek.dart';
 
 class DebugSettingsScreen extends StatefulWidget {
@@ -46,6 +47,9 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
   late LearningLanguage _language;
+  late bool _autoSimulationEnabled;
+  late int _autoSimulationContinueCount;
+  late final TextEditingController _autoSimulationCountController;
   LearningMethod? _debugForcedLearningMethod;
   TrainingItemType? _debugForcedItemType;
   TrainingItemType _debugSimulationItemType = TrainingItemType.digits;
@@ -69,6 +73,12 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
     _language = _settingsRepository.readLearningLanguage();
+    _autoSimulationEnabled = _settingsRepository.readAutoSimulationEnabled();
+    _autoSimulationContinueCount = _settingsRepository
+        .readAutoSimulationContinueCount();
+    _autoSimulationCountController = TextEditingController(
+      text: _autoSimulationContinueCount.toString(),
+    );
     _debugForcedLearningMethod = _settingsRepository
         .readDebugForcedLearningMethod();
     _debugForcedItemType = _settingsRepository.readDebugForcedItemType();
@@ -81,6 +91,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
 
   @override
   void dispose() {
+    _autoSimulationCountController.dispose();
     _sliderPeekController.dispose();
     super.dispose();
   }
@@ -223,9 +234,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
               .toList()
             ..sort();
       if (candidates.isEmpty) {
-        _showSnack(
-          'No cards found for ${_itemTypeLabel(_debugSimulationItemType)}.',
-        );
+        _showSnack('No cards found for ${_debugSimulationItemType.label}.');
         return;
       }
 
@@ -269,27 +278,6 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
       }
     }
     return candidates.first;
-  }
-
-  String _itemTypeLabel(TrainingItemType type) {
-    switch (type) {
-      case TrainingItemType.digits:
-        return 'Digits';
-      case TrainingItemType.base:
-        return 'Base';
-      case TrainingItemType.hundreds:
-        return 'Hundreds';
-      case TrainingItemType.thousands:
-        return 'Thousands';
-      case TrainingItemType.timeExact:
-        return 'Time (exact)';
-      case TrainingItemType.timeQuarter:
-        return 'Time (quarter)';
-      case TrainingItemType.timeHalf:
-        return 'Time (half)';
-      case TrainingItemType.timeRandom:
-        return 'Time (random)';
-    }
   }
 
   String _formatQueueId(TrainingItemId id) {
@@ -522,6 +510,77 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
     );
   }
 
+  Future<void> _updateAutoSimulationEnabled(bool enabled) async {
+    setState(() {
+      _autoSimulationEnabled = enabled;
+    });
+    await _settingsRepository.setAutoSimulationEnabled(enabled);
+  }
+
+  Future<void> _setAutoSimulationContinueCount(int count) async {
+    final normalized = count
+        .clamp(autoSimulationContinueCountMin, autoSimulationContinueCountMax)
+        .toInt();
+    if (_autoSimulationContinueCount == normalized) {
+      final currentText = _autoSimulationCountController.text.trim();
+      final normalizedText = normalized.toString();
+      if (currentText != normalizedText) {
+        _autoSimulationCountController.value = TextEditingValue(
+          text: normalizedText,
+          selection: TextSelection.collapsed(offset: normalizedText.length),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _autoSimulationContinueCount = normalized;
+    });
+    final normalizedText = normalized.toString();
+    _autoSimulationCountController.value = TextEditingValue(
+      text: normalizedText,
+      selection: TextSelection.collapsed(offset: normalizedText.length),
+    );
+    await _settingsRepository.setAutoSimulationContinueCount(normalized);
+  }
+
+  void _onAutoSimulationContinueCountChanged(String rawValue) {
+    final parsed = int.tryParse(rawValue.trim());
+    if (parsed == null) return;
+    unawaited(_setAutoSimulationContinueCount(parsed));
+  }
+
+  Future<void> _normalizeAutoSimulationContinueCountInput() async {
+    final raw = _autoSimulationCountController.text.trim();
+    if (raw.isEmpty) {
+      _autoSimulationCountController.value = TextEditingValue(
+        text: _autoSimulationContinueCount.toString(),
+        selection: TextSelection.collapsed(
+          offset: _autoSimulationContinueCount.toString().length,
+        ),
+      );
+      return;
+    }
+    final parsed = int.tryParse(raw);
+    if (parsed == null) {
+      _autoSimulationCountController.value = TextEditingValue(
+        text: _autoSimulationContinueCount.toString(),
+        selection: TextSelection.collapsed(
+          offset: _autoSimulationContinueCount.toString().length,
+        ),
+      );
+      return;
+    }
+    await _setAutoSimulationContinueCount(parsed);
+  }
+
+  Future<void> _adjustAutoSimulationContinueCount(int delta) async {
+    final next = (_autoSimulationContinueCount + delta)
+        .clamp(autoSimulationContinueCountMin, autoSimulationContinueCountMax)
+        .toInt();
+    await _setAutoSimulationContinueCount(next);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -552,7 +611,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
                   ...TrainingItemType.values.map(
                     (type) => DropdownMenuItem<TrainingItemType?>(
                       value: type,
-                      child: Text(_itemTypeLabel(type)),
+                      child: Text(type.label),
                     ),
                   ),
                 ],
@@ -595,6 +654,69 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Long-run simulation',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _autoSimulationEnabled,
+                onChanged: _updateAutoSimulationEnabled,
+                title: const Text(
+                  'Enable auto simulation',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: const Text(
+                  'Auto-answers cards (99.9% correct) and continues '
+                  'session summary up to X times.',
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _autoSimulationCountController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Auto-continue sessions (X)',
+                        helperText: 'Exact value, e.g. 1, 2, 10',
+                      ),
+                      onChanged: _onAutoSimulationContinueCountChanged,
+                      onFieldSubmitted: (_) {
+                        unawaited(_normalizeAutoSimulationContinueCountInput());
+                      },
+                      onEditingComplete: () {
+                        unawaited(_normalizeAutoSimulationContinueCountInput());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () =>
+                        unawaited(_adjustAutoSimulationContinueCount(-1)),
+                    icon: const Icon(Icons.remove_circle_outline),
+                    tooltip: 'Decrease by 1',
+                  ),
+                  Text(
+                    'Current: $_autoSimulationContinueCount',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  IconButton(
+                    onPressed: () =>
+                        unawaited(_adjustAutoSimulationContinueCount(1)),
+                    icon: const Icon(Icons.add_circle_outline),
+                    tooltip: 'Increase by 1',
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               const Text(
@@ -662,7 +784,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
                     .map(
                       (type) => DropdownMenuItem<TrainingItemType>(
                         value: type,
-                        child: Text(_itemTypeLabel(type)),
+                        child: Text(type.label),
                       ),
                     )
                     .toList(),

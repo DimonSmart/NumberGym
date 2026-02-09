@@ -108,6 +108,7 @@ final class ListeningState extends TaskState {
     required super.timer,
     required List<String> options,
     required this.isAnswerRevealed,
+    required this.isPromptPlaying,
   }) : options = List<String>.unmodifiable(options),
        super(
          kind: LearningMethod.listening,
@@ -118,6 +119,7 @@ final class ListeningState extends TaskState {
   final TimeValue? timeValue;
   final List<String> options;
   final bool isAnswerRevealed;
+  final bool isPromptPlaying;
 }
 
 enum PhraseFlow { waiting, recording, recorded, sending, reviewing }

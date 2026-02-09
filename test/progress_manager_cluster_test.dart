@@ -318,6 +318,8 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   int _answerSeconds = 10;
   int _hintStreak = 3;
   bool _premium = false;
+  bool _autoSimulationEnabled = false;
+  int _autoSimulationContinueCount = 0;
   int _celebrationCounter = 0;
   LearningMethod? _forcedMethod;
   TrainingItemType? _forcedItemType;
@@ -358,6 +360,22 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
     _premium = enabled;
+  }
+
+  @override
+  bool readAutoSimulationEnabled() => _autoSimulationEnabled;
+
+  @override
+  Future<void> setAutoSimulationEnabled(bool enabled) async {
+    _autoSimulationEnabled = enabled;
+  }
+
+  @override
+  int readAutoSimulationContinueCount() => _autoSimulationContinueCount;
+
+  @override
+  Future<void> setAutoSimulationContinueCount(int count) async {
+    _autoSimulationContinueCount = count;
   }
 
   @override
