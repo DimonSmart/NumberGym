@@ -134,7 +134,9 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final mediaSize = _resolveMediaSize(context);
-    final masteredText = _resolveMasteredText();
+    final hasConcreteMasteredValue = _hasConcreteMasteredValue();
+    final primaryMasteredText = _resolvePrimaryMasteredText();
+    final categoryLabel = widget.celebration.categoryLabel.trim();
     return ColoredBox(
       color: theme.colorScheme.surface.withValues(alpha: 0.95),
       child: SafeArea(
@@ -149,19 +151,63 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Milestone reached',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
+                      Center(
+                        child: Text(
+                          'Milestone reached',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'You mastered: $masteredText',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text(
+                          'You mastered',
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
+                      const SizedBox(height: 4),
+                      Center(
+                        child: Text(
+                          primaryMasteredText,
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            height: 1.05,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      if (hasConcreteMasteredValue &&
+                          categoryLabel.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Center(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.85),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              child: Text(
+                                categoryLabel,
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 14),
                       _buildSummaryCard(theme),
                       const SizedBox(height: 18),
@@ -206,7 +252,6 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSummaryLine(theme, 'Category', celebration.categoryLabel),
             _buildSummaryLine(theme, 'Method', celebration.learningMethodLabel),
             _buildSummaryLine(
               theme,
@@ -252,12 +297,22 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
     );
   }
 
-  String _resolveMasteredText() {
-    final text = widget.celebration.masteredText.trim();
-    if (text.isNotEmpty) {
-      return text;
+  bool _hasConcreteMasteredValue() {
+    return widget.celebration.masteredText.trim().isNotEmpty;
+  }
+
+  String _resolvePrimaryMasteredText() {
+    final masteredText = widget.celebration.masteredText.trim();
+    if (masteredText.isNotEmpty) {
+      return masteredText;
     }
-    return 'new card';
+
+    final category = widget.celebration.categoryLabel.trim();
+    if (category.isNotEmpty) {
+      return category;
+    }
+
+    return 'New card';
   }
 
   String _sessionProgressText() {

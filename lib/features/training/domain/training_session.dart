@@ -91,6 +91,7 @@ class TrainingSession {
   }
 
   static void _noop() {}
+  static final RegExp _clockValuePattern = RegExp(r'^\d{1,2}:\d{2}$');
 
   final math.Random _random = math.Random();
   final TrainingServices _services;
@@ -632,17 +633,25 @@ class TrainingSession {
   }
 
   String _resolveMasteredText(TaskState taskState) {
-    final text = taskState.displayText.trim();
-    if (text.isNotEmpty) {
-      return text;
-    }
-
-    final numberValue = taskState.numberValue;
+    final numberValue = taskState.numberValue ?? taskState.taskId.number;
     if (numberValue != null) {
       return numberValue.toString();
     }
 
-    return taskState.taskId.storageKey;
+    final taskTime = taskState.taskId.time;
+    if (taskTime != null) {
+      return taskTime.displayText;
+    }
+    if (taskState is ListeningState && taskState.timeValue != null) {
+      return taskState.timeValue!.displayText;
+    }
+
+    final text = taskState.displayText.trim();
+    if (_clockValuePattern.hasMatch(text)) {
+      return text;
+    }
+
+    return '';
   }
 
   String _describeCategoryLabel(TrainingItemType type) {
