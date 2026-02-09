@@ -19,6 +19,7 @@ import 'runtimes/phrase_pronunciation_runtime.dart';
 import 'runtime_coordinator.dart';
 import 'session_progress_plan.dart';
 import 'session_helpers.dart';
+import 'study_streak_service.dart';
 import 'task_availability.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
@@ -63,6 +64,9 @@ class TrainingSession {
       internetChecker: _services.internet,
       random: _random,
     );
+    _studyStreakService = StudyStreakService(
+      settingsRepository: _settingsRepository,
+    );
     _progressManager = ProgressManager(
       progressRepository: _progressRepository,
       languageRouter: _languageRouter,
@@ -92,6 +96,7 @@ class TrainingSession {
   late final TaskRegistry _taskRegistry;
   late final TaskScheduler _taskScheduler;
   late final ProgressManager _progressManager;
+  late final StudyStreakService _studyStreakService;
   late final FeedbackCoordinator _feedbackCoordinator;
   late final RuntimeCoordinator _runtimeCoordinator;
   TrainingCelebration? _pendingCelebration;
@@ -636,6 +641,7 @@ class TrainingSession {
       now: now,
     );
     await _settingsRepository.setDailySessionStats(todayStats);
+    await _studyStreakService.recordCompletedSession(now: now);
     return todayStats;
   }
 

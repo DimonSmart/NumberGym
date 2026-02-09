@@ -430,6 +430,7 @@ class _IntroScreenState extends State<IntroScreen> {
       MaterialPageRoute(
         builder: (context) => StatisticsScreen(
           progressBox: widget.progressBox,
+          settingsBox: widget.settingsBox,
           language: _language,
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:number_gym/features/training/data/settings_repository.dart';
 import 'package:number_gym/features/training/domain/daily_session_stats.dart';
+import 'package:number_gym/features/training/domain/study_streak.dart';
 
 void main() {
   late Directory tempDir;
@@ -78,5 +79,26 @@ void main() {
     expect(nextDay.sessionsCompleted, 0);
     expect(nextDay.cardsCompleted, 0);
     expect(nextDay.durationSeconds, 0);
+  });
+
+  test('study streak defaults to empty value', () {
+    final repository = SettingsRepository(box);
+    final streak = repository.readStudyStreak();
+    expect(streak.sessionsByDay, isEmpty);
+    expect(streak.currentStreakDays(now: DateTime(2026, 2, 9, 9, 0)), 0);
+  });
+
+  test('study streak is persisted as day sessions map', () async {
+    final repository = SettingsRepository(box);
+    final streak = StudyStreak(
+      sessionsByDay: const <String, int>{'2026-02-07': 1, '2026-02-08': 2},
+    );
+
+    await repository.setStudyStreak(streak);
+
+    final restored = repository.readStudyStreak();
+    expect(restored.sessionsByDay['2026-02-07'], 1);
+    expect(restored.sessionsByDay['2026-02-08'], 2);
+    expect(restored.currentStreakDays(now: DateTime(2026, 2, 9, 9, 0)), 2);
   });
 }

@@ -6,6 +6,7 @@ import 'package:number_gym/features/training/domain/learning_strategy/learning_p
 import 'package:number_gym/features/training/domain/progress_manager.dart';
 import 'package:number_gym/features/training/domain/daily_session_stats.dart';
 import 'package:number_gym/features/training/domain/repositories.dart';
+import 'package:number_gym/features/training/domain/study_streak.dart';
 import 'package:number_gym/features/training/domain/training_catalog.dart';
 import 'package:number_gym/features/training/domain/training_item.dart';
 import 'package:number_gym/features/training/domain/training_task.dart';
@@ -323,6 +324,7 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
     DateTime.now(),
   );
+  StudyStreak _studyStreak = StudyStreak.empty();
   final Map<LearningLanguage, String?> _voiceByLanguage =
       <LearningLanguage, String?>{};
 
@@ -375,6 +377,16 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setDailySessionStats(DailySessionStats stats) async {
     _dailySessionStats = stats;
+  }
+
+  @override
+  StudyStreak readStudyStreak() {
+    return _studyStreak;
+  }
+
+  @override
+  Future<void> setStudyStreak(StudyStreak streak) async {
+    _studyStreak = streak;
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../domain/daily_session_stats.dart';
 import '../domain/learning_language.dart';
 import '../domain/repositories.dart';
+import '../domain/study_streak.dart';
 import '../domain/training_item.dart';
 import '../domain/training_task.dart';
 
@@ -12,6 +13,7 @@ const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String celebrationCounterKey = 'celebrationCounter';
 const String dailySessionStatsKey = 'dailySessionStats';
+const String studyStreakKey = 'studyStreak';
 // Keep stored key name for backward compatibility with older builds.
 const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
@@ -143,6 +145,22 @@ class SettingsRepository implements SettingsRepositoryBase {
     final serialized =
         '${normalized.dayKey}|${normalized.sessionsCompleted}|${normalized.cardsCompleted}|${normalized.durationSeconds}';
     await settingsBox.put(dailySessionStatsKey, serialized);
+  }
+
+  @override
+  StudyStreak readStudyStreak() {
+    final rawValue = settingsBox.get(studyStreakKey);
+    return StudyStreak.fromStorage(rawValue);
+  }
+
+  @override
+  Future<void> setStudyStreak(StudyStreak streak) async {
+    final serialized = streak.toStorage();
+    if (serialized.isEmpty) {
+      await settingsBox.delete(studyStreakKey);
+      return;
+    }
+    await settingsBox.put(studyStreakKey, serialized);
   }
 
   @override

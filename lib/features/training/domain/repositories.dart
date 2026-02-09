@@ -1,6 +1,7 @@
 import '../data/card_progress.dart';
 import 'daily_session_stats.dart';
 import 'learning_language.dart';
+import 'study_streak.dart';
 import 'training_item.dart';
 import 'training_task.dart';
 
@@ -30,6 +31,8 @@ abstract class SettingsRepositoryBase {
   Future<void> setCelebrationCounter(int counter);
   DailySessionStats readDailySessionStats({DateTime? now});
   Future<void> setDailySessionStats(DailySessionStats stats);
+  StudyStreak readStudyStreak();
+  Future<void> setStudyStreak(StudyStreak streak);
   String? readTtsVoiceId(LearningLanguage language);
   Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId);
   LearningMethod? readDebugForcedLearningMethod();
