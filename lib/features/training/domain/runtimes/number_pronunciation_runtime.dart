@@ -60,6 +60,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   static const Duration _listenStartTimeout = Duration(milliseconds: 1500);
   static const Duration _timeoutGrace = Duration(milliseconds: 500);
   static const Duration _maxListenDuration = Duration(seconds: 10);
+  static const Duration _partialFastAcceptDelay = Duration(milliseconds: 250);
   static const int _maxConsecutiveClientErrors = 3;
 
   final PronunciationTaskData _task;
@@ -98,6 +99,9 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   bool _disposed = false;
   Timer? _listenStartTimer;
   Timer? _timeoutGraceTimer;
+  Timer? _partialFastAcceptTimer;
+  int? _pendingPartialFastAcceptAttemptId;
+  String? _pendingPartialFastAcceptText;
 
   @override
   Future<void> start() async {
@@ -116,6 +120,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartTimer = null;
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
+    _cancelPendingPartialFastAccept();
 
     final ready = await _initSpeech();
     if (!ready) {
@@ -234,6 +239,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     final attemptId = ++_attemptCounter;
     _activeAttemptId = attemptId;
     _lastPartialResult = '';
+    _cancelPendingPartialFastAccept();
     _clearPreview(emit: true);
     _currentAttemptHadSpeech = false;
     _suppressNextClientError = false;
@@ -336,11 +342,17 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
         _lastPartialResult = recognizedWords;
         _log('Speech partial: "$recognizedWords"');
         _updatePreviewFromPartial(recognizedWords);
+        _schedulePartialFastAcceptIfEligible(
+          recognizedText: recognizedWords,
+          attemptId: attemptId,
+        );
       } else if (recognizedWords.trim().isEmpty) {
+        _cancelPendingPartialFastAccept();
         _clearPreview(emit: true);
       }
       return;
     }
+    _cancelPendingPartialFastAccept();
     final resolvedWords = recognizedWords.trim().isEmpty
         ? _lastPartialResult
         : recognizedWords;
@@ -352,6 +364,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _cancelPendingPartialFastAccept();
 
     var resolvedText = recognizedText;
     if (resolvedText.trim().isEmpty && _lastPartialResult.isNotEmpty) {
@@ -452,6 +465,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartTimer = null;
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
+    _cancelPendingPartialFastAccept();
     _cardTimer.stop();
     _deadlinePassed = false;
     _currentAttemptHadSpeech = false;
@@ -466,8 +480,8 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     appLogI(
       'task',
       'Answer: kind=numberPronunciation id=${_task.id} '
-      'heard="${heard == null || heard.isEmpty ? '<empty>' : heard}" '
-      'outcome=${outcome.name}',
+          'heard="${heard == null || heard.isEmpty ? '<empty>' : heard}" '
+          'outcome=${outcome.name}',
     );
     _log('Speech attempt completed: outcome=$outcome');
     emitState(_buildState());
@@ -481,6 +495,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartTimer = null;
     _timeoutGraceTimer?.cancel();
     _timeoutGraceTimer = null;
+    _cancelPendingPartialFastAccept();
     _lastPartialResult = '';
     _currentAttemptHadSpeech = false;
     _clearPreview(emit: false);
@@ -541,6 +556,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
     _lastPartialResult = '';
+    _cancelPendingPartialFastAccept();
     _currentAttemptHadSpeech = false;
     _clearPreview(emit: false);
     if (_speechService.isListening) {
@@ -558,6 +574,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
+    _cancelPendingPartialFastAccept();
     if (_activeAttemptId == attemptId) {
       _activeAttemptId = null;
     }
@@ -693,6 +710,72 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Duration _remainingCardDuration() {
     if (!_timerHasStarted) return _cardDuration;
     return _cardTimer.remaining();
+  }
+
+  bool _isPartialFastAcceptEligible() {
+    final value = _task.numberValue;
+    return value != null && value >= 0 && value <= 9;
+  }
+
+  void _schedulePartialFastAcceptIfEligible({
+    required String recognizedText,
+    required int attemptId,
+  }) {
+    if (!_isPartialFastAcceptEligible()) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    final candidate = recognizedText.trim();
+    if (candidate.isEmpty || !_answerMatcher.isAcceptedAnswer(candidate)) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    if (_pendingPartialFastAcceptAttemptId == attemptId &&
+        _pendingPartialFastAcceptText == candidate &&
+        _partialFastAcceptTimer != null) {
+      return;
+    }
+    _cancelPendingPartialFastAccept();
+    _pendingPartialFastAcceptAttemptId = attemptId;
+    _pendingPartialFastAcceptText = candidate;
+    _partialFastAcceptTimer = Timer(_partialFastAcceptDelay, () {
+      unawaited(_enqueue(() => _commitPendingPartialFastAccept(attemptId)));
+    });
+    _log(
+      'Speech partial fast-accept scheduled: "$candidate" attempt=$attemptId',
+    );
+  }
+
+  Future<void> _commitPendingPartialFastAccept(int attemptId) async {
+    if (!_cardActive || _deadlinePassed) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    if (_activeAttemptId != attemptId ||
+        _pendingPartialFastAcceptAttemptId != attemptId) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    final candidate = _pendingPartialFastAcceptText;
+    if (candidate == null || _lastPartialResult.trim() != candidate) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    if (!_answerMatcher.isAcceptedAnswer(candidate)) {
+      _cancelPendingPartialFastAccept();
+      return;
+    }
+    _log(
+      'Speech partial fast-accept committed: "$candidate" attempt=$attemptId',
+    );
+    await _handleAttemptResult(recognizedText: candidate);
+  }
+
+  void _cancelPendingPartialFastAccept() {
+    _partialFastAcceptTimer?.cancel();
+    _partialFastAcceptTimer = null;
+    _pendingPartialFastAcceptAttemptId = null;
+    _pendingPartialFastAcceptText = null;
   }
 
   bool _isNoMatchError(SpeechRecognitionError error) {

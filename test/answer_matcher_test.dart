@@ -77,6 +77,20 @@ void main() {
     expect(matcher.isComplete, isTrue);
   });
 
+  test('checks accepted answer without mutating matcher state', () {
+    final matcher = AnswerMatcher();
+    matcher.reset(
+      prompt: '6',
+      answers: const <String>['seis', '6'],
+      language: LearningLanguage.spanish,
+    );
+
+    expect(matcher.isAcceptedAnswer('seis'), isTrue);
+    expect(matcher.isAcceptedAnswer(' 6 '), isTrue);
+    expect(matcher.isAcceptedAnswer('siete'), isFalse);
+    expect(matcher.isComplete, isFalse);
+  });
+
   test('does not collapse spanish unit chain into arithmetic sum', () {
     final matcher = AnswerMatcher();
     matcher.reset(

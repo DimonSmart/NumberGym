@@ -49,6 +49,14 @@ class AnswerMatcher {
     return matchedRequired >= _requiredAtomCount;
   }
 
+  bool isAcceptedAnswer(String recognizedText) {
+    final normalizedText = _pack.normalizer(recognizedText);
+    if (normalizedText.isEmpty) {
+      return false;
+    }
+    return _acceptedAnswers.contains(normalizedText);
+  }
+
   void reset({
     required String prompt,
     required List<String> answers,
