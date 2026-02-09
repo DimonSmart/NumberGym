@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
@@ -15,7 +14,6 @@ import '../../domain/services/tts_service.dart';
 import '../../domain/task_availability.dart';
 import '../../domain/training_task.dart';
 import '../../languages/registry.dart';
-import 'debug_settings_screen.dart';
 import '../../../../core/logging/app_log_buffer.dart';
 import '../../../../core/theme/app_palette.dart';
 
@@ -269,19 +267,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  Future<void> _openDebugMenu() async {
-    if (!kDebugMode) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => DebugSettingsScreen(
-          settingsBox: widget.settingsBox,
-          progressBox: widget.progressBox,
-          onProgressChanged: widget.onProgressChanged,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -512,20 +497,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          if (kDebugMode) ...[
-            const SizedBox(height: 16),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: _openDebugMenu,
-              leading: const Icon(Icons.bug_report_outlined),
-              title: const Text(
-                'Debug',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text('Open debug tools and simulation settings.'),
-              trailing: const Icon(Icons.chevron_right),
-            ),
-          ],
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

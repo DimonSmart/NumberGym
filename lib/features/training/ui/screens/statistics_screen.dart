@@ -97,13 +97,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Spacer(),
-                    Text(
-                      '${_ids.length} items',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -178,7 +171,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         const spacing = 12.0;
-        final columns = width >= 420 ? 2 : 1;
+        const columns = 2;
         final cardWidth = (width - spacing * (columns - 1)) / columns;
 
         return Wrap(

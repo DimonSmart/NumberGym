@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -13,14 +14,14 @@ import '../../../training/domain/daily_session_stats.dart';
 import '../../../training/domain/daily_study_summary.dart';
 import '../../../training/domain/learning_language.dart';
 import '../../../training/domain/session_progress_plan.dart';
+import '../../../training/ui/screens/debug_settings_screen.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
 import '../../../training/ui/widgets/training_background.dart';
-import '../widgets/today_training_summary_card.dart';
 import 'about_screen.dart';
 
-enum _IntroMenuAction { statistics, settings, about }
+enum _IntroMenuAction { statistics, settings, debug, about }
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({
@@ -126,7 +127,7 @@ class _IntroScreenState extends State<IntroScreen> {
               const menuHeight = 48.0;
               const gapAfterLogo = 12.0;
               const gapAfterMascot = 16.0;
-              const ctaHeight = 52.0;
+              const infoCardHeight = 96.0;
               const layoutSafety = 4.0;
 
               final contentWidth =
@@ -142,7 +143,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     (menuHeight +
                         gapAfterLogo +
                         gapAfterMascot +
-                        ctaHeight +
+                        infoCardHeight +
                         layoutSafety),
               );
               final maxWidthByHeight =
@@ -179,6 +180,9 @@ class _IntroScreenState extends State<IntroScreen> {
                                   case _IntroMenuAction.settings:
                                     _openSettings(context);
                                     break;
+                                  case _IntroMenuAction.debug:
+                                    _openDebugMenu(context);
+                                    break;
                                   case _IntroMenuAction.about:
                                     _openAbout(context);
                                     break;
@@ -205,6 +209,20 @@ class _IntroScreenState extends State<IntroScreen> {
                                     ],
                                   ),
                                 ),
+                                if (kDebugMode)
+                                  PopupMenuItem(
+                                    value: _IntroMenuAction.debug,
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.bug_report_outlined,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Debug'),
+                                      ],
+                                    ),
+                                  ),
                                 PopupMenuItem(
                                   value: _IntroMenuAction.about,
                                   child: Row(
@@ -278,23 +296,29 @@ class _IntroScreenState extends State<IntroScreen> {
           filterQuality: FilterQuality.high,
         ),
         const SizedBox(height: 16),
-        if (_dailySessionStats.hasSessions) ...[
-          TodayTrainingSummaryCard(
-            stats: _dailySessionStats,
-            cardsCompletedToday: _cardsCompletedToday,
-          ),
-          const SizedBox(height: 16),
-        ],
-        _buildDailyPlanCard(theme),
-        const SizedBox(height: 16),
-        _buildCallToAction(theme, context),
+        _buildDailyPlanActionCard(theme, context),
       ],
     );
   }
 
-  Widget _buildDailyPlanCard(ThemeData theme) {
+  Widget _buildDailyPlanActionCard(ThemeData theme, BuildContext context) {
     if (_loadingProgress) {
-      return const SizedBox.shrink();
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: const Center(child: CircularProgressIndicator()),
+      );
     }
     final textStyle = theme.textTheme.bodyMedium?.copyWith(
       color: Colors.black87,
@@ -313,6 +337,7 @@ class _IntroScreenState extends State<IntroScreen> {
       cardsCompletedToday: completed,
       sessionSize: _sessionCardGoal,
     );
+    final durationText = _formatDuration(_dailySessionStats.duration);
     final statusText = sessionBoundary
         ? '$sessionsCompleted $sessionWord completed today'
         : 'Current session: $sessionProgress/$_sessionCardGoal';
@@ -327,82 +352,88 @@ class _IntroScreenState extends State<IntroScreen> {
           BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Today\'s plan', style: textStyle),
-          const SizedBox(height: 4),
-          Text('$completed of $goal cards', style: subStyle),
-          Text(statusText, style: subStyle),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 360;
+          final infoColumn = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Today\'s plan', style: textStyle),
+              const SizedBox(height: 4),
+              Text('$completed of $goal cards', style: subStyle),
+              Text(statusText, style: subStyle),
+              Text('Duration today: $durationText', style: subStyle),
+            ],
+          );
+          final actionButton = _buildStartButton(
+            theme,
+            context,
+            expand: compact,
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [infoColumn, const SizedBox(height: 12), actionButton],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: infoColumn),
+              const SizedBox(width: 12),
+              actionButton,
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildCallToAction(ThemeData theme, BuildContext context) {
-    if (_loadingProgress) {
-      return const SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_allLearned) {
-      return Container(
-        width: double.infinity,
-        height: 52,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          'Все выучено',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.2,
-            color: Colors.black87,
-          ),
-        ),
-      );
-    }
-
+  Widget _buildStartButton(
+    ThemeData theme,
+    BuildContext context, {
+    required bool expand,
+  }) {
     return SizedBox(
-      width: double.infinity,
-      height: 52,
+      width: expand ? double.infinity : 120,
+      height: 44,
       child: FilledButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => TrainingScreen(
-                settingsBox: widget.settingsBox,
-                progressBox: widget.progressBox,
-              ),
-            ),
-          );
-        },
+        onPressed: _allLearned
+            ? null
+            : () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TrainingScreen(
+                      settingsBox: widget.settingsBox,
+                      progressBox: widget.progressBox,
+                    ),
+                  ),
+                );
+              },
         style: FilledButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          textStyle: theme.textTheme.titleMedium?.copyWith(
+          backgroundColor: AppPalette.deepBlue,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.black12,
+          disabledForegroundColor: Colors.black45,
+          textStyle: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 0.2,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Text('Start'),
+        child: Text(_allLearned ? 'All learned' : 'Start'),
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   void _openSettings(BuildContext context) {
@@ -410,6 +441,21 @@ class _IntroScreenState extends State<IntroScreen> {
         .push(
           MaterialPageRoute(
             builder: (context) => SettingsScreen(
+              settingsBox: widget.settingsBox,
+              progressBox: widget.progressBox,
+              onProgressChanged: _loadProgress,
+            ),
+          ),
+        )
+        .then((_) => _loadProgress());
+  }
+
+  void _openDebugMenu(BuildContext context) {
+    if (!kDebugMode) return;
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => DebugSettingsScreen(
               settingsBox: widget.settingsBox,
               progressBox: widget.progressBox,
               onProgressChanged: _loadProgress,

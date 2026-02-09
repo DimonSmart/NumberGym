@@ -81,6 +81,38 @@ void main() {
     expect(nextDay.durationSeconds, 0);
   });
 
+  test(
+    'daily session duration is accumulated across all sessions today',
+    () async {
+      final repository = SettingsRepository(box);
+      final now = DateTime(2026, 2, 9, 9, 0);
+
+      var stats = repository.readDailySessionStats(now: now);
+      stats = stats.addSession(
+        cards: 20,
+        sessionDuration: const Duration(minutes: 4, seconds: 15),
+        now: now,
+      );
+      await repository.setDailySessionStats(stats);
+
+      final later = DateTime(2026, 2, 9, 18, 0);
+      stats = repository.readDailySessionStats(now: later);
+      stats = stats.addSession(
+        cards: 18,
+        sessionDuration: const Duration(minutes: 3, seconds: 45),
+        now: later,
+      );
+      await repository.setDailySessionStats(stats);
+
+      final sameDay = repository.readDailySessionStats(
+        now: DateTime(2026, 2, 9, 22, 0),
+      );
+      expect(sameDay.sessionsCompleted, 2);
+      expect(sameDay.cardsCompleted, 38);
+      expect(sameDay.durationSeconds, 480);
+    },
+  );
+
   test('study streak defaults to empty value', () {
     final repository = SettingsRepository(box);
     final streak = repository.readStudyStreak();
