@@ -1,11 +1,17 @@
 import '../../../languages/language_pack.dart';
-import '../../../languages/number_lexicon.dart';
 import 'matching_token.dart';
 
 class MatcherTextParser {
-  MatcherTextParser(this._pack);
+  MatcherTextParser(this._pack)
+    : _numberPhraseLexicon = _resolveNumberPhraseLexicon(_pack);
 
   final LanguagePack _pack;
+  final _NumberPhraseLexicon _numberPhraseLexicon;
+
+  static final Map<String, _NumberPhraseLexicon> _phraseLexiconCache =
+      <String, _NumberPhraseLexicon>{};
+
+  static const int _generatedPhraseMaxValue = 10000;
 
   List<MatchingToken> tokenize(String text) {
     if (text.trim().isEmpty) {
@@ -72,9 +78,7 @@ class MatcherTextParser {
         continue;
       }
 
-      tokens.add(
-        MatchingToken(display: rawToken.raw, normalized: normalized),
-      );
+      tokens.add(MatchingToken(display: rawToken.raw, normalized: normalized));
       index += 1;
     }
     return tokens;
@@ -92,85 +96,35 @@ class MatcherTextParser {
       return _NumberParseResult(value: direct, length: 1);
     }
 
-    final lexicon = _pack.numberLexicon;
-    if (!lexicon.isNumberWord(firstNormalized)) {
-      return null;
-    }
-
-    var total = 0;
-    var current = 0;
-    var index = start;
-    var consumed = false;
-    while (index < tokens.length) {
-      final token = tokens[index];
-      if (token.isOperatorSymbol) break;
-      final word = token.normalized;
-      if (word.isEmpty) {
-        index += 1;
-        continue;
-      }
-      if (lexicon.conjunctions.contains(word)) {
-        final nextWord = _nextNumberWord(tokens, index + 1, lexicon);
-        if (nextWord == null || !consumed) {
+    final phraseLimit = tokens.length - start;
+    final maxLength = phraseLimit < _numberPhraseLexicon.maxWordCount
+        ? phraseLimit
+        : _numberPhraseLexicon.maxWordCount;
+    for (var length = maxLength; length >= 1; length -= 1) {
+      final phraseWords = <String>[];
+      var valid = true;
+      for (var offset = 0; offset < length; offset += 1) {
+        final token = tokens[start + offset];
+        if (token.isOperatorSymbol) {
+          valid = false;
           break;
         }
-        index += 1;
-        continue;
-      }
-      final unit = lexicon.units[word];
-      if (unit != null) {
-        current += unit;
-        consumed = true;
-        index += 1;
-        continue;
-      }
-      final tens = lexicon.tens[word];
-      if (tens != null) {
-        current += tens;
-        consumed = true;
-        index += 1;
-        continue;
-      }
-      final scale = lexicon.scales[word];
-      if (scale != null) {
-        consumed = true;
-        if (scale == 100) {
-          if (current == 0) {
-            current = 1;
-          }
-          current *= scale;
-        } else {
-          if (current == 0) {
-            current = 1;
-          }
-          total += current * scale;
-          current = 0;
+        final word = token.normalized;
+        if (word.isEmpty ||
+            _pack.ignoredWords.contains(word) ||
+            _pack.operatorWords.containsKey(word) ||
+            int.tryParse(word) != null) {
+          valid = false;
+          break;
         }
-        index += 1;
-        continue;
+        phraseWords.add(word);
       }
-      break;
-    }
-    if (!consumed) return null;
-    return _NumberParseResult(value: total + current, length: index - start);
-  }
-
-  String? _nextNumberWord(
-    List<_RawToken> tokens,
-    int start,
-    NumberLexicon lexicon,
-  ) {
-    for (var i = start; i < tokens.length; i += 1) {
-      final token = tokens[i];
-      if (token.isOperatorSymbol) return null;
-      final word = token.normalized;
-      if (word.isEmpty) {
-        continue;
+      if (!valid || phraseWords.isEmpty) continue;
+      final phrase = phraseWords.join(' ');
+      final value = _numberPhraseLexicon.phraseToValue[phrase];
+      if (value != null) {
+        return _NumberParseResult(value: value, length: length);
       }
-      if (lexicon.isNumberWord(word)) {
-        return word;
-      }
-      return null;
     }
     return null;
   }
@@ -183,6 +137,72 @@ class MatcherTextParser {
       final normalized = isOperator ? '' : _pack.normalizer(raw);
       return _RawToken(raw, normalized, isOperator);
     }).toList();
+  }
+
+  static _NumberPhraseLexicon _resolveNumberPhraseLexicon(LanguagePack pack) {
+    return _phraseLexiconCache.putIfAbsent(
+      pack.code,
+      () => _buildNumberPhraseLexicon(pack),
+    );
+  }
+
+  static _NumberPhraseLexicon _buildNumberPhraseLexicon(LanguagePack pack) {
+    final phraseToValue = <String, int>{};
+    final lexicon = pack.numberLexicon;
+
+    void addPhrase(String phrase, int value) {
+      final normalized = phrase.trim();
+      if (normalized.isEmpty) return;
+      phraseToValue.putIfAbsent(normalized, () => value);
+    }
+
+    for (var value = 0; value <= _generatedPhraseMaxValue; value += 1) {
+      String words;
+      try {
+        words = pack.numberWordsConverter(value);
+      } catch (_) {
+        continue;
+      }
+      final normalized = pack.normalizer(words);
+      if (normalized.isEmpty) continue;
+      addPhrase(normalized, value);
+
+      final withoutConjunction = normalized
+          .split(_whitespaceRegex)
+          .where(
+            (word) => word.isNotEmpty && !lexicon.conjunctions.contains(word),
+          )
+          .join(' ');
+      if (withoutConjunction.isNotEmpty && withoutConjunction != normalized) {
+        addPhrase(withoutConjunction, value);
+      }
+    }
+
+    for (final entry in lexicon.units.entries) {
+      addPhrase(pack.normalizer(entry.key), entry.value);
+    }
+    for (final entry in lexicon.tens.entries) {
+      addPhrase(pack.normalizer(entry.key), entry.value);
+    }
+    for (final entry in lexicon.scales.entries) {
+      addPhrase(pack.normalizer(entry.key), entry.value);
+    }
+
+    var maxWordCount = 1;
+    for (final phrase in phraseToValue.keys) {
+      final words = phrase
+          .split(_whitespaceRegex)
+          .where((word) => word.isNotEmpty);
+      final count = words.length;
+      if (count > maxWordCount) {
+        maxWordCount = count;
+      }
+    }
+
+    return _NumberPhraseLexicon(
+      phraseToValue: Map<String, int>.unmodifiable(phraseToValue),
+      maxWordCount: maxWordCount,
+    );
   }
 }
 
@@ -201,6 +221,16 @@ class _NumberParseResult {
   const _NumberParseResult({required this.value, required this.length});
 }
 
+class _NumberPhraseLexicon {
+  final Map<String, int> phraseToValue;
+  final int maxWordCount;
+
+  const _NumberPhraseLexicon({
+    required this.phraseToValue,
+    required this.maxWordCount,
+  });
+}
+
 const _operatorSymbols = {
   '+': 'PLUS',
   '-': 'MINUS',
@@ -212,3 +242,5 @@ const _operatorSymbols = {
 String? _operatorKeyFromSymbol(String symbol) {
   return _operatorSymbols[symbol];
 }
+
+final _whitespaceRegex = RegExp(r'\s+');

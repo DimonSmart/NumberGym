@@ -62,4 +62,46 @@ void main() {
     expect(result.matchedSegmentIndices, equals([0, 1]));
     expect(matcher.isComplete, isTrue);
   });
+
+  test('accepts repeated speech echo for spanish digit', () {
+    final matcher = AnswerMatcher();
+    matcher.reset(
+      prompt: '6',
+      answers: const <String>['seis', '6'],
+      language: LearningLanguage.spanish,
+    );
+
+    final result = matcher.applyRecognition('seis seis');
+
+    expect(result.matchedSegmentIndices, equals([0]));
+    expect(matcher.isComplete, isTrue);
+  });
+
+  test('does not collapse spanish unit chain into arithmetic sum', () {
+    final matcher = AnswerMatcher();
+    matcher.reset(
+      prompt: '6',
+      answers: const <String>['seis', '6'],
+      language: LearningLanguage.spanish,
+    );
+
+    final result = matcher.applyRecognition('uno dos tres');
+
+    expect(result.matchedSegmentIndices, isEmpty);
+    expect(matcher.isComplete, isFalse);
+  });
+
+  test('accepts repeated spanish composite number phrase', () {
+    final matcher = AnswerMatcher();
+    matcher.reset(
+      prompt: '96',
+      answers: const <String>['noventa y seis', '96'],
+      language: LearningLanguage.spanish,
+    );
+
+    final result = matcher.applyRecognition('noventa y seis noventa y seis');
+
+    expect(result.matchedSegmentIndices, equals([0]));
+    expect(matcher.isComplete, isTrue);
+  });
 }
