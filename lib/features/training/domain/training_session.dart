@@ -10,7 +10,6 @@ import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
 import 'progress_manager.dart';
-import 'daily_study_summary.dart';
 import 'repositories.dart';
 import 'runtimes/listening_runtime.dart';
 import 'runtimes/multiple_choice_runtime.dart';
@@ -107,6 +106,7 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
+  bool _ignoreDailyLimit = false;
 
   // Session limits
   DateTime? _sessionStartTime;
@@ -172,6 +172,7 @@ class TrainingSession {
 
     _errorMessage = null;
     _trainingActive = true;
+    _ignoreDailyLimit = false;
     _silentDetector.reset();
     _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
@@ -188,6 +189,7 @@ class TrainingSession {
 
   Future<void> continueSession() async {
     // Allows the user to ignore the limit and continue
+    _ignoreDailyLimit = true;
     _resetSessionCounters();
     // Clear the stats from state
     _state = TrainingState(
@@ -216,6 +218,7 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _services.soundWave.reset();
     _trainingActive = false;
+    _ignoreDailyLimit = false;
     _errorMessage = null;
     _progressManager.resetSelection();
     _premiumPronunciationEnabled = _settingsRepository
@@ -233,6 +236,7 @@ class TrainingSession {
   Future<void> pauseForOverlay() async {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
+    _ignoreDailyLimit = false;
     _pendingCelebration = null;
     await _setKeepAwake(false);
     _syncState();
@@ -250,6 +254,7 @@ class TrainingSession {
     _silentDetector.reset();
     _runtimeCoordinator.resetInteraction();
     _trainingActive = false;
+    _ignoreDailyLimit = false;
     await _setKeepAwake(false);
     _syncState();
   }
@@ -264,12 +269,9 @@ class TrainingSession {
   }
 
   bool _checkSessionLimits() {
-    if (_sessionCardsCompleted >= DailyStudyPlan.cardLimit) return true;
-    if (_sessionStartTime != null) {
-      final elapsed = DateTime.now().difference(_sessionStartTime!);
-      if (elapsed >= DailyStudyPlan.sessionTimeLimit) return true;
-    }
-    return false;
+    if (_ignoreDailyLimit) return false;
+    final summary = _progressManager.dailySummary();
+    return summary.remainingToday <= 0;
   }
 
   void _syncState() {
@@ -573,22 +575,10 @@ class TrainingSession {
   }
 
   Future<void> _handleSessionLimitReached() async {
-    // 1. Calculate recommendation
     final now = DateTime.now();
-    final earliestDue = _progressManager.getEarliestNextDue() ?? now;
-
-    // Constraints: Not sooner than 2 hours, not later than 1 day
-    final minReturn = now.add(const Duration(hours: 2));
-    final maxReturn = now.add(const Duration(days: 1));
-
-    DateTime recommendation = earliestDue;
-    if (recommendation.isBefore(minReturn)) {
-      recommendation = minReturn;
-    } else if (recommendation.isAfter(maxReturn)) {
-      recommendation = maxReturn;
-    }
-
-    // 2. Prepare stats
+    final summary = _progressManager.dailySummary(now: now);
+    final recommendation =
+        summary.nextDue ?? DateTime(now.year, now.month, now.day + 1);
     final elapsed = _sessionStartTime == null
         ? Duration.zero
         : now.difference(_sessionStartTime!);
@@ -599,10 +589,7 @@ class TrainingSession {
       recommendedReturn: recommendation,
     );
 
-    // 3. Update state
     await _runtimeCoordinator.disposeRuntime(clearState: true);
-    // Don't set _trainingActive = false yet, allow "continue"
-    // But stop keep awake? Maybe.
     unawaited(_setKeepAwake(false));
 
     _state = TrainingState(

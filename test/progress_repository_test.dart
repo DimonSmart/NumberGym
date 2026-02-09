@@ -41,10 +41,7 @@ void main() {
       const TrainingItemId(type: TrainingItemType.digits, number: 1),
       const TrainingItemId(type: TrainingItemType.digits, number: 2),
     ];
-    final results = await repo.loadAll(
-      ids,
-      language: LearningLanguage.english,
-    );
+    final results = await repo.loadAll(ids, language: LearningLanguage.english);
 
     expect(results.length, ids.length);
     expect(results.keys, containsAll(ids));
@@ -64,38 +61,25 @@ void main() {
           skippedCount: 0,
         ),
       ],
-      intervalDays: 4,
-      nextDue: 12345,
-      ease: 2.1,
-      spacedSuccessCount: 1,
-      lastCountedSuccessDay: 10,
       learnedAt: 1000,
+      firstAttemptAt: 800,
     );
 
-    const targetId = TrainingItemId(
-      type: TrainingItemType.digits,
-      number: 2,
-    );
+    const targetId = TrainingItemId(type: TrainingItemType.digits, number: 2);
     await repo.save(targetId, progress, language: LearningLanguage.english);
-    final results = await repo.loadAll(
-      <TrainingItemId>[
-        const TrainingItemId(type: TrainingItemType.digits, number: 0),
-        const TrainingItemId(type: TrainingItemType.digits, number: 1),
-        targetId,
-      ],
-      language: LearningLanguage.english,
-    );
+    final results = await repo.loadAll(<TrainingItemId>[
+      const TrainingItemId(type: TrainingItemType.digits, number: 0),
+      const TrainingItemId(type: TrainingItemType.digits, number: 1),
+      targetId,
+    ], language: LearningLanguage.english);
     final stored = results[targetId]!;
 
     expect(stored.learned, true);
     expect(stored.totalAttempts, 5);
     expect(stored.totalCorrect, 4);
     expect(stored.clusters.length, 1);
-    expect(stored.intervalDays, 4);
-    expect(stored.nextDue, 12345);
-    expect(stored.ease, 2.1);
-    expect(stored.spacedSuccessCount, 1);
-    expect(stored.lastCountedSuccessDay, 10);
+    expect(stored.learnedAt, 1000);
+    expect(stored.firstAttemptAt, 800);
   });
 
   test('reset clears progress', () async {
@@ -110,33 +94,24 @@ void main() {
           skippedCount: 0,
         ),
       ],
-      intervalDays: 2,
-      nextDue: 999,
-      ease: 1.8,
-      spacedSuccessCount: 0,
-      lastCountedSuccessDay: -1,
       learnedAt: 0,
+      firstAttemptAt: 2000,
     );
 
-    const targetId = TrainingItemId(
-      type: TrainingItemType.digits,
-      number: 1,
-    );
+    const targetId = TrainingItemId(type: TrainingItemType.digits, number: 1);
     await repo.save(targetId, progress, language: LearningLanguage.english);
     await repo.reset(language: LearningLanguage.english);
-    final results = await repo.loadAll(
-      <TrainingItemId>[
-        const TrainingItemId(type: TrainingItemType.digits, number: 0),
-        targetId,
-      ],
-      language: LearningLanguage.english,
-    );
+    final results = await repo.loadAll(<TrainingItemId>[
+      const TrainingItemId(type: TrainingItemType.digits, number: 0),
+      targetId,
+    ], language: LearningLanguage.english);
     final stored = results[targetId]!;
 
     expect(stored.learned, false);
     expect(stored.totalAttempts, 0);
     expect(stored.totalCorrect, 0);
     expect(stored.clusters, isEmpty);
+    expect(stored.firstAttemptAt, 0);
   });
 
   test('reset clears only selected language', () async {
@@ -151,31 +126,22 @@ void main() {
           skippedCount: 0,
         ),
       ],
-      intervalDays: 3,
-      nextDue: 555,
-      ease: 2.0,
-      spacedSuccessCount: 2,
-      lastCountedSuccessDay: 5,
       learnedAt: 3000,
+      firstAttemptAt: 3000,
     );
 
-    const targetId = TrainingItemId(
-      type: TrainingItemType.digits,
-      number: 1,
-    );
+    const targetId = TrainingItemId(type: TrainingItemType.digits, number: 1);
     await repo.save(targetId, progress, language: LearningLanguage.english);
     await repo.save(targetId, progress, language: LearningLanguage.spanish);
 
     await repo.reset(language: LearningLanguage.english);
 
-    final english = await repo.loadAll(
-      <TrainingItemId>[targetId],
-      language: LearningLanguage.english,
-    );
-    final spanish = await repo.loadAll(
-      <TrainingItemId>[targetId],
-      language: LearningLanguage.spanish,
-    );
+    final english = await repo.loadAll(<TrainingItemId>[
+      targetId,
+    ], language: LearningLanguage.english);
+    final spanish = await repo.loadAll(<TrainingItemId>[
+      targetId,
+    ], language: LearningLanguage.spanish);
 
     expect(english[targetId]!.totalAttempts, 0);
     expect(spanish[targetId]!.totalAttempts, 2);

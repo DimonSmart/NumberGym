@@ -136,9 +136,9 @@ The system must allow switching the learning language. All content and progress 
 
 - Metrics and grid reflect local progress data.
 
-- The grid shows each card's current successful cluster streak.
+- The screen shows coverage, recent accuracy, and daily activity.
 
-- The most troublesome cards are highlighted (top 10 by attempts among not learned).
+- The most troublesome cards are highlighted (low recent accuracy among not learned).
 
 
 
@@ -180,31 +180,35 @@ The system must include cards for:
 
 ### 4.2. Training rules
 
-- Training uses two pools: **AllCards** (full content) and **Active** (study window).
+- Training uses a single eligible card pool (no Active/Backlog queues).
 
-- Active is filled from Backlog up to the active limit.
+- Card selection is probabilistic and weighted.
 
-- Training selects only not-learned cards from Active.
+- Weight combines:
+  - base content difficulty,
+  - weakness priority (cards below mastery target are shown more often),
+  - novelty boost (new cards),
+  - cooldown penalty (recently shown cards).
 
-- Card order uses `nextDue` to find the earliest due cards, then selects a random
+- Learned cards are still sampled with a small review probability.
 
-  eligible card among those earliest due items from Active.
-
-- The session finishes when all cards are learned.
+- Daily practice is capped by explicit daily limits (attempts and new cards).
 
 
 
 #### 4.2.1. Card selection process
 
-1. Load progress for the active language and build Active/Backlog from unlearned cards.
+1. Load progress for the active language.
 
-2. Filter Active to eligible cards (task constraints, availability).
+2. Filter full card set to eligible cards (task constraints, availability).
 
-3. Order eligible cards by `nextDue` (earliest first) and find the earliest due group.
+3. Split into learned and unlearned buckets.
 
-4. Randomly select any eligible card from that earliest due group.
+4. Select source bucket by review probability.
 
-5. Build the next task variant based on availability and weights.
+5. Compute per-card weights and perform weighted random pick.
+
+6. Build the next task variant based on availability and method weights.
 
 
 
@@ -216,54 +220,23 @@ The system must include cards for:
 
 - A cluster aggregates attempts within the configured time gap (`clusterMaxGapMinutes`).
 
-- The scheduler is updated once per cluster (on cluster start). Additional attempts inside the same cluster update only cluster counters, not interval growth.
+- A card becomes learned by mastery criteria:
+  - total attempts >= `minAttemptsToLearn`,
+  - recent accuracy (last N attempts) >= target for card difficulty.
 
-- Interval, ease, and `nextDue` are updated only when a new cluster is created.
+- Mastery targets are difficulty-aware:
+  - easy cards: strict (default 100%),
+  - medium cards: moderate (default 85%),
+  - hard cards: tolerant (default 75%).
 
-- Inside an active cluster window, `nextDue` is shifted from the current attempt time (`now + currentInterval`) without multiplying interval/ease again.
-
-- A cluster is successful if its accuracy is above the configured threshold.
-
-- **Spaced success** counts only when enough days passed since the previous counted success.
-
-- A card is learned only if it reaches both:
-
-  - minimum spaced successes,
-
-  - minimum interval length.
-
-- Default interval ceiling is one week: `LearningParams.maxReviewIntervalDays = 7`.
-
-
-#### 4.3.1. Default spaced parameters and daily learning estimate
-
-Default values:
-- `maxReviewIntervalDays = 7`
-- `minSpacedSuccessClustersToLearn = 3`
-- `minDaysBetweenCountedSuccesses = 1`
-- `initialIntervalDays = 1.0`
-- `initialEase = 1.3`
-- `easeUpOnSuccess = 0.04`
-
-If the learner studies one successful cluster per day, interval growth is:
-1. Day 1: `1.34` days
-2. Day 2: `1.85` days
-3. Day 3: `2.63` days
-4. Day 4: `3.83` days
-5. Day 5: `5.75` days
-6. Day 6: `7.00` days (clamped by max)
-
-With these defaults, a card becomes learned in about **6 days** of successful daily practice:
-- by Day 3 it reaches the required spaced-success count (`>= 3`),
-- by Day 6 it reaches the required interval (`>= 7` days).
+- Learned cards can return to learning state if recent performance drops below target.
 
 - Statistics must expose:
 
   - totalAttempts,
 
   - totalCorrect,
-
-  - current consecutive successful cluster streak.
+  - recent accuracy and problematic cards.
 
 
 
@@ -399,9 +372,11 @@ For each card and language, store:
 
 - learned flag,
 
-- spaced scheduling fields (`intervalDays`, `nextDue`, `ease`, `spacedSuccessCount`, `lastCountedSuccessDay`),
-
 - last N clusters of attempts (each cluster stores lastAnswerAt + correct/wrong/skipped counts),
+
+- first attempt timestamp (for daily new-card limit),
+
+- learned timestamp,
 
 - total attempts / correct totals derived from clusters.
 

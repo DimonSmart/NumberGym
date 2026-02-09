@@ -1,81 +1,123 @@
-class LearningParams {
-  static const double maxReviewIntervalDays = 7.0;
-  static const int minSpacedSuccessClustersToLearn = 3;
+import '../training_item.dart';
 
-  final int activeLimit;
-  final double clusterSuccessAccuracy;
+class LearningParams {
+  final int dailyAttemptLimit;
+  final int dailyNewCardsLimit;
   final int clusterMaxGapMinutes;
   final int maxStoredClusters;
-  final int minDaysBetweenCountedSuccesses;
-  final int minSpacedSuccessClusters;
-  final double learnedIntervalDays;
-  final double easeUpOnSuccess;
-  final double easeDownOnFail;
-  final double failIntervalFactor;
-  final double minIntervalDays;
-  final double maxIntervalDays;
-  final double easeMin;
-  final double easeMax;
-  final double initialEase;
-  final double initialIntervalDays;
+  final int recentAttemptsWindow;
+  final int minAttemptsToLearn;
+  final double learnedReviewProbability;
+  final int repeatCooldownCards;
+  final double easyMasteryAccuracy;
+  final double mediumMasteryAccuracy;
+  final double hardMasteryAccuracy;
+  final double easyTypeWeight;
+  final double mediumTypeWeight;
+  final double hardTypeWeight;
+  final double weaknessBoost;
+  final double newCardBoost;
+  final double recentMistakeBoost;
+  final double cooldownPenalty;
 
   const LearningParams({
-    required this.activeLimit,
-    required this.clusterSuccessAccuracy,
+    required this.dailyAttemptLimit,
+    required this.dailyNewCardsLimit,
     required this.clusterMaxGapMinutes,
     required this.maxStoredClusters,
-    required this.minDaysBetweenCountedSuccesses,
-    required this.minSpacedSuccessClusters,
-    required this.learnedIntervalDays,
-    required this.easeUpOnSuccess,
-    required this.easeDownOnFail,
-    required this.failIntervalFactor,
-    required this.minIntervalDays,
-    required this.maxIntervalDays,
-    required this.easeMin,
-    required this.easeMax,
-    required this.initialEase,
-    required this.initialIntervalDays,
-  }) : assert(activeLimit > 0),
-       assert(clusterSuccessAccuracy >= 0 && clusterSuccessAccuracy <= 1),
+    required this.recentAttemptsWindow,
+    required this.minAttemptsToLearn,
+    required this.learnedReviewProbability,
+    required this.repeatCooldownCards,
+    required this.easyMasteryAccuracy,
+    required this.mediumMasteryAccuracy,
+    required this.hardMasteryAccuracy,
+    required this.easyTypeWeight,
+    required this.mediumTypeWeight,
+    required this.hardTypeWeight,
+    required this.weaknessBoost,
+    required this.newCardBoost,
+    required this.recentMistakeBoost,
+    required this.cooldownPenalty,
+  }) : assert(dailyAttemptLimit > 0),
+       assert(dailyNewCardsLimit >= 0),
        assert(clusterMaxGapMinutes >= 0),
        assert(maxStoredClusters > 0),
-       assert(minDaysBetweenCountedSuccesses >= 0),
-       assert(minSpacedSuccessClusters >= 0),
-       assert(learnedIntervalDays >= 0),
-       assert(minIntervalDays > 0),
-       assert(maxIntervalDays >= minIntervalDays),
-       assert(easeMin > 0),
-       assert(easeMax >= easeMin),
-       assert(initialEase > 0),
-       assert(initialIntervalDays > 0);
+       assert(recentAttemptsWindow > 0),
+       assert(minAttemptsToLearn > 0),
+       assert(learnedReviewProbability >= 0 && learnedReviewProbability <= 1),
+       assert(repeatCooldownCards >= 0),
+       assert(easyMasteryAccuracy >= 0 && easyMasteryAccuracy <= 1),
+       assert(mediumMasteryAccuracy >= 0 && mediumMasteryAccuracy <= 1),
+       assert(hardMasteryAccuracy >= 0 && hardMasteryAccuracy <= 1),
+       assert(easyTypeWeight > 0),
+       assert(mediumTypeWeight > 0),
+       assert(hardTypeWeight > 0),
+       assert(weaknessBoost >= 0),
+       assert(newCardBoost > 0),
+       assert(recentMistakeBoost > 0),
+       assert(cooldownPenalty > 0);
 
   factory LearningParams.defaults() {
     return const LearningParams(
-      activeLimit: 20,
-      clusterSuccessAccuracy: 0.8,
+      dailyAttemptLimit: 50,
+      dailyNewCardsLimit: 15,
       clusterMaxGapMinutes: 30,
-      maxStoredClusters: 10,
-      minDaysBetweenCountedSuccesses: 1,
-      minSpacedSuccessClusters: minSpacedSuccessClustersToLearn,
-      learnedIntervalDays: maxReviewIntervalDays,
-      easeUpOnSuccess: 0.04,
-      easeDownOnFail: 0.1,
-      failIntervalFactor: 0.6,
-      minIntervalDays: 1,
-      maxIntervalDays: maxReviewIntervalDays,
-      easeMin: 1.2,
-      easeMax: 1.8,
-      initialEase: 1.3,
-      initialIntervalDays: 1.0,
+      maxStoredClusters: 32,
+      recentAttemptsWindow: 10,
+      minAttemptsToLearn: 20,
+      learnedReviewProbability: 0.12,
+      repeatCooldownCards: 2,
+      easyMasteryAccuracy: 1.0,
+      mediumMasteryAccuracy: 0.85,
+      hardMasteryAccuracy: 0.75,
+      easyTypeWeight: 1.8,
+      mediumTypeWeight: 1.1,
+      hardTypeWeight: 0.7,
+      weaknessBoost: 2.0,
+      newCardBoost: 1.4,
+      recentMistakeBoost: 1.3,
+      cooldownPenalty: 0.2,
     );
   }
 
-  double clampEase(double value) {
-    return value.clamp(easeMin, easeMax).toDouble();
+  double targetAccuracy(TrainingItemType type) {
+    switch (_difficultyFor(type)) {
+      case _ItemDifficulty.easy:
+        return easyMasteryAccuracy;
+      case _ItemDifficulty.medium:
+        return mediumMasteryAccuracy;
+      case _ItemDifficulty.hard:
+        return hardMasteryAccuracy;
+    }
   }
 
-  double clampInterval(double value) {
-    return value.clamp(minIntervalDays, maxIntervalDays).toDouble();
+  double baseTypeWeight(TrainingItemType type) {
+    switch (_difficultyFor(type)) {
+      case _ItemDifficulty.easy:
+        return easyTypeWeight;
+      case _ItemDifficulty.medium:
+        return mediumTypeWeight;
+      case _ItemDifficulty.hard:
+        return hardTypeWeight;
+    }
+  }
+
+  _ItemDifficulty _difficultyFor(TrainingItemType type) {
+    switch (type) {
+      case TrainingItemType.digits:
+      case TrainingItemType.base:
+        return _ItemDifficulty.easy;
+      case TrainingItemType.hundreds:
+      case TrainingItemType.thousands:
+      case TrainingItemType.timeExact:
+      case TrainingItemType.timeHalf:
+        return _ItemDifficulty.medium;
+      case TrainingItemType.timeQuarter:
+      case TrainingItemType.timeRandom:
+        return _ItemDifficulty.hard;
+    }
   }
 }
+
+enum _ItemDifficulty { easy, medium, hard }

@@ -69,11 +69,12 @@ class AnswerMatcher {
     }
     _expectedTokens = _atoms.map((atom) => atom.displayText).toList();
     _matchedTokens = List<bool>.filled(_atoms.length, false);
-    _requiredAtomCount =
-        _atoms.where((atom) => atom.isRequired).length;
+    _requiredAtomCount = _atoms.where((atom) => atom.isRequired).length;
     final normalized = <String>{
       for (final answer in answers) _pack.normalizer(answer),
       if (prompt.isNotEmpty) _pack.normalizer(prompt),
+      for (final alias in _buildPromptAliases(prompt, language))
+        _pack.normalizer(alias),
     }..removeWhere((value) => value.isEmpty);
     _acceptedAnswers = normalized;
   }
@@ -196,6 +197,21 @@ class AnswerMatcher {
 
   bool _hasEtalonSyntax(String text) {
     return text.contains('(') || text.contains('[') || text.contains('{');
+  }
+
+  List<String> _buildPromptAliases(String prompt, LearningLanguage language) {
+    if (language != LearningLanguage.english) {
+      return const <String>[];
+    }
+    final match = RegExp(r'^\s*(\d{1,2}):00\s*$').firstMatch(prompt);
+    if (match == null) {
+      return const <String>[];
+    }
+    final hourValue = int.tryParse(match.group(1) ?? '');
+    if (hourValue == null) {
+      return const <String>[];
+    }
+    return <String>['$hourValue o clock'];
   }
 
   List<_AtomVariant> _mergeVariants(
@@ -402,9 +418,7 @@ class _EtalonParser {
         if (variants.isEmpty) {
           continue;
         }
-        atoms.add(
-          _EtalonAtom.literal(displayText: part, variants: variants),
-        );
+        atoms.add(_EtalonAtom.literal(displayText: part, variants: variants));
         continue;
       }
       atoms.add(_EtalonAtom.decorative(part));

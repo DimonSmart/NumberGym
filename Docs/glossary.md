@@ -2,16 +2,16 @@
 
 - Card: A single training item representing a numeric concept, not just a raw number (for example, time, phone number, weight, price, dates, measurements), along with its accepted answers.
 - Card ID (TrainingItemId): Unique identifier built from item type and number/time value; used as the progress key.
-- Item type (TrainingItemType): **Content category** defining what is being trained — numbers (digits, base, hundreds, thousands) or time (timeExact, timeQuarter, timeHalf, timeRandom). Used for scheduling and option generation.
-- Active window (Active pool): Limited subset of unlearned cards eligible for selection; size is capped by activeLimit.
-- Backlog: Remaining unlearned cards waiting to enter the Active window.
-- Cluster: Aggregated attempts within a time gap, storing correct/wrong/skipped counts and lastAnswerAt.
+- Item type (TrainingItemType): Content category defining what is being trained - numbers (digits, base, hundreds, thousands) or time (timeExact, timeQuarter, timeHalf, timeRandom).
+- Card weight: A dynamic priority score used for probabilistic card selection.
+- Cluster: Aggregated attempts within a short time gap, storing correct/wrong/skipped counts and lastAnswerAt.
 - Cluster gap: Maximum time between attempts that still belong to the same cluster (clusterMaxGapMinutes).
-- Spaced success: Counted success that advances spaced repetition only when enough days passed since the last counted success.
-- Interval (intervalDays): Current spacing interval for a card, used to compute nextDue.
-- nextDue: Due timestamp (ms since epoch) when a card becomes eligible again.
-- Ease: Spacing multiplier that grows on success and shrinks on failure.
-- Learned: Card state reached when spacedSuccessCount and intervalDays meet configured thresholds.
+- Mastery window: The latest N attempts used to compute recent accuracy for mastery decisions.
+- Learned: Card state reached when both mastery conditions pass (minimum attempts plus recent accuracy threshold for the card difficulty).
+- Review probability: Chance to include already learned cards in practice for retention checks.
+- Cooldown: Temporary weight penalty for cards shown very recently, preventing repetitive loops.
+- Daily attempt limit: Max number of attempts targeted per day.
+- Daily new-card limit: Max number of first-time cards introduced per day.
 - Learning method (LearningMethod): Defines how the learner interacts with a card (for example, pronunciation with speech recognition, listening comprehension, multiple choice).
 - Number pronunciation: Speech-recognition task where the learner says the number aloud and matching is checked against accepted answers.
 - Etalon: Reference pattern string for speech matching; supports syntax for decorative text `(...)`, variants `[...]`, and optional tokens `{...}`.

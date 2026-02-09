@@ -4,7 +4,7 @@ import '../data/card_progress.dart';
 
 class DailyStudyPlan {
   static const int cardLimit = 50;
-  static const Duration sessionTimeLimit = Duration(minutes: 10);
+  static const int newCardsLimit = 15;
 }
 
 class DailyStudySummary {
@@ -14,6 +14,8 @@ class DailyStudySummary {
     required this.targetToday,
     required this.remainingToday,
     required this.nextDue,
+    required this.newCardsToday,
+    required this.newCardsRemaining,
   });
 
   final int dueToday;
@@ -21,11 +23,14 @@ class DailyStudySummary {
   final int targetToday;
   final int remainingToday;
   final DateTime? nextDue;
+  final int newCardsToday;
+  final int newCardsRemaining;
 
   factory DailyStudySummary.fromProgress(
     Iterable<CardProgress> progressItems, {
     DateTime? now,
-    int dailyLimit = DailyStudyPlan.cardLimit,
+    int dailyAttemptLimit = DailyStudyPlan.cardLimit,
+    int dailyNewCardsLimit = DailyStudyPlan.newCardsLimit,
   }) {
     final resolvedNow = now ?? DateTime.now();
     final startOfDay = DateTime(
@@ -37,9 +42,8 @@ class DailyStudySummary {
     final endOfDayMillis = endOfDay.millisecondsSinceEpoch - 1;
     final startOfDayMillis = startOfDay.millisecondsSinceEpoch;
 
-    var dueToday = 0;
     var completedToday = 0;
-    int? earliestFutureDue;
+    var newCardsToday = 0;
 
     for (final progress in progressItems) {
       completedToday += _attemptsInDayWindow(
@@ -48,33 +52,28 @@ class DailyStudySummary {
         endOfDayMillis: endOfDayMillis,
       );
 
-      if (progress.learned) {
-        continue;
-      }
-
-      final dueMillis = progress.nextDue;
-      if (dueMillis <= 0 || dueMillis <= endOfDayMillis) {
-        dueToday += 1;
-        continue;
-      }
-
-      if (earliestFutureDue == null || dueMillis < earliestFutureDue) {
-        earliestFutureDue = dueMillis;
+      final firstAttemptAt = progress.firstAttemptAt;
+      if (firstAttemptAt >= startOfDayMillis &&
+          firstAttemptAt <= endOfDayMillis) {
+        newCardsToday += 1;
       }
     }
 
-    final targetToday = math.min(dueToday, dailyLimit);
+    final targetToday = dailyAttemptLimit;
     final remainingToday = math.max(0, targetToday - completedToday);
-    final nextDue = remainingToday == 0 && earliestFutureDue != null
-        ? DateTime.fromMillisecondsSinceEpoch(earliestFutureDue)
+    final newCardsRemaining = math.max(0, dailyNewCardsLimit - newCardsToday);
+    final nextDue = remainingToday == 0
+        ? startOfDay.add(const Duration(days: 1))
         : null;
 
     return DailyStudySummary(
-      dueToday: dueToday,
+      dueToday: targetToday,
       completedToday: completedToday,
       targetToday: targetToday,
       remainingToday: remainingToday,
       nextDue: nextDue,
+      newCardsToday: newCardsToday,
+      newCardsRemaining: newCardsRemaining,
     );
   }
 

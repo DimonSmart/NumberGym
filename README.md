@@ -11,13 +11,15 @@ aloud, and repeats until the response is learned.
 
 ## Concept
 
-- The app maintains two pools: a full card pool (all available content) and an
-  active window used for current study.
-- A session draws from the active window; `nextDue` determines the next item
-  type, then a random card of that type is selected.
-- Card progress is updated after each attempt via spaced repetition; clusters
-  are stored for streak and analytics.
-- Learned cards drop out of the active window and are replaced from the backlog.
+- A session selects the next card from the full eligible set using weighted
+  probability (no active/backlog queues).
+- Card weights combine type difficulty, weak-spot priority, novelty control,
+  and anti-repeat cooldown.
+- A card becomes learned by mastery rules: minimum total attempts plus recent
+  accuracy threshold (difficulty-dependent).
+- Learned cards still appear with a small probability for retention checks;
+  mistakes can return them to learning.
+- Daily work is limited by clear caps: total attempts and new cards per day.
 - Cards can represent numbers, simple expressions, measurements, and time formats,
   allowing multiple levels and domains without changing the flow.
 

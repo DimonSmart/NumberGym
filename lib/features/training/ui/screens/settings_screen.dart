@@ -9,7 +9,6 @@ import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/learning_language.dart';
-import '../../domain/learning_strategy/learning_params.dart';
 import '../../domain/language_router.dart';
 import '../../domain/progress_manager.dart';
 import '../../domain/services/internet_checker.dart';
@@ -41,7 +40,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
-  late final LearningParams _learningParams;
   late final TtsServiceBase _ttsService;
   late final SpeechServiceBase _speechService;
   late final TaskAvailabilityRegistry _availabilityRegistry;
@@ -73,7 +71,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
-    _learningParams = LearningParams.defaults();
     _ttsService = TtsService();
     _speechService = SpeechService();
     _availabilityRegistry = TaskAvailabilityRegistry(
@@ -349,32 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return _itemTypeLabel(id.type);
   }
 
-  CardProgress _almostLearnedProgress(CardProgress source) {
-    final requiredSuccesses = _learningParams.minSpacedSuccessClusters;
-    final almostLearnedSuccesses = requiredSuccesses > 0
-        ? requiredSuccesses - 1
-        : 0;
-    final updatedClusters = List<CardCluster>.from(source.clusters);
-    if (updatedClusters.isNotEmpty) {
-      final lastIndex = updatedClusters.length - 1;
-      updatedClusters[lastIndex] = updatedClusters[lastIndex].copyWith(
-        // Force the next answer into a new cluster so scheduler runs.
-        lastAnswerAt: 0,
-      );
-    }
-    return source.copyWith(
-      learned: false,
-      learnedAt: 0,
-      clusters: updatedClusters,
-      intervalDays: _learningParams.learnedIntervalDays,
-      nextDue: 0,
-      ease: _learningParams.easeMax,
-      spacedSuccessCount: almostLearnedSuccesses,
-      lastCountedSuccessDay: -1,
-    );
-  }
-
-  Future<void> _markSelectedCardAlmostLearned() async {
+  Future<void> _markSelectedCardLearned() async {
     final selected = _debugSelectedCardId;
     if (selected == null || _debugMarkingAlmostLearned) return;
     setState(() {
@@ -385,15 +357,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         selected,
       ], language: _language);
       final current = progressById[selected] ?? CardProgress.empty;
-      final updated = _almostLearnedProgress(current);
+      final updated = current.copyWith(
+        learned: true,
+        learnedAt: DateTime.now().millisecondsSinceEpoch,
+      );
       await _progressRepository.save(selected, updated, language: _language);
       widget.onProgressChanged?.call();
-      _showSnack(
-        'Card ${_formatQueueId(selected)} is almost learned. '
-        'One new correct answer should move it to learned.',
-      );
+      _showSnack('Card ${_formatQueueId(selected)} marked as learned.');
     } catch (error) {
-      _showSnack('Failed to mark card almost learned: $error');
+      _showSnack('Failed to mark card as learned: $error');
     } finally {
       if (mounted) {
         setState(() {
@@ -441,26 +413,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   int _totalWrong(CardProgress progress) {
-    var total = 0;
-    for (final cluster in progress.clusters) {
-      total += cluster.wrongCount;
-    }
-    return total;
-  }
-
-  int _countDueNow(
-    Iterable<TrainingItemId> ids,
-    LearningQueueDebugSnapshot snapshot,
-    int nowMillis,
-  ) {
-    var count = 0;
-    for (final id in ids) {
-      final due = _progressFor(snapshot, id).nextDue;
-      if (due <= 0 || due <= nowMillis) {
-        count += 1;
-      }
-    }
-    return count;
+    return progress.totalWrong;
   }
 
   int _sumAttempts(
@@ -507,21 +460,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return total;
   }
 
-  String _formatDurationShort(Duration duration) {
-    final totalMinutes = duration.inMinutes;
-    if (totalMinutes < 60) {
-      return '${totalMinutes}m';
-    }
-    final totalHours = duration.inHours;
-    if (totalHours < 24) {
-      final minutes = totalMinutes % 60;
-      return minutes == 0 ? '${totalHours}h' : '${totalHours}h ${minutes}m';
-    }
-    final days = duration.inDays;
-    final hours = totalHours % 24;
-    return hours == 0 ? '${days}d' : '${days}d ${hours}h';
-  }
-
   String _formatDateTime(DateTime value) {
     final local = value.toLocal();
     final y = local.year.toString().padLeft(4, '0');
@@ -532,55 +470,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return '$y-$m-$d $hh:$mm';
   }
 
-  String _formatDueLabel(int dueMillis, int nowMillis) {
-    if (dueMillis <= 0 || dueMillis <= nowMillis) {
-      return 'ready now';
-    }
-    final due = DateTime.fromMillisecondsSinceEpoch(dueMillis);
-    final diff = Duration(milliseconds: dueMillis - nowMillis);
-    return '${_formatDateTime(due)} (in ${_formatDurationShort(diff)})';
-  }
-
   String _formatQueueCardLine(
     TrainingItemId id,
     LearningQueueDebugSnapshot snapshot,
-    int nowMillis,
   ) {
     final progress = _progressFor(snapshot, id);
     final lastAnswerAt = progress.lastCluster?.lastAnswerAt ?? 0;
     final lastAnswerText = lastAnswerAt <= 0
         ? '-'
         : _formatDateTime(DateTime.fromMillisecondsSinceEpoch(lastAnswerAt));
-    final dueText = _formatDueLabel(progress.nextDue, nowMillis);
+    final status = progress.learned ? 'learned' : 'learning';
     final correct = progress.totalCorrect;
     final wrong = _totalWrong(progress);
     final skipped = progress.totalSkipped;
-    return '${_formatQueueId(id)} | due: $dueText | c/w/s: '
-        '$correct/$wrong/$skipped | attempts: ${progress.totalAttempts} '
+    final attempts = progress.totalAttempts;
+    final accuracy = attempts == 0 ? 0.0 : correct / attempts;
+    final weight = snapshot.weightById[id] ?? 0;
+    return '${_formatQueueId(id)} | weight: ${weight.toStringAsFixed(3)} '
+        '| $status | acc: ${(accuracy * 100).toStringAsFixed(1)}% '
+        '| c/w/s: $correct/$wrong/$skipped | attempts: $attempts '
         '| last: $lastAnswerText';
   }
 
   String _formatQueuePreview(LearningQueueDebugSnapshot snapshot) {
     final language = snapshot.language ?? _language;
     final languageLabel = LanguageRegistry.of(language).label;
-    final nowMillis = DateTime.now().millisecondsSinceEpoch;
-    final activeHead = snapshot.active.take(5).map(_formatQueueId).join(', ');
-    final backlogHead = snapshot.backlog.take(5).map(_formatQueueId).join(', ');
-    final activeSuffix = snapshot.active.length > 5 ? ', ...' : '';
-    final backlogSuffix = snapshot.backlog.length > 5 ? ', ...' : '';
-    final dueNowActive = _countDueNow(snapshot.active, snapshot, nowMillis);
-    final dueNowBacklog = _countDueNow(snapshot.backlog, snapshot, nowMillis);
     final totalAttempts = _sumAttempts(snapshot.all, snapshot);
     final totalCorrect = _sumCorrect(snapshot.all, snapshot);
     final totalWrong = _sumWrong(snapshot.all, snapshot);
     final totalSkipped = _sumSkipped(snapshot.all, snapshot);
+    final prioritizedHead = snapshot.prioritized
+        .take(8)
+        .map((id) => _formatQueueId(id))
+        .join(', ');
+    final prioritizedSuffix = snapshot.prioritized.length > 8 ? ', ...' : '';
+    final attemptsRemaining =
+        (snapshot.dailyAttemptLimit - snapshot.dailyAttemptsToday).clamp(
+          0,
+          snapshot.dailyAttemptLimit,
+        );
+    final newCardsRemaining =
+        (snapshot.dailyNewCardsLimit - snapshot.dailyNewCardsToday).clamp(
+          0,
+          snapshot.dailyNewCardsLimit,
+        );
     return [
       'Language: $languageLabel',
-      'Active ${snapshot.active.length}/${snapshot.activeLimit}: '
-          '${activeHead.isEmpty ? 'empty' : '$activeHead$activeSuffix'}',
-      'Backlog ${snapshot.backlog.length}: '
-          '${backlogHead.isEmpty ? 'empty' : '$backlogHead$backlogSuffix'}',
-      'Due now: active $dueNowActive, backlog $dueNowBacklog',
+      'Daily attempts: ${snapshot.dailyAttemptsToday}/${snapshot.dailyAttemptLimit} '
+          '(remaining $attemptsRemaining)',
+      'Daily new cards: ${snapshot.dailyNewCardsToday}/${snapshot.dailyNewCardsLimit} '
+          '(remaining $newCardsRemaining)',
+      'Top priority: ${prioritizedHead.isEmpty ? 'empty' : '$prioritizedHead$prioritizedSuffix'}',
       'Answers: $totalAttempts (correct $totalCorrect, '
           'wrong $totalWrong, skipped $totalSkipped)',
     ].join('\n');
@@ -590,40 +530,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final language = snapshot.language ?? _language;
     final languageLabel = LanguageRegistry.of(language).label;
     final now = DateTime.now();
-    final nowMillis = now.millisecondsSinceEpoch;
-    final dueNowActive = _countDueNow(snapshot.active, snapshot, nowMillis);
-    final dueNowBacklog = _countDueNow(snapshot.backlog, snapshot, nowMillis);
     final totalAttempts = _sumAttempts(snapshot.all, snapshot);
     final totalCorrect = _sumCorrect(snapshot.all, snapshot);
     final totalWrong = _sumWrong(snapshot.all, snapshot);
     final totalSkipped = _sumSkipped(snapshot.all, snapshot);
-    const backlogCopyLimit = 500;
+    const priorityCopyLimit = 500;
     final buffer = StringBuffer()
       ..writeln('Generated at: ${_formatDateTime(now)}')
       ..writeln('Language: $languageLabel')
-      ..writeln('Active limit: ${snapshot.activeLimit}')
       ..writeln('Total cards: ${snapshot.all.length}')
-      ..writeln('Due now: active $dueNowActive, backlog $dueNowBacklog')
+      ..writeln(
+        'Daily attempts: ${snapshot.dailyAttemptsToday}/${snapshot.dailyAttemptLimit}',
+      )
+      ..writeln(
+        'Daily new cards: ${snapshot.dailyNewCardsToday}/${snapshot.dailyNewCardsLimit}',
+      )
       ..writeln(
         'Answers total: $totalAttempts '
         '(correct: $totalCorrect, wrong: $totalWrong, skipped: $totalSkipped)',
       )
-      ..writeln('Active (${snapshot.active.length}):');
-    for (var i = 0; i < snapshot.active.length; i++) {
+      ..writeln('Priority list (${snapshot.prioritized.length}):');
+    final prioritizedItems = snapshot.prioritized
+        .take(priorityCopyLimit)
+        .toList();
+    for (var i = 0; i < prioritizedItems.length; i++) {
       buffer.writeln(
         '  ${i + 1}. '
-        '${_formatQueueCardLine(snapshot.active[i], snapshot, nowMillis)}',
+        '${_formatQueueCardLine(prioritizedItems[i], snapshot)}',
       );
     }
-    buffer.writeln('Backlog (${snapshot.backlog.length}):');
-    final backlogItems = snapshot.backlog.take(backlogCopyLimit).toList();
-    for (var i = 0; i < backlogItems.length; i++) {
-      buffer.writeln(
-        '  ${i + 1}. '
-        '${_formatQueueCardLine(backlogItems[i], snapshot, nowMillis)}',
-      );
-    }
-    final remaining = snapshot.backlog.length - backlogItems.length;
+    final remaining = snapshot.prioritized.length - prioritizedItems.length;
     if (remaining > 0) {
       buffer.writeln('  ... +$remaining more');
     }
@@ -659,7 +595,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _queuePreview = preview;
       });
       messenger.showSnackBar(
-        const SnackBar(content: Text('Card queue copied to clipboard.')),
+        const SnackBar(content: Text('Card priorities copied to clipboard.')),
       );
     } catch (error) {
       if (mounted) {
@@ -1010,7 +946,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               FilledButton.tonalIcon(
                 onPressed: _debugMarkingAlmostLearned
                     ? null
-                    : _markSelectedCardAlmostLearned,
+                    : _markSelectedCardLearned,
                 icon: _debugMarkingAlmostLearned
                     ? SizedBox(
                         width: 16,
@@ -1024,13 +960,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: Text(
                   _debugMarkingAlmostLearned
                       ? 'Updating...'
-                      : 'Set selected card almost learned',
+                      : 'Mark selected card learned',
                 ),
               ),
               const SizedBox(height: 6),
               Text(
-                'Bypasses normal domain flow. The next correct answer '
-                'for this card should move it to learned.',
+                'Debug shortcut: marks this card as learned immediately.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -1049,11 +984,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     )
                   : const Icon(Icons.copy_all),
-              label: Text(_queueLoading ? 'Copying...' : 'Copy card queue'),
+              label: Text(
+                _queueLoading ? 'Copying...' : 'Copy card priorities',
+              ),
             ),
             const SizedBox(height: 6),
             Text(
-              'Copies current training queue (active + backlog) to clipboard.',
+              'Copies current probabilistic priority list to clipboard.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
