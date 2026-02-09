@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,14 +12,27 @@ class TrainingStatusView extends StatelessWidget {
     required this.viewModel,
     required this.onRetry,
     required this.onContinue,
+    required this.onEndTraining,
+    this.showSessionSummaryFullscreen = false,
   });
 
   final TrainingStatusViewModel viewModel;
   final VoidCallback onRetry;
   final VoidCallback onContinue;
+  final VoidCallback onEndTraining;
+  final bool showSessionSummaryFullscreen;
 
   @override
   Widget build(BuildContext context) {
+    if (showSessionSummaryFullscreen && viewModel.sessionFinished) {
+      return _SessionSummaryCard(
+        stats: viewModel.sessionStats!,
+        onContinue: onContinue,
+        onEndTraining: onEndTraining,
+        fullscreen: true,
+      );
+    }
+
     final theme = Theme.of(context);
     final showMessage = viewModel.message.isNotEmpty;
     return Column(
@@ -57,6 +72,7 @@ class TrainingStatusView extends StatelessWidget {
           _SessionSummaryCard(
             stats: viewModel.sessionStats!,
             onContinue: onContinue,
+            onEndTraining: onEndTraining,
           ),
         ],
       ],
@@ -65,10 +81,17 @@ class TrainingStatusView extends StatelessWidget {
 }
 
 class _SessionSummaryCard extends StatefulWidget {
-  const _SessionSummaryCard({required this.stats, required this.onContinue});
+  const _SessionSummaryCard({
+    required this.stats,
+    required this.onContinue,
+    required this.onEndTraining,
+    this.fullscreen = false,
+  });
 
   final SessionStats stats;
   final VoidCallback onContinue;
+  final VoidCallback onEndTraining;
+  final bool fullscreen;
 
   @override
   State<_SessionSummaryCard> createState() => _SessionSummaryCardState();
@@ -127,65 +150,117 @@ class _SessionSummaryCardState extends State<_SessionSummaryCard> {
     final selectedImage = _resolveImageAsset(
       widget.stats.sessionsCompletedToday,
     );
+    final buttonGap = widget.fullscreen ? 12.0 : 8.0;
+    final cardPadding = widget.fullscreen ? 24.0 : 16.0;
+    final borderRadius = widget.fullscreen ? 24.0 : 16.0;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(
-          alpha: 0.85,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildSessionImage(theme, selectedImage),
-          const SizedBox(height: 10),
-          Text(
-            'Session complete',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imageSize = _resolveImageSize(constraints.biggest);
+        final content = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildSessionImage(theme, selectedImage, imageSize),
+            const SizedBox(height: 16),
+            Text(
+              'Session complete',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'This session: ${widget.stats.cardsCompleted} cards',
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'This duration: ${_formatDuration(widget.stats.duration)}',
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Today: ${widget.stats.sessionsCompletedToday} $sessionWord',
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'Cards today: ${widget.stats.cardsCompletedToday}',
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'Duration today: ${_formatDuration(widget.stats.durationToday)}',
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: widget.onContinue,
+                child: const Text('Continue session'),
+              ),
+            ),
+            SizedBox(height: buttonGap),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.tonal(
+                onPressed: widget.onEndTraining,
+                child: const Text('End training'),
+              ),
+            ),
+          ],
+        );
+
+        final minHeight = widget.fullscreen
+            ? math.max(0.0, constraints.maxHeight - (cardPadding * 2))
+            : 0.0;
+
+        return Container(
+          width: double.infinity,
+          height: widget.fullscreen ? double.infinity : null,
+          padding: EdgeInsets.all(cardPadding),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: widget.fullscreen ? 0.93 : 0.85,
+            ),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: minHeight),
+              child: Center(child: content),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'This session: ${widget.stats.cardsCompleted} cards',
-            style: textStyle,
-          ),
-          Text(
-            'This duration: ${_formatDuration(widget.stats.duration)}',
-            style: textStyle,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Today: ${widget.stats.sessionsCompletedToday} $sessionWord',
-            style: textStyle,
-          ),
-          Text(
-            'Cards today: ${widget.stats.cardsCompletedToday}',
-            style: textStyle,
-          ),
-          Text(
-            'Duration today: ${_formatDuration(widget.stats.durationToday)}',
-            style: textStyle,
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: widget.onContinue,
-            child: const Text('Continue session'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildSessionImage(ThemeData theme, String? selectedImage) {
-    const imageSize = 136.0;
+  double _resolveImageSize(Size availableSize) {
+    if (!widget.fullscreen) {
+      return 136.0;
+    }
+    final byHeight = availableSize.height * 0.34;
+    final byWidth = availableSize.width * 0.78;
+    final byShortest = availableSize.shortestSide * 0.66;
+    final candidate = math.min(byHeight, math.min(byWidth, byShortest));
+    return candidate.clamp(170.0, 360.0).toDouble();
+  }
+
+  Widget _buildSessionImage(
+    ThemeData theme,
+    String? selectedImage,
+    double imageSize,
+  ) {
     if (!_loaded) {
-      return const SizedBox(
+      return SizedBox(
         width: imageSize,
         height: imageSize,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       );
     }
 

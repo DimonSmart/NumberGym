@@ -232,6 +232,24 @@ class _TrainingScreenState extends State<TrainingScreen>
           canShowPeek: canShowPeek,
         );
 
+        if (statusViewModel.sessionFinished) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: TrainingBackground(
+              child: SafeArea(
+                minimum: const EdgeInsets.all(16),
+                child: TrainingStatusView(
+                  viewModel: statusViewModel,
+                  onRetry: _handleRetry,
+                  onContinue: _handleContinueSession,
+                  onEndTraining: _handleStopTraining,
+                  showSessionSummaryFullscreen: true,
+                ),
+              ),
+            ),
+          );
+        }
+
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: TrainingBackground(
@@ -271,6 +289,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                                 viewModel: statusViewModel,
                                 onRetry: _handleRetry,
                                 onContinue: _handleContinueSession,
+                                onEndTraining: _handleStopTraining,
                               ),
                             ],
                           ),

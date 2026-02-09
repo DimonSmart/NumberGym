@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../training/domain/daily_session_stats.dart';
 
 class TodayTrainingSummaryCard extends StatelessWidget {
-  const TodayTrainingSummaryCard({super.key, required this.stats});
+  const TodayTrainingSummaryCard({
+    super.key,
+    required this.stats,
+    required this.cardsCompletedToday,
+  });
 
   final DailySessionStats stats;
+  final int cardsCompletedToday;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class TodayTrainingSummaryCard extends StatelessWidget {
           Text('Today you already trained', style: titleStyle),
           const SizedBox(height: 4),
           Text('${stats.sessionsCompleted} $sessionWord', style: bodyStyle),
-          Text('Cards completed: ${stats.cardsCompleted}', style: bodyStyle),
+          Text('Cards completed: $cardsCompletedToday', style: bodyStyle),
           Text(
             'Duration: ${_formatDuration(stats.duration)}',
             style: bodyStyle,

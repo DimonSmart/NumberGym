@@ -17,6 +17,7 @@ import 'runtimes/multiple_choice_runtime.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtimes/phrase_pronunciation_runtime.dart';
 import 'runtime_coordinator.dart';
+import 'session_progress_plan.dart';
 import 'session_helpers.dart';
 import 'task_availability.dart';
 import 'task_registry.dart';
@@ -273,8 +274,14 @@ class TrainingSession {
   }
 
   int _initialSessionTargetCards() {
-    final remaining = dailyRemainingCards;
-    return remaining > 0 ? remaining : 0;
+    final summary = _progressManager.dailySummary();
+    final sessionSize = SessionProgressPlan.normalizeSessionSize(
+      summary.targetToday,
+    );
+    return SessionProgressPlan.cardsToFinishCurrentSession(
+      cardsCompletedToday: summary.completedToday,
+      sessionSize: sessionSize,
+    );
   }
 
   bool _checkSessionLimits() {
@@ -591,11 +598,12 @@ class TrainingSession {
       elapsed: elapsed,
     );
 
+    final dailySummary = _progressManager.dailySummary(now: now);
     final stats = SessionStats(
       cardsCompleted: _sessionCardsCompleted,
       duration: elapsed,
       sessionsCompletedToday: todayStats.sessionsCompleted,
-      cardsCompletedToday: todayStats.cardsCompleted,
+      cardsCompletedToday: dailySummary.completedToday,
       durationToday: todayStats.duration,
     );
 

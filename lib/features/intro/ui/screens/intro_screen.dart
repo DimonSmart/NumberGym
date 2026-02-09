@@ -12,6 +12,7 @@ import '../../../training/data/settings_repository.dart';
 import '../../../training/domain/daily_session_stats.dart';
 import '../../../training/domain/daily_study_summary.dart';
 import '../../../training/domain/learning_language.dart';
+import '../../../training/domain/session_progress_plan.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
@@ -43,8 +44,9 @@ class _IntroScreenState extends State<IntroScreen> {
   int _progressLoadRequestId = 0;
   bool _allLearned = false;
   bool _loadingProgress = true;
-  int _dailyRemainingCards = 0;
-  int _dailyGoalCards = 0;
+  int _cardsCompletedToday = 0;
+  int _cardsTargetToday = DailyStudyPlan.cardLimit;
+  int _sessionCardGoal = DailyStudyPlan.cardLimit;
   DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
     DateTime.now(),
   );
@@ -84,14 +86,26 @@ class _IntroScreenState extends State<IntroScreen> {
     final dailySessionStats = settingsRepository.readDailySessionStats(
       now: DateTime.now(),
     );
+    final sessionCardGoal = SessionProgressPlan.normalizeSessionSize(
+      dailySummary.targetToday,
+    );
+    final cardsCompletedToday = dailySummary.completedToday < 0
+        ? 0
+        : dailySummary.completedToday;
+    final cardsTargetToday = SessionProgressPlan.targetCards(
+      cardsCompletedToday: cardsCompletedToday,
+      sessionsCompleted: dailySessionStats.sessionsCompleted,
+      sessionSize: sessionCardGoal,
+    );
 
     if (!mounted || requestId != _progressLoadRequestId) return;
     setState(() {
       _language = language;
       _allLearned = allLearned;
       _loadingProgress = false;
-      _dailyRemainingCards = dailySummary.remainingToday;
-      _dailyGoalCards = dailySummary.targetToday;
+      _cardsCompletedToday = cardsCompletedToday;
+      _cardsTargetToday = cardsTargetToday;
+      _sessionCardGoal = sessionCardGoal;
       _dailySessionStats = dailySessionStats;
     });
   }
@@ -265,7 +279,10 @@ class _IntroScreenState extends State<IntroScreen> {
         ),
         const SizedBox(height: 16),
         if (_dailySessionStats.hasSessions) ...[
-          TodayTrainingSummaryCard(stats: _dailySessionStats),
+          TodayTrainingSummaryCard(
+            stats: _dailySessionStats,
+            cardsCompletedToday: _cardsCompletedToday,
+          ),
           const SizedBox(height: 16),
         ],
         _buildDailyPlanCard(theme),
@@ -284,8 +301,21 @@ class _IntroScreenState extends State<IntroScreen> {
       fontWeight: FontWeight.w600,
     );
     final subStyle = theme.textTheme.bodySmall?.copyWith(color: Colors.black54);
-    final remaining = _dailyRemainingCards;
-    final goal = _dailyGoalCards;
+    final completed = _cardsCompletedToday;
+    final goal = _cardsTargetToday;
+    final sessionsCompleted = _dailySessionStats.sessionsCompleted;
+    final sessionWord = sessionsCompleted == 1 ? 'session' : 'sessions';
+    final sessionProgress = SessionProgressPlan.currentSessionProgress(
+      cardsCompletedToday: completed,
+      sessionSize: _sessionCardGoal,
+    );
+    final sessionBoundary = SessionProgressPlan.isSessionBoundary(
+      cardsCompletedToday: completed,
+      sessionSize: _sessionCardGoal,
+    );
+    final statusText = sessionBoundary
+        ? '$sessionsCompleted $sessionWord completed today'
+        : 'Current session: $sessionProgress/$_sessionCardGoal';
 
     return Container(
       width: double.infinity,
@@ -302,7 +332,8 @@ class _IntroScreenState extends State<IntroScreen> {
         children: [
           Text('Today\'s plan', style: textStyle),
           const SizedBox(height: 4),
-          Text('$remaining cards left of $goal', style: subStyle),
+          Text('$completed of $goal cards', style: subStyle),
+          Text(statusText, style: subStyle),
         ],
       ),
     );
