@@ -41,3 +41,15 @@ also supports round hundreds (100, 200, ... , 900) and round thousands
 
 - [Specification](Docs/specification.md)
 - [Domain glossary](Docs/glossary.md)
+
+## Branding
+
+Regenerate app icons and native splash assets manually:
+
+```powershell
+dart run flutter_launcher_icons
+dart run flutter_native_splash:create
+```
+
+After `flutter_native_splash:create`, verify `android:screenOrientation="portrait"`
+is still present in `android/app/src/main/AndroidManifest.xml` for `MainActivity`.
