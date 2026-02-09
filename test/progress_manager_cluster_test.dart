@@ -4,6 +4,7 @@ import 'package:number_gym/features/training/domain/language_router.dart';
 import 'package:number_gym/features/training/domain/learning_language.dart';
 import 'package:number_gym/features/training/domain/learning_strategy/learning_params.dart';
 import 'package:number_gym/features/training/domain/progress_manager.dart';
+import 'package:number_gym/features/training/domain/daily_session_stats.dart';
 import 'package:number_gym/features/training/domain/repositories.dart';
 import 'package:number_gym/features/training/domain/training_catalog.dart';
 import 'package:number_gym/features/training/domain/training_item.dart';
@@ -319,6 +320,9 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   int _celebrationCounter = 0;
   LearningMethod? _forcedMethod;
   TrainingItemType? _forcedItemType;
+  DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
+    DateTime.now(),
+  );
   final Map<LearningLanguage, String?> _voiceByLanguage =
       <LearningLanguage, String?>{};
 
@@ -360,6 +364,17 @@ class _FakeSettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setCelebrationCounter(int counter) async {
     _celebrationCounter = counter;
+  }
+
+  @override
+  DailySessionStats readDailySessionStats({DateTime? now}) {
+    final resolvedNow = now ?? DateTime.now();
+    return _dailySessionStats.normalizedFor(resolvedNow);
+  }
+
+  @override
+  Future<void> setDailySessionStats(DailySessionStats stats) async {
+    _dailySessionStats = stats;
   }
 
   @override

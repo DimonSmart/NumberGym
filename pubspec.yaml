@@ -85,6 +85,8 @@ flutter:
     - assets/animations/failure/
     - assets/images/
     - assets/images/goal_rewards/
+    - assets/images/session_rewards/
+    - assets/images/sliders/
     - assets/audio/goal_rewards/
 
   fonts:

@@ -9,12 +9,14 @@ import '../../../training/data/card_progress.dart';
 import '../../../training/data/number_cards.dart';
 import '../../../training/data/progress_repository.dart';
 import '../../../training/data/settings_repository.dart';
+import '../../../training/domain/daily_session_stats.dart';
 import '../../../training/domain/daily_study_summary.dart';
 import '../../../training/domain/learning_language.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
 import '../../../training/ui/widgets/training_background.dart';
+import '../widgets/today_training_summary_card.dart';
 import 'about_screen.dart';
 
 enum _IntroMenuAction { statistics, settings, about }
@@ -43,7 +45,9 @@ class _IntroScreenState extends State<IntroScreen> {
   bool _loadingProgress = true;
   int _dailyRemainingCards = 0;
   int _dailyGoalCards = 0;
-  DateTime? _dailyRecommendedReturn;
+  DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
+    DateTime.now(),
+  );
 
   @override
   void initState() {
@@ -77,6 +81,9 @@ class _IntroScreenState extends State<IntroScreen> {
         .length;
     final allLearned = ids.isNotEmpty && learnedCount == ids.length;
     final dailySummary = DailyStudySummary.fromProgress(progress.values);
+    final dailySessionStats = settingsRepository.readDailySessionStats(
+      now: DateTime.now(),
+    );
 
     if (!mounted || requestId != _progressLoadRequestId) return;
     setState(() {
@@ -85,7 +92,7 @@ class _IntroScreenState extends State<IntroScreen> {
       _loadingProgress = false;
       _dailyRemainingCards = dailySummary.remainingToday;
       _dailyGoalCards = dailySummary.targetToday;
-      _dailyRecommendedReturn = dailySummary.nextDue;
+      _dailySessionStats = dailySessionStats;
     });
   }
 
@@ -257,6 +264,10 @@ class _IntroScreenState extends State<IntroScreen> {
           filterQuality: FilterQuality.high,
         ),
         const SizedBox(height: 16),
+        if (_dailySessionStats.hasSessions) ...[
+          TodayTrainingSummaryCard(stats: _dailySessionStats),
+          const SizedBox(height: 16),
+        ],
         _buildDailyPlanCard(theme),
         const SizedBox(height: 16),
         _buildCallToAction(theme, context),
@@ -275,10 +286,6 @@ class _IntroScreenState extends State<IntroScreen> {
     final subStyle = theme.textTheme.bodySmall?.copyWith(color: Colors.black54);
     final remaining = _dailyRemainingCards;
     final goal = _dailyGoalCards;
-    final recommendation = _dailyRecommendedReturn;
-    final recommendationText = recommendation == null
-        ? null
-        : _formatTime(recommendation);
 
     return Container(
       width: double.infinity,
@@ -296,20 +303,9 @@ class _IntroScreenState extends State<IntroScreen> {
           Text('Today\'s plan', style: textStyle),
           const SizedBox(height: 4),
           Text('$remaining cards left of $goal', style: subStyle),
-          if (recommendationText != null) ...[
-            const SizedBox(height: 4),
-            Text('Recommended return: $recommendationText', style: subStyle),
-          ],
         ],
       ),
     );
-  }
-
-  String _formatTime(DateTime time) {
-    final localTime = time.toLocal();
-    final hour = localTime.hour.toString().padLeft(2, '0');
-    final minute = localTime.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 
   Widget _buildCallToAction(ThemeData theme, BuildContext context) {

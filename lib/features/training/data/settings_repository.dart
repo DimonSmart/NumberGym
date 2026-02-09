@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+import '../domain/daily_session_stats.dart';
 import '../domain/learning_language.dart';
 import '../domain/repositories.dart';
 import '../domain/training_item.dart';
@@ -10,6 +11,7 @@ const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String celebrationCounterKey = 'celebrationCounter';
+const String dailySessionStatsKey = 'dailySessionStats';
 // Keep stored key name for backward compatibility with older builds.
 const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
@@ -100,6 +102,47 @@ class SettingsRepository implements SettingsRepositoryBase {
   Future<void> setCelebrationCounter(int counter) async {
     final normalized = counter < 0 ? 0 : counter;
     await settingsBox.put(celebrationCounterKey, normalized.toString());
+  }
+
+  @override
+  DailySessionStats readDailySessionStats({DateTime? now}) {
+    final resolvedNow = now ?? DateTime.now();
+    final rawValue = settingsBox.get(dailySessionStatsKey);
+    if (rawValue == null || rawValue.trim().isEmpty) {
+      return DailySessionStats.emptyFor(resolvedNow);
+    }
+
+    final parts = rawValue.split('|');
+    if (parts.length != 4) {
+      return DailySessionStats.emptyFor(resolvedNow);
+    }
+
+    final dayKey = parts[0].trim();
+    final sessions = int.tryParse(parts[1]) ?? 0;
+    final cards = int.tryParse(parts[2]) ?? 0;
+    final seconds = int.tryParse(parts[3]) ?? 0;
+    final parsed = DailySessionStats(
+      dayKey: dayKey,
+      sessionsCompleted: sessions < 0 ? 0 : sessions,
+      cardsCompleted: cards < 0 ? 0 : cards,
+      durationSeconds: seconds < 0 ? 0 : seconds,
+    );
+    return parsed.normalizedFor(resolvedNow);
+  }
+
+  @override
+  Future<void> setDailySessionStats(DailySessionStats stats) async {
+    final normalized = DailySessionStats(
+      dayKey: stats.dayKey,
+      sessionsCompleted: stats.sessionsCompleted < 0
+          ? 0
+          : stats.sessionsCompleted,
+      cardsCompleted: stats.cardsCompleted < 0 ? 0 : stats.cardsCompleted,
+      durationSeconds: stats.durationSeconds < 0 ? 0 : stats.durationSeconds,
+    );
+    final serialized =
+        '${normalized.dayKey}|${normalized.sessionsCompleted}|${normalized.cardsCompleted}|${normalized.durationSeconds}';
+    await settingsBox.put(dailySessionStatsKey, serialized);
   }
 
   @override

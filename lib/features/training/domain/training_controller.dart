@@ -128,7 +128,8 @@ class TrainingController extends ChangeNotifier {
   bool get hasRemainingCards => _session.hasRemainingCards;
   int get dailyGoalCards => _session.dailyGoalCards;
   int get dailyRemainingCards => _session.dailyRemainingCards;
-  DateTime? get dailyRecommendedReturn => _session.dailyRecommendedReturn;
+  int get sessionCardsCompleted => _session.sessionCardsCompleted;
+  int get sessionTargetCards => _session.sessionTargetCards;
 
   Future<void> initialize() => _session.initialize();
   Future<void> retryInitSpeech() => _session.retryInitSpeech();
@@ -139,6 +140,8 @@ class TrainingController extends ChangeNotifier {
   Future<void> continueSession() => _session.continueSession();
   Future<void> continueAfterCelebration() =>
       _session.continueAfterCelebration();
+  Future<void> pauseTaskTimer() => _session.pauseTaskTimer();
+  Future<void> resumeTaskTimer() => _session.resumeTaskTimer();
 
   Future<void> setPremiumPronunciationEnabled(bool enabled) =>
       _session.setPremiumPronunciationEnabled(enabled);

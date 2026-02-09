@@ -6,6 +6,7 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 
 import '../../../core/logging/app_logger.dart';
 import '../languages/registry.dart';
+import 'daily_session_stats.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
@@ -106,11 +107,11 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
-  bool _ignoreDailyLimit = false;
 
   // Session limits
   DateTime? _sessionStartTime;
   int _sessionCardsCompleted = 0;
+  int _sessionTargetCards = 0;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -123,8 +124,8 @@ class TrainingSession {
   bool get hasRemainingCards => _progressManager.hasRemainingCards;
   int get dailyGoalCards => _progressManager.dailySummary().targetToday;
   int get dailyRemainingCards => _progressManager.dailySummary().remainingToday;
-  DateTime? get dailyRecommendedReturn =>
-      _progressManager.dailySummary().nextDue;
+  int get sessionCardsCompleted => _sessionCardsCompleted;
+  int get sessionTargetCards => _sessionTargetCards;
 
   bool get premiumPronunciationEnabled => _premiumPronunciationEnabled;
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
@@ -172,25 +173,23 @@ class TrainingSession {
 
     _errorMessage = null;
     _trainingActive = true;
-    _ignoreDailyLimit = false;
     _silentDetector.reset();
     _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(true));
-    _resetSessionCounters();
+    _resetSessionCounters(targetCards: _initialSessionTargetCards());
     await _startNextCard();
   }
 
-  void _resetSessionCounters() {
+  void _resetSessionCounters({required int targetCards}) {
     _sessionStartTime = DateTime.now();
     _sessionCardsCompleted = 0;
+    _sessionTargetCards = targetCards < 0 ? 0 : targetCards;
   }
 
   Future<void> continueSession() async {
-    // Allows the user to ignore the limit and continue
-    _ignoreDailyLimit = true;
-    _resetSessionCounters();
+    _resetSessionCounters(targetCards: dailyGoalCards);
     // Clear the stats from state
     _state = TrainingState(
       speechReady: _state.speechReady,
@@ -218,7 +217,6 @@ class TrainingSession {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _services.soundWave.reset();
     _trainingActive = false;
-    _ignoreDailyLimit = false;
     _errorMessage = null;
     _progressManager.resetSelection();
     _premiumPronunciationEnabled = _settingsRepository
@@ -236,7 +234,6 @@ class TrainingSession {
   Future<void> pauseForOverlay() async {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
-    _ignoreDailyLimit = false;
     _pendingCelebration = null;
     await _setKeepAwake(false);
     _syncState();
@@ -254,7 +251,6 @@ class TrainingSession {
     _silentDetector.reset();
     _runtimeCoordinator.resetInteraction();
     _trainingActive = false;
-    _ignoreDailyLimit = false;
     await _setKeepAwake(false);
     _syncState();
   }
@@ -268,10 +264,21 @@ class TrainingSession {
     await _handleTaskCompleted(outcome);
   }
 
+  Future<void> pauseTaskTimer() async {
+    _services.timer.pause();
+  }
+
+  Future<void> resumeTaskTimer() async {
+    _services.timer.resume();
+  }
+
+  int _initialSessionTargetCards() {
+    final remaining = dailyRemainingCards;
+    return remaining > 0 ? remaining : 0;
+  }
+
   bool _checkSessionLimits() {
-    if (_ignoreDailyLimit) return false;
-    final summary = _progressManager.dailySummary();
-    return summary.remainingToday <= 0;
+    return _sessionCardsCompleted >= _sessionTargetCards;
   }
 
   void _syncState() {
@@ -576,17 +583,20 @@ class TrainingSession {
 
   Future<void> _handleSessionLimitReached() async {
     final now = DateTime.now();
-    final summary = _progressManager.dailySummary(now: now);
-    final recommendation =
-        summary.nextDue ?? DateTime(now.year, now.month, now.day + 1);
     final elapsed = _sessionStartTime == null
         ? Duration.zero
         : now.difference(_sessionStartTime!);
+    final todayStats = await _recordDailySessionStats(
+      now: now,
+      elapsed: elapsed,
+    );
 
     final stats = SessionStats(
       cardsCompleted: _sessionCardsCompleted,
       duration: elapsed,
-      recommendedReturn: recommendation,
+      sessionsCompletedToday: todayStats.sessionsCompleted,
+      cardsCompletedToday: todayStats.cardsCompleted,
+      durationToday: todayStats.duration,
     );
 
     await _runtimeCoordinator.disposeRuntime(clearState: true);
@@ -596,11 +606,29 @@ class TrainingSession {
       speechReady: _state.speechReady,
       errorMessage: null,
       feedback: null,
-      currentTask: null, // Clear task so UI can show overlay
+      currentTask: null,
       sessionStats: stats,
       celebration: _pendingCelebration,
     );
     _onStateChanged();
+  }
+
+  Future<DailySessionStats> _recordDailySessionStats({
+    required DateTime now,
+    required Duration elapsed,
+  }) async {
+    var todayStats = _settingsRepository.readDailySessionStats(now: now);
+    if (_sessionCardsCompleted <= 0) {
+      return todayStats;
+    }
+
+    todayStats = todayStats.addSession(
+      cards: _sessionCardsCompleted,
+      sessionDuration: elapsed,
+      now: now,
+    );
+    await _settingsRepository.setDailySessionStats(todayStats);
+    return todayStats;
   }
 
   Future<void> _startNextCard() async {

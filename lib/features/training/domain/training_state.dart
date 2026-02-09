@@ -11,12 +11,16 @@ class TrainingFeedback {
 class SessionStats {
   final int cardsCompleted;
   final Duration duration;
-  final DateTime recommendedReturn;
+  final int sessionsCompletedToday;
+  final int cardsCompletedToday;
+  final Duration durationToday;
 
   const SessionStats({
     required this.cardsCompleted,
     required this.duration,
-    required this.recommendedReturn,
+    required this.sessionsCompletedToday,
+    required this.cardsCompletedToday,
+    required this.durationToday,
   });
 }
 

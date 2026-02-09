@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
 import '../../data/card_progress.dart';
@@ -11,8 +15,8 @@ import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
 import '../view_models/phrase_pronunciation_view_model.dart';
 import '../view_models/training_feedback_view_model.dart';
-import '../widgets/celebration_overlay.dart';
 import '../view_models/training_status_view_model.dart';
+import '../widgets/celebration_overlay.dart';
 import '../widgets/feedback_overlay.dart';
 import '../widgets/listening_view.dart';
 import '../widgets/multiple_choice_view.dart';
@@ -35,7 +39,8 @@ class TrainingScreen extends StatefulWidget {
   State<TrainingScreen> createState() => _TrainingScreenState();
 }
 
-class _TrainingScreenState extends State<TrainingScreen> {
+class _TrainingScreenState extends State<TrainingScreen>
+    with SingleTickerProviderStateMixin {
   late final TrainingController _controller;
   bool _startingTraining = false;
 
@@ -46,6 +51,24 @@ class _TrainingScreenState extends State<TrainingScreen> {
       'assets/animations/failure/Failure.json';
   static const Duration _overlayTransition = Duration(milliseconds: 200);
 
+  static final RegExp _sliderAssetPattern = RegExp(
+    r'^assets/images/sliders/(\d+)_.*\.(png|jpg|jpeg|webp)$',
+    caseSensitive: false,
+  );
+  static const Duration _sliderPeekMoveDuration = Duration(milliseconds: 500);
+  static const Duration _sliderPeekHoldDuration = Duration(milliseconds: 500);
+
+  final math.Random _random = math.Random();
+  late final AnimationController _sliderPeekController;
+
+  List<_SliderPeekAsset> _sliderAssets = const [];
+  _SliderPeekAsset? _activeSliderAsset;
+  Animation<Offset>? _sliderPeekAnimation;
+  bool _sliderPeekRunning = false;
+  int _lastObservedSessionCards = -1;
+  int _lastShownPeekMilestone = 0;
+  int _pendingPeekMilestone = 0;
+
   @override
   void initState() {
     super.initState();
@@ -54,11 +77,17 @@ class _TrainingScreenState extends State<TrainingScreen> {
       progressRepository: ProgressRepository(widget.progressBox),
       onAutoStop: _handleAutoStop,
     );
+    _sliderPeekController = AnimationController(
+      vsync: this,
+      duration: _sliderPeekMoveDuration,
+    );
     _initializeAndStart();
+    unawaited(_loadSliderAssets());
   }
 
   @override
   void dispose() {
+    _sliderPeekController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -79,14 +108,110 @@ class _TrainingScreenState extends State<TrainingScreen> {
     }
   }
 
+  Future<void> _loadSliderAssets() async {
+    try {
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final parsed = <_SliderPeekAsset>[];
+      for (final asset in manifest.listAssets()) {
+        final match = _sliderAssetPattern.firstMatch(asset);
+        if (match == null) continue;
+        final clockPosition = int.tryParse(match.group(1)!);
+        if (clockPosition == null || clockPosition < 0 || clockPosition > 11) {
+          continue;
+        }
+        parsed.add(
+          _SliderPeekAsset(assetPath: asset, clockPosition: clockPosition),
+        );
+      }
+      parsed.sort((a, b) => a.assetPath.compareTo(b.assetPath));
+      if (!mounted) return;
+      setState(() {
+        _sliderAssets = parsed;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _sliderAssets = const [];
+      });
+    }
+  }
+
+  void _trackSessionProgress({
+    required int cardsCompleted,
+    required bool canShowPeek,
+  }) {
+    if (_lastObservedSessionCards != cardsCompleted) {
+      final previous = _lastObservedSessionCards;
+      _lastObservedSessionCards = cardsCompleted;
+      if (cardsCompleted < previous) {
+        _pendingPeekMilestone = 0;
+        _lastShownPeekMilestone = 0;
+      }
+      final milestone = cardsCompleted ~/ 10;
+      if (milestone > _lastShownPeekMilestone) {
+        _pendingPeekMilestone = milestone;
+      }
+    }
+
+    if (!canShowPeek) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_tryShowPendingPeek());
+    });
+  }
+
+  Future<void> _tryShowPendingPeek() async {
+    if (_sliderPeekRunning) return;
+    if (_pendingPeekMilestone <= _lastShownPeekMilestone) return;
+    if (_sliderAssets.isEmpty) return;
+
+    final selected = _sliderAssets[_random.nextInt(_sliderAssets.length)];
+    final placement = _placementForClockPosition(selected.clockPosition);
+    final animation =
+        Tween<Offset>(begin: placement.hiddenOffset, end: Offset.zero).animate(
+          CurvedAnimation(parent: _sliderPeekController, curve: Curves.easeOut),
+        );
+
+    setState(() {
+      _activeSliderAsset = selected;
+      _sliderPeekAnimation = animation;
+      _sliderPeekRunning = true;
+      _lastShownPeekMilestone = _pendingPeekMilestone;
+    });
+
+    var timerWasPaused = false;
+    try {
+      await _controller.pauseTaskTimer();
+      timerWasPaused = true;
+      await _sliderPeekController.forward(from: 0);
+      if (!mounted) return;
+      await Future<void>.delayed(_sliderPeekHoldDuration);
+      if (!mounted) return;
+      await _sliderPeekController.reverse();
+    } finally {
+      if (timerWasPaused && mounted) {
+        await _controller.resumeTaskTimer();
+      }
+      if (mounted) {
+        setState(() {
+          _activeSliderAsset = null;
+          _sliderPeekAnimation = null;
+          _sliderPeekRunning = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         final theme = Theme.of(context);
-        final dailyRemaining = _controller.dailyRemainingCards;
-        final dailyGoal = _controller.dailyGoalCards;
+        final sessionCardsCompleted = _controller.sessionCardsCompleted;
+        final sessionTarget = _controller.sessionTargetCards <= 0
+            ? _controller.dailyGoalCards
+            : _controller.sessionTargetCards;
         final methodLabel =
             _controller.currentLearningMethod?.label ?? 'Training';
         final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
@@ -95,6 +220,16 @@ class _TrainingScreenState extends State<TrainingScreen> {
         );
         final statusViewModel = TrainingStatusViewModel.fromState(
           state: _controller.state,
+        );
+        final canShowPeek =
+            _controller.feedback == null &&
+            _controller.celebration == null &&
+            !statusViewModel.sessionFinished &&
+            _controller.currentTask != null;
+
+        _trackSessionProgress(
+          cardsCompleted: sessionCardsCompleted,
+          canShowPeek: canShowPeek,
         );
 
         return Scaffold(
@@ -117,7 +252,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                             ),
                             const Spacer(),
                             Text(
-                              'Today: $dailyRemaining/$dailyGoal',
+                              'Session: $sessionCardsCompleted/$sessionTarget',
                               style: theme.textTheme.labelMedium,
                             ),
                           ],
@@ -147,6 +282,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                     ],
                   ),
                 ),
+                _buildSliderPeekOverlay(context),
                 _buildFeedbackOverlay(feedbackViewModel),
                 _buildCelebrationOverlay(),
               ],
@@ -158,6 +294,17 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 
   Widget _buildTaskView(
+    ThemeData theme,
+    TrainingFeedbackViewModel feedbackViewModel,
+  ) {
+    final taskView = _buildTaskViewContent(theme, feedbackViewModel);
+    return IgnorePointer(
+      ignoring: _sliderPeekRunning,
+      child: TickerMode(enabled: !_sliderPeekRunning, child: taskView),
+    );
+  }
+
+  Widget _buildTaskViewContent(
     ThemeData theme,
     TrainingFeedbackViewModel feedbackViewModel,
   ) {
@@ -225,6 +372,107 @@ class _TrainingScreenState extends State<TrainingScreen> {
         label: const Text('End training'),
       ),
     );
+  }
+
+  Widget _buildSliderPeekOverlay(BuildContext context) {
+    final asset = _activeSliderAsset;
+    final animation = _sliderPeekAnimation;
+    if (asset == null || animation == null) {
+      return const SizedBox.shrink();
+    }
+    final placement = _placementForClockPosition(asset.clockPosition);
+    final sliderSize = _resolveSliderSize(context);
+    return IgnorePointer(
+      child: Align(
+        alignment: placement.alignment,
+        child: SizedBox(
+          width: sliderSize.width,
+          height: sliderSize.height,
+          child: SlideTransition(
+            position: animation,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(asset.assetPath, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Size _resolveSliderSize(BuildContext context) {
+    final screen = MediaQuery.sizeOf(context);
+    return Size(screen.width * 0.5, screen.height * 0.5);
+  }
+
+  _SliderPeekPlacement _placementForClockPosition(int clockPosition) {
+    switch (clockPosition) {
+      case 0:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(0.0, -1.0),
+          hiddenOffset: Offset(0.0, -1.0),
+        );
+      case 1:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(0.7, -1.0),
+          hiddenOffset: Offset(0.0, -1.0),
+        );
+      case 2:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(1.0, -0.7),
+          hiddenOffset: Offset(1.0, 0.0),
+        );
+      case 3:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(1.0, 0.0),
+          hiddenOffset: Offset(1.0, 0.0),
+        );
+      case 4:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(1.0, 0.7),
+          hiddenOffset: Offset(1.0, 0.0),
+        );
+      case 5:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(0.7, 1.0),
+          hiddenOffset: Offset(0.0, 1.0),
+        );
+      case 6:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(0.0, 1.0),
+          hiddenOffset: Offset(0.0, 1.0),
+        );
+      case 7:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(-0.7, 1.0),
+          hiddenOffset: Offset(0.0, 1.0),
+        );
+      case 8:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(-1.0, 0.7),
+          hiddenOffset: Offset(-1.0, 0.0),
+        );
+      case 9:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(-1.0, 0.0),
+          hiddenOffset: Offset(-1.0, 0.0),
+        );
+      case 10:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(-1.0, -0.7),
+          hiddenOffset: Offset(-1.0, 0.0),
+        );
+      case 11:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(-0.7, -1.0),
+          hiddenOffset: Offset(0.0, -1.0),
+        );
+      default:
+        return const _SliderPeekPlacement(
+          alignment: Alignment(0.0, -1.0),
+          hiddenOffset: Offset(0.0, -1.0),
+        );
+    }
   }
 
   Widget _buildFeedbackOverlay(TrainingFeedbackViewModel feedbackViewModel) {
@@ -322,4 +570,24 @@ class _TrainingScreenState extends State<TrainingScreen> {
   Future<void> _handleContinueAfterCelebration() async {
     await _controller.continueAfterCelebration();
   }
+}
+
+class _SliderPeekAsset {
+  const _SliderPeekAsset({
+    required this.assetPath,
+    required this.clockPosition,
+  });
+
+  final String assetPath;
+  final int clockPosition;
+}
+
+class _SliderPeekPlacement {
+  const _SliderPeekPlacement({
+    required this.alignment,
+    required this.hiddenOffset,
+  });
+
+  final Alignment alignment;
+  final Offset hiddenOffset;
 }
