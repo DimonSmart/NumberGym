@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
 import '../../data/card_progress.dart';
@@ -22,6 +21,7 @@ import '../widgets/listening_view.dart';
 import '../widgets/multiple_choice_view.dart';
 import '../widgets/number_pronunciation_view.dart';
 import '../widgets/phrase_pronunciation_view.dart';
+import '../widgets/slider_peek.dart';
 import '../widgets/training_background.dart';
 import '../widgets/training_status_view.dart';
 
@@ -51,18 +51,11 @@ class _TrainingScreenState extends State<TrainingScreen>
       'assets/animations/failure/Failure.json';
   static const Duration _overlayTransition = Duration(milliseconds: 200);
 
-  static final RegExp _sliderAssetPattern = RegExp(
-    r'^assets/images/sliders/(\d+)_.*\.(png|jpg|jpeg|webp)$',
-    caseSensitive: false,
-  );
-  static const Duration _sliderPeekMoveDuration = Duration(milliseconds: 500);
-  static const Duration _sliderPeekHoldDuration = Duration(milliseconds: 500);
-
   final math.Random _random = math.Random();
   late final AnimationController _sliderPeekController;
 
-  List<_SliderPeekAsset> _sliderAssets = const [];
-  _SliderPeekAsset? _activeSliderAsset;
+  List<SliderPeekAsset> _sliderAssets = const [];
+  SliderPeekAsset? _activeSliderAsset;
   Animation<Offset>? _sliderPeekAnimation;
   bool _sliderPeekRunning = false;
   int _lastObservedSessionCards = -1;
@@ -79,7 +72,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     );
     _sliderPeekController = AnimationController(
       vsync: this,
-      duration: _sliderPeekMoveDuration,
+      duration: sliderPeekMoveDuration,
     );
     _initializeAndStart();
     unawaited(_loadSliderAssets());
@@ -110,20 +103,7 @@ class _TrainingScreenState extends State<TrainingScreen>
 
   Future<void> _loadSliderAssets() async {
     try {
-      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-      final parsed = <_SliderPeekAsset>[];
-      for (final asset in manifest.listAssets()) {
-        final match = _sliderAssetPattern.firstMatch(asset);
-        if (match == null) continue;
-        final clockPosition = int.tryParse(match.group(1)!);
-        if (clockPosition == null || clockPosition < 0 || clockPosition > 11) {
-          continue;
-        }
-        parsed.add(
-          _SliderPeekAsset(assetPath: asset, clockPosition: clockPosition),
-        );
-      }
-      parsed.sort((a, b) => a.assetPath.compareTo(b.assetPath));
+      final parsed = await loadSliderPeekAssets();
       if (!mounted) return;
       setState(() {
         _sliderAssets = parsed;
@@ -165,12 +145,14 @@ class _TrainingScreenState extends State<TrainingScreen>
     if (_pendingPeekMilestone <= _lastShownPeekMilestone) return;
     if (_sliderAssets.isEmpty) return;
 
-    final selected = _sliderAssets[_random.nextInt(_sliderAssets.length)];
-    final placement = _placementForClockPosition(selected.clockPosition);
-    final animation =
-        Tween<Offset>(begin: placement.hiddenOffset, end: Offset.zero).animate(
-          CurvedAnimation(parent: _sliderPeekController, curve: Curves.easeOut),
-        );
+    final selected = pickRandomSliderPeekAsset(
+      assets: _sliderAssets,
+      random: _random,
+    );
+    final animation = createSliderPeekAnimation(
+      controller: _sliderPeekController,
+      clockPosition: selected.clockPosition,
+    );
 
     setState(() {
       _activeSliderAsset = selected;
@@ -183,11 +165,11 @@ class _TrainingScreenState extends State<TrainingScreen>
     try {
       await _controller.pauseTaskTimer();
       timerWasPaused = true;
-      await _sliderPeekController.forward(from: 0);
-      if (!mounted) return;
-      await Future<void>.delayed(_sliderPeekHoldDuration);
-      if (!mounted) return;
-      await _sliderPeekController.reverse();
+      await playSliderPeekSequence(
+        controller: _sliderPeekController,
+        holdDuration: sliderPeekHoldDuration,
+        shouldContinue: () => mounted,
+      );
     } finally {
       if (timerWasPaused && mounted) {
         await _controller.resumeTaskTimer();
@@ -399,99 +381,11 @@ class _TrainingScreenState extends State<TrainingScreen>
     if (asset == null || animation == null) {
       return const SizedBox.shrink();
     }
-    final placement = _placementForClockPosition(asset.clockPosition);
-    final sliderSize = _resolveSliderSize(context);
-    return IgnorePointer(
-      child: Align(
-        alignment: placement.alignment,
-        child: SizedBox(
-          width: sliderSize.width,
-          height: sliderSize.height,
-          child: SlideTransition(
-            position: animation,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(asset.assetPath, fit: BoxFit.cover),
-            ),
-          ),
-        ),
-      ),
+    return SliderPeekOverlay(
+      assetPath: asset.assetPath,
+      clockPosition: asset.clockPosition,
+      animation: animation,
     );
-  }
-
-  Size _resolveSliderSize(BuildContext context) {
-    final screen = MediaQuery.sizeOf(context);
-    return Size(screen.width * 0.5, screen.height * 0.5);
-  }
-
-  _SliderPeekPlacement _placementForClockPosition(int clockPosition) {
-    switch (clockPosition) {
-      case 0:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(0.0, -1.0),
-          hiddenOffset: Offset(0.0, -1.0),
-        );
-      case 1:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(0.7, -1.0),
-          hiddenOffset: Offset(0.0, -1.0),
-        );
-      case 2:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(1.0, -0.7),
-          hiddenOffset: Offset(1.0, 0.0),
-        );
-      case 3:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(1.0, 0.0),
-          hiddenOffset: Offset(1.0, 0.0),
-        );
-      case 4:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(1.0, 0.7),
-          hiddenOffset: Offset(1.0, 0.0),
-        );
-      case 5:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(0.7, 1.0),
-          hiddenOffset: Offset(0.0, 1.0),
-        );
-      case 6:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(0.0, 1.0),
-          hiddenOffset: Offset(0.0, 1.0),
-        );
-      case 7:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(-0.7, 1.0),
-          hiddenOffset: Offset(0.0, 1.0),
-        );
-      case 8:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(-1.0, 0.7),
-          hiddenOffset: Offset(-1.0, 0.0),
-        );
-      case 9:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(-1.0, 0.0),
-          hiddenOffset: Offset(-1.0, 0.0),
-        );
-      case 10:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(-1.0, -0.7),
-          hiddenOffset: Offset(-1.0, 0.0),
-        );
-      case 11:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(-0.7, -1.0),
-          hiddenOffset: Offset(0.0, -1.0),
-        );
-      default:
-        return const _SliderPeekPlacement(
-          alignment: Alignment(0.0, -1.0),
-          hiddenOffset: Offset(0.0, -1.0),
-        );
-    }
   }
 
   Widget _buildFeedbackOverlay(TrainingFeedbackViewModel feedbackViewModel) {
@@ -589,24 +483,4 @@ class _TrainingScreenState extends State<TrainingScreen>
   Future<void> _handleContinueAfterCelebration() async {
     await _controller.continueAfterCelebration();
   }
-}
-
-class _SliderPeekAsset {
-  const _SliderPeekAsset({
-    required this.assetPath,
-    required this.clockPosition,
-  });
-
-  final String assetPath;
-  final int clockPosition;
-}
-
-class _SliderPeekPlacement {
-  const _SliderPeekPlacement({
-    required this.alignment,
-    required this.hiddenOffset,
-  });
-
-  final Alignment alignment;
-  final Offset hiddenOffset;
 }

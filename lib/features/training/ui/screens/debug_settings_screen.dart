@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +16,7 @@ import '../../domain/progress_manager.dart';
 import '../../domain/training_item.dart';
 import '../../domain/training_task.dart';
 import '../../languages/registry.dart';
+import '../widgets/slider_peek.dart';
 
 class DebugSettingsScreen extends StatefulWidget {
   const DebugSettingsScreen({
@@ -30,7 +34,8 @@ class DebugSettingsScreen extends StatefulWidget {
   State<DebugSettingsScreen> createState() => _DebugSettingsScreenState();
 }
 
-class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
+class _DebugSettingsScreenState extends State<DebugSettingsScreen>
+    with SingleTickerProviderStateMixin {
   static const List<TrainingItemType> _simulationItemTypes = <TrainingItemType>[
     TrainingItemType.digits,
     TrainingItemType.base,
@@ -44,9 +49,19 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
   LearningMethod? _debugForcedLearningMethod;
   TrainingItemType? _debugForcedItemType;
   TrainingItemType _debugSimulationItemType = TrainingItemType.digits;
+  int _sliderPeekClockPosition = 0;
   bool _debugMarkingAlmostLearned = false;
   bool _queueLoading = false;
+  bool _sliderPeekLoading = false;
+  bool _sliderPeekRunning = false;
   String? _queuePreview;
+  final math.Random _random = math.Random();
+
+  late final AnimationController _sliderPeekController;
+  List<SliderPeekAsset> _sliderPeekAssets = const [];
+  SliderPeekAsset? _activeSliderPeekAsset;
+  Animation<Offset>? _activeSliderPeekAnimation;
+  int? _activeSliderPeekClockPosition;
 
   @override
   void initState() {
@@ -57,6 +72,17 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
     _debugForcedLearningMethod = _settingsRepository
         .readDebugForcedLearningMethod();
     _debugForcedItemType = _settingsRepository.readDebugForcedItemType();
+    _sliderPeekController = AnimationController(
+      vsync: this,
+      duration: sliderPeekMoveDuration,
+    );
+    unawaited(_loadSliderPeekAssets());
+  }
+
+  @override
+  void dispose() {
+    _sliderPeekController.dispose();
+    super.dispose();
   }
 
   void _showSnack(String message) {
@@ -85,6 +111,79 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
     setState(() {
       _debugSimulationItemType = type;
     });
+  }
+
+  void _updateSliderPeekClockPosition(int? value) {
+    if (value == null) return;
+    setState(() {
+      _sliderPeekClockPosition = value;
+    });
+  }
+
+  Future<void> _loadSliderPeekAssets() async {
+    setState(() {
+      _sliderPeekLoading = true;
+    });
+    try {
+      final assets = await loadSliderPeekAssets();
+      if (!mounted) return;
+      setState(() {
+        _sliderPeekAssets = assets;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _sliderPeekAssets = const [];
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _sliderPeekLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _showSliderPeekPreview() async {
+    if (_sliderPeekRunning || _sliderPeekLoading) return;
+    if (_sliderPeekAssets.isEmpty) {
+      _showSnack('No slider images found in assets/images/sliders/.');
+      return;
+    }
+
+    final selected = pickRandomSliderPeekAsset(
+      assets: _sliderPeekAssets,
+      random: _random,
+    );
+    final clockPosition = _sliderPeekClockPosition;
+    final animation = createSliderPeekAnimation(
+      controller: _sliderPeekController,
+      clockPosition: clockPosition,
+    );
+
+    setState(() {
+      _activeSliderPeekAsset = selected;
+      _activeSliderPeekClockPosition = clockPosition;
+      _activeSliderPeekAnimation = animation;
+      _sliderPeekRunning = true;
+    });
+
+    try {
+      await playSliderPeekSequence(
+        controller: _sliderPeekController,
+        holdDuration: sliderPeekHoldDuration,
+        shouldContinue: () => mounted,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _activeSliderPeekAsset = null;
+          _activeSliderPeekClockPosition = null;
+          _activeSliderPeekAnimation = null;
+          _sliderPeekRunning = false;
+        });
+      }
+    }
   }
 
   Future<void> _simulateAlmostLearnedCard() async {
@@ -385,6 +484,20 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
     }
   }
 
+  Widget _buildSliderPeekOverlay() {
+    final asset = _activeSliderPeekAsset;
+    final animation = _activeSliderPeekAnimation;
+    final clockPosition = _activeSliderPeekClockPosition;
+    if (asset == null || animation == null || clockPosition == null) {
+      return const SizedBox.shrink();
+    }
+    return SliderPeekOverlay(
+      assetPath: asset.assetPath,
+      clockPosition: clockPosition,
+      animation: animation,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -399,146 +512,205 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Debug')),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: Stack(
         children: [
-          DropdownButtonFormField<TrainingItemType?>(
-            initialValue: _debugForcedItemType,
-            onChanged: _updateDebugForcedItemType,
-            items: [
-              const DropdownMenuItem<TrainingItemType?>(
-                value: null,
-                child: Text('No forced card type'),
-              ),
-              ...TrainingItemType.values.map(
-                (type) => DropdownMenuItem<TrainingItemType?>(
-                  value: type,
-                  child: Text(_itemTypeLabel(type)),
-                ),
-              ),
-            ],
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Force card type',
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Filters the training pool to only the selected card type.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<LearningMethod?>(
-            initialValue: _debugForcedLearningMethod,
-            onChanged: _updateDebugForcedLearningMethod,
-            items: [
-              const DropdownMenuItem<LearningMethod?>(
-                value: null,
-                child: Text('No forced learning method'),
-              ),
-              ...LearningMethod.values.map(
-                (method) => DropdownMenuItem<LearningMethod?>(
-                  value: method,
-                  child: Text(method.label),
-                ),
-              ),
-            ],
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Force learning method',
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Forces the trainer to use only the selected learning method.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Simulation',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<TrainingItemType>(
-            initialValue: _debugSimulationItemType,
-            onChanged: _updateDebugSimulationItemType,
-            items: _simulationItemTypes
-                .map(
-                  (type) => DropdownMenuItem<TrainingItemType>(
-                    value: type,
-                    child: Text(_itemTypeLabel(type)),
+          ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              DropdownButtonFormField<TrainingItemType?>(
+                initialValue: _debugForcedItemType,
+                onChanged: _updateDebugForcedItemType,
+                items: [
+                  const DropdownMenuItem<TrainingItemType?>(
+                    value: null,
+                    child: Text('No forced card type'),
                   ),
-                )
-                .toList(),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Card class',
-            ),
-          ),
-          const SizedBox(height: 8),
-          FilledButton.tonalIcon(
-            onPressed: _debugMarkingAlmostLearned
-                ? null
-                : _simulateAlmostLearnedCard,
-            icon: _debugMarkingAlmostLearned
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: theme.colorScheme.onSecondaryContainer,
+                  ...TrainingItemType.values.map(
+                    (type) => DropdownMenuItem<TrainingItemType?>(
+                      value: type,
+                      child: Text(_itemTypeLabel(type)),
                     ),
-                  )
-                : const Icon(Icons.school),
-            label: Text(
-              _debugMarkingAlmostLearned
-                  ? 'Updating...'
-                  : 'Simulate almost learned card',
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Sets one card in selected class to $_almostLearnedCorrectAttempts correct attempts (not learned yet).',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          FilledButton.tonalIcon(
-            onPressed: _queueLoading ? null : _copyQueueToClipboard,
-            icon: _queueLoading
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: theme.colorScheme.onSecondaryContainer,
-                    ),
-                  )
-                : const Icon(Icons.copy_all),
-            label: Text(_queueLoading ? 'Copying...' : 'Copy card priorities'),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Copies current probabilistic priority list to clipboard.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          if (_queuePreview != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              _queuePreview!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: 'monospace',
-                color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ],
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Force card type',
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 6),
+              Text(
+                'Filters the training pool to only the selected card type.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<LearningMethod?>(
+                initialValue: _debugForcedLearningMethod,
+                onChanged: _updateDebugForcedLearningMethod,
+                items: [
+                  const DropdownMenuItem<LearningMethod?>(
+                    value: null,
+                    child: Text('No forced learning method'),
+                  ),
+                  ...LearningMethod.values.map(
+                    (method) => DropdownMenuItem<LearningMethod?>(
+                      value: method,
+                      child: Text(method.label),
+                    ),
+                  ),
+                ],
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Force learning method',
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Forces the trainer to use only the selected learning method.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Sliding animation',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<int>(
+                initialValue: _sliderPeekClockPosition,
+                onChanged: _updateSliderPeekClockPosition,
+                items: List.generate(
+                  12,
+                  (index) => DropdownMenuItem<int>(
+                    value: index,
+                    child: Text(index.toString()),
+                  ),
+                ),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Clock position (0-11)',
+                ),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.tonalIcon(
+                onPressed: (_sliderPeekRunning || _sliderPeekLoading)
+                    ? null
+                    : _showSliderPeekPreview,
+                icon: (_sliderPeekRunning || _sliderPeekLoading)
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: theme.colorScheme.onSecondaryContainer,
+                        ),
+                      )
+                    : const Icon(Icons.swipe),
+                label: Text(
+                  _sliderPeekLoading
+                      ? 'Loading images...'
+                      : _sliderPeekRunning
+                      ? 'Playing...'
+                      : 'Show sliding animation',
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Uses the same slide sequence as training. Position sets entry side '
+                '(0 top, 3 right, 6 bottom, 9 left). Assets found: ${_sliderPeekAssets.length}.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Simulation',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<TrainingItemType>(
+                initialValue: _debugSimulationItemType,
+                onChanged: _updateDebugSimulationItemType,
+                items: _simulationItemTypes
+                    .map(
+                      (type) => DropdownMenuItem<TrainingItemType>(
+                        value: type,
+                        child: Text(_itemTypeLabel(type)),
+                      ),
+                    )
+                    .toList(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Card class',
+                ),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.tonalIcon(
+                onPressed: _debugMarkingAlmostLearned
+                    ? null
+                    : _simulateAlmostLearnedCard,
+                icon: _debugMarkingAlmostLearned
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: theme.colorScheme.onSecondaryContainer,
+                        ),
+                      )
+                    : const Icon(Icons.school),
+                label: Text(
+                  _debugMarkingAlmostLearned
+                      ? 'Updating...'
+                      : 'Simulate almost learned card',
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Sets one card in selected class to $_almostLearnedCorrectAttempts correct attempts (not learned yet).',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.tonalIcon(
+                onPressed: _queueLoading ? null : _copyQueueToClipboard,
+                icon: _queueLoading
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: theme.colorScheme.onSecondaryContainer,
+                        ),
+                      )
+                    : const Icon(Icons.copy_all),
+                label: Text(
+                  _queueLoading ? 'Copying...' : 'Copy card priorities',
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Copies current probabilistic priority list to clipboard.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              if (_queuePreview != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  _queuePreview!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          _buildSliderPeekOverlay(),
         ],
       ),
     );
