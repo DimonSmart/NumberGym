@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:number_gym/features/training/data/settings_repository.dart';
 import 'package:number_gym/features/training/domain/daily_session_stats.dart';
+import 'package:number_gym/features/training/domain/learning_language.dart';
 import 'package:number_gym/features/training/domain/study_streak.dart';
 
 void main() {
@@ -113,6 +114,45 @@ void main() {
     },
   );
 
+  test('daily session stats are scoped by learning language', () async {
+    final repository = SettingsRepository(box);
+
+    await repository.setLearningLanguage(LearningLanguage.english);
+    await repository.setDailySessionStats(
+      const DailySessionStats(
+        dayKey: '2026-02-09',
+        sessionsCompleted: 1,
+        cardsCompleted: 20,
+        durationSeconds: 300,
+      ),
+    );
+
+    await repository.setLearningLanguage(LearningLanguage.spanish);
+    final spanishStats = repository.readDailySessionStats(
+      now: DateTime(2026, 2, 9, 9, 0),
+    );
+    expect(spanishStats.sessionsCompleted, 0);
+    expect(spanishStats.cardsCompleted, 0);
+    expect(spanishStats.durationSeconds, 0);
+
+    await repository.setDailySessionStats(
+      const DailySessionStats(
+        dayKey: '2026-02-09',
+        sessionsCompleted: 2,
+        cardsCompleted: 35,
+        durationSeconds: 420,
+      ),
+    );
+
+    await repository.setLearningLanguage(LearningLanguage.english);
+    final englishStats = repository.readDailySessionStats(
+      now: DateTime(2026, 2, 9, 9, 0),
+    );
+    expect(englishStats.sessionsCompleted, 1);
+    expect(englishStats.cardsCompleted, 20);
+    expect(englishStats.durationSeconds, 300);
+  });
+
   test('study streak defaults to empty value', () {
     final repository = SettingsRepository(box);
     final streak = repository.readStudyStreak();
@@ -133,4 +173,80 @@ void main() {
     expect(restored.sessionsByDay['2026-02-08'], 2);
     expect(restored.currentStreakDays(now: DateTime(2026, 2, 9, 9, 0)), 2);
   });
+
+  test('study streak is scoped by learning language', () async {
+    final repository = SettingsRepository(box);
+
+    await repository.setLearningLanguage(LearningLanguage.english);
+    await repository.setStudyStreak(
+      StudyStreak(sessionsByDay: const <String, int>{'2026-02-09': 1}),
+    );
+
+    await repository.setLearningLanguage(LearningLanguage.spanish);
+    final spanishStreak = repository.readStudyStreak();
+    expect(spanishStreak.sessionsByDay, isEmpty);
+
+    await repository.setStudyStreak(
+      StudyStreak(sessionsByDay: const <String, int>{'2026-02-09': 2}),
+    );
+
+    await repository.setLearningLanguage(LearningLanguage.english);
+    final englishStreak = repository.readStudyStreak();
+    expect(englishStreak.sessionsByDay['2026-02-09'], 1);
+  });
+
+  test(
+    'resetProgressForLanguage clears only selected language stats',
+    () async {
+      final repository = SettingsRepository(box);
+
+      await repository.setLearningLanguage(LearningLanguage.english);
+      await repository.setDailySessionStats(
+        const DailySessionStats(
+          dayKey: '2026-02-09',
+          sessionsCompleted: 1,
+          cardsCompleted: 12,
+          durationSeconds: 180,
+        ),
+      );
+      await repository.setStudyStreak(
+        StudyStreak(sessionsByDay: const <String, int>{'2026-02-09': 1}),
+      );
+
+      await repository.setLearningLanguage(LearningLanguage.spanish);
+      await repository.setDailySessionStats(
+        const DailySessionStats(
+          dayKey: '2026-02-09',
+          sessionsCompleted: 2,
+          cardsCompleted: 24,
+          durationSeconds: 360,
+        ),
+      );
+      await repository.setStudyStreak(
+        StudyStreak(sessionsByDay: const <String, int>{'2026-02-09': 2}),
+      );
+
+      await repository.resetProgressForLanguage(LearningLanguage.english);
+
+      await repository.setLearningLanguage(LearningLanguage.english);
+      final englishStats = repository.readDailySessionStats(
+        now: DateTime(2026, 2, 9, 9, 0),
+      );
+      final englishStreak = repository.readStudyStreak();
+      expect(englishStats.sessionsCompleted, 0);
+      expect(englishStats.cardsCompleted, 0);
+      expect(englishStats.durationSeconds, 0);
+      expect(englishStreak.sessionsByDay, isEmpty);
+
+      await repository.setLearningLanguage(LearningLanguage.spanish);
+      final spanishStats = repository.readDailySessionStats(
+        now: DateTime(2026, 2, 9, 9, 0),
+      );
+      final spanishStreak = repository.readStudyStreak();
+      expect(spanishStats.sessionsCompleted, 2);
+      expect(spanishStats.cardsCompleted, 24);
+      expect(spanishStats.durationSeconds, 360);
+      expect(spanishStreak.sessionsByDay['2026-02-09'], 2);
+    },
+  );
 }

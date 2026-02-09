@@ -12,8 +12,11 @@ const String answerDurationSecondsKey = 'answerDurationSeconds';
 const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String celebrationCounterKey = 'celebrationCounter';
-const String dailySessionStatsKey = 'dailySessionStats';
-const String studyStreakKey = 'studyStreak';
+const String dailySessionStatsKeyPrefix = 'dailySessionStats';
+const String studyStreakKeyPrefix = 'studyStreak';
+// Keep stored key names for backward compatibility with older builds.
+const String dailySessionStatsLegacyKey = 'dailySessionStats';
+const String studyStreakLegacyKey = 'studyStreak';
 // Keep stored key name for backward compatibility with older builds.
 const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
@@ -109,7 +112,8 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   DailySessionStats readDailySessionStats({DateTime? now}) {
     final resolvedNow = now ?? DateTime.now();
-    final rawValue = settingsBox.get(dailySessionStatsKey);
+    final language = readLearningLanguage();
+    final rawValue = settingsBox.get(_dailySessionStatsKey(language));
     if (rawValue == null || rawValue.trim().isEmpty) {
       return DailySessionStats.emptyFor(resolvedNow);
     }
@@ -134,6 +138,7 @@ class SettingsRepository implements SettingsRepositoryBase {
 
   @override
   Future<void> setDailySessionStats(DailySessionStats stats) async {
+    final language = readLearningLanguage();
     final normalized = DailySessionStats(
       dayKey: stats.dayKey,
       sessionsCompleted: stats.sessionsCompleted < 0
@@ -144,23 +149,34 @@ class SettingsRepository implements SettingsRepositoryBase {
     );
     final serialized =
         '${normalized.dayKey}|${normalized.sessionsCompleted}|${normalized.cardsCompleted}|${normalized.durationSeconds}';
-    await settingsBox.put(dailySessionStatsKey, serialized);
+    await settingsBox.put(_dailySessionStatsKey(language), serialized);
   }
 
   @override
   StudyStreak readStudyStreak() {
-    final rawValue = settingsBox.get(studyStreakKey);
+    final language = readLearningLanguage();
+    final rawValue = settingsBox.get(_studyStreakKey(language));
     return StudyStreak.fromStorage(rawValue);
   }
 
   @override
   Future<void> setStudyStreak(StudyStreak streak) async {
+    final language = readLearningLanguage();
     final serialized = streak.toStorage();
     if (serialized.isEmpty) {
-      await settingsBox.delete(studyStreakKey);
+      await settingsBox.delete(_studyStreakKey(language));
       return;
     }
-    await settingsBox.put(studyStreakKey, serialized);
+    await settingsBox.put(_studyStreakKey(language), serialized);
+  }
+
+  Future<void> resetProgressForLanguage(LearningLanguage language) async {
+    await settingsBox.delete(_dailySessionStatsKey(language));
+    await settingsBox.delete(_studyStreakKey(language));
+
+    // Remove obsolete non-scoped keys so legacy data doesn't leak into UI.
+    await settingsBox.delete(dailySessionStatsLegacyKey);
+    await settingsBox.delete(studyStreakLegacyKey);
   }
 
   @override
@@ -250,5 +266,13 @@ class SettingsRepository implements SettingsRepositoryBase {
 
   String _ttsVoiceKey(LearningLanguage language) {
     return '$ttsVoiceIdPrefix.${language.code}';
+  }
+
+  String _dailySessionStatsKey(LearningLanguage language) {
+    return '$dailySessionStatsKeyPrefix.${language.code}';
+  }
+
+  String _studyStreakKey(LearningLanguage language) {
+    return '$studyStreakKeyPrefix.${language.code}';
   }
 }

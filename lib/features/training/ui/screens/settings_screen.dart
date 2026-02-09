@@ -112,6 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (confirmed != true) return;
     await _progressRepository.reset(language: _language);
+    await _settingsRepository.resetProgressForLanguage(_language);
     widget.onProgressChanged?.call();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
