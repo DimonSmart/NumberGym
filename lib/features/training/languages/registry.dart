@@ -22,6 +22,4 @@ class LanguageRegistry {
     }
     return pack;
   }
-
-  static List<LanguagePack> get supportedPacks => _packs.values.toList();
 }

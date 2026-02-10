@@ -285,10 +285,12 @@ class TrainingSession {
 
   Future<void> pauseTaskTimer() async {
     _services.timer.pause();
+    await _runtimeCoordinator.handleAction(const RefreshTimerAction());
   }
 
   Future<void> resumeTaskTimer() async {
     _services.timer.resume();
+    await _runtimeCoordinator.handleAction(const RefreshTimerAction());
   }
 
   int _initialSessionTargetCards() {
@@ -320,10 +322,14 @@ class TrainingSession {
   }
 
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     _feedbackCoordinator.dispose();
-    unawaited(_runtimeCoordinator.disposeRuntime(clearState: true));
-    _services.dispose();
+    unawaited(
+      _runtimeCoordinator
+          .disposeRuntime(clearState: true)
+          .whenComplete(_services.dispose),
+    );
   }
 
   void _refreshCardsIfNeeded() {

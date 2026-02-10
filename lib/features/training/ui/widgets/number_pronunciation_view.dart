@@ -56,6 +56,7 @@ class NumberPronunciationView extends StatelessWidget {
         const SizedBox(height: 18),
         TrainingTimerBar(
           duration: viewModel.timer.duration,
+          remaining: viewModel.timer.remaining,
           isActive: viewModel.isTimerActive,
           taskKey: viewModel.taskKey,
         ),
@@ -68,10 +69,7 @@ class NumberPronunciationView extends StatelessWidget {
     );
   }
 
-  Widget _buildPrompt(
-    ThemeData theme,
-    NumberPronunciationViewModel viewModel,
-  ) {
+  Widget _buildPrompt(ThemeData theme, NumberPronunciationViewModel viewModel) {
     final prompt = viewModel.promptText.isEmpty ? '--' : viewModel.promptText;
     final baseStyle = theme.textTheme.displayLarge?.copyWith(
       fontSize: 86,

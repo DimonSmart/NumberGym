@@ -11,8 +11,8 @@ class LanguageRouter {
   LanguageRouter({
     required SettingsRepositoryBase settingsRepository,
     Random? random,
-  })  : _settingsRepository = settingsRepository,
-        _random = random ?? Random();
+  }) : _settingsRepository = settingsRepository,
+       _random = random ?? Random();
 
   final SettingsRepositoryBase _settingsRepository;
   final Random _random;
@@ -30,41 +30,23 @@ class LanguageRouter {
     return LanguageRegistry.of(selected).timeWordsConverter;
   }
 
-  String numberToWords(int value, {LearningLanguage? language}) {
-    return numberWordsConverter(language)(value);
-  }
-
   String timeToWords(TimeValue value, {LearningLanguage? language}) {
     return timeWordsConverter(language)(value);
   }
 
-  List<String> numberAnswers(int value, {LearningLanguage? language}) {
-    final toWords = numberWordsConverter(language);
-    return <String>[
-      toWords(value),
-      value.toString(),
-    ];
-  }
-
-  List<PhraseTemplate> templates([LearningLanguage? language]) {
-    final selected = language ?? currentLanguage;
-    return LanguageRegistry.of(selected).phraseTemplates;
-  }
-
   PhraseTemplate? pickTemplate(int value, {LearningLanguage? language}) {
     final selected = language ?? currentLanguage;
-    final available = LanguageRegistry.of(selected)
-        .phraseTemplates
-        .where((template) => template.supports(value))
-        .toList();
+    final available = LanguageRegistry.of(
+      selected,
+    ).phraseTemplates.where((template) => template.supports(value)).toList();
     if (available.isEmpty) return null;
     return available[_random.nextInt(available.length)];
   }
 
   bool hasTemplate(int value, {LearningLanguage? language}) {
     final selected = language ?? currentLanguage;
-    return LanguageRegistry.of(selected)
-        .phraseTemplates
-        .any((template) => template.supports(value));
+    return LanguageRegistry.of(
+      selected,
+    ).phraseTemplates.any((template) => template.supports(value));
   }
 }

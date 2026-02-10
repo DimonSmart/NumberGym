@@ -129,6 +129,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> handleAction(TaskAction action) async {
     if (action is RetrySpeechInitAction) {
       await _initSpeech();
+      return;
+    }
+    if (action is RefreshTimerAction) {
+      emitState(_buildState());
     }
   }
 

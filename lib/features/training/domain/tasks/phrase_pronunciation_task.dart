@@ -15,12 +15,8 @@ class PhrasePronunciationTask extends NumberTrainingTask {
     required this.maxValue,
     required super.numberValue,
     required this.text,
-  })  : assert(id.number == numberValue),
-        super(
-          kind: LearningMethod.phrasePronunciation,
-        );
-
-  bool get isInRange => numberValue >= minValue && numberValue <= maxValue;
+  }) : assert(id.number == numberValue),
+       super(kind: LearningMethod.phrasePronunciation);
 
   @override
   String get displayText => text;

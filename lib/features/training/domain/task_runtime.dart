@@ -42,6 +42,10 @@ final class RetrySpeechInitAction extends TaskAction {
   const RetrySpeechInitAction();
 }
 
+final class RefreshTimerAction extends TaskAction {
+  const RefreshTimerAction();
+}
+
 final class StartRecordingAction extends TaskAction {
   const StartRecordingAction();
 }

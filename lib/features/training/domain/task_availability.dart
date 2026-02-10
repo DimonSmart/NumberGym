@@ -10,12 +10,7 @@ class TaskAvailability {
   final bool isAvailable;
   final String? message;
 
-  const TaskAvailability({
-    required this.isAvailable,
-    this.message,
-  });
-
-  bool get canStart => isAvailable;
+  const TaskAvailability({required this.isAvailable, this.message});
 
   static const TaskAvailability available = TaskAvailability(isAvailable: true);
 
@@ -47,9 +42,7 @@ abstract interface class TaskAvailabilityProvider {
 
 class TaskAvailabilityRegistry {
   TaskAvailabilityRegistry({required List<TaskAvailabilityProvider> providers})
-      : _providers = {
-          for (final provider in providers) provider.kind: provider,
-        };
+    : _providers = {for (final provider in providers) provider.kind: provider};
 
   final Map<LearningMethod, TaskAvailabilityProvider> _providers;
 
@@ -87,7 +80,8 @@ class SpeechTaskAvailabilityProvider implements TaskAvailabilityProvider {
     if (result.ready) {
       return TaskAvailability.available;
     }
-    final message = result.errorMessage ??
+    final message =
+        result.errorMessage ??
         'Speech recognition is not available on this device.';
     return TaskAvailability.unavailable(message);
   }
@@ -109,17 +103,16 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
     bool force = false,
   }) async {
     final language = context.language;
-    if (!force &&
-        _cachedAvailable != null &&
-        _cachedLanguage == language) {
+    if (!force && _cachedAvailable != null && _cachedLanguage == language) {
       return _cachedAvailable!
           ? TaskAvailability.available
           : TaskAvailability.unavailable(
               'Text-to-speech is not available for the selected language.',
             );
     }
-    final available =
-        await _ttsService.isLanguageAvailable(LanguageRegistry.of(language).locale);
+    final available = await _ttsService.isLanguageAvailable(
+      LanguageRegistry.of(language).locale,
+    );
     _cachedLanguage = language;
     _cachedAvailable = available;
     if (available) {

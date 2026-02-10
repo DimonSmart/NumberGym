@@ -16,26 +16,26 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
     required List<String> options,
     required Duration cardDuration,
     required CardTimerBase cardTimer,
-  })  : _kind = kind,
-        _taskId = taskId,
-        _correctOption = correctOption,
-        _cardDuration = cardDuration,
-        _cardTimer = cardTimer,
-        super(
-          MultipleChoiceState(
-            kind: kind,
-            taskId: taskId,
-            numberValue: numberValue,
-            displayText: prompt,
-            timer: TimerState(
-              isRunning: false,
-              duration: cardDuration,
-              remaining: cardDuration,
-            ),
-            prompt: prompt,
-            options: options,
-          ),
-        );
+  }) : _kind = kind,
+       _taskId = taskId,
+       _correctOption = correctOption,
+       _cardDuration = cardDuration,
+       _cardTimer = cardTimer,
+       super(
+         MultipleChoiceState(
+           kind: kind,
+           taskId: taskId,
+           numberValue: numberValue,
+           displayText: prompt,
+           timer: TimerState(
+             isRunning: false,
+             duration: cardDuration,
+             remaining: cardDuration,
+           ),
+           prompt: prompt,
+           options: options,
+         ),
+       );
 
   final LearningMethod _kind;
   final TrainingItemId _taskId;
@@ -54,6 +54,10 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
   @override
   Future<void> handleAction(TaskAction action) async {
     if (_completed) return;
+    if (action is RefreshTimerAction) {
+      emitState(_buildState());
+      return;
+    }
     if (action is! SelectOptionAction) return;
     emitEvent(const TaskUserInteracted());
 
@@ -65,8 +69,8 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
     appLogI(
       'task',
       'Answer: kind=${_kind.name} id=$_taskId '
-      'selected="${action.option}" correct="$_correctOption" '
-      'outcome=${outcome.name}',
+          'selected="${action.option}" correct="$_correctOption" '
+          'outcome=${outcome.name}',
     );
     await _complete(outcome);
   }

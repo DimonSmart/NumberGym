@@ -79,6 +79,10 @@ class ListeningRuntime extends TaskRuntimeBase {
   @override
   Future<void> handleAction(TaskAction action) async {
     if (_completed) return;
+    if (action is RefreshTimerAction) {
+      emitState(_buildState());
+      return;
+    }
     if (action is RepeatPromptAction) {
       emitEvent(const TaskUserInteracted());
       await _speak();

@@ -111,8 +111,6 @@ class ProgressManager {
     );
   }
 
-  PronunciationTaskData? cardById(TrainingItemId id) => _cardsById[id];
-
   void refreshCardsIfNeeded(LearningLanguage language) {
     if (_cardsLanguage == language && _cardsById.isNotEmpty) return;
     _cardsLanguage = language;
@@ -296,10 +294,6 @@ class ProgressManager {
 
   void resetSelection() {
     _recentPickHistory.clear();
-  }
-
-  DateTime? getEarliestNextDue() {
-    return dailySummary().nextDue;
   }
 
   bool _meetsMastery(TrainingItemType type, CardProgress progress) {

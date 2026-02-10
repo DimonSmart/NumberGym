@@ -76,6 +76,7 @@ class MultipleChoiceView extends StatelessWidget {
         const SizedBox(height: 16),
         TrainingTimerBar(
           duration: viewModel.timer.duration,
+          remaining: viewModel.timer.remaining,
           isActive: viewModel.isTimerActive,
           taskKey: viewModel.taskKey,
         ),

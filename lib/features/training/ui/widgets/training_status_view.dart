@@ -34,19 +34,9 @@ class TrainingStatusView extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
-    final showMessage = viewModel.message.isNotEmpty;
     return Column(
       children: [
-        if (showMessage)
-          Text(
-            viewModel.message,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
         if (viewModel.hasError) ...[
-          if (showMessage) const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -68,7 +58,7 @@ class TrainingStatusView extends StatelessWidget {
           ),
         ],
         if (viewModel.sessionFinished) ...[
-          if (showMessage || viewModel.hasError) const SizedBox(height: 16),
+          if (viewModel.hasError) const SizedBox(height: 16),
           _SessionSummaryCard(
             stats: viewModel.sessionStats!,
             onContinue: onContinue,
