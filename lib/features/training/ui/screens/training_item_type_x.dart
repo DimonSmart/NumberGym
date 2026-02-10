@@ -10,6 +10,9 @@ extension TrainingItemTypeX on TrainingItemType {
     TrainingItemType.timeQuarter => 'Time (quarter)',
     TrainingItemType.timeHalf => 'Time (half)',
     TrainingItemType.timeRandom => 'Time (random)',
+    TrainingItemType.phone33x3 => 'Phone numbers (3-3-3)',
+    TrainingItemType.phone3222 => 'Phone numbers (3-2-2-2)',
+    TrainingItemType.phone2322 => 'Phone numbers (2-3-2-2)',
   };
 
   String get range => switch (this) {
@@ -21,5 +24,8 @@ extension TrainingItemTypeX on TrainingItemType {
     TrainingItemType.timeQuarter => '(HH:15, HH:45)',
     TrainingItemType.timeHalf => '(HH:30)',
     TrainingItemType.timeRandom => '(HH:MM)',
+    TrainingItemType.phone33x3 => '(+34) XXX XXX XXX',
+    TrainingItemType.phone3222 => '(+34) XXX XX XX XX',
+    TrainingItemType.phone2322 => '(+34) XX XXX XX XX',
   };
 }

@@ -5,10 +5,7 @@ import '../../domain/training_item.dart';
 import 'training_feedback_view_model.dart';
 
 class SpeechRecognitionLine {
-  const SpeechRecognitionLine({
-    required this.text,
-    required this.isPreview,
-  });
+  const SpeechRecognitionLine({required this.text, required this.isPreview});
 
   final String text;
   final bool isPreview;
@@ -59,8 +56,9 @@ class NumberPronunciationViewModel {
       promptText: displayText.isEmpty ? '--' : displayText,
       expectedTokens: task?.expectedTokens ?? const <String>[],
       matchedTokens: task?.matchedTokens ?? const <bool>[],
-      previewMatchedIndices:
-          Set<int>.from(task?.previewMatchedIndices ?? const <int>[]),
+      previewMatchedIndices: Set<int>.from(
+        task?.previewMatchedIndices ?? const <int>[],
+      ),
       hintText: task?.hintText,
       feedbackText: feedback.text,
       feedbackColor: feedback.color,
@@ -91,7 +89,8 @@ class NumberPronunciationViewModel {
             .trim();
     final previewIndices = task.previewMatchedIndices;
 
-    final hasAny = heardDisplay.isNotEmpty ||
+    final hasAny =
+        heardDisplay.isNotEmpty ||
         matchedIndices.isNotEmpty ||
         previewDisplay.isNotEmpty ||
         previewIndices.isNotEmpty;
@@ -100,8 +99,10 @@ class NumberPronunciationViewModel {
     }
 
     final matchedDisplay = _buildMatchedDisplay(expectedTokens, matchedIndices);
-    final previewMatchedDisplay =
-        _buildMatchedDisplay(expectedTokens, previewIndices);
+    final previewMatchedDisplay = _buildMatchedDisplay(
+      expectedTokens,
+      previewIndices,
+    );
     final lines = <SpeechRecognitionLine>[];
     if (previewDisplay.isNotEmpty) {
       lines.add(
@@ -121,17 +122,11 @@ class NumberPronunciationViewModel {
     }
     if (heardDisplay.isNotEmpty) {
       lines.add(
-        SpeechRecognitionLine(
-          text: 'Heard: $heardDisplay',
-          isPreview: false,
-        ),
+        SpeechRecognitionLine(text: 'Heard: $heardDisplay', isPreview: false),
       );
     }
     lines.add(
-      SpeechRecognitionLine(
-        text: 'Matched: $matchedDisplay',
-        isPreview: false,
-      ),
+      SpeechRecognitionLine(text: 'Matched: $matchedDisplay', isPreview: false),
     );
     return List<SpeechRecognitionLine>.unmodifiable(lines);
   }
@@ -144,6 +139,10 @@ class NumberPronunciationViewModel {
       case TrainingItemType.timeHalf:
       case TrainingItemType.timeRandom:
         return 'Say the time aloud';
+      case TrainingItemType.phone33x3:
+      case TrainingItemType.phone3222:
+      case TrainingItemType.phone2322:
+        return 'Say the phone number aloud';
       case TrainingItemType.digits:
       case TrainingItemType.base:
       case TrainingItemType.hundreds:

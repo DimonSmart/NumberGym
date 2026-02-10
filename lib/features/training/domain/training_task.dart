@@ -52,6 +52,9 @@ extension LearningMethodX on LearningMethod {
           TrainingItemType.timeQuarter,
           TrainingItemType.timeHalf,
           TrainingItemType.timeRandom,
+          TrainingItemType.phone33x3,
+          TrainingItemType.phone3222,
+          TrainingItemType.phone2322,
         };
       case LearningMethod.valueToText:
         return const {
@@ -101,10 +104,7 @@ abstract class TrainingTask {
   final TrainingItemId id;
   final LearningMethod kind;
 
-  const TrainingTask({
-    required this.id,
-    required this.kind,
-  });
+  const TrainingTask({required this.id, required this.kind});
 
   /// Key used to track progress; by default equals [id].
   TrainingItemId get progressId => id;
