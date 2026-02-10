@@ -82,6 +82,14 @@ class LearningParams {
   }
 
   double targetAccuracy(TrainingItemType type) {
+    switch (type) {
+      case TrainingItemType.phone33x3:
+      case TrainingItemType.phone3222:
+      case TrainingItemType.phone2322:
+        return 0.8;
+      default:
+        break;
+    }
     switch (_difficultyFor(type)) {
       case _ItemDifficulty.easy:
         return easyMasteryAccuracy;
@@ -115,6 +123,9 @@ class LearningParams {
         return _ItemDifficulty.medium;
       case TrainingItemType.timeQuarter:
       case TrainingItemType.timeRandom:
+      case TrainingItemType.phone33x3:
+      case TrainingItemType.phone3222:
+      case TrainingItemType.phone2322:
         return _ItemDifficulty.hard;
     }
   }

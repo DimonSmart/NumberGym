@@ -678,6 +678,12 @@ class TrainingSession {
         return 'Half-hour time';
       case TrainingItemType.timeRandom:
         return 'Random time';
+      case TrainingItemType.phone33x3:
+        return 'Phone numbers (3-3-3)';
+      case TrainingItemType.phone3222:
+        return 'Phone numbers (3-2-2-2)';
+      case TrainingItemType.phone2322:
+        return 'Phone numbers (2-3-2-2)';
     }
   }
 

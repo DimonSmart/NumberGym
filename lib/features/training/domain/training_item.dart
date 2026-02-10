@@ -9,14 +9,13 @@ enum TrainingItemType {
   timeQuarter,
   timeHalf,
   timeRandom,
+  phone33x3,
+  phone3222,
+  phone2322,
 }
 
 class TrainingItemId implements Comparable<TrainingItemId> {
-  const TrainingItemId({
-    required this.type,
-    this.number,
-    this.time,
-  });
+  const TrainingItemId({required this.type, this.number, this.time});
 
   final TrainingItemType type;
   final int? number;
