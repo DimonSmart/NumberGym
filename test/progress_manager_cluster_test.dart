@@ -65,7 +65,6 @@ void main() {
         maxStoredClusters: 32,
         recentAttemptsWindow: 3,
         minAttemptsToLearn: 3,
-        learnedReviewProbability: 0.0,
         repeatCooldownCards: 0,
         easyMasteryAccuracy: 1.0,
         mediumMasteryAccuracy: 0.85,
@@ -114,7 +113,6 @@ void main() {
       maxStoredClusters: 32,
       recentAttemptsWindow: 10,
       minAttemptsToLearn: 3,
-      learnedReviewProbability: 0.0,
       repeatCooldownCards: 0,
       easyMasteryAccuracy: 1.0,
       mediumMasteryAccuracy: 0.85,
@@ -171,6 +169,66 @@ void main() {
     expect(stored.learnedAt, 0);
   });
 
+  test('learned cards are excluded from next-card selection', () async {
+    const learnedId = TrainingItemId(type: TrainingItemType.digits, number: 0);
+    const activeId = TrainingItemId(type: TrainingItemType.digits, number: 1);
+    final repository = _InMemoryProgressRepository(
+      seeded: {
+        _repoKey(learnedId, LearningLanguage.english): const CardProgress(
+          learned: true,
+          clusters: <CardCluster>[],
+          learnedAt: 1000,
+          firstAttemptAt: 1000,
+        ),
+      },
+    );
+    final manager = _buildManager(repository: repository);
+    const language = LearningLanguage.english;
+
+    await manager.loadProgress(language);
+
+    final picked = manager.pickNextCard(
+      isEligible: (_) => true,
+      now: DateTime(2026, 2, 9, 12, 0),
+    );
+    expect(picked, isNotNull);
+    expect(picked!.card.progressId, activeId);
+  });
+
+  test('hasRemainingCards is false when every card is learned', () async {
+    const firstId = TrainingItemId(type: TrainingItemType.digits, number: 0);
+    const secondId = TrainingItemId(type: TrainingItemType.digits, number: 1);
+    final repository = _InMemoryProgressRepository(
+      seeded: {
+        _repoKey(firstId, LearningLanguage.english): const CardProgress(
+          learned: true,
+          clusters: <CardCluster>[],
+          learnedAt: 1000,
+          firstAttemptAt: 1000,
+        ),
+        _repoKey(secondId, LearningLanguage.english): const CardProgress(
+          learned: true,
+          clusters: <CardCluster>[],
+          learnedAt: 1000,
+          firstAttemptAt: 1000,
+        ),
+      },
+    );
+    final manager = _buildManager(repository: repository);
+    const language = LearningLanguage.english;
+
+    await manager.loadProgress(language);
+
+    expect(manager.hasRemainingCards, isFalse);
+    expect(
+      manager.pickNextCard(
+        isEligible: (_) => true,
+        now: DateTime(2026, 2, 9, 12, 0),
+      ),
+      isNull,
+    );
+  });
+
   test(
     'new cards are limited per day when there are practiced alternatives',
     () async {
@@ -181,7 +239,6 @@ void main() {
         maxStoredClusters: 32,
         recentAttemptsWindow: 10,
         minAttemptsToLearn: 20,
-        learnedReviewProbability: 0.0,
         repeatCooldownCards: 0,
         easyMasteryAccuracy: 1.0,
         mediumMasteryAccuracy: 0.85,

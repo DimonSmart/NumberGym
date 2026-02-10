@@ -7,7 +7,6 @@ class LearningParams {
   final int maxStoredClusters;
   final int recentAttemptsWindow;
   final int minAttemptsToLearn;
-  final double learnedReviewProbability;
   final int repeatCooldownCards;
   final double easyMasteryAccuracy;
   final double mediumMasteryAccuracy;
@@ -27,7 +26,6 @@ class LearningParams {
     required this.maxStoredClusters,
     required this.recentAttemptsWindow,
     required this.minAttemptsToLearn,
-    required this.learnedReviewProbability,
     required this.repeatCooldownCards,
     required this.easyMasteryAccuracy,
     required this.mediumMasteryAccuracy,
@@ -45,7 +43,6 @@ class LearningParams {
        assert(maxStoredClusters > 0),
        assert(recentAttemptsWindow > 0),
        assert(minAttemptsToLearn > 0),
-       assert(learnedReviewProbability >= 0 && learnedReviewProbability <= 1),
        assert(repeatCooldownCards >= 0),
        assert(easyMasteryAccuracy >= 0 && easyMasteryAccuracy <= 1),
        assert(mediumMasteryAccuracy >= 0 && mediumMasteryAccuracy <= 1),
@@ -66,7 +63,6 @@ class LearningParams {
       maxStoredClusters: 32,
       recentAttemptsWindow: 10,
       minAttemptsToLearn: 20,
-      learnedReviewProbability: 0.12,
       repeatCooldownCards: 2,
       easyMasteryAccuracy: 1.0,
       mediumMasteryAccuracy: 0.85,

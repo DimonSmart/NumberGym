@@ -6,7 +6,7 @@ import 'training_item.dart';
 
 enum LearningMethod {
   numberPronunciation,
-  valueToText, // Formerly numberReading
+  valueToText,
   textToValue, // Inverse for number/time cards
   listening,
   phrasePronunciation,

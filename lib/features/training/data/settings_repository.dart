@@ -16,11 +16,7 @@ const String autoSimulationContinueCountKey = 'autoSimulationContinueCount';
 const String celebrationCounterKey = 'celebrationCounter';
 const String dailySessionStatsKeyPrefix = 'dailySessionStats';
 const String studyStreakKeyPrefix = 'studyStreak';
-// Keep stored key names for backward compatibility with older builds.
-const String dailySessionStatsLegacyKey = 'dailySessionStats';
-const String studyStreakLegacyKey = 'studyStreak';
-// Keep stored key name for backward compatibility with older builds.
-const String debugForcedLearningMethodKey = 'debugForcedTaskKind';
+const String debugForcedLearningMethodKey = 'debugForcedLearningMethod';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
 const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
@@ -212,10 +208,6 @@ class SettingsRepository implements SettingsRepositoryBase {
   Future<void> resetProgressForLanguage(LearningLanguage language) async {
     await settingsBox.delete(_dailySessionStatsKey(language));
     await settingsBox.delete(_studyStreakKey(language));
-
-    // Remove obsolete non-scoped keys so legacy data doesn't leak into UI.
-    await settingsBox.delete(dailySessionStatsLegacyKey);
-    await settingsBox.delete(studyStreakLegacyKey);
   }
 
   @override
@@ -242,12 +234,7 @@ class SettingsRepository implements SettingsRepositoryBase {
     if (rawValue == null || rawValue.trim().isEmpty) {
       return null;
     }
-    final normalized = switch (rawValue) {
-      'numberToWord' => 'valueToText',
-      'wordToNumber' => 'textToValue',
-      'wordToTime' => 'textToValue',
-      _ => rawValue,
-    };
+    final normalized = rawValue.trim();
     for (final method in LearningMethod.values) {
       if (method.name == normalized) {
         return method;

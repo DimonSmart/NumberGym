@@ -41,7 +41,6 @@ class TrainingSession {
     void Function()? onStateChanged,
     void Function()? onAutoStop,
   }) : _settingsRepository = settingsRepository,
-       _progressRepository = progressRepository,
        _services = services ?? TrainingServices.defaults(),
        _onStateChanged = onStateChanged ?? _noop,
        _onAutoStop = onAutoStop ?? _noop {
@@ -75,7 +74,7 @@ class TrainingSession {
       settingsRepository: _settingsRepository,
     );
     _progressManager = ProgressManager(
-      progressRepository: _progressRepository,
+      progressRepository: progressRepository,
       languageRouter: _languageRouter,
     );
     _feedbackCoordinator = FeedbackCoordinator(onChanged: _syncState);
@@ -97,7 +96,6 @@ class TrainingSession {
   final math.Random _random = math.Random();
   final TrainingServices _services;
   final SettingsRepositoryBase _settingsRepository;
-  final ProgressRepositoryBase _progressRepository;
   final void Function() _onStateChanged;
   final void Function() _onAutoStop;
   late final LanguageRouter _languageRouter;

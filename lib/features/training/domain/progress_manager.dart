@@ -61,14 +61,28 @@ class ProgressManager {
   int get learnedCount =>
       _progressById.values.where((progress) => progress.learned).length;
   int get remainingCount => totalCards - learnedCount;
-  bool get hasRemainingCards => _cardsById.isNotEmpty;
+  bool get hasRemainingCards {
+    if (_cardIds.isEmpty) {
+      return false;
+    }
+    for (final id in _cardIds) {
+      final progress = _progressById[id] ?? CardProgress.empty;
+      if (!progress.learned) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   LearningQueueDebugSnapshot debugQueueSnapshot({DateTime? now}) {
     final resolvedNow = now ?? DateTime.now();
     final newCardsLimitReached = _isDailyNewLimitReached(resolvedNow);
+    final unlearnedIds = _cardIds.where((id) {
+      return !(_progressById[id] ?? CardProgress.empty).learned;
+    }).toList();
 
     final weightById = <TrainingItemId, double>{};
-    for (final id in _cardIds) {
+    for (final id in unlearnedIds) {
       final progress = _progressById[id] ?? CardProgress.empty;
       weightById[id] = _cardWeight(
         id,
@@ -79,7 +93,7 @@ class ProgressManager {
       );
     }
 
-    final prioritized = _cardIds.toList()
+    final prioritized = unlearnedIds.toList()
       ..sort((a, b) {
         final aWeight = weightById[a] ?? 0;
         final bWeight = weightById[b] ?? 0;
@@ -158,16 +172,14 @@ class ProgressManager {
 
     if (eligibleIds.isEmpty) return null;
 
-    final learnedIds = <TrainingItemId>[];
     var unlearnedIds = <TrainingItemId>[];
     for (final id in eligibleIds) {
       final progress = _progressById[id] ?? CardProgress.empty;
-      if (progress.learned) {
-        learnedIds.add(id);
-      } else {
+      if (!progress.learned) {
         unlearnedIds.add(id);
       }
     }
+    if (unlearnedIds.isEmpty) return null;
 
     final newCardsLimitReached = _isDailyNewLimitReached(resolvedNow);
     if (newCardsLimitReached && unlearnedIds.isNotEmpty) {
@@ -181,14 +193,10 @@ class ProgressManager {
       }
     }
 
-    final source = _resolveSourceBucket(
-      learnedIds: learnedIds,
-      unlearnedIds: unlearnedIds,
-    );
-    if (source.isEmpty) return null;
+    if (unlearnedIds.isEmpty) return null;
 
     final weightById = <TrainingItemId, double>{};
-    for (final id in source) {
+    for (final id in unlearnedIds) {
       final progress = _progressById[id] ?? CardProgress.empty;
       weightById[id] = _cardWeight(
         id,
@@ -198,7 +206,7 @@ class ProgressManager {
       );
     }
 
-    final pickedId = _pickWeightedId(source, weightById);
+    final pickedId = _pickWeightedId(unlearnedIds, weightById);
     if (pickedId == null) return null;
 
     final pickedCard = _cardsById[pickedId];
@@ -306,27 +314,6 @@ class ProgressManager {
     );
     final target = _learningParams.targetAccuracy(type);
     return accuracy >= target;
-  }
-
-  List<TrainingItemId> _resolveSourceBucket({
-    required List<TrainingItemId> learnedIds,
-    required List<TrainingItemId> unlearnedIds,
-  }) {
-    if (unlearnedIds.isEmpty && learnedIds.isEmpty) {
-      return const <TrainingItemId>[];
-    }
-    if (unlearnedIds.isEmpty) {
-      return learnedIds;
-    }
-    if (learnedIds.isEmpty) {
-      return unlearnedIds;
-    }
-
-    final reviewRoll = _random.nextDouble();
-    if (reviewRoll < _learningParams.learnedReviewProbability) {
-      return learnedIds;
-    }
-    return unlearnedIds;
   }
 
   TrainingItemId? _pickWeightedId(

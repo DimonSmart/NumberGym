@@ -34,22 +34,12 @@ class StudyStreakSnapshot {
   }
 }
 
-abstract interface class StreakStatusProvider {
-  int readCurrentStreakDays({DateTime? now});
-}
-
-abstract interface class StudyStreakSnapshotProvider {
-  StudyStreakSnapshot readCurrentStreakSnapshot({DateTime? now});
-}
-
-class StudyStreakService
-    implements StreakStatusProvider, StudyStreakSnapshotProvider {
+class StudyStreakService {
   StudyStreakService({required SettingsRepositoryBase settingsRepository})
     : _settingsRepository = settingsRepository;
 
   final SettingsRepositoryBase _settingsRepository;
 
-  @override
   int readCurrentStreakDays({DateTime? now}) {
     final resolvedNow = (now ?? DateTime.now()).toLocal();
     final day = DateTime(resolvedNow.year, resolvedNow.month, resolvedNow.day);
@@ -57,7 +47,6 @@ class StudyStreakService
     return streak.currentStreakDays(now: day);
   }
 
-  @override
   StudyStreakSnapshot readCurrentStreakSnapshot({DateTime? now}) {
     final resolvedNow = (now ?? DateTime.now()).toLocal();
     final today = DateTime(
