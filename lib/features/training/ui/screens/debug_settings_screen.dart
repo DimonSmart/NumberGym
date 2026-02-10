@@ -377,7 +377,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
   }
 
   String _formatQueuePreview(LearningQueueDebugSnapshot snapshot) {
-    final language = snapshot.language ?? _language;
+    final language = snapshot.language;
     final languageLabel = LanguageRegistry.of(language).label;
     final totalAttempts = _sumAttempts(snapshot.all, snapshot);
     final totalCorrect = _sumCorrect(snapshot.all, snapshot);
@@ -411,7 +411,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen>
   }
 
   String _formatQueueClipboard(LearningQueueDebugSnapshot snapshot) {
-    final language = snapshot.language ?? _language;
+    final language = snapshot.language;
     final languageLabel = LanguageRegistry.of(language).label;
     final now = DateTime.now();
     final totalAttempts = _sumAttempts(snapshot.all, snapshot);

@@ -20,33 +20,32 @@ class LanguageRouter {
   LearningLanguage get currentLanguage =>
       _settingsRepository.readLearningLanguage();
 
-  NumberWordsConverter numberWordsConverter([LearningLanguage? language]) {
-    final selected = language ?? currentLanguage;
-    return LanguageRegistry.of(selected).numberWordsConverter;
+  NumberWordsConverter numberWordsConverter(LearningLanguage language) {
+    return LanguageRegistry.of(language).numberWordsConverter;
   }
 
-  TimeWordsConverter timeWordsConverter([LearningLanguage? language]) {
-    final selected = language ?? currentLanguage;
-    return LanguageRegistry.of(selected).timeWordsConverter;
+  TimeWordsConverter timeWordsConverter(LearningLanguage language) {
+    return LanguageRegistry.of(language).timeWordsConverter;
   }
 
-  String timeToWords(TimeValue value, {LearningLanguage? language}) {
+  String timeToWords(TimeValue value, {required LearningLanguage language}) {
     return timeWordsConverter(language)(value);
   }
 
-  PhraseTemplate? pickTemplate(int value, {LearningLanguage? language}) {
-    final selected = language ?? currentLanguage;
+  PhraseTemplate? pickTemplate(
+    int value, {
+    required LearningLanguage language,
+  }) {
     final available = LanguageRegistry.of(
-      selected,
+      language,
     ).phraseTemplates.where((template) => template.supports(value)).toList();
     if (available.isEmpty) return null;
     return available[_random.nextInt(available.length)];
   }
 
-  bool hasTemplate(int value, {LearningLanguage? language}) {
-    final selected = language ?? currentLanguage;
+  bool hasTemplate(int value, {required LearningLanguage language}) {
     return LanguageRegistry.of(
-      selected,
+      language,
     ).phraseTemplates.any((template) => template.supports(value));
   }
 }

@@ -37,7 +37,8 @@ class ProgressManager {
        _languageRouter = languageRouter,
        _catalog = catalog ?? TrainingCatalog.defaults(),
        _random = random ?? Random(),
-       _learningParams = learningParams ?? LearningParams.defaults();
+       _learningParams = learningParams ?? LearningParams.defaults(),
+       _cardsLanguage = languageRouter.currentLanguage;
 
   final ProgressRepositoryBase _progressRepository;
   final LanguageRouter _languageRouter;
@@ -47,12 +48,12 @@ class ProgressManager {
 
   Map<TrainingItemId, PronunciationTaskData> _cardsById = {};
   List<TrainingItemId> _cardIds = [];
-  LearningLanguage? _cardsLanguage;
+  LearningLanguage _cardsLanguage;
 
   Map<TrainingItemId, CardProgress> _progressById = {};
   final List<TrainingItemId> _recentPickHistory = <TrainingItemId>[];
 
-  LearningLanguage? get cardsLanguage => _cardsLanguage;
+  LearningLanguage get cardsLanguage => _cardsLanguage;
   List<TrainingItemId> get cardIds => _cardIds;
   LearningParams get learningParams => _learningParams;
 
@@ -483,7 +484,7 @@ class LearningQueueDebugSnapshot {
     required this.dailyNewCardsToday,
   });
 
-  final LearningLanguage? language;
+  final LearningLanguage language;
   final List<TrainingItemId> prioritized;
   final List<TrainingItemId> all;
   final Map<TrainingItemId, double> weightById;

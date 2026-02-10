@@ -91,7 +91,7 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
   TtsTaskAvailabilityProvider(this._ttsService);
 
   final TtsServiceBase _ttsService;
-  LearningLanguage? _cachedLanguage;
+  LearningLanguage _cachedLanguage = LearningLanguage.english;
   bool? _cachedAvailable;
 
   @override
