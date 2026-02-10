@@ -125,6 +125,7 @@ class TrainingSession {
   DateTime? _sessionStartTime;
   int _sessionCardsCompleted = 0;
   int _sessionTargetCards = 0;
+  bool _sessionStatsPersisted = false;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -199,6 +200,7 @@ class TrainingSession {
     _sessionStartTime = DateTime.now();
     _sessionCardsCompleted = 0;
     _sessionTargetCards = targetCards < 0 ? 0 : targetCards;
+    _sessionStatsPersisted = false;
   }
 
   Future<void> continueSession() async {
@@ -226,6 +228,7 @@ class TrainingSession {
   }
 
   Future<void> stopTraining() async {
+    await _persistCurrentSessionIfNeeded();
     _feedbackCoordinator.clear();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _services.soundWave.reset();
@@ -446,6 +449,22 @@ class TrainingSession {
     _onStateChanged();
   }
 
+  Future<void> _persistCurrentSessionIfNeeded() async {
+    if (_sessionStatsPersisted || _sessionCardsCompleted <= 0) {
+      return;
+    }
+    final startedAt = _sessionStartTime;
+    if (startedAt == null) {
+      return;
+    }
+    final now = DateTime.now();
+    var elapsed = now.difference(startedAt);
+    if (elapsed.isNegative) {
+      elapsed = Duration.zero;
+    }
+    await _recordDailySessionStats(now: now, elapsed: elapsed);
+  }
+
   Future<DailySessionStats> _recordDailySessionStats({
     required DateTime now,
     required Duration elapsed,
@@ -462,6 +481,7 @@ class TrainingSession {
     );
     await _settingsRepository.setDailySessionStats(todayStats);
     await _studyStreakService.recordCompletedSession(now: now);
+    _sessionStatsPersisted = true;
     return todayStats;
   }
 

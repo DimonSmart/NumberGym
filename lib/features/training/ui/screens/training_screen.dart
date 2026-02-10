@@ -44,6 +44,8 @@ class _TrainingScreenState extends State<TrainingScreen>
   late final SettingsRepository _settingsRepository;
   late final TrainingController _controller;
   bool _startingTraining = false;
+  bool _stoppingTraining = false;
+  bool _allowSystemPop = false;
 
   static const String _successAnimationPrefix = 'assets/animations/success/';
   static const String _fallbackSuccessAnimation =
@@ -216,112 +218,121 @@ class _TrainingScreenState extends State<TrainingScreen>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        final theme = Theme.of(context);
-        final sessionCardsCompleted = _controller.sessionCardsCompleted;
-        final sessionTarget = _controller.sessionTargetCards <= 0
-            ? _controller.dailyGoalCards
-            : _controller.sessionTargetCards;
-        final methodLabel =
-            _controller.currentLearningMethod?.label ?? 'Training';
-        final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
-          theme: theme,
-          feedback: _controller.feedback,
-        );
-        final statusViewModel = TrainingStatusViewModel.fromState(
-          state: _controller.state,
-        );
-        final canShowPeek =
-            _controller.feedback == null &&
-            _controller.celebration == null &&
-            !statusViewModel.sessionFinished &&
-            _controller.currentTask != null;
+    return PopScope(
+      canPop: _allowSystemPop,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop || !mounted) {
+          return;
+        }
+        unawaited(_handleSystemBack());
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final theme = Theme.of(context);
+          final sessionCardsCompleted = _controller.sessionCardsCompleted;
+          final sessionTarget = _controller.sessionTargetCards <= 0
+              ? _controller.dailyGoalCards
+              : _controller.sessionTargetCards;
+          final methodLabel =
+              _controller.currentLearningMethod?.label ?? 'Training';
+          final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
+            theme: theme,
+            feedback: _controller.feedback,
+          );
+          final statusViewModel = TrainingStatusViewModel.fromState(
+            state: _controller.state,
+          );
+          final canShowPeek =
+              _controller.feedback == null &&
+              _controller.celebration == null &&
+              !statusViewModel.sessionFinished &&
+              _controller.currentTask != null;
 
-        _trackSessionProgress(
-          cardsCompleted: sessionCardsCompleted,
-          canShowPeek: canShowPeek,
-        );
-        _scheduleAutoSimulation();
+          _trackSessionProgress(
+            cardsCompleted: sessionCardsCompleted,
+            canShowPeek: canShowPeek,
+          );
+          _scheduleAutoSimulation();
 
-        if (statusViewModel.sessionFinished) {
+          if (statusViewModel.sessionFinished) {
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              body: TrainingBackground(
+                child: SafeArea(
+                  minimum: const EdgeInsets.all(16),
+                  child: TrainingStatusView(
+                    viewModel: statusViewModel,
+                    onRetry: _handleRetry,
+                    onContinue: _handleContinueSession,
+                    onEndTraining: _handleStopTraining,
+                    showSessionSummaryFullscreen: true,
+                  ),
+                ),
+              ),
+            );
+          }
+
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: TrainingBackground(
-              child: SafeArea(
-                minimum: const EdgeInsets.all(16),
-                child: TrainingStatusView(
-                  viewModel: statusViewModel,
-                  onRetry: _handleRetry,
-                  onContinue: _handleContinueSession,
-                  onEndTraining: _handleStopTraining,
-                  showSessionSummaryFullscreen: true,
-                ),
-              ),
-            ),
-          );
-        }
-
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: TrainingBackground(
-            child: Stack(
-              children: [
-                SafeArea(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: [
-                            Text(
-                              methodLabel,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              'Session: $sessionCardsCompleted/$sessionTarget',
-                              style: theme.textTheme.labelMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
                             children: [
-                              _buildTaskView(theme, feedbackViewModel),
-                              const SizedBox(height: 16),
-                              TrainingStatusView(
-                                viewModel: statusViewModel,
-                                onRetry: _handleRetry,
-                                onContinue: _handleContinueSession,
-                                onEndTraining: _handleStopTraining,
+                              Text(
+                                methodLabel,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Session: $sessionCardsCompleted/$sessionTarget',
+                                style: theme.textTheme.labelMedium,
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildStopButton(theme),
-                      const SizedBox(height: 18),
-                    ],
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildTaskView(theme, feedbackViewModel),
+                                const SizedBox(height: 16),
+                                TrainingStatusView(
+                                  viewModel: statusViewModel,
+                                  onRetry: _handleRetry,
+                                  onContinue: _handleContinueSession,
+                                  onEndTraining: _handleStopTraining,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildStopButton(theme),
+                        const SizedBox(height: 18),
+                      ],
+                    ),
                   ),
-                ),
-                _buildSliderPeekOverlay(context),
-                _buildFeedbackOverlay(feedbackViewModel),
-                _buildCelebrationOverlay(),
-              ],
+                  _buildSliderPeekOverlay(context),
+                  _buildFeedbackOverlay(feedbackViewModel),
+                  _buildCelebrationOverlay(),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -560,10 +571,36 @@ class _TrainingScreenState extends State<TrainingScreen>
     return candidate.clamp(260.0, 420.0).toDouble();
   }
 
+  Future<void> _handleSystemBack() async {
+    await _stopTrainingAndExit(popToRoot: false);
+  }
+
   Future<void> _handleStopTraining() async {
-    await _controller.stopTraining();
-    if (!mounted) return;
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    await _stopTrainingAndExit(popToRoot: true);
+  }
+
+  Future<void> _stopTrainingAndExit({required bool popToRoot}) async {
+    if (_stoppingTraining) {
+      return;
+    }
+    _stoppingTraining = true;
+    try {
+      await _controller.stopTraining();
+      if (!mounted) return;
+      if (!_allowSystemPop) {
+        setState(() {
+          _allowSystemPop = true;
+        });
+      }
+      final navigator = Navigator.of(context);
+      if (popToRoot) {
+        navigator.popUntil((route) => route.isFirst);
+      } else {
+        navigator.pop();
+      }
+    } finally {
+      _stoppingTraining = false;
+    }
   }
 
   Future<void> _handleRetry() async {
@@ -591,6 +628,11 @@ class _TrainingScreenState extends State<TrainingScreen>
 
   void _handleAutoStop() {
     if (!mounted) return;
+    if (!_allowSystemPop) {
+      setState(() {
+        _allowSystemPop = true;
+      });
+    }
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
