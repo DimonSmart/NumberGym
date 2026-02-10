@@ -80,7 +80,16 @@ class NumberPronunciationView extends StatelessWidget {
     if (viewModel.expectedTokens.isEmpty ||
         viewModel.matchedTokens.length != viewModel.expectedTokens.length ||
         baseStyle == null) {
-      return Text(prompt, style: baseStyle, textAlign: TextAlign.center);
+      return _buildScaledPrompt(
+        Text(
+          prompt,
+          style: baseStyle,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          softWrap: false,
+          overflow: TextOverflow.visible,
+        ),
+      );
     }
 
     final matchedStyle = baseStyle.copyWith(color: theme.colorScheme.primary);
@@ -111,9 +120,25 @@ class NumberPronunciationView extends StatelessWidget {
       }
     }
 
-    return Text.rich(
-      TextSpan(style: baseStyle, children: spans),
-      textAlign: TextAlign.center,
+    return _buildScaledPrompt(
+      Text.rich(
+        TextSpan(style: baseStyle, children: spans),
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.visible,
+      ),
+    );
+  }
+
+  Widget _buildScaledPrompt(Widget child) {
+    return SizedBox(
+      width: double.infinity,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.center,
+        child: child,
+      ),
     );
   }
 

@@ -3,8 +3,10 @@ import 'dart:math';
 import '../domain/learning_language.dart';
 import '../domain/tasks/phone_pronunciation_task.dart';
 import '../domain/training_item.dart';
+import '../languages/registry.dart';
 
 const int _phoneCardsPerFormat = 16;
+const int _countryCode = 34;
 
 List<TrainingItemId> buildPhoneCardIds() {
   final ids = <TrainingItemId>[];
@@ -39,40 +41,91 @@ List<PhonePronunciationTask> buildPhoneCards({
   final cards = <PhonePronunciationTask>[];
   for (final id in buildPhoneCardIds()) {
     final localNumber = id.number!;
-    final includePrefix = localNumber.isEven;
-    final groupedLocal = _groupNumber(localNumber, id.type);
-    final prompt = includePrefix ? '+34 $groupedLocal' : groupedLocal;
-    final compact = groupedLocal.replaceAll(' ', '');
-    final answers = <String>{
-      prompt,
-      groupedLocal,
-      compact,
-      if (includePrefix) '+34$compact',
-      if (includePrefix) '34$compact',
-    }.toList();
     cards.add(
-      PhonePronunciationTask(
+      buildPhoneCardForLocalNumber(
         id: id,
-        numberValue: localNumber,
-        prompt: prompt,
+        localNumber: localNumber,
         language: language,
-        answers: answers,
+        includePrefix: localNumber.isEven,
       ),
     );
   }
   return cards;
 }
 
+PhonePronunciationTask buildRandomPhoneCard({
+  required TrainingItemId id,
+  required LearningLanguage language,
+  required Random random,
+  String Function(int)? toWords,
+}) {
+  final localNumber = buildRandomPhoneLocalNumber(id.type, random);
+  return buildPhoneCardForLocalNumber(
+    id: id,
+    localNumber: localNumber,
+    language: language,
+    includePrefix: random.nextBool(),
+    toWords: toWords,
+  );
+}
+
+PhonePronunciationTask buildPhoneCardForLocalNumber({
+  required TrainingItemId id,
+  required int localNumber,
+  required LearningLanguage language,
+  required bool includePrefix,
+  String Function(int)? toWords,
+}) {
+  final groupedLocal = _groupNumber(localNumber, id.type);
+  final prompt = includePrefix ? '+$_countryCode $groupedLocal' : groupedLocal;
+  final compact = groupedLocal.replaceAll(' ', '');
+  final spokenPrompt = _spokenPrompt(
+    localNumber: localNumber,
+    language: language,
+    includePrefix: includePrefix,
+    toWords: toWords,
+  );
+
+  final answers = <String>[];
+  void addAnswer(String value) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) return;
+    final exists = answers.any(
+      (answer) => answer.toLowerCase() == normalized.toLowerCase(),
+    );
+    if (!exists) {
+      answers.add(normalized);
+    }
+  }
+
+  addAnswer(prompt);
+  addAnswer(spokenPrompt);
+  addAnswer(groupedLocal);
+  addAnswer(compact);
+  if (includePrefix) {
+    addAnswer('+$_countryCode$compact');
+    addAnswer('$_countryCode$compact');
+  }
+
+  return PhonePronunciationTask(
+    id: id,
+    numberValue: localNumber,
+    prompt: prompt,
+    language: language,
+    answers: answers,
+  );
+}
+
 int _uniqueLocalNumber(TrainingItemType type, Random random, Set<int> seen) {
   while (true) {
-    final number = _buildLocalNumber(type, random);
+    final number = buildRandomPhoneLocalNumber(type, random);
     if (seen.add(number)) {
       return number;
     }
   }
 }
 
-int _buildLocalNumber(TrainingItemType type, Random random) {
+int buildRandomPhoneLocalNumber(TrainingItemType type, Random random) {
   final firstDigits = switch (type) {
     TrainingItemType.phone33x3 ||
     TrainingItemType.phone3222 => random.nextBool() ? 6 : 7,
@@ -84,6 +137,46 @@ int _buildLocalNumber(TrainingItemType type, Random random) {
     number = number * 10 + random.nextInt(10);
   }
   return number;
+}
+
+String _spokenPrompt({
+  required int localNumber,
+  required LearningLanguage language,
+  required bool includePrefix,
+  String Function(int)? toWords,
+}) {
+  final converter =
+      toWords ?? LanguageRegistry.of(language).numberWordsConverter;
+  final localDigits = localNumber.toString().padLeft(9, '0');
+  final localWords = _digitsToWords(localDigits, converter);
+  if (!includePrefix) {
+    return localWords;
+  }
+  final prefixWords = _digitsToWords(_countryCode.toString(), converter);
+  return '${_plusWord(language)} $prefixWords $localWords';
+}
+
+String _digitsToWords(String digits, String Function(int) converter) {
+  final words = <String>[];
+  for (final rune in digits.runes) {
+    final char = String.fromCharCode(rune);
+    final value = int.tryParse(char);
+    if (value == null) {
+      continue;
+    }
+    words.add(converter(value));
+  }
+  return words.join(' ').trim();
+}
+
+String _plusWord(LearningLanguage language) {
+  final pack = LanguageRegistry.of(language);
+  for (final entry in pack.operatorWords.entries) {
+    if (entry.value == 'PLUS') {
+      return entry.key;
+    }
+  }
+  return 'plus';
 }
 
 String _groupNumber(int localNumber, TrainingItemType type) {

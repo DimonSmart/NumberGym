@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
 import '../../../core/logging/app_logger.dart';
+import '../data/phone_cards.dart';
 import 'daily_session_stats.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
@@ -120,6 +121,9 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
+  TimeValue? _lastRandomTimeValue;
+  final Map<TrainingItemType, int> _lastRandomPhoneValueByType =
+      <TrainingItemType, int>{};
 
   // Session limits
   DateTime? _sessionStartTime;
@@ -528,7 +532,7 @@ class TrainingSession {
       return;
     }
 
-    final card = _resolveRandomTimeCard(scheduleResult.card, language);
+    final card = _resolveDynamicCard(scheduleResult.card, language);
     final taskKind = scheduleResult.method;
 
     _services.soundWave.reset();
@@ -555,15 +559,20 @@ class TrainingSession {
     await _runtimeCoordinator.attach(runtime);
   }
 
+  PronunciationTaskData _resolveDynamicCard(
+    PronunciationTaskData card,
+    LearningLanguage language,
+  ) {
+    final withRandomTime = _resolveRandomTimeCard(card, language);
+    return _resolveRandomPhoneCard(withRandomTime, language);
+  }
+
   PronunciationTaskData _resolveRandomTimeCard(
     PronunciationTaskData card,
     LearningLanguage language,
   ) {
     if (card.id.type != TrainingItemType.timeRandom) return card;
-    final timeValue = TimeValue(
-      hour: _random.nextInt(24),
-      minute: _random.nextInt(60),
-    );
+    final timeValue = _nextRandomTimeValue();
     return TimePronunciationTask.forTime(
       id: card.id,
       timeValue: timeValue,
@@ -571,6 +580,52 @@ class TrainingSession {
       toWords: (value) =>
           _languageRouter.timeToWords(value, language: language),
     );
+  }
+
+  PronunciationTaskData _resolveRandomPhoneCard(
+    PronunciationTaskData card,
+    LearningLanguage language,
+  ) {
+    switch (card.id.type) {
+      case TrainingItemType.phone33x3:
+      case TrainingItemType.phone3222:
+      case TrainingItemType.phone2322:
+        final previous = _lastRandomPhoneValueByType[card.id.type];
+        late PronunciationTaskData dynamicCard;
+        var attempts = 0;
+        do {
+          dynamicCard = buildRandomPhoneCard(
+            id: card.id,
+            language: language,
+            random: _random,
+            toWords: _languageRouter.numberWordsConverter(language),
+          );
+          attempts += 1;
+        } while (previous != null &&
+            dynamicCard.numberValue == previous &&
+            attempts < 8);
+        final numberValue = dynamicCard.numberValue;
+        if (numberValue != null) {
+          _lastRandomPhoneValueByType[card.id.type] = numberValue;
+        }
+        return dynamicCard;
+      default:
+        return card;
+    }
+  }
+
+  TimeValue _nextRandomTimeValue() {
+    late TimeValue candidate;
+    var attempts = 0;
+    do {
+      candidate = TimeValue(
+        hour: _random.nextInt(24),
+        minute: _random.nextInt(60),
+      );
+      attempts += 1;
+    } while (_lastRandomTimeValue == candidate && attempts < 8);
+    _lastRandomTimeValue = candidate;
+    return candidate;
   }
 
   void _handleRuntimeEvent(TaskEvent event) {
