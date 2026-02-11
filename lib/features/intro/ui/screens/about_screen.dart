@@ -145,7 +145,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             Text.rich(
                               const TextSpan(
                                 text:
-                                    '- A numbers-only language trainer. It is built with a strict focus on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
+                                    'Is a numbers-only language trainer. It is built with a strict focus on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
                                     'Training is based on short cards and quick drills: you repeatedly practice the same number until it becomes automatic. Cards you answer correctly and consistently are removed from future sessions, so your practice stays focused on what still needs work.',
                               ),
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -155,7 +155,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'I am glad to collaborate and receive feedback.',
+                              'Буду рад сотрудничеству и обратной связи.',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.onSurfaceVariant,
                               ),
@@ -181,7 +181,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       _InfoTile(
                         icon: Icons.code_outlined,
                         label: 'Repository',
-                        value: 'github.com/DimonSmart/NumberGym',
+                        value: 'https://github.com/DimonSmart/NumberGym',
                         onTap: _openRepository,
                       ),
                       const SizedBox(height: 12),
