@@ -1,23 +1,5 @@
 import 'training_services.dart';
 
-class StreakTracker {
-  int _streak = 0;
-
-  int get streak => _streak;
-
-  void reset() {
-    _streak = 0;
-  }
-
-  void record(bool correct) {
-    if (correct) {
-      _streak += 1;
-    } else {
-      _streak = 0;
-    }
-  }
-}
-
 class SilentDetector {
   SilentDetector({this.threshold = 3});
 
@@ -49,9 +31,9 @@ class InternetGate {
     required InternetChecker checker,
     Duration cache = const Duration(seconds: 10),
     bool initialValue = true,
-  })  : _checker = checker,
-        _cache = cache,
-        _hasInternet = initialValue;
+  }) : _checker = checker,
+       _cache = cache,
+       _hasInternet = initialValue;
 
   final InternetChecker _checker;
   final Duration _cache;

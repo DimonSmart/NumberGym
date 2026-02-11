@@ -69,8 +69,6 @@ class InMemoryProgressRepository implements ProgressRepositoryBase {
 class FakeSettingsRepository implements SettingsRepositoryBase {
   FakeSettingsRepository({
     LearningLanguage language = LearningLanguage.english,
-    int answerSeconds = 10,
-    int hintStreak = 3,
     bool premiumPronunciation = false,
     bool autoSimulationEnabled = false,
     int autoSimulationContinueCount = 0,
@@ -81,8 +79,6 @@ class FakeSettingsRepository implements SettingsRepositoryBase {
     Map<LearningLanguage, StudyStreak>? streakByLanguage,
     Map<LearningLanguage, String?>? voiceByLanguage,
   }) : _language = language,
-       _answerSeconds = answerSeconds,
-       _hintStreak = hintStreak,
        _premium = premiumPronunciation,
        _autoSimulationEnabled = autoSimulationEnabled,
        _autoSimulationContinueCount = autoSimulationContinueCount,
@@ -97,8 +93,6 @@ class FakeSettingsRepository implements SettingsRepositoryBase {
        _voiceByLanguage = voiceByLanguage ?? <LearningLanguage, String?>{};
 
   LearningLanguage _language;
-  int _answerSeconds;
-  int _hintStreak;
   bool _premium;
   bool _autoSimulationEnabled;
   int _autoSimulationContinueCount;
@@ -115,22 +109,6 @@ class FakeSettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setLearningLanguage(LearningLanguage language) async {
     _language = language;
-  }
-
-  @override
-  int readAnswerDurationSeconds() => _answerSeconds;
-
-  @override
-  Future<void> setAnswerDurationSeconds(int seconds) async {
-    _answerSeconds = seconds;
-  }
-
-  @override
-  int readHintStreakCount() => _hintStreak;
-
-  @override
-  Future<void> setHintStreakCount(int count) async {
-    _hintStreak = count;
   }
 
   @override

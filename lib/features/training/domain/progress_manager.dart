@@ -56,6 +56,13 @@ class ProgressManager {
   LearningLanguage get cardsLanguage => _cardsLanguage;
   List<TrainingItemId> get cardIds => _cardIds;
   LearningParams get learningParams => _learningParams;
+  CardProgress progressFor(TrainingItemId id) {
+    return _progressById[id] ?? CardProgress.empty;
+  }
+
+  int hintVisibleUntilCorrectStreak(TrainingItemType type) {
+    return _learningParams.hintVisibleUntilCorrectStreak(type);
+  }
 
   int get totalCards => _cardsById.length;
   int get learnedCount =>
@@ -264,7 +271,13 @@ class ProgressManager {
       clusters.removeRange(0, overflow);
     }
 
-    var updated = progress.copyWith(clusters: clusters);
+    final nextConsecutiveCorrect = isCorrect
+        ? progress.consecutiveCorrect + 1
+        : 0;
+    var updated = progress.copyWith(
+      clusters: clusters,
+      consecutiveCorrect: nextConsecutiveCorrect,
+    );
     if (updated.firstAttemptAt == 0) {
       updated = updated.copyWith(firstAttemptAt: updatedLastAnswerAt);
     }

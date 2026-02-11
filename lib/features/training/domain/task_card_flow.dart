@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import '../data/phone_cards.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
-import 'repositories.dart';
 import 'training_item.dart';
 import 'training_task.dart';
 import 'tasks/time_pronunciation_task.dart';
@@ -13,14 +12,11 @@ class TaskCardFlow {
   TaskCardFlow({
     required math.Random random,
     required LanguageRouter languageRouter,
-    required SettingsRepositoryBase settingsRepository,
   }) : _random = random,
-       _languageRouter = languageRouter,
-       _settingsRepository = settingsRepository;
+       _languageRouter = languageRouter;
 
   final math.Random _random;
   final LanguageRouter _languageRouter;
-  final SettingsRepositoryBase _settingsRepository;
 
   TimeValue? _lastRandomTimeValue;
   final Map<TrainingItemType, int> _lastRandomPhoneValueByType =
@@ -37,12 +33,14 @@ class TaskCardFlow {
   String? resolveHintText({
     required PronunciationTaskData card,
     required LearningMethod method,
-    required int currentStreak,
+    required int consecutiveCorrect,
+    required int hintVisibleUntilCorrectStreak,
   }) {
     final direct = _resolveHintForMethod(
       card: card,
       method: method,
-      currentStreak: currentStreak,
+      consecutiveCorrect: consecutiveCorrect,
+      hintVisibleUntilCorrectStreak: hintVisibleUntilCorrectStreak,
     );
     if (direct != null) {
       return direct;
@@ -51,7 +49,8 @@ class TaskCardFlow {
       return _resolveHintForMethod(
         card: card,
         method: LearningMethod.numberPronunciation,
-        currentStreak: currentStreak,
+        consecutiveCorrect: consecutiveCorrect,
+        hintVisibleUntilCorrectStreak: hintVisibleUntilCorrectStreak,
       );
     }
     return null;
@@ -60,14 +59,14 @@ class TaskCardFlow {
   String? _resolveHintForMethod({
     required PronunciationTaskData card,
     required LearningMethod method,
-    required int currentStreak,
+    required int consecutiveCorrect,
+    required int hintVisibleUntilCorrectStreak,
   }) {
     if (method != LearningMethod.numberPronunciation) {
       return null;
     }
-
-    final maxStreak = _settingsRepository.readHintStreakCount();
-    if (maxStreak <= 0 || currentStreak >= maxStreak) {
+    if (hintVisibleUntilCorrectStreak <= 0 ||
+        consecutiveCorrect >= hintVisibleUntilCorrectStreak) {
       return null;
     }
 

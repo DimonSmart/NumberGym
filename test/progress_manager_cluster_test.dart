@@ -168,6 +168,49 @@ void main() {
     expect(stored.learnedAt, 0);
   });
 
+  test('consecutive correct progress resets after a mistake', () async {
+    final manager = _buildManager();
+    const language = LearningLanguage.english;
+    const cardId = TrainingItemId(type: TrainingItemType.digits, number: 0);
+
+    await manager.loadProgress(language);
+
+    final start = DateTime(2026, 2, 9, 10, 0);
+    await manager.recordAttempt(
+      progressKey: cardId,
+      isCorrect: true,
+      isSkipped: false,
+      language: language,
+      now: start,
+    );
+    await manager.recordAttempt(
+      progressKey: cardId,
+      isCorrect: true,
+      isSkipped: false,
+      language: language,
+      now: start.add(const Duration(minutes: 1)),
+    );
+    expect(manager.progressFor(cardId).consecutiveCorrect, 2);
+
+    await manager.recordAttempt(
+      progressKey: cardId,
+      isCorrect: false,
+      isSkipped: false,
+      language: language,
+      now: start.add(const Duration(minutes: 2)),
+    );
+    expect(manager.progressFor(cardId).consecutiveCorrect, 0);
+
+    await manager.recordAttempt(
+      progressKey: cardId,
+      isCorrect: true,
+      isSkipped: false,
+      language: language,
+      now: start.add(const Duration(minutes: 3)),
+    );
+    expect(manager.progressFor(cardId).consecutiveCorrect, 1);
+  });
+
   test('learned cards are excluded from next-card selection', () async {
     const learnedId = TrainingItemId(type: TrainingItemType.digits, number: 0);
     const activeId = TrainingItemId(type: TrainingItemType.digits, number: 1);

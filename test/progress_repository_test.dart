@@ -63,6 +63,7 @@ void main() {
       ],
       learnedAt: 1000,
       firstAttemptAt: 800,
+      consecutiveCorrect: 4,
     );
 
     const targetId = TrainingItemId(type: TrainingItemType.digits, number: 2);
@@ -80,6 +81,7 @@ void main() {
     expect(stored.clusters.length, 1);
     expect(stored.learnedAt, 1000);
     expect(stored.firstAttemptAt, 800);
+    expect(stored.consecutiveCorrect, 4);
   });
 
   test('reset clears progress', () async {

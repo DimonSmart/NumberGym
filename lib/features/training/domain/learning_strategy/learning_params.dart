@@ -96,6 +96,15 @@ class LearningParams {
     }
   }
 
+  int requiredCorrectAttemptsToLearn(TrainingItemType type) {
+    final required = (minAttemptsToLearn * targetAccuracy(type)).ceil();
+    return required < 1 ? 1 : required;
+  }
+
+  int hintVisibleUntilCorrectStreak(TrainingItemType type) {
+    return requiredCorrectAttemptsToLearn(type) ~/ 2;
+  }
+
   double baseTypeWeight(TrainingItemType type) {
     switch (_difficultyFor(type)) {
       case _ItemDifficulty.easy:

@@ -21,10 +21,6 @@ abstract class ProgressRepositoryBase {
 abstract class SettingsRepositoryBase {
   LearningLanguage readLearningLanguage();
   Future<void> setLearningLanguage(LearningLanguage language);
-  int readAnswerDurationSeconds();
-  Future<void> setAnswerDurationSeconds(int seconds);
-  int readHintStreakCount();
-  Future<void> setHintStreakCount(int count);
   bool readPremiumPronunciationEnabled();
   Future<void> setPremiumPronunciationEnabled(bool enabled);
   bool readAutoSimulationEnabled();

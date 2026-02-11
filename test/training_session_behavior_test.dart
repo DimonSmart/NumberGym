@@ -119,6 +119,60 @@ void main() {
     expect(celebration.cardsLearnedTotal, greaterThanOrEqualTo(1));
     session.dispose();
   });
+
+  test('uses fixed card duration by item type', () async {
+    Future<void> expectDuration({
+      required TrainingItemType type,
+      required Duration expected,
+    }) async {
+      Duration? capturedDuration;
+      final session = TrainingSession(
+        settingsRepository: FakeSettingsRepository(
+          language: _language,
+          forcedMethod: LearningMethod.numberPronunciation,
+          forcedItemType: type,
+        ),
+        progressRepository: InMemoryProgressRepository(),
+        services: buildFakeTrainingServices(),
+        taskRegistry: TaskRegistry({
+          for (final method in LearningMethod.values)
+            method: (context) {
+              capturedDuration = context.cardDuration;
+              return _ScriptedRuntime(
+                method: method,
+                taskId: context.card.id,
+                onStartEvents: const <TaskEvent>[],
+              );
+            },
+        }),
+      );
+
+      await session.initialize();
+      await session.startTraining();
+      await _waitFor(() => capturedDuration != null);
+      expect(capturedDuration, expected);
+
+      await session.stopTraining();
+      session.dispose();
+    }
+
+    await expectDuration(
+      type: TrainingItemType.digits,
+      expected: const Duration(seconds: 10),
+    );
+    await expectDuration(
+      type: TrainingItemType.base,
+      expected: const Duration(seconds: 15),
+    );
+    await expectDuration(
+      type: TrainingItemType.timeRandom,
+      expected: const Duration(seconds: 15),
+    );
+    await expectDuration(
+      type: TrainingItemType.phone33x3,
+      expected: const Duration(seconds: 30),
+    );
+  });
 }
 
 const LearningLanguage _language = LearningLanguage.english;

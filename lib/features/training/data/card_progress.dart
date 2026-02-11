@@ -41,12 +41,14 @@ class CardProgress {
   final List<CardCluster> clusters;
   final int learnedAt;
   final int firstAttemptAt;
+  final int consecutiveCorrect;
 
   const CardProgress({
     required this.learned,
     required this.clusters,
     required this.learnedAt,
     required this.firstAttemptAt,
+    this.consecutiveCorrect = 0,
   });
 
   int get totalAttempts =>
@@ -92,12 +94,14 @@ class CardProgress {
     List<CardCluster>? clusters,
     int? learnedAt,
     int? firstAttemptAt,
+    int? consecutiveCorrect,
   }) {
     return CardProgress(
       learned: learned ?? this.learned,
       clusters: clusters ?? this.clusters,
       learnedAt: learnedAt ?? this.learnedAt,
       firstAttemptAt: firstAttemptAt ?? this.firstAttemptAt,
+      consecutiveCorrect: consecutiveCorrect ?? this.consecutiveCorrect,
     );
   }
 
@@ -106,6 +110,7 @@ class CardProgress {
     clusters: <CardCluster>[],
     learnedAt: 0,
     firstAttemptAt: 0,
+    consecutiveCorrect: 0,
   );
 }
 
@@ -134,11 +139,13 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
         ),
       );
     }
+    final consecutiveCorrect = reader.availableBytes > 0 ? reader.readInt() : 0;
     return CardProgress(
       learned: learned,
       clusters: clusters,
       learnedAt: learnedAt,
       firstAttemptAt: firstAttemptAt,
+      consecutiveCorrect: consecutiveCorrect < 0 ? 0 : consecutiveCorrect,
     );
   }
 
@@ -154,5 +161,6 @@ class CardProgressAdapter extends TypeAdapter<CardProgress> {
       writer.writeInt(cluster.wrongCount);
       writer.writeInt(cluster.skippedCount);
     }
+    writer.writeInt(obj.consecutiveCorrect);
   }
 }

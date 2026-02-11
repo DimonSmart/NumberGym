@@ -89,7 +89,6 @@ class TrainingSession {
     _taskCardFlow = TaskCardFlow(
       random: _random,
       languageRouter: _languageRouter,
-      settingsRepository: _settingsRepository,
     );
     _feedbackCoordinator = FeedbackCoordinator(onChanged: _syncState);
     _runtimeCoordinator = RuntimeCoordinator(
@@ -133,8 +132,6 @@ class TrainingSession {
   String? _errorMessage;
 
   final SilentDetector _silentDetector = SilentDetector();
-  final StreakTracker _streakTracker = StreakTracker();
-
   bool _disposed = false;
   bool _trainingActive = false;
 
@@ -199,7 +196,6 @@ class TrainingSession {
     _errorMessage = null;
     _trainingActive = true;
     _silentDetector.reset();
-    _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(true));
@@ -249,7 +245,6 @@ class TrainingSession {
     _debugForcedItemType = _readDebugForcedItemType();
     _pendingCelebration = null;
     _silentDetector.reset();
-    _streakTracker.reset();
     _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(false));
@@ -382,9 +377,23 @@ class TrainingSession {
     return _settingsRepository.readDebugForcedItemType();
   }
 
-  Duration _resolveCardDuration() {
-    final seconds = _settingsRepository.readAnswerDurationSeconds();
-    return Duration(seconds: seconds);
+  Duration _resolveCardDuration(TrainingItemType type) {
+    switch (type) {
+      case TrainingItemType.digits:
+        return const Duration(seconds: 10);
+      case TrainingItemType.base:
+      case TrainingItemType.hundreds:
+      case TrainingItemType.thousands:
+      case TrainingItemType.timeExact:
+      case TrainingItemType.timeQuarter:
+      case TrainingItemType.timeHalf:
+      case TrainingItemType.timeRandom:
+        return const Duration(seconds: 15);
+      case TrainingItemType.phone33x3:
+      case TrainingItemType.phone3222:
+      case TrainingItemType.phone2322:
+        return const Duration(seconds: 30);
+    }
   }
 
   void _handleSpeechReady(bool ready, String? errorMessage) {
@@ -502,17 +511,21 @@ class TrainingSession {
     _services.soundWave.reset();
     _errorMessage = null;
 
+    final cardProgress = _progressManager.progressFor(card.progressId);
+    final hintVisibleUntilCorrectStreak = _progressManager
+        .hintVisibleUntilCorrectStreak(card.progressId.type);
     final hintText = _taskCardFlow.resolveHintText(
       card: card,
       method: taskKind,
-      currentStreak: _streakTracker.streak,
+      consecutiveCorrect: cardProgress.consecutiveCorrect,
+      hintVisibleUntilCorrectStreak: hintVisibleUntilCorrectStreak,
     );
     final context = TaskBuildContext(
       card: card,
       language: language,
       cardIds: _progressManager.cardIds,
       toWords: _languageRouter.numberWordsConverter(language),
-      cardDuration: _resolveCardDuration(),
+      cardDuration: _resolveCardDuration(card.id.type),
       languageRouter: _languageRouter,
       random: _random,
       services: _services,
@@ -553,7 +566,6 @@ class TrainingSession {
       language: _currentLanguage(),
     );
     if (progressUpdate.affectsProgress) {
-      _streakTracker.record(progressUpdate.isCorrect);
       if (progressUpdate.learned) {
         await _queueCelebration(taskState: taskState);
       }

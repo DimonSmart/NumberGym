@@ -40,8 +40,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final SpeechServiceBase _speechService;
   late final TaskAvailabilityRegistry _availabilityRegistry;
   late LearningLanguage _language;
-  late int _answerSeconds;
-  late int _hintStreakCount;
   late bool _premiumPronunciation;
   bool _ttsAvailable = true;
   bool _ttsLoading = false;
@@ -68,8 +66,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ],
     );
     _language = _settingsRepository.readLearningLanguage();
-    _answerSeconds = _settingsRepository.readAnswerDurationSeconds();
-    _hintStreakCount = _settingsRepository.readHintStreakCount();
     _premiumPronunciation = _settingsRepository
         .readPremiumPronunciationEnabled();
     _loadTtsData();
@@ -131,20 +127,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _settingsRepository.setLearningLanguage(value);
     await _loadTtsData();
     await _loadSpeechAvailability();
-  }
-
-  Future<void> _updateAnswerSeconds(int seconds) async {
-    setState(() {
-      _answerSeconds = seconds;
-    });
-    await _settingsRepository.setAnswerDurationSeconds(seconds);
-  }
-
-  Future<void> _updateHintStreakCount(int count) async {
-    setState(() {
-      _hintStreakCount = count;
-    });
-    await _settingsRepository.setHintStreakCount(count);
   }
 
   Future<void> _updatePremiumPronunciation(bool enabled) async {
@@ -497,61 +479,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Answer time',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Text('${_answerSeconds}s'),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Slider(
-            value: _answerSeconds.toDouble(),
-            min: answerDurationMinSeconds.toDouble(),
-            max: answerDurationMaxSeconds.toDouble(),
-            divisions:
-                (answerDurationMaxSeconds - answerDurationMinSeconds) ~/
-                answerDurationStepSeconds,
-            label: '${_answerSeconds}s',
-            onChanged: (value) {
-              final seconds = value.round();
-              _updateAnswerSeconds(seconds);
-            },
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Hint streak',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Text('$_hintStreakCount'),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Show hint for the first N correct answers in a row.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Slider(
-            value: _hintStreakCount.toDouble(),
-            min: hintStreakMinCount.toDouble(),
-            max: hintStreakMaxCount.toDouble(),
-            divisions: hintStreakMaxCount - hintStreakMinCount,
-            label: '$_hintStreakCount',
-            onChanged: (value) {
-              final count = value.round();
-              _updateHintStreakCount(count);
-            },
           ),
           const SizedBox(height: 24),
           const Text('Logs', style: TextStyle(fontWeight: FontWeight.w600)),

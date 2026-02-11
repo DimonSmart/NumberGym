@@ -8,8 +8,6 @@ import '../domain/training_item.dart';
 import '../domain/training_task.dart';
 
 const String learningLanguageKey = 'learningLanguage';
-const String answerDurationSecondsKey = 'answerDurationSeconds';
-const String hintStreakCountKey = 'hintStreakCount';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String autoSimulationEnabledKey = 'autoSimulationEnabled';
 const String autoSimulationContinueCountKey = 'autoSimulationContinueCount';
@@ -20,14 +18,6 @@ const String debugForcedLearningMethodKey = 'debugForcedLearningMethod';
 const String debugForcedItemTypeKey = 'debugForcedItemType';
 const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
-const int answerDurationMinSeconds = 5;
-const int answerDurationMaxSeconds = 15;
-const int answerDurationStepSeconds = 5;
-const int answerDurationDefaultSeconds = answerDurationMinSeconds;
-
-const int hintStreakMinCount = 0;
-const int hintStreakMaxCount = 6;
-const int hintStreakDefaultCount = 3;
 const bool premiumPronunciationDefault = false;
 const bool autoSimulationEnabledDefault = false;
 const int autoSimulationContinueCountMin = 0;
@@ -47,38 +37,6 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setLearningLanguage(LearningLanguage language) async {
     await settingsBox.put(learningLanguageKey, language.code);
-  }
-
-  @override
-  int readAnswerDurationSeconds() {
-    final rawValue = settingsBox.get(answerDurationSecondsKey);
-    final parsed = int.tryParse(rawValue ?? '');
-    if (parsed == null) {
-      return answerDurationDefaultSeconds;
-    }
-    return _normalizeAnswerDurationSeconds(parsed);
-  }
-
-  @override
-  Future<void> setAnswerDurationSeconds(int seconds) async {
-    final normalized = _normalizeAnswerDurationSeconds(seconds);
-    await settingsBox.put(answerDurationSecondsKey, normalized.toString());
-  }
-
-  @override
-  int readHintStreakCount() {
-    final rawValue = settingsBox.get(hintStreakCountKey);
-    final parsed = int.tryParse(rawValue ?? '');
-    if (parsed == null) {
-      return hintStreakDefaultCount;
-    }
-    return _normalizeHintStreakCount(parsed);
-  }
-
-  @override
-  Future<void> setHintStreakCount(int count) async {
-    final normalized = _normalizeHintStreakCount(count);
-    await settingsBox.put(hintStreakCountKey, normalized.toString());
   }
 
   @override
@@ -273,21 +231,6 @@ class SettingsRepository implements SettingsRepositoryBase {
       return;
     }
     await settingsBox.put(debugForcedItemTypeKey, type.name);
-  }
-
-  int _normalizeAnswerDurationSeconds(int seconds) {
-    final clamped = seconds.clamp(
-      answerDurationMinSeconds,
-      answerDurationMaxSeconds,
-    );
-    final stepIndex =
-        ((clamped - answerDurationMinSeconds) / answerDurationStepSeconds)
-            .round();
-    return answerDurationMinSeconds + stepIndex * answerDurationStepSeconds;
-  }
-
-  int _normalizeHintStreakCount(int count) {
-    return count.clamp(hintStreakMinCount, hintStreakMaxCount).toInt();
   }
 
   int _normalizeAutoSimulationContinueCount(int count) {
