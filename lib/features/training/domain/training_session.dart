@@ -5,8 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 
 import '../../../core/logging/app_logger.dart';
-import '../data/phone_cards.dart';
-import 'daily_session_stats.dart';
 import 'feedback_coordinator.dart';
 import 'language_router.dart';
 import 'learning_language.dart';
@@ -14,22 +12,25 @@ import 'progress_manager.dart';
 import 'repositories.dart';
 import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtime_coordinator.dart';
+import 'session_lifecycle_tracker.dart';
 import 'session_progress_plan.dart';
 import 'session_helpers.dart';
+import 'session_stats_recorder.dart';
 import 'study_streak_service.dart';
 import 'task_availability.dart';
+import 'task_card_flow.dart';
+import 'task_progress_recorder.dart';
 import 'task_registry.dart';
 import 'task_runtime.dart';
 import 'task_runtime_factory.dart';
 import 'task_scheduler.dart';
 import 'task_state.dart';
-import 'tasks/time_pronunciation_task.dart';
+import 'training_celebration_formatter.dart';
 import 'training_outcome.dart';
 import 'training_services.dart';
 import 'training_state.dart';
 import 'training_item.dart';
 import 'training_task.dart';
-import 'time_value.dart';
 
 class TrainingSession {
   TrainingSession({
@@ -70,12 +71,25 @@ class TrainingSession {
       internetChecker: _services.internet,
       random: _random,
     );
-    _studyStreakService = StudyStreakService(
+    final studyStreakService = StudyStreakService(
       settingsRepository: _settingsRepository,
+    );
+    _sessionStatsRecorder = SessionStatsRecorder(
+      settingsRepository: _settingsRepository,
+      studyStreakService: studyStreakService,
     );
     _progressManager = ProgressManager(
       progressRepository: progressRepository,
       languageRouter: _languageRouter,
+    );
+    _taskProgressRecorder = TaskProgressRecorder(
+      progressManager: _progressManager,
+      sessionTracker: _sessionTracker,
+    );
+    _taskCardFlow = TaskCardFlow(
+      random: _random,
+      languageRouter: _languageRouter,
+      settingsRepository: _settingsRepository,
     );
     _feedbackCoordinator = FeedbackCoordinator(onChanged: _syncState);
     _runtimeCoordinator = RuntimeCoordinator(
@@ -91,7 +105,6 @@ class TrainingSession {
   }
 
   static void _noop() {}
-  static final RegExp _clockValuePattern = RegExp(r'^\d{1,2}:\d{2}$');
 
   final math.Random _random = math.Random();
   final TrainingServices _services;
@@ -102,9 +115,14 @@ class TrainingSession {
   late final TaskRegistry _taskRegistry;
   late final TaskScheduler _taskScheduler;
   late final ProgressManager _progressManager;
-  late final StudyStreakService _studyStreakService;
+  late final SessionStatsRecorder _sessionStatsRecorder;
+  late final TaskCardFlow _taskCardFlow;
+  late final TaskProgressRecorder _taskProgressRecorder;
   late final FeedbackCoordinator _feedbackCoordinator;
   late final RuntimeCoordinator _runtimeCoordinator;
+  final SessionLifecycleTracker _sessionTracker = SessionLifecycleTracker();
+  final TrainingCelebrationFormatter _celebrationFormatter =
+      const TrainingCelebrationFormatter();
   TrainingCelebration? _pendingCelebration;
   int _celebrationEventId = 0;
 
@@ -119,15 +137,6 @@ class TrainingSession {
 
   bool _disposed = false;
   bool _trainingActive = false;
-  TimeValue? _lastRandomTimeValue;
-  final Map<TrainingItemType, int> _lastRandomPhoneValueByType =
-      <TrainingItemType, int>{};
-
-  // Session limits
-  DateTime? _sessionStartTime;
-  int _sessionCardsCompleted = 0;
-  int _sessionTargetCards = 0;
-  bool _sessionStatsPersisted = false;
 
   TrainingState _state = TrainingState.initial();
   TrainingState get state => _state;
@@ -140,8 +149,8 @@ class TrainingSession {
   bool get hasRemainingCards => _progressManager.hasRemainingCards;
   int get dailyGoalCards => _progressManager.dailySummary().targetToday;
   int get dailyRemainingCards => _progressManager.dailySummary().remainingToday;
-  int get sessionCardsCompleted => _sessionCardsCompleted;
-  int get sessionTargetCards => _sessionTargetCards;
+  int get sessionCardsCompleted => _sessionTracker.cardsCompleted;
+  int get sessionTargetCards => _sessionTracker.targetCards;
 
   bool get premiumPronunciationEnabled => _premiumPronunciationEnabled;
   Future<void> setPremiumPronunciationEnabled(bool enabled) async {
@@ -199,10 +208,7 @@ class TrainingSession {
   }
 
   void _resetSessionCounters({required int targetCards}) {
-    _sessionStartTime = DateTime.now();
-    _sessionCardsCompleted = 0;
-    _sessionTargetCards = targetCards < 0 ? 0 : targetCards;
-    _sessionStatsPersisted = false;
+    _sessionTracker.reset(targetCards: targetCards);
   }
 
   Future<void> continueSession() async {
@@ -309,10 +315,6 @@ class TrainingSession {
     );
   }
 
-  bool _checkSessionLimits() {
-    return _sessionCardsCompleted >= _sessionTargetCards;
-  }
-
   void _syncState() {
     if (_disposed) return;
     _state = TrainingState(
@@ -385,29 +387,6 @@ class TrainingSession {
     return Duration(seconds: seconds);
   }
 
-  String? _resolveHintText(PronunciationTaskData card, LearningMethod kind) {
-    if (kind != LearningMethod.numberPronunciation) return null;
-    final maxStreak = _settingsRepository.readHintStreakCount();
-    if (maxStreak <= 0 || _streakTracker.streak >= maxStreak) {
-      return null;
-    }
-    final answers = card.answers;
-    if (answers.isEmpty) return null;
-
-    final prompt = card.prompt.trim().toLowerCase();
-    for (final answer in answers) {
-      final trimmed = answer.trim();
-      if (trimmed.isEmpty) continue;
-      if (prompt.isNotEmpty && trimmed.toLowerCase() == prompt) {
-        continue;
-      }
-      return trimmed;
-    }
-
-    final fallback = answers.first.trim();
-    return fallback.isEmpty ? null : fallback;
-  }
-
   void _handleSpeechReady(bool ready, String? errorMessage) {
     _runtimeCoordinator.updateSpeechReady(ready);
     if (ready) {
@@ -420,17 +399,19 @@ class TrainingSession {
 
   Future<void> _handleSessionLimitReached() async {
     final now = DateTime.now();
-    final elapsed = _sessionStartTime == null
-        ? Duration.zero
-        : now.difference(_sessionStartTime!);
-    final todayStats = await _recordDailySessionStats(
-      now: now,
+    final elapsed = _sessionTracker.elapsed(now: now);
+    final todayStats = await _sessionStatsRecorder.record(
+      cardsCompleted: _sessionTracker.cardsCompleted,
       elapsed: elapsed,
+      now: now,
     );
+    if (_sessionTracker.hasCompletedCards) {
+      _sessionTracker.markStatsPersisted();
+    }
 
     final dailySummary = _progressManager.dailySummary(now: now);
     final stats = SessionStats(
-      cardsCompleted: _sessionCardsCompleted,
+      cardsCompleted: _sessionTracker.cardsCompleted,
       duration: elapsed,
       sessionsCompletedToday: todayStats.sessionsCompleted,
       cardsCompletedToday: dailySummary.completedToday,
@@ -452,39 +433,21 @@ class TrainingSession {
   }
 
   Future<void> _persistCurrentSessionIfNeeded() async {
-    if (_sessionStatsPersisted || _sessionCardsCompleted <= 0) {
+    if (_sessionTracker.statsPersisted || !_sessionTracker.hasCompletedCards) {
       return;
     }
-    final startedAt = _sessionStartTime;
-    if (startedAt == null) {
+    if (_sessionTracker.startedAt == null) {
       return;
     }
     final now = DateTime.now();
-    var elapsed = now.difference(startedAt);
-    if (elapsed.isNegative) {
-      elapsed = Duration.zero;
-    }
-    await _recordDailySessionStats(now: now, elapsed: elapsed);
-  }
-
-  Future<DailySessionStats> _recordDailySessionStats({
-    required DateTime now,
-    required Duration elapsed,
-  }) async {
-    var todayStats = _settingsRepository.readDailySessionStats(now: now);
-    if (_sessionCardsCompleted <= 0) {
-      return todayStats;
-    }
-
-    todayStats = todayStats.addSession(
-      cards: _sessionCardsCompleted,
-      sessionDuration: elapsed,
+    await _sessionStatsRecorder.record(
+      cardsCompleted: _sessionTracker.cardsCompleted,
+      elapsed: _sessionTracker.elapsed(now: now),
       now: now,
     );
-    await _settingsRepository.setDailySessionStats(todayStats);
-    await _studyStreakService.recordCompletedSession(now: now);
-    _sessionStatsPersisted = true;
-    return todayStats;
+    if (_sessionTracker.hasCompletedCards) {
+      _sessionTracker.markStatsPersisted();
+    }
   }
 
   Future<void> _startNextCard() async {
@@ -493,7 +456,7 @@ class TrainingSession {
     }
 
     // Check session limits
-    if (_checkSessionLimits()) {
+    if (_sessionTracker.reachedLimit) {
       await _handleSessionLimitReached();
       return;
     }
@@ -530,17 +493,20 @@ class TrainingSession {
       return;
     }
 
-    final card = _resolveDynamicCard(scheduleResult.card, language);
+    final card = _taskCardFlow.resolveDynamicCard(
+      scheduleResult.card,
+      language,
+    );
     final taskKind = scheduleResult.method;
 
     _services.soundWave.reset();
     _errorMessage = null;
 
-    final hintText =
-        _resolveHintText(card, taskKind) ??
-        (taskKind == LearningMethod.phrasePronunciation
-            ? _resolveHintText(card, LearningMethod.numberPronunciation)
-            : null);
+    final hintText = _taskCardFlow.resolveHintText(
+      card: card,
+      method: taskKind,
+      currentStreak: _streakTracker.streak,
+    );
     final context = TaskBuildContext(
       card: card,
       language: language,
@@ -555,75 +521,6 @@ class TrainingSession {
 
     final runtime = _taskRegistry.create(taskKind, context);
     await _runtimeCoordinator.attach(runtime);
-  }
-
-  PronunciationTaskData _resolveDynamicCard(
-    PronunciationTaskData card,
-    LearningLanguage language,
-  ) {
-    final withRandomTime = _resolveRandomTimeCard(card, language);
-    return _resolveRandomPhoneCard(withRandomTime, language);
-  }
-
-  PronunciationTaskData _resolveRandomTimeCard(
-    PronunciationTaskData card,
-    LearningLanguage language,
-  ) {
-    if (card.id.type != TrainingItemType.timeRandom) return card;
-    final timeValue = _nextRandomTimeValue();
-    return TimePronunciationTask.forTime(
-      id: card.id,
-      timeValue: timeValue,
-      language: language,
-      toWords: (value) =>
-          _languageRouter.timeToWords(value, language: language),
-    );
-  }
-
-  PronunciationTaskData _resolveRandomPhoneCard(
-    PronunciationTaskData card,
-    LearningLanguage language,
-  ) {
-    switch (card.id.type) {
-      case TrainingItemType.phone33x3:
-      case TrainingItemType.phone3222:
-      case TrainingItemType.phone2322:
-        final previous = _lastRandomPhoneValueByType[card.id.type];
-        late PronunciationTaskData dynamicCard;
-        var attempts = 0;
-        do {
-          dynamicCard = buildRandomPhoneCard(
-            id: card.id,
-            language: language,
-            random: _random,
-            toWords: _languageRouter.numberWordsConverter(language),
-          );
-          attempts += 1;
-        } while (previous != null &&
-            dynamicCard.numberValue == previous &&
-            attempts < 8);
-        final numberValue = dynamicCard.numberValue;
-        if (numberValue != null) {
-          _lastRandomPhoneValueByType[card.id.type] = numberValue;
-        }
-        return dynamicCard;
-      default:
-        return card;
-    }
-  }
-
-  TimeValue _nextRandomTimeValue() {
-    late TimeValue candidate;
-    var attempts = 0;
-    do {
-      candidate = TimeValue(
-        hour: _random.nextInt(24),
-        minute: _random.nextInt(60),
-      );
-      attempts += 1;
-    } while (_lastRandomTimeValue == candidate && attempts < 8);
-    _lastRandomTimeValue = candidate;
-    return candidate;
   }
 
   void _handleRuntimeEvent(TaskEvent event) {
@@ -650,39 +547,16 @@ class TrainingSession {
     if (taskState == null) return;
     await _runtimeCoordinator.disposeRuntime(clearState: false);
 
-    final affectsProgress = taskState.affectsProgress;
-    var learnedNow = false;
-    if (affectsProgress) {
-      final isCorrect = outcome == TrainingOutcome.correct;
-      final isSkipped =
-          outcome == TrainingOutcome.timeout ||
-          outcome == TrainingOutcome.skipped;
-      _streakTracker.record(isCorrect);
-      _sessionCardsCompleted++;
-
-      final attemptResult = await _progressManager.recordAttempt(
-        progressKey: taskState.taskId,
-        isCorrect: isCorrect,
-        isSkipped: isSkipped,
-        language: _currentLanguage(),
-      );
-      final clusterLabel = attemptResult.newCluster ? 'new' : 'existing';
-      appLogI(
-        'progress',
-        'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
-            'outcome=${outcome.name} correct=$isCorrect skipped=$isSkipped '
-            'cluster=$clusterLabel',
-      );
-      learnedNow = attemptResult.learned;
-      if (learnedNow) {
+    final progressUpdate = await _taskProgressRecorder.record(
+      taskState: taskState,
+      outcome: outcome,
+      language: _currentLanguage(),
+    );
+    if (progressUpdate.affectsProgress) {
+      _streakTracker.record(progressUpdate.isCorrect);
+      if (progressUpdate.learned) {
         await _queueCelebration(taskState: taskState);
       }
-    } else {
-      appLogI(
-        'progress',
-        'Attempt: kind=${taskState.kind.name} id=${taskState.taskId} '
-            'outcome=${outcome.name} affectsProgress=false',
-      );
     }
 
     final feedbackHold = _feedbackCoordinator.show(outcome);
@@ -691,7 +565,7 @@ class TrainingSession {
       interacted:
           simulatedUserInteraction ||
           _runtimeCoordinator.taskHadUserInteraction,
-      affectsProgress: affectsProgress,
+      affectsProgress: progressUpdate.affectsProgress,
     );
     if (_silentDetector.shouldStop) {
       await stopTraining();
@@ -711,72 +585,23 @@ class TrainingSession {
     await _startNextCard();
   }
 
-  String _resolveMasteredText(TaskState taskState) {
-    final numberValue = taskState.numberValue ?? taskState.taskId.number;
-    if (numberValue != null) {
-      return numberValue.toString();
-    }
-
-    final taskTime = taskState.taskId.time;
-    if (taskTime != null) {
-      return taskTime.displayText;
-    }
-    if (taskState is ListeningState && taskState.timeValue != null) {
-      return taskState.timeValue!.displayText;
-    }
-
-    final text = taskState.displayText.trim();
-    if (_clockValuePattern.hasMatch(text)) {
-      return text;
-    }
-
-    return '';
-  }
-
-  String _describeCategoryLabel(TrainingItemType type) {
-    switch (type) {
-      case TrainingItemType.digits:
-        return 'Single digits';
-      case TrainingItemType.base:
-        return 'Base numbers';
-      case TrainingItemType.hundreds:
-        return 'Hundreds';
-      case TrainingItemType.thousands:
-        return 'Thousands';
-      case TrainingItemType.timeExact:
-        return 'Exact time';
-      case TrainingItemType.timeQuarter:
-        return 'Quarter-hour time';
-      case TrainingItemType.timeHalf:
-        return 'Half-hour time';
-      case TrainingItemType.timeRandom:
-        return 'Random time';
-      case TrainingItemType.phone33x3:
-        return 'Phone numbers (3-3-3)';
-      case TrainingItemType.phone3222:
-        return 'Phone numbers (3-2-2-2)';
-      case TrainingItemType.phone2322:
-        return 'Phone numbers (2-3-2-2)';
-    }
-  }
-
   Future<void> _queueCelebration({required TaskState taskState}) async {
     try {
       final now = DateTime.now();
       final dailySummary = _progressManager.dailySummary(now: now);
-      final sessionTargetCards = _sessionTargetCards <= 0
-          ? math.max(1, _sessionCardsCompleted)
-          : _sessionTargetCards;
+      final sessionTargetCards = _sessionTracker.celebrationTargetCards();
       final nextCounter = _settingsRepository.readCelebrationCounter() + 1;
       await _settingsRepository.setCelebrationCounter(nextCounter);
       _celebrationEventId += 1;
       _pendingCelebration = TrainingCelebration(
         eventId: _celebrationEventId,
         counter: nextCounter,
-        masteredText: _resolveMasteredText(taskState),
+        masteredText: _celebrationFormatter.masteredText(taskState),
         learningMethodLabel: taskState.kind.label,
-        categoryLabel: _describeCategoryLabel(taskState.taskId.type),
-        sessionCardsCompleted: _sessionCardsCompleted,
+        categoryLabel: _celebrationFormatter.categoryLabel(
+          taskState.taskId.type,
+        ),
+        sessionCardsCompleted: _sessionTracker.cardsCompleted,
         sessionTargetCards: sessionTargetCards,
         cardsLearnedTotal: _progressManager.learnedCount,
         cardsRemainingTotal: _progressManager.remainingCount,

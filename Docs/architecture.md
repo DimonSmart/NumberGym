@@ -1,220 +1,70 @@
 # Architecture
 
+This document describes the current implementation, not a target-state design.
 
+## High-level layout
 
-This document describes the intended architecture of the app and the rules used for reviews.
+- Feature-first structure under `lib/features/`.
+- Main feature is `lib/features/training/`.
+- Layers inside feature:
+  - `ui/`: screens, widgets, view models;
+  - `domain/`: session orchestration, task scheduling, runtimes, business rules;
+  - `data/`: repositories and local persistence models.
 
+## Runtime flow
 
+- `main.dart` builds repositories/services and creates app root.
+- `TrainingController` (`ChangeNotifier`) is the UI-facing facade.
+- `TrainingSession` is the core orchestrator of one training flow.
+- `TrainingSession` delegates focused responsibilities to small domain components:
+  - `TaskScheduler`;
+  - `ProgressManager`;
+  - `TaskCardFlow`;
+  - `TaskProgressRecorder`;
+  - `SessionLifecycleTracker`;
+  - `SessionStatsRecorder`;
+  - `RuntimeCoordinator`;
+  - `FeedbackCoordinator`.
 
-## High-level structure
+## Dependency policy
 
+The project is intentionally pragmatic and close to a monolith for delivery speed.
 
+- Preferred direction:
+  - `ui -> domain`;
+  - `domain -> data` through repository interfaces;
+  - persistence details stay in `data`.
+- Practical exceptions exist:
+  - some domain orchestration classes use Flutter/runtime packages directly
+    (`kDebugMode`, speech package models).
 
-- **Feature-first** layout under `lib/features/`.
-
-  - `lib/features/intro/`
-
-  - `lib/features/training/`
-
-- Each feature is **layered internally**:
-
-  - `ui/` (Flutter widgets, screens, UI state)
-
-  - `domain/` (pure business logic, entities, use cases, repository interfaces)
-
-  - `data/` (implementations: persistence, DTOs, mappers, Hive adapters, repositories)
-
-- Cross-feature and shared components:
-
-  - `lib/core/` – shared utilities, base abstractions, shared widgets, common services
-
-  - `lib/tts/` – text-to-speech integration and related helpers
-
-
-
-## Dependency rules (must hold)
-
-
-
-### Within a feature
-
-
-
-- `ui` may depend on: `domain`, `core`, `tts`
-
-- `data` may depend on: `domain`, `core`, `tts` (only when truly shared)
-
-- `domain` may depend on: `core` only
-
-
-
-### Forbidden dependencies
-
-
-
-- `domain` must NOT depend on:
-
-  - Flutter (`package:flutter/...`)
-
-  - UI framework code (widgets, BuildContext)
-
-  - persistence/infra (Hive, Box, platform channels, IO)
-
-- `ui` must NOT access persistence directly:
-
-  - No direct `Hive` / `Box` usage in `ui`
-
-  - No direct data sources in `ui`
-
-  - UI talks to `domain` via use cases / controllers, not via raw storage
-
-
-
-### Cross-feature boundaries
-
-
-
-- Features should not import each other directly.
-
-- Shared behavior must go to `core/` (or be duplicated if truly feature-specific).
-
-- `core/` must not depend on any feature module.
-
-
+When reviewing changes, prefer reducing coupling and moving pure logic into small
+testable classes rather than enforcing strict layering at any cost.
 
 ## State management
 
-
-
-The app intentionally does not use external state-management frameworks
-
-(no `provider`, `riverpod`, `bloc`, etc.).
-
-
-
-### Global training state
-
-
-
-- Global training state lives in `TrainingController` (`ChangeNotifier`).
-
-- UI subscribes via `AnimatedBuilder` (or equivalent notifier listeners).
-
-- Ownership / lifecycle:
-
-  - `TrainingController` has a single owner at the training flow level.
-
-  - The owner must call `dispose()` when the flow ends.
-
-
-
-Rules:
-
-- `TrainingController` should not become a "god object".
-
-  - UI orchestration may live in the controller.
-
-  - Business logic belongs to `domain` (use cases).
-
-  - Persistence details belong to `data` (repositories, adapters).
-
-- Avoid doing heavy work inside `notifyListeners()` chains.
-
-- Avoid leaking listeners/streams: every subscription must be canceled/disposed.
-
-
-
-### Local widget state
-
-
-
-- Local, purely visual state may use `setState()` inside screens/widgets
-
-  (e.g., settings toggles, local UI selections).
-
-- If state affects multiple widgets/screens or must survive navigation,
-
-  it should be lifted to a controller/use case instead of scattered `setState()`.
-
-
-
-### Streams
-
-
-
-- `StreamBuilder` may be used for narrow reactive sources (e.g., indicators).
-
-- Streams must have a clear owner and be disposed/canceled when appropriate.
-
-
-
-## Composition root and wiring
-
-
-
-- The **composition root** is `main.dart`.
-
-  - App initialization happens here (including Hive initialization and box opening).
-
-- Dependencies are constructed in `main.dart` and passed into `NumbersTrainerApp`.
-
-- Further dependencies are passed into features/screens via constructors.
-
-
-
-Rules:
-
-- Do not open Hive boxes lazily from UI code.
-
-- Keep initialization order deterministic.
-
-- Prefer passing a small number of "service bundle" objects rather than
-
-  threading many individual dependencies through deep widget trees.
-
-
-
-## Persistence (Hive)
-
-
-
-- Hive types, adapters, and box access live in `data/` (or `core/` if truly shared).
-
-- Domain models must not be Hive-annotated.
-
-- Mapping between domain entities and storage DTOs happens in `data/` mappers.
-
-
+- Global training state is exposed by `TrainingController`.
+- UI subscribes via `ChangeNotifier` listeners.
+- Per-task runtime state is owned by `RuntimeCoordinator` and passed through
+  immutable `TaskState` objects.
+
+## Persistence
+
+- Local persistence uses Hive.
+- Settings and progress are scoped by selected language.
+- Session daily stats and streak are stored in settings storage.
 
 ## Testing expectations
 
-
-
-- `domain` should be testable with plain Dart tests (no Flutter binding).
-
-- `data` should have tests for mapping and repository behavior.
-
-- `ui` tests are optional but recommended for critical flows.
-
-
+- Domain helpers and coordinators should have focused unit tests.
+- Session-level behavior should be covered by integration-like domain tests
+  (for example `training_session_behavior_test.dart`).
+- Repository/storage behavior should be covered separately.
 
 ## Review checklist
 
-
-
-When reviewing changes, check:
-
-
-
-1. Layer boundaries (`ui/domain/data`) are respected.
-
-2. No forbidden imports in `domain`.
-
-3. UI does not access Hive/data sources directly.
-
-4. Controllers own lifecycle properly (`dispose`).
-
-5. No cross-feature imports; shared code goes to `core`.
-
-6. Wiring remains centralized in `main.dart` and stays predictable.
-
+1. Is responsibility split clear, or did a god object grow again?
+2. Are new dependencies truly needed in each class?
+3. Is storage access still behind repositories?
+4. Are edge cases covered by tests (timeouts, unavailable services, empty pools)?
+5. Does documentation stay aligned with actual behavior?

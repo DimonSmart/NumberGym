@@ -1,45 +1,48 @@
 # Numbers Gym
 
-Speech-driven training app for practicing spoken answers with short cards. It starts with
-number pronunciation (0-100) in English and Spanish and is built to expand into other
-everyday formats.
+Speech-driven training app with short cards for numbers, time, and phone formats.
 
 ## Purpose
 
-Build accurate, confident speech through quick drills: the user sees a prompt, answers
-aloud, and repeats until the response is learned.
+Build fast and confident spoken responses with short sessions:
+- user sees or hears a prompt;
+- user answers by voice or multiple choice;
+- progress is stored locally per language.
 
-## Concept
+## Current scope
 
-- A session selects the next card from the full eligible set using weighted
-  probability (no active/backlog queues).
-- Card weights combine type difficulty, weak-spot priority, novelty control,
-  and anti-repeat cooldown.
-- A card becomes learned by mastery rules: minimum total attempts plus recent
-  accuracy threshold (difficulty-dependent).
-- Learned cards still appear with a small probability for retention checks;
-  mistakes can return them to learning.
-- Daily work is limited by clear caps: total attempts and new cards per day.
-- Cards can represent numbers, simple expressions, measurements, and time formats,
-  allowing multiple levels and domains without changing the flow.
+- Languages: English (`en`), Spanish (`es`), French (`fr`), German (`de`), Hebrew (`he`).
+- Content types:
+  - numbers (`0..99`, round hundreds `100..900`, round thousands `1000..9000`);
+  - time (`exact`, `quarter`, `half`, `random`);
+  - phone (`3-3-3`, `3-2-2-2`, `2-3-2-2`).
+- Learning methods:
+  - number pronunciation;
+  - value to text;
+  - text to value;
+  - listening;
+  - phrase pronunciation (premium).
+
+## Progress model
+
+- Selection uses weighted random from eligible unlearned cards.
+- Weight combines content difficulty, weakness boost, new-card boost, and cooldown penalty.
+- A card becomes learned when total attempts and recent-accuracy thresholds are met.
+- Learned cards are excluded from normal scheduling.
+- Daily limits are applied to attempts and newly introduced cards.
 
 ## Structure
 
-- `lib/app.dart`, `lib/main.dart`: app entry wiring.
-- `lib/features/training/data`: card definitions, repositories, and Hive adapters.
-- `lib/features/training/domain`: domain types and controller logic.
-- `lib/features/training/ui`: screens and widgets for training, settings, and statistics.
-
-## Card range
-
-The primary number range is fully covered from 0 to 99. Beyond that, the app
-also supports round hundreds (100, 200, ... , 900) and round thousands
-(1000, 2000, ... , 9000). The single source of truth for the card range lives in
-`lib/features/training/data/number_cards.dart`.
+- `lib/app.dart`, `lib/main.dart`: composition root and app wiring.
+- `lib/features/training/data`: repositories and storage models.
+- `lib/features/training/domain`: scheduling, session orchestration, and runtime coordination.
+- `lib/features/training/ui`: screens, view models, and widgets.
 
 ## Documentation
 
 - [Specification](Docs/specification.md)
+- [Architecture](Docs/architecture.md)
+- [ItemType vs LearningMethod](Docs/itemtype_learning_method.md)
 - [Domain glossary](Docs/glossary.md)
 
 ## Branding
@@ -51,5 +54,6 @@ dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```
 
-After `flutter_native_splash:create`, verify `android:screenOrientation="portrait"`
-is still present in `android/app/src/main/AndroidManifest.xml` for `MainActivity`.
+After `flutter_native_splash:create`, verify
+`android:screenOrientation="portrait"` in
+`android/app/src/main/AndroidManifest.xml` for `MainActivity`.

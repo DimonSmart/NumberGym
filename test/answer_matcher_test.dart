@@ -118,4 +118,22 @@ void main() {
     expect(result.matchedSegmentIndices, equals([0]));
     expect(matcher.isComplete, isTrue);
   });
+
+  test('supports grouped phone chunks in expected tokens and matching', () {
+    final matcher = AnswerMatcher();
+    matcher.reset(
+      prompt: '+34 555 22 11',
+      answers: const <String>[],
+      language: LearningLanguage.english,
+    );
+
+    expect(matcher.expectedTokens, equals(['+34', '555', '22', '11']));
+
+    final result = matcher.applyRecognition(
+      'plus thirty four five hundred and fifty five twenty two eleven',
+    );
+
+    expect(result.matchedSegmentIndices, equals([0, 1, 2, 3]));
+    expect(matcher.isComplete, isTrue);
+  });
 }

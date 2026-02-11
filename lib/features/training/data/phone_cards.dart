@@ -80,7 +80,7 @@ PhonePronunciationTask buildPhoneCardForLocalNumber({
   final prompt = includePrefix ? '+$_countryCode $groupedLocal' : groupedLocal;
   final compact = groupedLocal.replaceAll(' ', '');
   final spokenPrompt = _spokenPrompt(
-    localNumber: localNumber,
+    groupedLocal: groupedLocal,
     language: language,
     includePrefix: includePrefix,
     toWords: toWords,
@@ -140,20 +140,44 @@ int buildRandomPhoneLocalNumber(TrainingItemType type, Random random) {
 }
 
 String _spokenPrompt({
-  required int localNumber,
+  required String groupedLocal,
   required LearningLanguage language,
   required bool includePrefix,
   String Function(int)? toWords,
 }) {
   final converter =
       toWords ?? LanguageRegistry.of(language).numberWordsConverter;
-  final localDigits = localNumber.toString().padLeft(9, '0');
-  final localWords = _digitsToWords(localDigits, converter);
+  final localWords = _groupedDigitsToWords(groupedLocal, converter);
   if (!includePrefix) {
     return localWords;
   }
-  final prefixWords = _digitsToWords(_countryCode.toString(), converter);
+  final prefixWords = converter(_countryCode);
   return '${_plusWord(language)} $prefixWords $localWords';
+}
+
+String _groupedDigitsToWords(
+  String groupedDigits,
+  String Function(int) converter,
+) {
+  final words = <String>[];
+  for (final group in groupedDigits.split(_whitespaceRegex)) {
+    if (group.isEmpty) {
+      continue;
+    }
+    words.add(_groupToWords(group, converter));
+  }
+  return words.join(' ').trim();
+}
+
+String _groupToWords(String group, String Function(int) converter) {
+  if (group.length > 1 && group.startsWith('0')) {
+    return _digitsToWords(group, converter);
+  }
+  final value = int.tryParse(group);
+  if (value == null) {
+    return _digitsToWords(group, converter);
+  }
+  return converter(value);
 }
 
 String _digitsToWords(String digits, String Function(int) converter) {
@@ -195,3 +219,5 @@ String _groupNumber(int localNumber, TrainingItemType type) {
   }
   return groups.join(' ');
 }
+
+final _whitespaceRegex = RegExp(r'\s+');

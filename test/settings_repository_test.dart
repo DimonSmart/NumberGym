@@ -6,6 +6,7 @@ import 'package:number_gym/features/training/data/settings_repository.dart';
 import 'package:number_gym/features/training/domain/daily_session_stats.dart';
 import 'package:number_gym/features/training/domain/learning_language.dart';
 import 'package:number_gym/features/training/domain/study_streak.dart';
+import 'package:number_gym/features/training/domain/training_task.dart';
 
 void main() {
   late Directory tempDir;
@@ -192,6 +193,39 @@ void main() {
     expect(restored.sessionsByDay['2026-02-07'], 1);
     expect(restored.sessionsByDay['2026-02-08'], 2);
     expect(restored.currentStreakDays(now: DateTime(2026, 2, 9, 9, 0)), 2);
+  });
+
+  test('legacy debug forced method key is ignored', () async {
+    final repository = SettingsRepository(box);
+    await box.put('debugForcedTaskKind', 'numberToWord');
+
+    expect(repository.readDebugForcedLearningMethod(), isNull);
+  });
+
+  test('new debug forced method key is used', () async {
+    final repository = SettingsRepository(box);
+    await box.put(
+      debugForcedLearningMethodKey,
+      LearningMethod.valueToText.name,
+    );
+
+    expect(
+      repository.readDebugForcedLearningMethod(),
+      LearningMethod.valueToText,
+    );
+  });
+
+  test('legacy non-scoped stats keys are ignored', () async {
+    final repository = SettingsRepository(box);
+    await box.put('dailySessionStats', '2026-02-09|9|99|999');
+    await box.put('studyStreak', '2026-02-09:3');
+
+    final stats = repository.readDailySessionStats(now: DateTime(2026, 2, 9));
+    final streak = repository.readStudyStreak();
+
+    expect(stats.sessionsCompleted, 0);
+    expect(stats.cardsCompleted, 0);
+    expect(streak.sessionsByDay, isEmpty);
   });
 
   test('study streak is scoped by learning language', () async {

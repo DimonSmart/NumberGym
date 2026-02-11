@@ -1,474 +1,124 @@
-# Technical specification (Spec-Driven Development)
-
-
+# Technical specification
 
 ## 1. Product purpose
 
-Build a mobile app that trains number skills in a foreign language. The app must develop four core skills:
-
-1) listening comprehension of numbers,
-
-2) reading numbers,
-
-3) writing/entering numbers,
-
-4) pronouncing numbers.
-
-It also supports phrase pronunciation with pronunciation quality scoring.
-
-
+Numbers Gym trains spoken and recognition skills with short cards:
+- pronunciation;
+- listening;
+- multiple-choice transformations (value <-> text);
+- premium phrase pronunciation analysis.
 
 ## 2. Supported languages
 
-- English (locale `en-US`).
+- English (`en`)
+- Spanish (`es`)
+- French (`fr`)
+- German (`de`)
+- Hebrew (`he`)
+
+All progress and settings are scoped by selected language.
 
-- Spanish (locale `es-ES`).
+## 3. Training content
 
+### 3.1 Numbers
 
+- digits: `0..9`
+- base: `10..99`
+- hundreds: `100..900` (step 100)
+- thousands: `1000..9000` (step 1000)
 
-The system must allow switching the learning language. All content and progress data must be scoped to the selected language.
+### 3.2 Time
 
+- `timeExact`
+- `timeQuarter`
+- `timeHalf`
+- `timeRandom`
 
+### 3.3 Phone formats
 
-## 3. User flows (UX)
+- `phone33x3`
+- `phone3222`
+- `phone2322`
 
+## 4. Learning methods
 
+- `numberPronunciation`
+- `valueToText`
+- `textToValue`
+- `listening`
+- `phrasePronunciation` (premium)
 
-### 3.1. Start training
+Compatibility matrix: `Docs/itemtype_learning_method.md`.
 
-**User scenario:**
+## 5. Session and scheduling rules
 
-1. The user opens the app and sees the intro screen.
+- Training starts only if there are remaining unlearned cards.
+- Next card is chosen by weighted random from eligible unlearned cards.
+- Card weight factors:
+  - base type weight;
+  - weakness boost (relative to target accuracy);
+  - new-card boost;
+  - recent mistake boost;
+  - repeat cooldown penalty.
+- Daily controls:
+  - attempt limit;
+  - new-card limit.
 
-2. The user taps **Start**.
+Learned cards are excluded from normal scheduling.
 
-3. The training screen opens with the first task.
+## 6. Progress and mastery
 
+For each card, progress stores attempt clusters:
+- `correctCount`, `wrongCount`, `skippedCount`;
+- `lastAnswerAt`;
+- `firstAttemptAt`;
+- `learned`, `learnedAt`.
 
+Mastery requires:
+- minimum total attempts;
+- recent accuracy above item-type target.
 
-**Done criteria:**
+## 7. Task availability
 
-- **Start** enters an active training session.
+- Speech tasks require speech recognition availability.
+- Listening tasks require TTS availability for selected language.
+- Phrase pronunciation requires internet and premium toggle.
 
-- Training begins automatically after progress is loaded.
+If forced debug method/type is incompatible or unavailable, session is paused
+with explicit error text.
 
+## 8. Settings (local)
 
+Stored values include:
+- language;
+- answer duration;
+- hint streak threshold;
+- premium pronunciation enabled;
+- forced debug learning method (debug only);
+- forced debug item type (debug only);
+- selected TTS voice per language;
+- daily session stats per language;
+- study streak per language;
+- celebration counter.
 
-### 3.2. Complete a task
+## 9. Statistics
 
-**User scenario:**
+The app shows:
+- total and learned card counts;
+- daily completion summary;
+- session stats;
+- streak snapshot;
+- queue diagnostics from progress data.
 
-1. The user completes a task (selects an option or speaks an answer).
+## 10. Session lifecycle behavior
 
-2. Feedback is shown (correct / wrong / timeout).
+- Start: warm availability, reset session counters, attach first runtime.
+- Completion: record progress, show feedback, optionally queue celebration.
+- Pause/overlay: dispose active runtime and disable keep-awake.
+- Stop: persist session stats, clear runtime/feedback, reset selection state.
 
-3. The next task appears after a short delay.
+## 11. Out of scope right now
 
-
-
-**Done criteria:**
-- Each learning method has clear UI and controls.
-- Feedback is shown for every answer.
-
-
-
-### 3.3. Stop training
-
-**User scenario:**
-
-1. The user taps **Stop**.
-
-2. The session ends and the user returns to the intro screen.
-
-
-
-**Done criteria:**
-
-- The runtime stops cleanly.
-
-- Progress is persisted.
-
-
-
-### 3.4. Settings
-
-**User scenario:**
-
-1. The user opens **Settings**.
-
-2. The user changes language, TTS voice, answer duration, or hint settings.
-
-3. The user toggles premium phrases.
-
-4. The user resets progress if needed.
-
-
-
-**Done criteria:**
-
-- Changes are stored locally.
-
-- Reset clears only the selected language’s progress.
-
-- Reset requires confirmation.
-
-- TTS availability is checked and voices can be previewed.
-
-- Speech recognition availability/status is shown.
-
-- Online/offline indicator is shown for premium features.
-
-- Copy logs exports the in-memory log buffer and is disabled when empty.
-
-
-
-### 3.5. Statistics
-
-**User scenario:**
-
-1. The user opens **Statistics**.
-
-2. The user sees summary metrics and the streak grid.
-
-
-
-**Done criteria:**
-
-- Metrics and grid reflect local progress data.
-
-- The screen shows coverage, recent accuracy, and daily activity.
-
-- The most troublesome cards are highlighted (low recent accuracy among not learned).
-
-
-
-### 3.6. Training interruptions
-
-**User scenario:**
-
-1. The user opens **Statistics** or **Settings** during an active session.
-
-2. Training pauses while those screens are open.
-
-3. When the user returns, training resumes.
-
-
-
-**Done criteria:**
-
-- The active task runtime is disposed while the overlay is open.
-
-- The session resumes from the next card on return.
-
-
-
-## 4. Functional requirements
-
-
-
-### 4.1. Card set
-
-The system must include cards for:
-
-- 0–99 (inclusive),
-
-- round hundreds 100–900,
-
-- round thousands 1000–9000.
-
-
-
-### 4.2. Training rules
-
-- Training uses a single eligible card pool (no Active/Backlog queues).
-
-- Card selection is probabilistic and weighted.
-
-- Weight combines:
-  - base content difficulty,
-  - weakness priority (cards below mastery target are shown more often),
-  - novelty boost (new cards),
-  - cooldown penalty (recently shown cards).
-
-- Learned cards are still sampled with a small review probability.
-
-- Daily practice is capped by explicit daily limits (attempts and new cards).
-
-
-
-#### 4.2.1. Card selection process
-
-1. Load progress for the active language.
-
-2. Filter full card set to eligible cards (task constraints, availability).
-
-3. Split into learned and unlearned buckets.
-
-4. Select source bucket by review probability.
-
-5. Compute per-card weights and perform weighted random pick.
-
-6. Build the next task variant based on availability and method weights.
-
-
-
-### 4.3. Progress rules
-
-- Each card stores the last N **clusters**. A cluster aggregates correct / wrong / skipped counts
-
-  within a time gap threshold.
-
-- A cluster aggregates attempts within the configured time gap (`clusterMaxGapMinutes`).
-
-- A card becomes learned by mastery criteria:
-  - total attempts >= `minAttemptsToLearn`,
-  - recent accuracy (last N attempts) >= target for card difficulty.
-
-- Mastery targets are difficulty-aware:
-  - easy cards: strict (default 100%),
-  - medium cards: moderate (default 85%),
-  - hard cards: tolerant (default 75%).
-
-- Learned cards can return to learning state if recent performance drops below target.
-
-- Statistics must expose:
-
-  - totalAttempts,
-
-  - totalCorrect,
-  - recent accuracy and problematic cards.
-
-
-
-### 4.4. Exercises
-
-
-
-The training system uses two orthogonal dimensions:
-
-
-
-**Content (WHAT)** — defined by `TrainingItemType`:
-
-- Numbers: digits (0-9), base (10-99), hundreds (100-900), thousands (1000-9000)
-
-- Time: timeExact (on the hour), timeQuarter (:15/:45), timeHalf (:30), timeRandom (any time)
-
-
-
-**Method (HOW)** — defined by `LearningMethod`:
-- Number pronunciation (speech recognition)
-
-- Value to text (multiple choice: number → words)
-
-- Text to value (multiple choice: words → number)
-
-- Listening (audio comprehension with TTS)
-
-- Phrase pronunciation (premium, speech analysis)
-
-
-
-Not all methods support all content types. See `itemtype_trainingtaskkind.md` for the compatibility matrix.
-
-
-
-#### 4.4.1. Number pronunciation
-
-- Show the numeric prompt.
-
-- The learner speaks the number.
-
-- The system matches speech against acceptable answers:
-
-  - number in words,
-
-  - numeric form.
-
-- A configurable answer timer is used.
-
-- Timeout yields a “timeout” outcome.
-
-
-
-#### 4.4.2. Number → Word (multiple choice)
-
-- Prompt is the number in digits.
-
-- Options are word forms.
-
-- Correct when the selected option matches the expected word.
-
-
-
-#### 4.4.3. Word → Number (multiple choice)
-
-- Prompt is the number in words.
-
-- Options are numeric values.
-
-- Correct when the selected number matches the expected value.
-
-
-
-#### 4.4.4. Listening
-
-- The system speaks the number or time with TTS.
-
-- The learner selects the correct option from the choices.
-
-- On correct selection, the answer is revealed on screen.
-
-- The learner can replay the audio during the task.
-
-
-
-#### 4.4.5. Phrase pronunciation (premium)
-
-- The learner records a spoken phrase containing the number.
-
-- This task does not affect card progress.
-
-- Flow: record → stop → send → review → continue.
-
-- Available only when the premium toggle is enabled and the device is online.
-
-
-
-### 4.5. Task availability
-
-- Speech recognition is available only when microphone permission is granted and the device supports speech recognition.
-
-- TTS is available only when there are voices for the selected language.
-
-- Phrase pronunciation requires an active internet connection.
-
-
-
-## 5. Data requirements
-
-
-
-### 5.1. Settings (local storage)
-
-The system stores:
-
-- selected learning language,
-
-- answer duration (5–15 sec, step 5),
-
-- hint streak threshold,
-
-- premium pronunciation flag,
-
-- selected TTS voice per language.
-
-- debug-only forced learning method (for QA/testing).
-
-
-### 5.2. Progress
-
-For each card and language, store:
-
-- learned flag,
-
-- last N clusters of attempts (each cluster stores lastAnswerAt + correct/wrong/skipped counts),
-
-- first attempt timestamp (for daily new-card limit),
-
-- learned timestamp,
-
-- total attempts / correct totals derived from clusters.
-
-
-
-## 6. Non-functional requirements
-
-- Core modes (pronunciation / multiple choice / listening) must work offline if the device capabilities are available locally.
-
-- Premium pronunciation requires online access.
-
-- On network or service errors, the user receives a clear message and can retry manually.
-
-- Progress must be stored locally without depending on the network.
-
-
-
-## 7. Pronunciation scoring backend
-
-
-
-### 7.1. Purpose
-
-A standalone HTTP service accepts recorded audio and the expected text, then returns pronunciation quality metrics.
-
-
-
-### 7.2. Request contract
-
-- Method: `POST`
-
-- Format: `multipart/form-data`
-
-- Fields:
-
-  - `expectedText`: the expected phrase,
-
-  - `language`: locale (for example, `en-US`, `es-ES`),
-
-  - `audio`: the audio file.
-
-
-
-### 7.3. Response contract (success)
-
-- JSON with at least:
-
-  - `DisplayText`: recognized text (string),
-
-  - `NBest`: list of pronunciation hypotheses,
-
-    - `AccuracyScore`, `FluencyScore`, `CompletenessScore`, `PronScore`,
-
-    - `Words`: list of words with scores,
-
-      - `Word`, `AccuracyScore`, `ErrorType`,
-
-      - `Phonemes`: list of phonemes with scores.
-
-
-
-### 7.4. Errors and resilience
-
-- On non-2xx responses, the client must:
-
-  - show a clear error message,
-
-  - return to a “ready to retry” state,
-
-  - avoid automatic retries.
-
-- Network failures follow the same behavior (manual retry only).
-
-
-
-### 7.5. Quality and security
-
-- The service must be reachable via HTTPS.
-
-- Response times must be acceptable for an interactive flow (seconds).
-
-- The service must handle invalid or incomplete payloads with predictable errors.
-
-
-
-## 8. Definition of Done
-
-- Users can complete training with any supported learning method.
-- Progress persists and is restored after restart.
-
-- Settings are available and affect training.
-
-- Premium pronunciation works only online and shows pronunciation results correctly.
-
-- The backend contract is implemented and handles both success and failure cases.
+- Automatic review of already learned cards in normal flow.
+- Cloud sync.
+- Multi-device conflict resolution.

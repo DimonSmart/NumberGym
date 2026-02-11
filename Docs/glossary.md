@@ -1,21 +1,19 @@
 # Domain glossary
 
-- Card: A single training item representing a numeric concept, not just a raw number (for example, time, phone number, weight, price, dates, measurements), along with its accepted answers.
-- Card ID (TrainingItemId): Unique identifier built from item type and number/time value; used as the progress key.
-- Item type (TrainingItemType): Content category defining what is being trained - numbers (digits, base, hundreds, thousands) or time (timeExact, timeQuarter, timeHalf, timeRandom).
-- Card weight: A dynamic priority score used for probabilistic card selection.
-- Cluster: Aggregated attempts within a short time gap, storing correct/wrong/skipped counts and lastAnswerAt.
-- Cluster gap: Maximum time between attempts that still belong to the same cluster (clusterMaxGapMinutes).
-- Mastery window: The latest N attempts used to compute recent accuracy for mastery decisions.
-- Learned: Card state reached when both mastery conditions pass (minimum attempts plus recent accuracy threshold for the card difficulty).
-- Review probability: Chance to include already learned cards in practice for retention checks.
-- Cooldown: Temporary weight penalty for cards shown very recently, preventing repetitive loops.
-- Daily attempt limit: Max number of attempts targeted per day.
-- Daily new-card limit: Max number of first-time cards introduced per day.
-- Learning method (LearningMethod): Defines how the learner interacts with a card (for example, pronunciation with speech recognition, listening comprehension, multiple choice).
-- Number pronunciation: Speech-recognition task where the learner says the number aloud and matching is checked against accepted answers.
-- Etalon: Reference pattern string for speech matching; supports syntax for decorative text `(...)`, variants `[...]`, and optional tokens `{...}`.
-- Value to text: Multiple-choice task where a number/time display is shown and the correct written form is selected.
-- Text to value: Multiple-choice task where a written form is shown and the correct number/time display is selected.
-- Listening: Audio comprehension task where a spoken number or time is played via TTS and the learner selects the matching option from choices. Works with both numbers and time values.
-- Phrase pronunciation: Premium speech task where the learner records a phrase containing the number; recording is analyzed but does not affect progress.
+- Card: one training item with prompt, accepted answers, and item type.
+- Card ID (`TrainingItemId`): stable key built from item type plus value/time.
+- Item type (`TrainingItemType`): content category (`digits`, `timeRandom`, `phone3222`, etc.).
+- Learning method (`LearningMethod`): interaction type (`numberPronunciation`, `listening`, etc.).
+- Cluster: aggregated attempts made within a short time gap.
+- Cluster gap: max gap that still keeps attempts in same cluster.
+- Mastery window: recent attempts window used to compute recent accuracy.
+- Learned: state reached when min attempts and target accuracy are satisfied.
+- Learned exclusion policy: learned cards are not scheduled in normal flow.
+- Daily attempt limit: soft cap for attempts per day.
+- Daily new-card limit: cap for cards first introduced today.
+- Cooldown: temporary penalty for cards shown recently.
+- Weakness boost: extra weight for cards below target accuracy.
+- Session target cards: number of cards planned for current session block.
+- Session stats: cards and duration persisted for daily aggregate.
+- Streak: count of consecutive days with completed sessions.
+- Phrase pronunciation: premium runtime that analyzes recording and does not affect card progress.

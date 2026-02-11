@@ -51,6 +51,31 @@ void main() {
     }
   });
 
+  test('phone hint follows grouped phone chunks instead of single digits', () {
+    const id = TrainingItemId(
+      type: TrainingItemType.phone3222,
+      number: 655221111,
+    );
+    final card = buildPhoneCardForLocalNumber(
+      id: id,
+      localNumber: 655221111,
+      language: LearningLanguage.english,
+      includePrefix: true,
+      toWords: (value) => '<$value>',
+    );
+
+    final promptNormalized = card.prompt.trim().toLowerCase();
+    final hint = card.answers.firstWhere(
+      (candidate) =>
+          candidate.trim().isNotEmpty &&
+          candidate.trim().toLowerCase() != promptNormalized,
+    );
+
+    expect(card.prompt, '+34 655 22 11 11');
+    expect(hint, 'plus <34> <655> <22> <11> <11>');
+    expect(hint.contains('<6> <5> <5>'), isFalse);
+  });
+
   test('random phone cards change between consecutive opens', () {
     const id = TrainingItemId(
       type: TrainingItemType.phone33x3,
