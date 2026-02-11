@@ -19,6 +19,9 @@ class _AboutScreenState extends State<AboutScreen> {
   static final Uri _privacyPolicyUri = Uri.parse(
     'https://dimonsmart.github.io/numbergym-privacy/',
   );
+  static final Uri _repositoryUri = Uri.parse(
+    'https://github.com/DimonSmart/NumberGym',
+  );
   static const _nativeLinkChannel = MethodChannel(
     'com.dimonsmart.numbergym/native_links',
   );
@@ -30,9 +33,23 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Future<void> _openPrivacyPolicy() async {
+    await _openExternalLink(
+      _privacyPolicyUri,
+      errorText: 'Could not open privacy policy link.',
+    );
+  }
+
+  Future<void> _openRepository() async {
+    await _openExternalLink(
+      _repositoryUri,
+      errorText: 'Could not open repository link.',
+    );
+  }
+
+  Future<void> _openExternalLink(Uri uri, {required String errorText}) async {
     try {
       final launched = await launchUrl(
-        _privacyPolicyUri,
+        uri,
         mode: LaunchMode.externalApplication,
       );
       if (launched) return;
@@ -41,21 +58,21 @@ class _AboutScreenState extends State<AboutScreen> {
     }
 
     if (Platform.isAndroid) {
-      final opened = await _openViaNativeChannel();
+      final opened = await _openViaNativeChannel(uri);
       if (opened) return;
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open privacy policy link.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorText)));
     }
   }
 
-  Future<bool> _openViaNativeChannel() async {
+  Future<bool> _openViaNativeChannel(Uri uri) async {
     try {
       final result = await _nativeLinkChannel.invokeMethod<bool>('openUrl', {
-        'url': _privacyPolicyUri.toString(),
+        'url': uri.toString(),
       });
       return result ?? false;
     } catch (_) {
@@ -126,23 +143,20 @@ class _AboutScreenState extends State<AboutScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'NumberGym',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const TextSpan(
-                                    text:
-                                        ' is a numbers-only language trainer. It is built with a strict focus on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
-                                        'Training is based on short cards and quick drills: you repeatedly practice the same number until it becomes automatic. Cards you answer correctly and consistently are removed from future sessions, so your practice stays focused on what still needs work.',
-                                  ),
-                                ],
+                              const TextSpan(
+                                text:
+                                    '- A numbers-only language trainer. It is built with a strict focus on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
+                                    'Training is based on short cards and quick drills: you repeatedly practice the same number until it becomes automatic. Cards you answer correctly and consistently are removed from future sessions, so your practice stays focused on what still needs work.',
                               ),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 height: 1.35,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'I am glad to collaborate and receive feedback.',
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.onSurfaceVariant,
                               ),
                             ),
@@ -162,6 +176,13 @@ class _AboutScreenState extends State<AboutScreen> {
                             value: versionText,
                           );
                         },
+                      ),
+                      const SizedBox(height: 12),
+                      _InfoTile(
+                        icon: Icons.code_outlined,
+                        label: 'Repository',
+                        value: 'github.com/DimonSmart/NumberGym',
+                        onTap: _openRepository,
                       ),
                       const SizedBox(height: 12),
                       _InfoTile(
