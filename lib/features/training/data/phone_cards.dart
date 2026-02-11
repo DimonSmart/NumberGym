@@ -7,6 +7,7 @@ import '../languages/registry.dart';
 
 const int _phoneCardsPerFormat = 16;
 const int _countryCode = 34;
+const String _phoneHintGroupSeparator = ' • ';
 
 List<TrainingItemId> buildPhoneCardIds() {
   final ids = <TrainingItemId>[];
@@ -152,7 +153,10 @@ String _spokenPrompt({
     return localWords;
   }
   final prefixWords = converter(_countryCode);
-  return '${_plusWord(language)} $prefixWords $localWords';
+  if (localWords.isEmpty) {
+    return '${_plusWord(language)} $prefixWords';
+  }
+  return '${_plusWord(language)} $prefixWords$_phoneHintGroupSeparator$localWords';
 }
 
 String _groupedDigitsToWords(
@@ -166,7 +170,7 @@ String _groupedDigitsToWords(
     }
     words.add(_groupToWords(group, converter));
   }
-  return words.join(' ').trim();
+  return words.join(_phoneHintGroupSeparator).trim();
 }
 
 String _groupToWords(String group, String Function(int) converter) {

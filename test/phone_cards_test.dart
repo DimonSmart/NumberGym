@@ -72,7 +72,7 @@ void main() {
     );
 
     expect(card.prompt, '+34 655 22 11 11');
-    expect(hint, 'plus <34> <655> <22> <11> <11>');
+    expect(hint, 'plus <34> • <655> • <22> • <11> • <11>');
     expect(hint.contains('<6> <5> <5>'), isFalse);
   });
 
