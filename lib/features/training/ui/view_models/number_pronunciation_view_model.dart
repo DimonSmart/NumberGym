@@ -25,6 +25,7 @@ class NumberPronunciationViewModel {
     required this.isTimerActive,
     required this.taskKey,
     required this.showSoundWave,
+    required this.heardDisplay,
     required this.speechLines,
   });
 
@@ -40,6 +41,7 @@ class NumberPronunciationViewModel {
   final bool isTimerActive;
   final String taskKey;
   final bool showSoundWave;
+  final String heardDisplay;
   final List<SpeechRecognitionLine> speechLines;
 
   bool get showHint => hintText != null && hintText!.isNotEmpty;
@@ -66,6 +68,7 @@ class NumberPronunciationViewModel {
       isTimerActive: task?.timer.isRunning ?? false,
       taskKey: task?.taskId.storageKey ?? 'none',
       showSoundWave: task?.timer.isRunning ?? false,
+      heardDisplay: _buildHeardDisplay(task),
       speechLines: _buildSpeechLines(task),
     );
   }
@@ -76,59 +79,32 @@ class NumberPronunciationViewModel {
     if (task == null) {
       return const <SpeechRecognitionLine>[];
     }
-    final expectedTokens = task.expectedTokens;
-    final matchedIndices = task.lastMatchedIndices;
-    final heardTokens = task.lastHeardTokens;
-    final heardText = task.lastHeardText?.trim() ?? '';
-    final heardDisplay =
-        (heardTokens.isNotEmpty ? heardTokens.join(' ') : heardText).trim();
     final previewTokens = task.previewHeardTokens;
     final previewText = task.previewHeardText?.trim() ?? '';
     final previewDisplay =
         (previewTokens.isNotEmpty ? previewTokens.join(' ') : previewText)
             .trim();
-    final previewIndices = task.previewMatchedIndices;
-
-    final hasAny =
-        heardDisplay.isNotEmpty ||
-        matchedIndices.isNotEmpty ||
-        previewDisplay.isNotEmpty ||
-        previewIndices.isNotEmpty;
-    if (!hasAny) {
+    if (previewDisplay.isEmpty) {
       return const <SpeechRecognitionLine>[];
     }
 
-    final matchedDisplay = _buildMatchedDisplay(expectedTokens, matchedIndices);
-    final previewMatchedDisplay = _buildMatchedDisplay(
-      expectedTokens,
-      previewIndices,
-    );
     final lines = <SpeechRecognitionLine>[];
-    if (previewDisplay.isNotEmpty) {
-      lines.add(
-        SpeechRecognitionLine(
-          text: 'Listening: $previewDisplay',
-          isPreview: true,
-        ),
-      );
-    }
-    if (previewIndices.isNotEmpty) {
-      lines.add(
-        SpeechRecognitionLine(
-          text: 'Preview matched: $previewMatchedDisplay',
-          isPreview: true,
-        ),
-      );
-    }
-    if (heardDisplay.isNotEmpty) {
-      lines.add(
-        SpeechRecognitionLine(text: 'Heard: $heardDisplay', isPreview: false),
-      );
-    }
     lines.add(
-      SpeechRecognitionLine(text: 'Matched: $matchedDisplay', isPreview: false),
+      SpeechRecognitionLine(
+        text: 'Listening: $previewDisplay',
+        isPreview: true,
+      ),
     );
     return List<SpeechRecognitionLine>.unmodifiable(lines);
+  }
+
+  static String _buildHeardDisplay(NumberPronunciationState? task) {
+    if (task == null) {
+      return '';
+    }
+    final heardTokens = task.lastHeardTokens;
+    final heardText = task.lastHeardText?.trim() ?? '';
+    return (heardTokens.isNotEmpty ? heardTokens.join(' ') : heardText).trim();
   }
 
   static String _resolveTitle(NumberPronunciationState? task) {
@@ -150,18 +126,5 @@ class NumberPronunciationViewModel {
       case null:
         return 'Read the number aloud';
     }
-  }
-
-  static String _buildMatchedDisplay(
-    List<String> expectedTokens,
-    List<int> indices,
-  ) {
-    final matchedTokens = <String>[];
-    for (final index in indices) {
-      if (index >= 0 && index < expectedTokens.length) {
-        matchedTokens.add(expectedTokens[index]);
-      }
-    }
-    return matchedTokens.isEmpty ? '--' : matchedTokens.join(' ');
   }
 }

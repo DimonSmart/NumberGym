@@ -146,10 +146,6 @@ class NumberPronunciationView extends StatelessWidget {
     ThemeData theme,
     NumberPronunciationViewModel viewModel,
   ) {
-    if (!viewModel.showSpeechFeedback) {
-      return const SizedBox(height: 12);
-    }
-
     final style = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
       height: 1.2,
@@ -157,20 +153,44 @@ class NumberPronunciationView extends StatelessWidget {
     final previewStyle = style?.copyWith(
       color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.65),
     );
+    final heardText = viewModel.heardDisplay;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: viewModel.speechLines
-            .map(
-              (line) => Text(
-                line.text,
-                style: line.isPreview ? previewStyle : style,
-                textAlign: TextAlign.center,
-              ),
-            )
-            .toList(),
+        children: [
+          ...viewModel.speechLines.map(
+            (line) => Text(
+              line.text,
+              style: line.isPreview ? previewStyle : style,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (viewModel.speechLines.isNotEmpty) const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Text('Услышано: ', style: style),
+                Expanded(
+                  child: ClipRect(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      reverse: true,
+                      child: Text(
+                        heardText,
+                        style: style,
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
