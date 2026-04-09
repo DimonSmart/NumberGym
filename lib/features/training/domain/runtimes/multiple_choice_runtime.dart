@@ -58,6 +58,16 @@ class MultipleChoiceRuntime extends TaskRuntimeBase {
       emitState(_buildState());
       return;
     }
+    if (action is PauseTaskAction) {
+      _cardTimer.pause();
+      emitState(_buildState());
+      return;
+    }
+    if (action is ResumeTaskAction) {
+      _cardTimer.resume();
+      emitState(_buildState());
+      return;
+    }
     if (action is! SelectOptionAction) return;
     emitEvent(const TaskUserInteracted());
 

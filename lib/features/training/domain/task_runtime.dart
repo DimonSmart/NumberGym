@@ -46,6 +46,14 @@ final class RefreshTimerAction extends TaskAction {
   const RefreshTimerAction();
 }
 
+final class PauseTaskAction extends TaskAction {
+  const PauseTaskAction();
+}
+
+final class ResumeTaskAction extends TaskAction {
+  const ResumeTaskAction();
+}
+
 final class StartRecordingAction extends TaskAction {
   const StartRecordingAction();
 }

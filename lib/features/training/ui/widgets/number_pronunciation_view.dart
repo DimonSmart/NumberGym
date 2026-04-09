@@ -172,7 +172,7 @@ class NumberPronunciationView extends StatelessWidget {
             width: double.infinity,
             child: Row(
               children: [
-                Text('Услышано: ', style: style),
+                Text('Heard: ', style: style),
                 Expanded(
                   child: ClipRect(
                     child: SingleChildScrollView(

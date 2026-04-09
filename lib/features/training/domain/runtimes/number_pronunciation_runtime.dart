@@ -88,6 +88,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   bool _speechReady = false;
   bool _cardActive = false;
   bool _isListening = false;
+  bool _paused = false;
   bool _timerHasStarted = false;
   bool _reportedInteraction = false;
   bool _deadlinePassed = false;
@@ -104,6 +105,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     if (_disposed) return;
     _resetMatcher();
     _cardActive = true;
+    _paused = false;
     _reportedInteraction = false;
     _suppressNextClientError = false;
     _consecutiveClientErrors = 0;
@@ -129,6 +131,14 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   Future<void> handleAction(TaskAction action) async {
     if (action is RetrySpeechInitAction) {
       await _initSpeech();
+      return;
+    }
+    if (action is PauseTaskAction) {
+      await _enqueue(_pauseForOverlay);
+      return;
+    }
+    if (action is ResumeTaskAction) {
+      await _enqueue(_resumeAfterOverlay);
       return;
     }
     if (action is RefreshTimerAction) {
@@ -191,7 +201,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
 
   TimerState _timerSnapshot() {
     final remaining = _timerHasStarted
-        ? (_cardTimer.isRunning ? _cardTimer.remaining() : Duration.zero)
+        ? _cardTimer.remaining()
         : _cardDuration;
     return TimerState(
       isRunning: _cardTimer.isRunning,
@@ -228,6 +238,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
 
   Future<void> _startListening() async {
     if (!_cardActive) return;
+    if (_paused) return;
     if (_deadlinePassed) return;
     final remaining = _remainingCardDuration();
     if (remaining < const Duration(milliseconds: 500)) {
@@ -316,6 +327,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     SpeechRecognitionResult result,
     int attemptId,
   ) async {
+    if (_paused) {
+      _log('Speech result ignored while paused.');
+      return;
+    }
     if (_activeAttemptId != attemptId) {
       _log(
         'Late result ignored for attempt=$attemptId: '
@@ -357,6 +372,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _handleAttemptResult({required String recognizedText}) async {
+    if (_paused) {
+      _log('Speech attempt result ignored while paused.');
+      return;
+    }
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
     _listenStartTimer = null;
@@ -428,7 +447,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _handleTimerTimeout() async {
-    if (!_cardActive || _deadlinePassed) return;
+    if (!_cardActive || _deadlinePassed || _paused) return;
     _deadlinePassed = true;
     _pendingListenAttemptId = null;
     _listenStartTimer?.cancel();
@@ -505,7 +524,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _markListeningStarted({required String source}) {
-    if (!_cardActive) return;
+    if (!_cardActive || _paused) return;
     final attemptId = _pendingListenAttemptId ?? _activeAttemptId;
     if (attemptId == null) {
       _log('Speech listen started ignored: no active attempt.');
@@ -586,6 +605,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _handleSpeechError(SpeechRecognitionError error) async {
+    if (_paused) {
+      _log('Speech error ignored while paused.');
+      return;
+    }
     _log('Speech error: "${error.errorMsg}", permanent: ${error.permanent}');
     if (!_cardActive || _activeAttemptId == null) {
       _log('Speech error ignored: no active attempt.');
@@ -640,6 +663,10 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _handleSpeechStatus(String status) async {
+    if (_paused) {
+      _log('Speech status ignored while paused: "$status"');
+      return;
+    }
     _log(
       'Speech status: "$status" '
       'attempt=$_activeAttemptId '
@@ -835,6 +862,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   void _handleSoundLevel({required double level, required int attemptId}) {
+    if (_paused) return;
     _soundWaveService.onSoundLevel(level);
     if (_activeAttemptId != attemptId) return;
     _soundLevelSampleCount += 1;
@@ -851,5 +879,38 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
     final delayMs =
         _listenRestartDelay.inMilliseconds + (_emptyResultStreak * 300);
     return Duration(milliseconds: delayMs > maxDelayMs ? maxDelayMs : delayMs);
+  }
+
+  Future<void> _pauseForOverlay() async {
+    if (_paused || !_cardActive) return;
+    _paused = true;
+    _pendingListenAttemptId = null;
+    _listenStartTimer?.cancel();
+    _listenStartTimer = null;
+    _cardTimer.pause();
+    _clearPreview(emit: false);
+    _soundWaveService.stop();
+    if (_speechService.isListening) {
+      await _speechService.stop();
+    }
+    _markListeningStopped(source: 'overlay-pause');
+    emitState(_buildState());
+  }
+
+  Future<void> _resumeAfterOverlay() async {
+    if (!_paused || !_cardActive) return;
+    _paused = false;
+    if (_timerHasStarted) {
+      _cardTimer.resume();
+    }
+    emitState(_buildState());
+    if (_deadlinePassed || _answerMatcher.isComplete) {
+      return;
+    }
+    if (_remainingCardDuration() <= Duration.zero) {
+      await _handleTimerTimeout();
+      return;
+    }
+    await _startListening();
   }
 }

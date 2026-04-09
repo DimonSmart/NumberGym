@@ -268,6 +268,9 @@ class FakeTtsService implements TtsServiceBase {
   Future<void> speak(String text) async {}
 
   @override
+  Future<void> stop() async {}
+
+  @override
   void dispose() {}
 }
 

@@ -51,6 +51,7 @@ class TrainingServices {
     timer.dispose();
     keepAwake.dispose();
     audioRecorder.dispose();
+    azure.dispose();
     tts.dispose();
   }
 }

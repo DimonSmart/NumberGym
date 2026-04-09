@@ -12,6 +12,7 @@ class AzureSpeechService {
 
   final http.Client _client;
   final Uri _endpoint;
+  bool _disposed = false;
 
   static const String _defaultEndpoint =
       'https://numbergym-api-173517264.azurewebsites.net/api/pronunciation/analyze';
@@ -21,6 +22,9 @@ class AzureSpeechService {
     required String expectedText,
     required String language,
   }) async {
+    if (_disposed) {
+      throw StateError('AzureSpeechService is already disposed.');
+    }
     final request = http.MultipartRequest('POST', _endpoint)
       ..fields['expectedText'] = expectedText
       ..fields['language'] = language;
@@ -40,5 +44,11 @@ class AzureSpeechService {
 
     final decoded = jsonDecode(body) as Map<String, dynamic>;
     return PronunciationAnalysisResult.fromJson(decoded);
+  }
+
+  void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    _client.close();
   }
 }

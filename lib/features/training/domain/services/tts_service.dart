@@ -25,6 +25,7 @@ abstract class TtsServiceBase {
   Future<List<TtsVoice>> listVoices();
   Future<void> setVoice(TtsVoice voice);
   Future<void> speak(String text);
+  Future<void> stop();
   void dispose();
 }
 
@@ -125,6 +126,20 @@ class TtsService implements TtsServiceBase {
     }
     await _tts.stop();
     await _tts.speak(text);
+  }
+
+  @override
+  Future<void> stop() async {
+    if (_disposed) return;
+    try {
+      await _tts.stop();
+    } on MissingPluginException {
+      // Keep default behavior when plugin hooks are unavailable.
+    } on PlatformException {
+      // Some platforms may not support stop consistently.
+    } catch (_) {
+      // Best effort only.
+    }
   }
 
   @override

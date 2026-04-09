@@ -66,6 +66,8 @@ class ListeningRuntime extends TaskRuntimeBase {
   bool _completed = false;
   bool _answerRevealed = false;
   bool _isPromptPlaying = false;
+  bool _paused = false;
+  bool _resumePromptAfterPause = false;
   Future<void>? _voicePreparation;
 
   @override
@@ -81,6 +83,17 @@ class ListeningRuntime extends TaskRuntimeBase {
     if (_completed) return;
     if (action is RefreshTimerAction) {
       emitState(_buildState());
+      return;
+    }
+    if (action is PauseTaskAction) {
+      await _pauseForOverlay();
+      return;
+    }
+    if (action is ResumeTaskAction) {
+      await _resumeAfterOverlay();
+      return;
+    }
+    if (_paused) {
       return;
     }
     if (action is RepeatPromptAction) {
@@ -176,14 +189,41 @@ class ListeningRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _speak() async {
+    if (_completed || _paused) return;
     await _prepareVoice();
+    if (_completed || _paused) return;
     _isPromptPlaying = true;
     emitState(_buildState());
     try {
       await _ttsService.speak(_speechText);
     } finally {
       _isPromptPlaying = false;
-      emitState(_buildState());
+      if (!_completed) {
+        emitState(_buildState());
+      }
+    }
+  }
+
+  Future<void> _pauseForOverlay() async {
+    if (_paused) return;
+    _paused = true;
+    _cardTimer.pause();
+    _resumePromptAfterPause = _isPromptPlaying;
+    if (_isPromptPlaying) {
+      await _ttsService.stop();
+      _isPromptPlaying = false;
+    }
+    emitState(_buildState());
+  }
+
+  Future<void> _resumeAfterOverlay() async {
+    if (!_paused) return;
+    _paused = false;
+    _cardTimer.resume();
+    emitState(_buildState());
+    if (_resumePromptAfterPause) {
+      _resumePromptAfterPause = false;
+      await _speak();
     }
   }
 }

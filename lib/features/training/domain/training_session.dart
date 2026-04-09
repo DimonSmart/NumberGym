@@ -290,13 +290,11 @@ class TrainingSession {
   }
 
   Future<void> pauseTaskTimer() async {
-    _services.timer.pause();
-    await _runtimeCoordinator.handleAction(const RefreshTimerAction());
+    await _runtimeCoordinator.handleAction(const PauseTaskAction());
   }
 
   Future<void> resumeTaskTimer() async {
-    _services.timer.resume();
-    await _runtimeCoordinator.handleAction(const RefreshTimerAction());
+    await _runtimeCoordinator.handleAction(const ResumeTaskAction());
   }
 
   int _initialSessionTargetCards() {

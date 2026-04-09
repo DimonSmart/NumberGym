@@ -155,7 +155,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'Буду рад сотрудничеству и обратной связи.',
+                              'Feedback and collaboration are welcome.',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.onSurfaceVariant,
                               ),
