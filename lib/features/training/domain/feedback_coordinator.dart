@@ -7,8 +7,8 @@ class FeedbackCoordinator {
   FeedbackCoordinator({
     required void Function() onChanged,
     Duration feedbackDuration = const Duration(milliseconds: 900),
-  })  : _onChanged = onChanged,
-        _feedbackDuration = feedbackDuration;
+  }) : _onChanged = onChanged,
+       _feedbackDuration = feedbackDuration;
 
   final void Function() _onChanged;
   final Duration _feedbackDuration;
@@ -24,31 +24,15 @@ class FeedbackCoordinator {
     _feedbackCompleter?.complete();
     _feedbackCompleter = null;
 
-    late final String text;
-
-    switch (outcome) {
-      case TrainingOutcome.correct:
-        text = 'Correct';
-        break;
-      case TrainingOutcome.wrong:
-        text = 'Wrong';
-        break;
-      case TrainingOutcome.timeout:
-        text = 'Timeout';
-        break;
-      case TrainingOutcome.skipped:
-        text = 'Skipped';
-        break;
-    }
-
-    _feedback = TrainingFeedback(outcome: outcome, text: text);
+    _feedback = TrainingFeedback(outcome: outcome);
     _onChanged();
 
     final completer = Completer<void>();
     _feedbackCompleter = completer;
     _feedbackTimer = Timer(_feedbackDuration, clear);
 
-    final shouldHold = outcome == TrainingOutcome.correct ||
+    final shouldHold =
+        outcome == TrainingOutcome.correct ||
         outcome == TrainingOutcome.wrong ||
         outcome == TrainingOutcome.timeout;
     if (!shouldHold) {

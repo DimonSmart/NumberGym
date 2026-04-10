@@ -1,3 +1,5 @@
+import 'day_key.dart';
+
 class DailySessionStats {
   const DailySessionStats({
     required this.dayKey,
@@ -16,7 +18,7 @@ class DailySessionStats {
 
   factory DailySessionStats.emptyFor(DateTime now) {
     return DailySessionStats(
-      dayKey: dayKeyFor(now),
+      dayKey: formatDayKey(now),
       sessionsCompleted: 0,
       cardsCompleted: 0,
       durationSeconds: 0,
@@ -24,7 +26,7 @@ class DailySessionStats {
   }
 
   DailySessionStats normalizedFor(DateTime now) {
-    if (dayKey == dayKeyFor(now)) {
+    if (dayKey == formatDayKey(now)) {
       return this;
     }
     return DailySessionStats.emptyFor(now);
@@ -41,18 +43,10 @@ class DailySessionStats {
         ? 0
         : sessionDuration.inSeconds;
     return DailySessionStats(
-      dayKey: dayKeyFor(now),
+      dayKey: formatDayKey(now),
       sessionsCompleted: base.sessionsCompleted + 1,
       cardsCompleted: base.cardsCompleted + normalizedCards,
       durationSeconds: base.durationSeconds + normalizedSeconds,
     );
-  }
-
-  static String dayKeyFor(DateTime now) {
-    final local = now.toLocal();
-    final year = local.year.toString().padLeft(4, '0');
-    final month = local.month.toString().padLeft(2, '0');
-    final day = local.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
   }
 }

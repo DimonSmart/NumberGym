@@ -1,3 +1,4 @@
+import '../multiple_choice_constants.dart';
 import '../training_task.dart';
 
 /// Shared builder for value-to-text multiple choice specs.
@@ -38,6 +39,3 @@ mixin ValueToTextSpecBuilder {
     );
   }
 }
-
-/// Total options shown in multiple-choice tasks (1 correct + rest incorrect).
-const int valueToTextOptionCount = 3;

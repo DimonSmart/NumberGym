@@ -14,8 +14,8 @@ import 'runtimes/number_pronunciation_runtime.dart';
 import 'runtime_coordinator.dart';
 import 'session_lifecycle_tracker.dart';
 import 'session_progress_plan.dart';
-import 'session_helpers.dart';
 import 'session_stats_recorder.dart';
+import 'silent_detector.dart';
 import 'study_streak_service.dart';
 import 'task_availability.dart';
 import 'task_card_flow.dart';
@@ -211,7 +211,6 @@ class TrainingSession {
     _resetSessionCounters(targetCards: dailyGoalCards);
     // Clear the stats from state
     _state = TrainingState(
-      speechReady: _state.speechReady,
       errorMessage: _state.errorMessage,
       feedback: _state.feedback,
       currentTask: _state.currentTask,
@@ -311,7 +310,6 @@ class TrainingSession {
   void _syncState() {
     if (_disposed) return;
     _state = TrainingState(
-      speechReady: _runtimeCoordinator.speechReady,
       errorMessage: _errorMessage,
       feedback: _feedbackCoordinator.feedback,
       currentTask: _runtimeCoordinator.currentTask,
@@ -429,7 +427,6 @@ class TrainingSession {
     unawaited(_setKeepAwake(false));
 
     _state = TrainingState(
-      speechReady: _state.speechReady,
       errorMessage: null,
       feedback: null,
       currentTask: null,

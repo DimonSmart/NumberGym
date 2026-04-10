@@ -10,12 +10,6 @@ import 'training_catalog.dart';
 import 'training_item.dart';
 import 'training_task.dart';
 
-class PickedCard {
-  const PickedCard({required this.card});
-
-  final PronunciationTaskData card;
-}
-
 class ProgressAttemptResult {
   const ProgressAttemptResult({
     required this.learned,
@@ -161,7 +155,7 @@ class ProgressManager {
     _recentPickHistory.clear();
   }
 
-  PickedCard? pickNextCard({
+  PronunciationTaskData? pickNextCard({
     required bool Function(PronunciationTaskData card) isEligible,
     DateTime? now,
   }) {
@@ -220,7 +214,7 @@ class ProgressManager {
     if (pickedCard == null) return null;
 
     _rememberPicked(pickedId);
-    return PickedCard(card: pickedCard);
+    return pickedCard;
   }
 
   Future<ProgressAttemptResult> recordAttempt({

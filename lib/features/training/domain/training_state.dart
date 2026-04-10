@@ -3,9 +3,8 @@ import 'training_outcome.dart';
 
 class TrainingFeedback {
   final TrainingOutcome outcome;
-  final String text;
 
-  const TrainingFeedback({required this.outcome, required this.text});
+  const TrainingFeedback({required this.outcome});
 }
 
 class SessionStats {
@@ -53,7 +52,6 @@ class TrainingCelebration {
 }
 
 class TrainingState {
-  final bool speechReady;
   final String? errorMessage;
   final TrainingFeedback? feedback;
   final TaskState? currentTask;
@@ -61,7 +59,6 @@ class TrainingState {
   final TrainingCelebration? celebration;
 
   const TrainingState({
-    required this.speechReady,
     required this.errorMessage,
     required this.feedback,
     required this.currentTask,
@@ -71,7 +68,6 @@ class TrainingState {
 
   factory TrainingState.initial() {
     return const TrainingState(
-      speechReady: false,
       errorMessage: null,
       feedback: null,
       currentTask: null,

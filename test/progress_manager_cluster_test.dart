@@ -234,7 +234,7 @@ void main() {
       now: DateTime(2026, 2, 9, 12, 0),
     );
     expect(picked, isNotNull);
-    expect(picked!.card.progressId, activeId);
+    expect(picked!.progressId, activeId);
   });
 
   test('hasRemainingCards is false when every card is learned', () async {
@@ -306,7 +306,7 @@ void main() {
       );
       expect(firstPicked, isNotNull);
 
-      final firstId = firstPicked!.card.progressId;
+      final firstId = firstPicked!.progressId;
       await manager.recordAttempt(
         progressKey: firstId,
         isCorrect: true,
@@ -320,7 +320,7 @@ void main() {
         now: now.add(const Duration(minutes: 1)),
       );
       expect(secondPicked, isNotNull);
-      expect(secondPicked!.card.progressId, firstId);
+      expect(secondPicked!.progressId, firstId);
     },
   );
 }

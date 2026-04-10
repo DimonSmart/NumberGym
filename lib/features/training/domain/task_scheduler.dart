@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'language_router.dart';
+import 'internet_gate.dart';
 import 'learning_language.dart';
 import 'progress_manager.dart';
-import 'session_helpers.dart';
 import 'task_availability.dart';
 import 'training_services.dart';
 import 'training_item.dart';
@@ -14,10 +14,7 @@ sealed class TaskScheduleResult {
 }
 
 final class TaskScheduleReady extends TaskScheduleResult {
-  const TaskScheduleReady({
-    required this.card,
-    required this.method,
-  });
+  const TaskScheduleReady({required this.card, required this.method});
 
   final PronunciationTaskData card;
   final LearningMethod method;
@@ -40,13 +37,13 @@ class TaskScheduler {
     required InternetChecker internetChecker,
     Duration internetCache = const Duration(seconds: 10),
     Random? random,
-  })  : _languageRouter = languageRouter,
-        _availabilityRegistry = availabilityRegistry,
-        _internetGate = InternetGate(
-          checker: internetChecker,
-          cache: internetCache,
-        ),
-        _random = random ?? Random();
+  }) : _languageRouter = languageRouter,
+       _availabilityRegistry = availabilityRegistry,
+       _internetGate = InternetGate(
+         checker: internetChecker,
+         cache: internetCache,
+       ),
+       _random = random ?? Random();
 
   static const int _numberPronunciationWeight = 70;
   static const int _valueToTextWeight = 15;
@@ -96,8 +93,7 @@ class TaskScheduler {
 
     final requirePhrase =
         forcedLearningMethod == LearningMethod.phrasePronunciation;
-    final requireListening =
-        forcedLearningMethod == LearningMethod.listening;
+    final requireListening = forcedLearningMethod == LearningMethod.listening;
     final requireSpeech =
         forcedLearningMethod == LearningMethod.numberPronunciation;
 
@@ -155,7 +151,7 @@ class TaskScheduler {
           return false;
         }
         if (requirePhrase) {
-          final numberValue = _resolveNumberValue(card);
+          final numberValue = card.numberValue;
           if (numberValue == null) return false;
           return _hasPhraseTemplate(language, numberValue);
         }
@@ -186,13 +182,14 @@ class TaskScheduler {
       return const TaskScheduleFinished();
     }
 
-    final card = picked.card;
+    final card = picked;
     final itemType = card.id.type;
-    final numberValue = _resolveNumberValue(card);
+    final numberValue = card.numberValue;
     final canUsePhrase =
         allowPhrase &&
-        LearningMethod.phrasePronunciation.supportedItemTypes
-            .contains(itemType) &&
+        LearningMethod.phrasePronunciation.supportedItemTypes.contains(
+          itemType,
+        ) &&
         numberValue != null &&
         _hasPhraseTemplate(language, numberValue);
     if (requirePhrase && !canUsePhrase) {
@@ -203,16 +200,16 @@ class TaskScheduler {
 
     final canUseSpeechKind =
         allowSpeech &&
-        LearningMethod.numberPronunciation.supportedItemTypes
-            .contains(itemType);
+        LearningMethod.numberPronunciation.supportedItemTypes.contains(
+          itemType,
+        );
     final canUseListeningKind =
         allowListening &&
-        LearningMethod.listening.supportedItemTypes
-            .contains(itemType);
-    final canUseValueToTextKind =
-        LearningMethod.valueToText.supportedItemTypes.contains(itemType);
-    final canUseTextToValueKind =
-        LearningMethod.textToValue.supportedItemTypes.contains(itemType);
+        LearningMethod.listening.supportedItemTypes.contains(itemType);
+    final canUseValueToTextKind = LearningMethod.valueToText.supportedItemTypes
+        .contains(itemType);
+    final canUseTextToValueKind = LearningMethod.textToValue.supportedItemTypes
+        .contains(itemType);
 
     if (!canUseSpeechKind &&
         !canUseListeningKind &&
@@ -259,39 +256,33 @@ class TaskScheduler {
   }) {
     final weightedKinds = <MapEntry<LearningMethod, int>>[
       if (canUseSpeech &&
-          LearningMethod.numberPronunciation.supportedItemTypes
-              .contains(itemType))
+          LearningMethod.numberPronunciation.supportedItemTypes.contains(
+            itemType,
+          ))
         const MapEntry(
           LearningMethod.numberPronunciation,
           _numberPronunciationWeight,
         ),
       if (LearningMethod.valueToText.supportedItemTypes.contains(itemType))
-        const MapEntry(
-          LearningMethod.valueToText,
-          _valueToTextWeight,
-        ),
+        const MapEntry(LearningMethod.valueToText, _valueToTextWeight),
       if (LearningMethod.textToValue.supportedItemTypes.contains(itemType))
-        const MapEntry(
-          LearningMethod.textToValue,
-          _textToValueWeight,
-        ),
+        const MapEntry(LearningMethod.textToValue, _textToValueWeight),
       if (canUseListening &&
-          LearningMethod.listening.supportedItemTypes
-              .contains(itemType))
-        const MapEntry(
-          LearningMethod.listening,
-          _listeningWeight,
-        ),
+          LearningMethod.listening.supportedItemTypes.contains(itemType))
+        const MapEntry(LearningMethod.listening, _listeningWeight),
       if (canUsePhrase &&
-          LearningMethod.phrasePronunciation.supportedItemTypes
-              .contains(itemType))
+          LearningMethod.phrasePronunciation.supportedItemTypes.contains(
+            itemType,
+          ))
         const MapEntry(
           LearningMethod.phrasePronunciation,
           _phrasePronunciationWeight,
         ),
     ];
-    final totalWeight =
-        weightedKinds.fold(0, (sum, entry) => sum + entry.value);
+    final totalWeight = weightedKinds.fold(
+      0,
+      (sum, entry) => sum + entry.value,
+    );
     final roll = _random.nextInt(totalWeight);
     var cursor = 0;
     for (final entry in weightedKinds) {
@@ -305,9 +296,5 @@ class TaskScheduler {
 
   bool _hasPhraseTemplate(LearningLanguage language, int numberValue) {
     return _languageRouter.hasTemplate(numberValue, language: language);
-  }
-
-  int? _resolveNumberValue(PronunciationTaskData card) {
-    return card.numberValue;
   }
 }

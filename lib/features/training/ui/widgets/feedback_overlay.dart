@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../domain/training_outcome.dart';
 import '../../domain/training_state.dart';
+import '../view_models/training_feedback_view_model.dart';
 
 class FeedbackOverlay extends StatefulWidget {
   const FeedbackOverlay({
@@ -66,14 +67,15 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       final allAssets = manifest.listAssets();
-      final assets = allAssets
-          .where(
-            (key) =>
-                key.startsWith(widget.successAssetPrefix) &&
-                key.endsWith('.json'),
-          )
-          .toList()
-        ..sort();
+      final assets =
+          allAssets
+              .where(
+                (key) =>
+                    key.startsWith(widget.successAssetPrefix) &&
+                    key.endsWith('.json'),
+              )
+              .toList()
+            ..sort();
       if (!mounted) return;
       setState(() {
         _successAssets = assets;
@@ -95,8 +97,9 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
     final feedback = widget.feedback;
     String? asset;
     if (feedback.outcome == TrainingOutcome.correct) {
-      final pool =
-          _successAssets.isEmpty ? [widget.fallbackSuccessAsset] : _successAssets;
+      final pool = _successAssets.isEmpty
+          ? [widget.fallbackSuccessAsset]
+          : _successAssets;
       final candidate = pool[_random.nextInt(pool.length)];
       asset = _canUseAsset(candidate) ? candidate : null;
     } else {
@@ -115,7 +118,8 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
 
   @override
   Widget build(BuildContext context) {
-    final asset = _activeAsset ??
+    final asset =
+        _activeAsset ??
         (widget.feedback.outcome == TrainingOutcome.correct
             ? widget.fallbackSuccessAsset
             : null);
@@ -133,15 +137,17 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
                 height: widget.animationSize,
                 child: _buildAnimation(
                   asset: asset,
-                  fallbackIcon: widget.feedback.outcome ==
-                          TrainingOutcome.correct
+                  fallbackIcon:
+                      widget.feedback.outcome == TrainingOutcome.correct
                       ? Icons.check_circle
                       : Icons.cancel,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                widget.feedback.text,
+                TrainingFeedbackViewModel.feedbackTextFor(
+                  widget.feedback.outcome,
+                ),
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: widget.accentColor,
                   fontWeight: FontWeight.w700,
@@ -163,8 +169,7 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
     if (!_manifestReady || asset == null || !_availableAssets.contains(asset)) {
       return _buildFallbackIcon(fallbackIcon, size: fallbackSize);
     }
-    final future =
-        _assetLoads.putIfAbsent(asset, () => rootBundle.load(asset));
+    final future = _assetLoads.putIfAbsent(asset, () => rootBundle.load(asset));
     return FutureBuilder<ByteData>(
       future: future,
       builder: (context, snapshot) {
@@ -181,9 +186,10 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
           fit: BoxFit.contain,
           onLoaded: (composition) {
             if (!mounted || _animationController == null) return;
-            final targetMillis =
-                max(1, (composition.duration.inMilliseconds / _speedMultiplier)
-                    .round());
+            final targetMillis = max(
+              1,
+              (composition.duration.inMilliseconds / _speedMultiplier).round(),
+            );
             _animationController!
               ..duration = Duration(milliseconds: targetMillis)
               ..forward(from: 0);
@@ -195,11 +201,7 @@ class _FeedbackOverlayState extends State<FeedbackOverlay>
 
   Widget _buildFallbackIcon(IconData icon, {required double size}) {
     return Center(
-      child: Icon(
-        icon,
-        size: size,
-        color: widget.accentColor,
-      ),
+      child: Icon(icon, size: size, color: widget.accentColor),
     );
   }
 

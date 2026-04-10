@@ -28,24 +28,35 @@ class TrainingFeedbackViewModel {
     final color = feedback == null
         ? null
         : _resolveFeedbackColor(theme, feedback.outcome);
-    final showOverlay = feedback != null &&
+    final showOverlay =
+        feedback != null &&
         (feedback.outcome == TrainingOutcome.correct ||
             feedback.outcome == TrainingOutcome.wrong ||
             feedback.outcome == TrainingOutcome.timeout);
 
     return TrainingFeedbackViewModel(
       feedback: feedback,
-      text: feedback?.text,
+      text: feedback == null ? null : feedbackTextFor(feedback.outcome),
       color: color,
       overlayColor: color ?? theme.colorScheme.primary,
       showOverlay: showOverlay,
     );
   }
 
-  static Color _resolveFeedbackColor(
-    ThemeData theme,
-    TrainingOutcome outcome,
-  ) {
+  static String feedbackTextFor(TrainingOutcome outcome) {
+    switch (outcome) {
+      case TrainingOutcome.correct:
+        return 'Correct';
+      case TrainingOutcome.wrong:
+        return 'Wrong';
+      case TrainingOutcome.timeout:
+        return 'Timeout';
+      case TrainingOutcome.skipped:
+        return 'Skipped';
+    }
+  }
+
+  static Color _resolveFeedbackColor(ThemeData theme, TrainingOutcome outcome) {
     switch (outcome) {
       case TrainingOutcome.correct:
         return AppPalette.deepBlue;

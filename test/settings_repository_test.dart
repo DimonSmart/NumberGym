@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:number_gym/features/training/data/settings_repository.dart';
 import 'package:number_gym/features/training/domain/daily_session_stats.dart';
+import 'package:number_gym/features/training/domain/day_key.dart';
 import 'package:number_gym/features/training/domain/learning_language.dart';
 import 'package:number_gym/features/training/domain/study_streak.dart';
 import 'package:number_gym/features/training/domain/training_task.dart';
@@ -70,7 +71,7 @@ void main() {
     final now = DateTime(2026, 2, 9, 9, 0);
     final stats = repository.readDailySessionStats(now: now);
 
-    expect(stats.dayKey, DailySessionStats.dayKeyFor(now));
+    expect(stats.dayKey, formatDayKey(now));
     expect(stats.sessionsCompleted, 0);
     expect(stats.cardsCompleted, 0);
     expect(stats.durationSeconds, 0);

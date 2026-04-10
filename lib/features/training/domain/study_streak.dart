@@ -1,3 +1,5 @@
+import 'day_key.dart';
+
 class StudyStreak {
   StudyStreak({required Map<String, int> sessionsByDay})
     : sessionsByDay = Map.unmodifiable(_normalizeEntries(sessionsByDay));
@@ -43,7 +45,7 @@ class StudyStreak {
   }
 
   int sessionsOn(DateTime date) {
-    return sessionsByDay[dayKeyFor(date)] ?? 0;
+    return sessionsByDay[formatDayKey(date)] ?? 0;
   }
 
   bool hasActivityOn(DateTime date) {
@@ -85,7 +87,7 @@ class StudyStreak {
     final cutoff = normalizedDay.subtract(
       Duration(days: normalizedRetention - 1),
     );
-    final dayKey = StudyStreak.dayKeyFor(normalizedDay);
+    final dayKey = formatDayKey(normalizedDay);
 
     final updated = Map<String, int>.from(sessionsByDay);
     if (sessionsCompleted <= 0) {
@@ -128,14 +130,6 @@ class StudyStreak {
     return count;
   }
 
-  static String dayKeyFor(DateTime date) {
-    final local = date.toLocal();
-    final year = local.year.toString().padLeft(4, '0');
-    final month = local.month.toString().padLeft(2, '0');
-    final day = local.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
-
   static DateTime? parseDayKey(String dayKey) {
     if (!_dayKeyPattern.hasMatch(dayKey)) return null;
     final year = int.tryParse(dayKey.substring(0, 4));
@@ -157,7 +151,7 @@ class StudyStreak {
       if (day == null) continue;
       final sessions = entry.value;
       if (sessions <= 0) continue;
-      normalized[dayKeyFor(day)] = sessions;
+      normalized[formatDayKey(day)] = sessions;
     }
     return normalized;
   }
