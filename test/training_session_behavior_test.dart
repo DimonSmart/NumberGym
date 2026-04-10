@@ -81,6 +81,44 @@ void main() {
     session.dispose();
   });
 
+  test(
+    'continueSession clears sessionStats and later syncs keep them cleared',
+    () async {
+      var emitCompletions = true;
+      final session = _buildSession(
+        taskRegistry: _buildScriptedRegistry(
+          onStart: (ignoredMethod, ignoredTaskId) {
+            if (!emitCompletions) {
+              return const <TaskEvent>[];
+            }
+            return const <TaskEvent>[
+              TaskUserInteracted(),
+              TaskCompleted(TrainingOutcome.skipped),
+            ];
+          },
+        ),
+      );
+
+      await session.initialize();
+      await session.startTraining();
+      await _waitFor(() => session.state.sessionStats != null);
+
+      emitCompletions = false;
+      await session.continueSession();
+      await _waitFor(
+        () =>
+            session.state.currentTask != null &&
+            session.state.sessionStats == null,
+      );
+
+      await session.setPremiumPronunciationEnabled(true);
+
+      expect(session.state.sessionStats, isNull);
+      expect(session.state.currentTask, isNotNull);
+      session.dispose();
+    },
+  );
+
   test('queues celebration when card transitions to learned', () async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final repository = InMemoryProgressRepository(

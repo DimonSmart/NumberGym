@@ -7,14 +7,12 @@ import 'package:hive/hive.dart';
 
 import '../../../../core/theme/app_palette.dart';
 import '../../../training/data/card_progress.dart';
-import '../../../training/data/number_cards.dart';
 import '../../../training/data/progress_repository.dart';
 import '../../../training/data/settings_repository.dart';
 import '../../../training/domain/daily_session_stats.dart';
 import '../../../training/domain/daily_study_summary.dart';
-import '../../../training/domain/learning_language.dart';
 import '../../../training/domain/session_progress_plan.dart';
-import '../../../training/domain/study_streak_service.dart';
+import '../../../training/domain/training_stats_loader.dart';
 import '../../../training/ui/screens/debug_settings_screen.dart';
 import '../../../training/ui/screens/settings_screen.dart';
 import '../../../training/ui/screens/statistics_screen.dart';
@@ -40,7 +38,8 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   late final ProgressRepository _progressRepository;
-  late LearningLanguage _language;
+  late final SettingsRepository _settingsRepository;
+  late final TrainingStatsLoader _statsLoader;
   StreamSubscription? _progressSubscription;
   StreamSubscription? _settingsSubscription;
   int _progressLoadRequestId = 0;
@@ -58,7 +57,11 @@ class _IntroScreenState extends State<IntroScreen> {
   void initState() {
     super.initState();
     _progressRepository = ProgressRepository(widget.progressBox);
-    _language = SettingsRepository(widget.settingsBox).readLearningLanguage();
+    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _statsLoader = TrainingStatsLoader(
+      progressRepository: _progressRepository,
+      settingsRepository: _settingsRepository,
+    );
     _loadProgress();
     _progressSubscription = widget.progressBox.watch().listen(
       (_) => _loadProgress(),
@@ -77,23 +80,9 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Future<void> _loadProgress() async {
     final requestId = ++_progressLoadRequestId;
-    final settingsRepository = SettingsRepository(widget.settingsBox);
-    final streakService = StudyStreakService(
-      settingsRepository: settingsRepository,
-    );
-    final now = DateTime.now();
-    final language = settingsRepository.readLearningLanguage();
-    final ids = buildAllCardIds();
-    final progress = await _progressRepository.loadAll(ids, language: language);
-    final learnedCount = progress.values
-        .where((progress) => progress.learned)
-        .length;
-    final allLearned = ids.isNotEmpty && learnedCount == ids.length;
-    final dailySummary = DailyStudySummary.fromProgress(progress.values);
-    final dailySessionStats = settingsRepository.readDailySessionStats(
-      now: now,
-    );
-    final currentStreakDays = streakService.readCurrentStreakDays(now: now);
+    final snapshot = await _statsLoader.load();
+    final dailySummary = snapshot.dailySummary;
+    final dailySessionStats = snapshot.dailySessionStats;
     final sessionCardGoal = SessionProgressPlan.normalizeSessionSize(
       dailySummary.targetToday,
     );
@@ -108,13 +97,12 @@ class _IntroScreenState extends State<IntroScreen> {
 
     if (!mounted || requestId != _progressLoadRequestId) return;
     setState(() {
-      _language = language;
-      _allLearned = allLearned;
+      _allLearned = snapshot.allLearned;
       _loadingProgress = false;
       _cardsCompletedToday = cardsCompletedToday;
       _cardsTargetToday = cardsTargetToday;
       _sessionCardGoal = sessionCardGoal;
-      _currentStreakDays = currentStreakDays;
+      _currentStreakDays = snapshot.streakSnapshot.currentStreakDays;
       _dailySessionStats = dailySessionStats;
     });
   }
@@ -524,11 +512,7 @@ class _IntroScreenState extends State<IntroScreen> {
   void _openStatistics(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => StatisticsScreen(
-          progressBox: widget.progressBox,
-          settingsBox: widget.settingsBox,
-          language: _language,
-        ),
+        builder: (context) => StatisticsScreen(statsLoader: _statsLoader),
       ),
     );
   }

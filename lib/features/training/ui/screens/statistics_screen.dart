@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
 import '../../data/card_progress.dart';
-import '../../data/number_cards.dart';
-import '../../data/progress_repository.dart';
-import '../../data/settings_repository.dart';
-import '../../domain/learning_language.dart';
 import '../../domain/learning_strategy/learning_params.dart';
-import '../../domain/study_streak_service.dart';
+import '../../domain/training_stats_loader.dart';
 import '../../domain/training_item.dart';
 import '../../../../core/theme/app_palette.dart';
 import '../widgets/training_background.dart';
@@ -16,56 +11,30 @@ import 'widgets/stats_card_surface.dart';
 import 'widgets/streak_card.dart';
 
 class StatisticsScreen extends StatefulWidget {
-  const StatisticsScreen({
-    super.key,
-    required this.progressBox,
-    required this.settingsBox,
-    required this.language,
-  });
+  const StatisticsScreen({super.key, required this.statsLoader});
 
-  final Box<CardProgress> progressBox;
-  final Box<String> settingsBox;
-  final LearningLanguage language;
+  final TrainingStatsLoader statsLoader;
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  late final ProgressRepository _progressRepository;
-  late final SettingsRepository _settingsRepository;
-  late final StudyStreakService _streakService;
-  Map<TrainingItemId, CardProgress> _progressById = {};
-  StudyStreakSnapshot? _streakSnapshot;
-  List<TrainingItemId> _ids = [];
+  TrainingStatsSnapshot? _stats;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _progressRepository = ProgressRepository(widget.progressBox);
-    _settingsRepository = SettingsRepository(widget.settingsBox);
-    _streakService = StudyStreakService(
-      settingsRepository: _settingsRepository,
-    );
     _load();
   }
 
   Future<void> _load() async {
-    final ids = buildAllCardIds();
-    final progress = await _progressRepository.loadAll(
-      ids,
-      language: widget.language,
-    );
-    final streakSnapshot = _streakService.readCurrentStreakSnapshot(
-      now: DateTime.now(),
-    );
+    final snapshot = await widget.statsLoader.load();
 
     if (!mounted) return;
     setState(() {
-      _ids = ids;
-      _progressById = progress;
-      _streakSnapshot = streakSnapshot;
+      _stats = snapshot;
       _loading = false;
     });
   }
@@ -114,15 +83,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
-    final progressById = {
-      for (final id in _ids) id: _progressById[id] ?? CardProgress.empty,
-    };
-    final streakSnapshot =
-        _streakSnapshot ??
-        _streakService.readCurrentStreakSnapshot(now: DateTime.now());
+    final stats = _stats;
+    if (stats == null) {
+      return const SizedBox.shrink();
+    }
 
-    final totalCards = _ids.length;
-    final learnedCount = progressById.values.where((it) => it.learned).length;
+    final progressById = stats.progressById;
+    final totalCards = stats.totalCards;
+    final learnedCount = stats.learnedCount;
 
     final totalAttempts = progressById.values.fold<int>(
       0,
@@ -149,7 +117,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             accuracy: accuracy,
           ),
           const SizedBox(height: 18),
-          StreakCard(snapshot: streakSnapshot),
+          StreakCard(snapshot: stats.streakSnapshot),
           const SizedBox(height: 18),
           _buildTypeSection(theme, typeRows),
           const SizedBox(height: 18),

@@ -122,6 +122,7 @@ class TrainingSession {
   final SessionLifecycleTracker _sessionTracker = SessionLifecycleTracker();
   final TrainingCelebrationFormatter _celebrationFormatter =
       const TrainingCelebrationFormatter();
+  SessionStats? _sessionStats;
   TrainingCelebration? _pendingCelebration;
   int _celebrationEventId = 0;
 
@@ -173,6 +174,7 @@ class TrainingSession {
 
   Future<void> startTraining() async {
     if (_trainingActive) return;
+    _sessionStats = null;
     _pendingCelebration = null;
 
     _premiumPronunciationEnabled = _settingsRepository
@@ -209,16 +211,8 @@ class TrainingSession {
 
   Future<void> continueSession() async {
     _resetSessionCounters(targetCards: dailyGoalCards);
-    // Clear the stats from state
-    _state = TrainingState(
-      errorMessage: _state.errorMessage,
-      feedback: _state.feedback,
-      currentTask: _state.currentTask,
-      sessionStats: null,
-      celebration: _pendingCelebration,
-    );
-    // Note: we don't call _syncState here to avoid flicker, just proceed
-    _onStateChanged();
+    _sessionStats = null;
+    _syncState();
     await _startNextCard();
   }
 
@@ -242,35 +236,12 @@ class TrainingSession {
         .readPremiumPronunciationEnabled();
     _debugForcedLearningMethod = _readDebugForcedLearningMethod();
     _debugForcedItemType = _readDebugForcedItemType();
+    _sessionStats = null;
     _pendingCelebration = null;
     _silentDetector.reset();
     _runtimeCoordinator.resetInteraction();
     _syncState();
     unawaited(_setKeepAwake(false));
-  }
-
-  Future<void> pauseForOverlay() async {
-    await _runtimeCoordinator.disposeRuntime(clearState: true);
-    _trainingActive = false;
-    _pendingCelebration = null;
-    await _setKeepAwake(false);
-    _syncState();
-  }
-
-  Future<void> restoreAfterOverlay() async {
-    await _loadProgress();
-    _premiumPronunciationEnabled = _settingsRepository
-        .readPremiumPronunciationEnabled();
-    _debugForcedLearningMethod = _readDebugForcedLearningMethod();
-    _debugForcedItemType = _readDebugForcedItemType();
-    _progressManager.resetSelection();
-    await _runtimeCoordinator.disposeRuntime(clearState: true);
-    _pendingCelebration = null;
-    _silentDetector.reset();
-    _runtimeCoordinator.resetInteraction();
-    _trainingActive = false;
-    await _setKeepAwake(false);
-    _syncState();
   }
 
   Future<void> handleAction(TaskAction action) async {
@@ -313,7 +284,7 @@ class TrainingSession {
       errorMessage: _errorMessage,
       feedback: _feedbackCoordinator.feedback,
       currentTask: _runtimeCoordinator.currentTask,
-      sessionStats: _state.sessionStats,
+      sessionStats: _sessionStats,
       celebration: _pendingCelebration,
     );
     _onStateChanged();
@@ -425,12 +396,13 @@ class TrainingSession {
 
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     unawaited(_setKeepAwake(false));
+    _sessionStats = stats;
 
     _state = TrainingState(
       errorMessage: null,
       feedback: null,
       currentTask: null,
-      sessionStats: stats,
+      sessionStats: _sessionStats,
       celebration: _pendingCelebration,
     );
     _onStateChanged();

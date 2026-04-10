@@ -9,7 +9,6 @@ class DailyStudyPlan {
 
 class DailyStudySummary {
   const DailyStudySummary({
-    required this.dueToday,
     required this.completedToday,
     required this.targetToday,
     required this.remainingToday,
@@ -18,7 +17,6 @@ class DailyStudySummary {
     required this.newCardsRemaining,
   });
 
-  final int dueToday;
   final int completedToday;
   final int targetToday;
   final int remainingToday;
@@ -67,7 +65,6 @@ class DailyStudySummary {
         : null;
 
     return DailyStudySummary(
-      dueToday: targetToday,
       completedToday: completedToday,
       targetToday: targetToday,
       remainingToday: remainingToday,
