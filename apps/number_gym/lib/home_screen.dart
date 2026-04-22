@@ -14,12 +14,16 @@ class NumberGymHomeScreen extends StatefulWidget {
     required this.appDefinition,
     required this.settingsBox,
     required this.progressBox,
+    this.statsLoader,
+    this.packageInfoLoader,
   });
 
   final AppConfig config;
   final TrainingAppDefinition appDefinition;
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+  final TrainingStatsLoader? statsLoader;
+  final Future<PackageInfo> Function()? packageInfoLoader;
 
   @override
   State<NumberGymHomeScreen> createState() => _NumberGymHomeScreenState();
@@ -38,11 +42,13 @@ class _NumberGymHomeScreenState extends State<NumberGymHomeScreen> {
     super.initState();
     _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
-    _statsLoader = TrainingStatsLoader(
-      progressRepository: _progressRepository,
-      settingsRepository: _settingsRepository,
-      catalog: widget.appDefinition.catalog,
-    );
+    _statsLoader =
+        widget.statsLoader ??
+        TrainingStatsLoader(
+          progressRepository: _progressRepository,
+          settingsRepository: _settingsRepository,
+          catalog: widget.appDefinition.catalog,
+        );
     _loadStats();
     _loadVersion();
   }
@@ -59,7 +65,8 @@ class _NumberGymHomeScreenState extends State<NumberGymHomeScreen> {
 
   Future<void> _loadVersion() async {
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
+      final packageInfo =
+          await (widget.packageInfoLoader ?? PackageInfo.fromPlatform)();
       if (!mounted) {
         return;
       }

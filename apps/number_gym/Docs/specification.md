@@ -2,11 +2,11 @@
 
 ## 1. Product purpose
 
-Numbers Gym trains spoken and recognition skills with short cards:
-- pronunciation;
-- listening;
-- multiple-choice transformations (value <-> text);
-- premium phrase pronunciation analysis.
+Number Gym trains spoken and recognition skills with short cards:
+- speaking from prompts;
+- multiple-choice transformations;
+- listening drills;
+- premium pronunciation review for number phrases.
 
 ## 2. Supported languages
 
@@ -18,106 +18,104 @@ Numbers Gym trains spoken and recognition skills with short cards:
 
 All progress and settings are scoped by selected language.
 
-## 3. Training content
+## 3. Domain model
 
-### 3.1 Numbers
+- `ExerciseFamily`: stable content family boundary used for scheduling, progress, difficulty, and debug filters.
+- `ExerciseId`: stable card key built from `moduleId`, `familyId`, and `variantId`.
+- `ExerciseMode`: interaction mode selected per session.
+- `ExerciseCard`: prompt, accepted answers, choice specs, and optional dynamic resolver.
+- `TrainingAppDefinition`: app config plus language profiles, tokenizer, and exercise catalog.
 
-- digits: `0..9`
-- base: `10..99`
-- hundreds: `100..900` (step 100)
-- thousands: `1000..9000` (step 1000)
+## 4. Exercise families
 
-### 3.2 Time
+### 4.1 Numbers
+
+- `digits`: `0..9`
+- `base`: `10..99`
+- `hundreds`: `100..900` in steps of `100`
+- `thousands`: `1000..9000` in steps of `1000`
+
+### 4.2 Time
 
 - `timeExact`
 - `timeQuarter`
 - `timeHalf`
 - `timeRandom`
 
-### 3.3 Phone formats
+### 4.3 Phone formats
 
 - `phone33x3`
 - `phone3222`
 - `phone2322`
 
-## 4. Learning methods
+## 5. Exercise modes
 
-- `numberPronunciation`
-- `valueToText`
-- `textToValue`
-- `listening`
-- `phrasePronunciation` (premium)
+- `speak`
+- `chooseFromPrompt`
+- `chooseFromAnswer`
+- `listenAndChoose`
+- `reviewPronunciation`
 
 Compatibility matrix: `Docs/itemtype_learning_method.md`.
 
-## 5. Session and scheduling rules
+- Number families support all modes.
+- Time families support all modes except `reviewPronunciation`.
+- Phone families support only `speak`.
+
+## 6. Dynamic content rules
+
+- `timeRandom` materializes a fresh displayed time when the card opens, but keeps a stable `progressId`.
+- Phone families materialize fresh numbers and optional `+34` prefix while keeping a stable `progressId`.
+- Number review phrases are materialized from language-owned templates.
+- Accepted variants, prompt aliases, grouped phone hints, and language edge cases are owned by `number_gym_content`.
+
+## 7. Session and scheduling rules
 
 - Training starts only if there are remaining unlearned cards.
-- Next card is chosen by weighted random from eligible unlearned cards.
-- Card weight factors:
-  - base type weight;
-  - weakness boost (relative to target accuracy);
-  - new-card boost;
-  - recent mistake boost;
-  - repeat cooldown penalty.
-- Daily controls:
-  - attempt limit;
-  - new-card limit.
+- Selection uses weighted random from eligible unlearned cards.
+- Weight combines difficulty, weakness boost, new-card boost, recent mistakes, and cooldown.
+- Learned cards are excluded from normal scheduling.
+- Daily limits apply to attempts and newly introduced cards.
 
-Learned cards are excluded from normal scheduling.
+## 8. Progress and mastery
 
-## 6. Progress and mastery
+- Progress stores attempt clusters per `progressId`.
+- Mastery requires minimum total attempts and recent accuracy above the family target.
+- Phone families use a lower mastery target than number and time families.
 
-For each card, progress stores attempt clusters:
-- `correctCount`, `wrongCount`, `skippedCount`;
-- `lastAnswerAt`;
-- `firstAttemptAt`;
-- `learned`, `learnedAt`.
-
-Mastery requires:
-- minimum total attempts;
-- recent accuracy above item-type target.
-
-## 7. Task availability
-
-- Speech tasks require speech recognition availability.
-- Listening tasks require TTS availability for selected language.
-- Phrase pronunciation requires internet and premium toggle.
-
-If forced debug method/type is incompatible or unavailable, session is paused
-with explicit error text.
-
-## 8. Settings (local)
+## 9. Availability and settings
 
 Stored values include:
 - language;
-- answer duration;
-- hint streak threshold;
 - premium pronunciation enabled;
-- forced debug learning method (debug only);
-- forced debug item type (debug only);
+- forced debug mode (debug only);
+- forced debug family (debug only);
 - selected TTS voice per language;
 - daily session stats per language;
 - study streak per language;
 - celebration counter.
 
-## 9. Statistics
+Availability rules:
+- speaking requires speech recognition;
+- listening requires TTS for the selected language;
+- pronunciation review requires internet plus the premium toggle.
+
+## 10. Statistics
 
 The app shows:
 - total and learned card counts;
 - daily completion summary;
-- session stats;
 - streak snapshot;
-- queue diagnostics from progress data.
+- learned progress per family.
 
-## 10. Session lifecycle behavior
+## 11. Session lifecycle behavior
 
-- Start: warm availability, reset session counters, attach first runtime.
-- Completion: record progress, show feedback, optionally queue celebration.
-- Pause/overlay: dispose active runtime and disable keep-awake.
-- Stop: persist session stats, clear runtime/feedback, reset selection state.
+- Start: load availability, resolve a mode, and attach the first runtime.
+- Completion: record progress, refresh stats, and continue until the session stops.
+- Pause and overlays are handled inside `trainer_core`.
+- Stop: persist session stats and return to the app shell.
 
-## 11. Out of scope right now
+## 12. Out of scope right now
 
 - Automatic review of already learned cards in normal flow.
 - Cloud sync.

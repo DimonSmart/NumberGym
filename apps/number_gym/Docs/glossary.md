@@ -1,9 +1,11 @@
 # Domain glossary
 
-- Card: one training item with prompt, accepted answers, and item type.
-- Card ID (`TrainingItemId`): stable key built from item type plus value/time.
-- Item type (`TrainingItemType`): content category (`digits`, `timeRandom`, `phone3222`, etc.).
-- Learning method (`LearningMethod`): interaction type (`numberPronunciation`, `listening`, etc.).
+- Exercise card: one training card with prompt, accepted answers, mode specs, and optional dynamic resolver.
+- Exercise ID (`ExerciseId`): stable key built from `moduleId`, `familyId`, and `variantId`.
+- Exercise family (`ExerciseFamily`): stable content boundary such as `digits`, `timeRandom`, or `phone3222`.
+- Exercise mode (`ExerciseMode`): interaction type such as `speak`, `listenAndChoose`, or `reviewPronunciation`.
+- Progress ID: stable key used for mastery tracking even when displayed content is generated dynamically.
+- Dynamic resolver: per-card function that re-materializes dynamic content without changing progress ownership.
 - Cluster: aggregated attempts made within a short time gap.
 - Cluster gap: max gap that still keeps attempts in same cluster.
 - Mastery window: recent attempts window used to compute recent accuracy.
@@ -16,4 +18,4 @@
 - Session target cards: number of cards planned for current session block.
 - Session stats: cards and duration persisted for daily aggregate.
 - Streak: count of consecutive days with completed sessions.
-- Phrase pronunciation: premium runtime that analyzes recording and does not affect card progress.
+- Pronunciation review: premium runtime that analyzes a phrase recording and does not affect mastery for the underlying card.

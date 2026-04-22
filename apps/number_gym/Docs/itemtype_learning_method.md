@@ -1,15 +1,15 @@
-# ItemType vs LearningMethod
+# ExerciseFamily vs ExerciseMode
 
-This matrix reflects `LearningMethod.supportedItemTypes` in code.
+This matrix reflects `ExerciseFamily.supportedModes` in the active catalog.
 
 ## Definitions
 
-- `TrainingItemType`: what user trains (content type).
-- `LearningMethod`: how user trains (interaction type).
+- `ExerciseFamily`: what user trains.
+- `ExerciseMode`: how the user trains it.
 
 ## Compatibility matrix
 
-| Item type | numberPronunciation | valueToText | textToValue | listening | phrasePronunciation |
+| Exercise family | speak | chooseFromPrompt | chooseFromAnswer | listenAndChoose | reviewPronunciation |
 | --- | --- | --- | --- | --- | --- |
 | digits | Yes | Yes | Yes | Yes | Yes |
 | base | Yes | Yes | Yes | Yes | Yes |
@@ -25,5 +25,5 @@ This matrix reflects `LearningMethod.supportedItemTypes` in code.
 
 ## Notes
 
-- `timeRandom` and phone item types are rendered dynamically in session flow.
-- `phrasePronunciation` supports only numeric item types.
+- `timeRandom` and phone families are re-materialized dynamically when a card opens.
+- `reviewPronunciation` is enabled only for number families.

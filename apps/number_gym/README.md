@@ -1,6 +1,6 @@
 # Numbers Gym
 
-Speech-driven training app with short cards for numbers, time, and phone formats.
+Speech-driven training app for numbers, time, and phone formats.
 
 ## Purpose
 
@@ -9,40 +9,43 @@ Build fast and confident spoken responses with short sessions:
 - user answers by voice or multiple choice;
 - progress is stored locally per language.
 
-## Current scope
+## Active architecture
 
 - Languages: English (`en`), Spanish (`es`), French (`fr`), German (`de`), Hebrew (`he`).
-- Content types:
-  - numbers (`0..99`, round hundreds `100..900`, round thousands `1000..9000`);
-  - time (`exact`, `quarter`, `half`, `random`);
-  - phone (`3-3-3`, `3-2-2-2`, `2-3-2-2`).
-- Learning methods:
-  - number pronunciation;
-  - value to text;
-  - text to value;
-  - listening;
-  - phrase pronunciation (premium).
-
-## Progress model
-
-- Selection uses weighted random from eligible unlearned cards.
-- Weight combines content difficulty, weakness boost, new-card boost, and cooldown penalty.
-- A card becomes learned when total attempts and recent-accuracy thresholds are met.
-- Learned cards are excluded from normal scheduling.
-- Daily limits are applied to attempts and newly introduced cards.
+- Active app shell lives in `lib/app.dart`, `lib/main.dart`, and `lib/home_screen.dart`.
+- NumberGym content lives in `../../packages/number_gym_content`.
+- Shared repositories, matcher, scheduler, runtimes, and screens live in `../../packages/trainer_core`.
+- `apps/number_gym` keeps branding, home/about screens, native assets, and shipping entrypoints.
 
 ## Structure
 
-- `lib/app.dart`, `lib/main.dart`: composition root and app wiring.
-- `lib/features/training/data`: repositories and storage models.
-- `lib/features/training/domain`: scheduling, session orchestration, and runtime coordination.
-- `lib/features/training/ui`: screens, view models, and widgets.
+- `lib/main.dart`: Flutter bootstrap, Hive setup, error logging.
+- `lib/app.dart`: `AppConfig` plus `TrainingAppDefinition` creation via `buildNumberGymAppDefinition`.
+- `lib/home_screen.dart`: branded home shell that routes into `trainer_core` screens.
+- `lib/features/intro/ui/screens/about_screen.dart`: app-specific about screen and external links.
+- `test/`: app-shell smoke and navigation tests only.
+
+## Domain scope
+
+- Exercise families:
+  - `digits`, `base`, `hundreds`, `thousands`
+  - `timeExact`, `timeQuarter`, `timeHalf`, `timeRandom`
+  - `phone33x3`, `phone3222`, `phone2322`
+- Exercise modes:
+  - `speak`
+  - `chooseFromPrompt`
+  - `chooseFromAnswer`
+  - `listenAndChoose`
+  - `reviewPronunciation` for number families
+
+`number_gym_content` owns accepted variants, prompt aliases, phone spoken variants,
+dynamic random-time and phone generation, and phrase materialization.
 
 ## Documentation
 
 - [Specification](Docs/specification.md)
 - [Architecture](Docs/architecture.md)
-- [ItemType vs LearningMethod](Docs/itemtype_learning_method.md)
+- [ExerciseFamily vs ExerciseMode](Docs/itemtype_learning_method.md)
 - [Domain glossary](Docs/glossary.md)
 
 ## Branding
@@ -73,4 +76,16 @@ Direct app-local commands:
 cd apps/number_gym
 flutter run -d <device-id>
 flutter build web --release --base-href /NumberGym/
+```
+
+## Testing
+
+Canonical workspace checks stay at repo root:
+
+```powershell
+pwsh ./tool/analyze_all.ps1
+pwsh ./tool/test_all.ps1
+cd apps/number_gym
+flutter build apk --debug
+pwsh ../tool/publish_number_gym_web.ps1 -DryRun
 ```

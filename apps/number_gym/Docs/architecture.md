@@ -1,70 +1,55 @@
 # Architecture
 
-This document describes the current implementation, not a target-state design.
+This document describes the current active implementation.
 
 ## High-level layout
 
-- Feature-first structure under `lib/features/`.
-- Main feature is `lib/features/training/`.
-- Layers inside feature:
-  - `ui/`: screens, widgets, view models;
-  - `domain/`: session orchestration, task scheduling, runtimes, business rules;
-  - `data/`: repositories and local persistence models.
+- `apps/number_gym` is the branded shell.
+- `packages/number_gym_content` owns NumberGym content and dynamic card generation.
+- `packages/trainer_core` owns the shared training engine, matcher, repositories, and reusable screens.
+
+Inside `apps/number_gym/lib`, only the shell stays local:
+- `main.dart`: bootstrap, Hive registration, guarded startup;
+- `app.dart`: `AppConfig` and `TrainingAppDefinition` composition;
+- `home_screen.dart`: branded landing page and navigation;
+- `features/intro/ui/screens/about_screen.dart`: app-specific about page.
 
 ## Runtime flow
 
-- `main.dart` builds repositories/services and creates app root.
-- `TrainingController` (`ChangeNotifier`) is the UI-facing facade.
-- `TrainingSession` is the core orchestrator of one training flow.
-- `TrainingSession` delegates focused responsibilities to small domain components:
-  - `TaskScheduler`;
-  - `ProgressManager`;
-  - `TaskCardFlow`;
-  - `TaskProgressRecorder`;
-  - `SessionLifecycleTracker`;
-  - `SessionStatsRecorder`;
-  - `RuntimeCoordinator`;
-  - `FeedbackCoordinator`.
+- `main.dart` initializes Flutter bindings, error logging, and Hive boxes.
+- `app.dart` creates `numberGymConfig` and `numberGymDefinition` through `buildNumberGymAppDefinition(...)`.
+- `NumberGymHomeScreen` shows branded entry actions and opens `trainer_core` screens:
+  - `TrainingScreen`
+  - `SettingsScreen`
+  - `StatisticsScreen`
+  - `DebugSettingsScreen`
+- `trainer_core` reads the catalog from `number_gym_content`, then runs scheduling, runtime selection, matching, progress, and statistics.
 
 ## Dependency policy
 
-The project is intentionally pragmatic and close to a monolith for delivery speed.
+- `apps/number_gym` should depend on package APIs, not re-implement training domain logic locally.
+- `number_gym_content` may depend on `trainer_core` models, but owns NumberGym-specific wording and generation rules.
+- `trainer_core` stays product-neutral and only grows when NumberGym cannot be expressed through the existing exercise model.
 
-- Preferred direction:
-  - `ui -> domain`;
-  - `domain -> data` through repository interfaces;
-  - persistence details stay in `data`.
-- Practical exceptions exist:
-  - some domain orchestration classes use Flutter/runtime packages directly
-    (`kDebugMode`, speech package models).
-
-When reviewing changes, prefer reducing coupling and moving pure logic into small
-testable classes rather than enforcing strict layering at any cost.
-
-## State management
-
-- Global training state is exposed by `TrainingController`.
-- UI subscribes via `ChangeNotifier` listeners.
-- Per-task runtime state is owned by `RuntimeCoordinator` and passed through
-  immutable `TaskState` objects.
-
-## Persistence
-
-- Local persistence uses Hive.
-- Settings and progress are scoped by selected language.
-- Session daily stats and streak are stored in settings storage.
+This is intentionally a package split, not a compatibility layer. The app shell should not keep a second copy of training models or scheduling code.
 
 ## Testing expectations
 
-- Domain helpers and coordinators should have focused unit tests.
-- Session-level behavior should be covered by integration-like domain tests
-  (for example `training_session_behavior_test.dart`).
-- Repository/storage behavior should be covered separately.
+- `packages/trainer_core/test`: matcher, learning params, scheduling/progress behavior.
+- `packages/number_gym_content/test`: family coverage, language resources, dynamic cards, accepted variants.
+- `apps/number_gym/test`: app-shell smoke, navigation, branding, and integration-level checks only.
+
+## Persistence and shipping
+
+- Local persistence uses Hive boxes opened by the app shell.
+- Shipping entrypoints stay at repo root:
+  - `tool/run_number_gym.ps1`
+  - `tool/publish_number_gym_web.ps1`
 
 ## Review checklist
 
-1. Is responsibility split clear, or did a god object grow again?
-2. Are new dependencies truly needed in each class?
-3. Is storage access still behind repositories?
-4. Are edge cases covered by tests (timeouts, unavailable services, empty pools)?
-5. Does documentation stay aligned with actual behavior?
+1. Does `apps/number_gym` stay a shell instead of rebuilding training logic locally?
+2. Does new NumberGym-specific behavior belong in `number_gym_content` instead of `trainer_core`?
+3. Is `trainer_core` still generic and minimal?
+4. Are tests placed at the package boundary that owns the behavior?
+5. Do root shipping scripts still work after the change?
