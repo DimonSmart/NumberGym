@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
-  [string]$BaseHref = '/NumberGym/',
-  [string]$PagesUrl = 'https://dimonsmart.github.io/NumberGym/',
-  [string]$CommitMessage = 'Deploy NumberGym web',
+  [string]$BaseHref = '/NumberGym/verb-gym/',
+  [string]$PagesUrl = 'https://dimonsmart.github.io/NumberGym/verb-gym/',
+  [string]$CommitMessage = 'Deploy VerbGym web',
   [switch]$DryRun
 )
 
@@ -10,10 +10,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 & (Join-Path $PSScriptRoot 'publish_github_pages_app.ps1') `
-  -AppPath 'apps/number_gym' `
-  -DisplayName 'NumberGym' `
+  -AppPath 'apps/verb_gym' `
+  -DisplayName 'VerbGym' `
   -BaseHref $BaseHref `
   -PagesUrl $PagesUrl `
   -CommitMessage $CommitMessage `
-  -PreservePaths 'verb-gym' `
+  -TargetSubdirectory 'verb-gym' `
   -DryRun:$DryRun
