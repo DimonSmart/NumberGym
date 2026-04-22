@@ -1,59 +1,56 @@
-# Numbers Gym
+# NumberGym Workspace
 
-Speech-driven training app with short cards for numbers, time, and phone formats.
+Monorepo for focused trainer apps that share one training engine and app-specific content packages.
 
-## Purpose
+## Source Of Truth
 
-Build fast and confident spoken responses with short sessions:
-- user sees or hears a prompt;
-- user answers by voice or multiple choice;
-- progress is stored locally per language.
+Active development happens only in these workspace members:
 
-## Current scope
+- `apps/number_gym`
+- `packages/trainer_core`
+- `packages/number_gym_content`
 
-- Languages: English (`en`), Spanish (`es`), French (`fr`), German (`de`), Hebrew (`he`).
-- Content types:
-  - numbers (`0..99`, round hundreds `100..900`, round thousands `1000..9000`);
-  - time (`exact`, `quarter`, `half`, `random`);
-  - phone (`3-3-3`, `3-2-2-2`, `2-3-2-2`).
-- Learning methods:
-  - number pronunciation;
-  - value to text;
-  - text to value;
-  - listening;
-  - phrase pronunciation (premium).
+Frozen stubs that stay in the repo but are not part of the active migration path:
 
-## Progress model
+- `apps/verb_gym`
+- `packages/verb_gym_content`
 
-- Selection uses weighted random from eligible unlearned cards.
-- Weight combines content difficulty, weakness boost, new-card boost, and cooldown penalty.
-- A card becomes learned when total attempts and recent-accuracy thresholds are met.
-- Learned cards are excluded from normal scheduling.
-- Daily limits are applied to attempts and newly introduced cards.
+The legacy root Flutter app still exists physically while the cutover is in progress, but it is no longer the target architecture and should not receive new feature work.
 
-## Structure
+## Workspace Commands
 
-- `lib/app.dart`, `lib/main.dart`: composition root and app wiring.
-- `lib/features/training/data`: repositories and storage models.
-- `lib/features/training/domain`: scheduling, session orchestration, and runtime coordination.
-- `lib/features/training/ui`: screens, view models, and widgets.
-
-## Documentation
-
-- [Specification](Docs/specification.md)
-- [Architecture](Docs/architecture.md)
-- [ItemType vs LearningMethod](Docs/itemtype_learning_method.md)
-- [Domain glossary](Docs/glossary.md)
-
-## Branding
-
-Regenerate app icons and native splash assets manually:
+Run everything from the repository root:
 
 ```powershell
-dart run flutter_launcher_icons
-dart run flutter_native_splash:create
+pwsh ./tool/bootstrap.ps1
+pwsh ./tool/analyze_all.ps1
+pwsh ./tool/test_all.ps1
+pwsh ./tool/run_number_gym.ps1
+pwsh ./tool/publish_number_gym_web.ps1
 ```
 
-After `flutter_native_splash:create`, verify
-`android:screenOrientation="portrait"` in
-`android/app/src/main/AndroidManifest.xml` for `MainActivity`.
+Use `-IncludeFrozen` only when you intentionally want to validate the frozen verb stubs as well.
+
+## Repository Layout
+
+- `apps/number_gym`: NumberGym app shell, branding, app-level UI, integration tests.
+- `packages/trainer_core`: shared training engine, orchestration, persistence abstractions, reusable UI shell.
+- `packages/number_gym_content`: NumberGym content definition and content-specific tests.
+- `apps/verb_gym`, `packages/verb_gym_content`: parked scaffolding for the future verb app.
+- `tool`: root scripts for bootstrapping and validating the workspace.
+- `Docs`: root-level migration and workspace architecture notes.
+
+## Lockfile Policy
+
+- App lockfiles are committed.
+- Internal package lockfiles are not treated as source of truth and are ignored.
+
+## Shipping Commands
+
+- Run NumberGym on a connected phone: `pwsh ./tool/run_number_gym.ps1 -DeviceId <device-id>`
+- Publish NumberGym web to GitHub Pages: `pwsh ./tool/publish_number_gym_web.ps1`
+
+## Docs
+
+- [Workspace Architecture](Docs/architecture.md)
+- [NumberGym App Readme](apps/number_gym/README.md)

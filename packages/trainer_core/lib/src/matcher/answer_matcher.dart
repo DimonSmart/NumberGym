@@ -1,0 +1,605 @@
+import '../base_language_profile.dart';
+import 'matcher_tokenizer.dart';
+
+class MatchResult {
+  const MatchResult({
+    required this.normalizedText,
+    required this.recognizedTokens,
+    required this.matchedSegmentIndices,
+    required this.acceptedAnswer,
+  });
+
+  final String normalizedText;
+  final List<String> recognizedTokens;
+  final List<int> matchedSegmentIndices;
+  final bool acceptedAnswer;
+}
+
+class AnswerMatcher {
+  AnswerMatcher({
+    required TextNormalizer normalizer,
+    required MatcherTokenizer tokenizer,
+  }) : _normalizer = normalizer,
+       _tokenizer = tokenizer;
+
+  final TextNormalizer _normalizer;
+  final MatcherTokenizer _tokenizer;
+  final _EtalonMatcher _matcher = const _EtalonMatcher();
+
+  List<_EtalonAtom> _atoms = const <_EtalonAtom>[];
+  List<bool> _matchedAtoms = const <bool>[];
+  Set<String> _acceptedAnswers = const <String>{};
+  List<String> _expectedTokens = const <String>[];
+  int _requiredAtomCount = 0;
+
+  List<String> get expectedTokens => _expectedTokens;
+  List<bool> get matchedTokens => _matchedAtoms;
+
+  bool get isComplete {
+    if (_atoms.isEmpty || _requiredAtomCount == 0) {
+      return false;
+    }
+
+    var matchedRequired = 0;
+    for (var i = 0; i < _atoms.length; i += 1) {
+      if (_atoms[i].isRequired && _matchedAtoms[i]) {
+        matchedRequired += 1;
+        if (matchedRequired >= _requiredAtomCount) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void reset({
+    required String prompt,
+    required List<String> answers,
+    required List<String> promptAliases,
+  }) {
+    _atoms = _EtalonParser(_tokenizer).parse(prompt);
+    if (!_hasEtalonSyntax(prompt) &&
+        _atoms.length == 1 &&
+        _atoms.first.isMatchable &&
+        answers.isNotEmpty) {
+      final extraVariants = _buildVariantsFromTexts(_tokenizer, answers);
+      if (extraVariants.isNotEmpty) {
+        final merged = _mergeVariants(_atoms.first.variants, extraVariants);
+        _atoms = <_EtalonAtom>[_atoms.first.copyWithVariants(merged)];
+      }
+    }
+
+    _expectedTokens = List<String>.unmodifiable(
+      _atoms.map((atom) => atom.displayText),
+    );
+    _matchedAtoms = List<bool>.filled(_atoms.length, false);
+    _requiredAtomCount = _atoms.where((atom) => atom.isRequired).length;
+
+    final accepted = <String>{
+      for (final answer in answers)
+        if (_normalizer(answer).isNotEmpty) _normalizer(answer),
+      if (_normalizer(prompt).isNotEmpty) _normalizer(prompt),
+      for (final alias in promptAliases)
+        if (_normalizer(alias).isNotEmpty) _normalizer(alias),
+    };
+    _acceptedAnswers = Set<String>.unmodifiable(accepted);
+  }
+
+  void clear() {
+    _atoms = const <_EtalonAtom>[];
+    _expectedTokens = const <String>[];
+    _matchedAtoms = const <bool>[];
+    _requiredAtomCount = 0;
+    _acceptedAnswers = const <String>{};
+  }
+
+  bool isAcceptedAnswer(String recognizedText) {
+    final normalized = _normalizer(recognizedText);
+    if (normalized.isEmpty) {
+      return false;
+    }
+    return _acceptedAnswers.contains(normalized);
+  }
+
+  MatchResult previewRecognition(String recognizedText) {
+    final normalizedText = _normalizer(recognizedText);
+    final tokens = _tokenizer.tokenize(recognizedText);
+    final recognizedTokens = tokens.map((token) => token.display).toList();
+
+    if (normalizedText.isEmpty || _atoms.isEmpty || tokens.isEmpty) {
+      return MatchResult(
+        normalizedText: normalizedText,
+        recognizedTokens: recognizedTokens,
+        matchedSegmentIndices: const <int>[],
+        acceptedAnswer: _acceptedAnswers.contains(normalizedText),
+      );
+    }
+
+    final matchedIndices = _matcher.match(
+      atoms: _atoms,
+      tokens: tokens,
+      matched: _matchedAtoms,
+    );
+    return MatchResult(
+      normalizedText: normalizedText,
+      recognizedTokens: recognizedTokens,
+      matchedSegmentIndices: matchedIndices,
+      acceptedAnswer: _acceptedAnswers.contains(normalizedText),
+    );
+  }
+
+  MatchResult applyRecognition(String recognizedText) {
+    final normalizedText = _normalizer(recognizedText);
+    final tokens = _tokenizer.tokenize(recognizedText);
+    final recognizedTokens = tokens.map((token) => token.display).toList();
+
+    if (normalizedText.isNotEmpty &&
+        _acceptedAnswers.contains(normalizedText)) {
+      final indices = _markAllMatched();
+      return MatchResult(
+        normalizedText: normalizedText,
+        recognizedTokens: recognizedTokens,
+        matchedSegmentIndices: indices,
+        acceptedAnswer: true,
+      );
+    }
+
+    if (_atoms.isEmpty || tokens.isEmpty) {
+      return MatchResult(
+        normalizedText: normalizedText,
+        recognizedTokens: recognizedTokens,
+        matchedSegmentIndices: const <int>[],
+        acceptedAnswer: false,
+      );
+    }
+
+    final matchedIndices = _matcher.match(
+      atoms: _atoms,
+      tokens: tokens,
+      matched: _matchedAtoms,
+    );
+    if (matchedIndices.isNotEmpty) {
+      _applyMatchedAtoms(matchedIndices);
+    }
+    return MatchResult(
+      normalizedText: normalizedText,
+      recognizedTokens: recognizedTokens,
+      matchedSegmentIndices: matchedIndices,
+      acceptedAnswer: false,
+    );
+  }
+
+  bool _hasEtalonSyntax(String text) {
+    return text.contains('(') || text.contains('[') || text.contains('{');
+  }
+
+  List<_AtomVariant> _mergeVariants(
+    List<_AtomVariant> base,
+    List<_AtomVariant> extra,
+  ) {
+    final merged = <_AtomVariant>[];
+    final seen = <String>{};
+
+    void addAll(List<_AtomVariant> variants) {
+      for (final variant in variants) {
+        final signature = variant.signature();
+        if (seen.add(signature)) {
+          merged.add(variant);
+        }
+      }
+    }
+
+    addAll(base);
+    addAll(extra);
+    merged.sort((a, b) => b.tokens.length.compareTo(a.tokens.length));
+    return merged;
+  }
+
+  List<int> _markAllMatched() {
+    if (_atoms.isEmpty) {
+      return const <int>[];
+    }
+
+    final indices = <int>[];
+    for (var i = 0; i < _matchedAtoms.length; i += 1) {
+      if (!_matchedAtoms[i]) {
+        indices.add(i);
+      }
+    }
+    _matchedAtoms = List<bool>.filled(_atoms.length, true);
+    return indices;
+  }
+
+  void _applyMatchedAtoms(List<int> indices) {
+    for (final index in indices) {
+      if (index >= 0 && index < _matchedAtoms.length) {
+        _matchedAtoms[index] = true;
+      }
+    }
+  }
+}
+
+class _EtalonAtom {
+  const _EtalonAtom._({
+    required this.displayText,
+    required this.variants,
+    required this.isMatchable,
+    required this.isOptional,
+  });
+
+  factory _EtalonAtom.literal({
+    required String displayText,
+    required List<_AtomVariant> variants,
+  }) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: true,
+      isOptional: false,
+    );
+  }
+
+  factory _EtalonAtom.optional({
+    required String displayText,
+    required List<_AtomVariant> variants,
+  }) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: true,
+      isOptional: true,
+    );
+  }
+
+  factory _EtalonAtom.decorative(String displayText) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: const <_AtomVariant>[],
+      isMatchable: false,
+      isOptional: true,
+    );
+  }
+
+  final String displayText;
+  final List<_AtomVariant> variants;
+  final bool isMatchable;
+  final bool isOptional;
+
+  bool get isRequired => isMatchable && !isOptional;
+
+  _EtalonAtom copyWithVariants(List<_AtomVariant> variants) {
+    return _EtalonAtom._(
+      displayText: displayText,
+      variants: variants,
+      isMatchable: isMatchable,
+      isOptional: isOptional,
+    );
+  }
+}
+
+class _AtomVariant {
+  const _AtomVariant({required this.tokens});
+
+  final List<_AtomToken> tokens;
+
+  String signature() {
+    return tokens.map((token) => token.signature()).join('|');
+  }
+}
+
+class _AtomToken {
+  const _AtomToken({
+    required this.normalized,
+    this.numberValue,
+    this.operatorKey,
+  });
+
+  factory _AtomToken.fromMatchingToken(MatchingToken token) {
+    return _AtomToken(
+      normalized: token.normalized,
+      numberValue: token.numberValue,
+      operatorKey: token.operatorKey,
+    );
+  }
+
+  final String normalized;
+  final int? numberValue;
+  final String? operatorKey;
+
+  String signature() {
+    if (operatorKey != null) {
+      return 'op:$operatorKey';
+    }
+    if (numberValue != null) {
+      return 'num:$numberValue';
+    }
+    return 'lit:$normalized';
+  }
+
+  static _AtomToken literal(String normalized) {
+    return _AtomToken(normalized: normalized);
+  }
+}
+
+class _EtalonParser {
+  const _EtalonParser(this._tokenizer);
+
+  final MatcherTokenizer _tokenizer;
+
+  List<_EtalonAtom> parse(String pattern) {
+    if (pattern.trim().isEmpty) {
+      return const <_EtalonAtom>[];
+    }
+
+    final atoms = <_EtalonAtom>[];
+    final literal = StringBuffer();
+
+    void flushLiteral() {
+      if (literal.isEmpty) {
+        return;
+      }
+      atoms.addAll(_atomsFromLiteral(literal.toString()));
+      literal.clear();
+    }
+
+    for (var i = 0; i < pattern.length; i += 1) {
+      final ch = pattern[i];
+
+      if (ch == '(') {
+        flushLiteral();
+        final end = pattern.indexOf(')', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final inner = pattern.substring(i + 1, end).trim();
+        if (inner.isNotEmpty) {
+          atoms.add(_EtalonAtom.decorative(inner));
+        }
+        i = end;
+        continue;
+      }
+
+      if (ch == '[') {
+        flushLiteral();
+        final end = pattern.indexOf(']', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final atom = _buildVariantAtom(
+          pattern.substring(i + 1, end),
+          isOptional: false,
+        );
+        if (atom != null) {
+          atoms.add(atom);
+        }
+        i = end;
+        continue;
+      }
+
+      if (ch == '{') {
+        flushLiteral();
+        final end = pattern.indexOf('}', i + 1);
+        if (end < 0) {
+          literal.write(ch);
+          continue;
+        }
+        final atom = _buildVariantAtom(
+          pattern.substring(i + 1, end),
+          isOptional: true,
+        );
+        if (atom != null) {
+          atoms.add(atom);
+        }
+        i = end;
+        continue;
+      }
+
+      literal.write(ch);
+    }
+
+    flushLiteral();
+    return atoms;
+  }
+
+  List<_EtalonAtom> _atomsFromLiteral(String text) {
+    final atoms = <_EtalonAtom>[];
+    for (final part in _splitLiteral(text)) {
+      if (part.trim().isEmpty) {
+        continue;
+      }
+      if (_letterDigitRegex.hasMatch(part)) {
+        final variants = _buildVariantsFromTexts(_tokenizer, <String>[part]);
+        if (variants.isNotEmpty) {
+          atoms.add(_EtalonAtom.literal(displayText: part, variants: variants));
+        }
+        continue;
+      }
+      atoms.add(_EtalonAtom.decorative(part));
+    }
+    return atoms;
+  }
+
+  _EtalonAtom? _buildVariantAtom(String raw, {required bool isOptional}) {
+    final options = raw
+        .split('|')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    if (options.isEmpty) {
+      return null;
+    }
+
+    final variants = _buildVariantsFromTexts(_tokenizer, options);
+    if (variants.isEmpty) {
+      return null;
+    }
+
+    return isOptional
+        ? _EtalonAtom.optional(displayText: options.first, variants: variants)
+        : _EtalonAtom.literal(displayText: options.first, variants: variants);
+  }
+
+  List<String> _splitLiteral(String text) {
+    final matches = _literalChunkRegex.allMatches(text);
+    if (matches.isEmpty) {
+      return const <String>[];
+    }
+    return matches
+        .map((match) => match.group(0) ?? '')
+        .where((part) => part.isNotEmpty)
+        .toList();
+  }
+}
+
+class _EtalonMatcher {
+  const _EtalonMatcher();
+
+  List<int> match({
+    required List<_EtalonAtom> atoms,
+    required List<MatchingToken> tokens,
+    required List<bool> matched,
+  }) {
+    if (atoms.isEmpty || tokens.isEmpty) {
+      return const <int>[];
+    }
+
+    final used = List<bool>.filled(tokens.length, false);
+    final matchedNow = <int>[];
+    final matchedLocal = List<bool>.from(matched);
+
+    while (true) {
+      _MatchCandidate? best;
+
+      for (var atomIndex = 0; atomIndex < atoms.length; atomIndex += 1) {
+        final atom = atoms[atomIndex];
+        if (!atom.isMatchable || matchedLocal[atomIndex]) {
+          continue;
+        }
+
+        for (final variant in atom.variants) {
+          final consumed = _tryMatch(tokens, used, variant.tokens);
+          if (consumed == null) {
+            continue;
+          }
+
+          final candidate = _MatchCandidate(atomIndex, consumed);
+          if (best == null ||
+              candidate.consumed.length > best.consumed.length) {
+            best = candidate;
+          }
+        }
+      }
+
+      if (best == null || matchedLocal[best.atomIndex]) {
+        break;
+      }
+
+      matchedLocal[best.atomIndex] = true;
+      for (final index in best.consumed) {
+        used[index] = true;
+      }
+      matchedNow.add(best.atomIndex);
+    }
+
+    matchedNow.sort();
+    return matchedNow;
+  }
+
+  List<int>? _tryMatch(
+    List<MatchingToken> tokens,
+    List<bool> used,
+    List<_AtomToken> needTokens,
+  ) {
+    if (needTokens.isEmpty) {
+      return null;
+    }
+
+    final need = <String, int>{};
+    for (final token in needTokens) {
+      final key = token.signature();
+      need[key] = (need[key] ?? 0) + 1;
+    }
+
+    final picked = <int>[];
+    for (var i = tokens.length - 1; i >= 0; i -= 1) {
+      if (used[i]) {
+        continue;
+      }
+
+      final key = _AtomToken.fromMatchingToken(tokens[i]).signature();
+      final count = need[key];
+      if (count == null || count <= 0) {
+        continue;
+      }
+
+      need[key] = count - 1;
+      picked.add(i);
+    }
+
+    for (final count in need.values) {
+      if (count > 0) {
+        return null;
+      }
+    }
+
+    picked.sort();
+    return picked;
+  }
+}
+
+class _MatchCandidate {
+  const _MatchCandidate(this.atomIndex, this.consumed);
+
+  final int atomIndex;
+  final List<int> consumed;
+}
+
+List<_AtomVariant> _buildVariantsFromTexts(
+  MatcherTokenizer tokenizer,
+  Iterable<String> texts,
+) {
+  final variants = <_AtomVariant>[];
+  final seen = <String>{};
+  for (final text in texts) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) {
+      continue;
+    }
+
+    final tokens = tokenizer.tokenize(trimmed);
+    if (tokens.isEmpty) {
+      continue;
+    }
+
+    final variant = _AtomVariant(
+      tokens: _variantTokensForText(trimmed, tokens),
+    );
+    final signature = variant.signature();
+    if (seen.add(signature)) {
+      variants.add(variant);
+    }
+  }
+
+  variants.sort((a, b) => b.tokens.length.compareTo(a.tokens.length));
+  return variants;
+}
+
+List<_AtomToken> _variantTokensForText(
+  String text,
+  List<MatchingToken> tokens,
+) {
+  if (tokens.length == 1) {
+    final token = tokens.first;
+    if (token.numberValue != null &&
+        text.trim().contains(' ') &&
+        token.normalized.contains(' ')) {
+      return <_AtomToken>[_AtomToken.literal(token.normalized)];
+    }
+  }
+  return tokens.map(_AtomToken.fromMatchingToken).toList();
+}
+
+final _literalChunkRegex = RegExp(r'\s+|[^\s]+', unicode: true);
+final _letterDigitRegex = RegExp(r'[\p{L}\p{N}]', unicode: true);

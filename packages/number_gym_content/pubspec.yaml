@@ -1,0 +1,21 @@
+name: number_gym_content
+description: Number, time, and phone training content for trainer_core apps.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  trainer_core:
+    path: ../trainer_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

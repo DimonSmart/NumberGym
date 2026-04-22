@@ -1,0 +1,21 @@
+# Domain glossary
+
+- Exercise card: one training card with prompt, accepted answers, mode specs, and optional dynamic resolver.
+- Exercise ID (`ExerciseId`): stable key built from `moduleId`, `familyId`, and `variantId`.
+- Exercise family (`ExerciseFamily`): stable content boundary such as `digits`, `timeRandom`, or `phone3222`.
+- Exercise mode (`ExerciseMode`): interaction type such as `speak`, `listenAndChoose`, or `reviewPronunciation`.
+- Progress ID: stable key used for mastery tracking even when displayed content is generated dynamically.
+- Dynamic resolver: per-card function that re-materializes dynamic content without changing progress ownership.
+- Cluster: aggregated attempts made within a short time gap.
+- Cluster gap: max gap that still keeps attempts in same cluster.
+- Mastery window: recent attempts window used to compute recent accuracy.
+- Learned: state reached when min attempts and target accuracy are satisfied.
+- Learned exclusion policy: learned cards are not scheduled in normal flow.
+- Daily attempt limit: soft cap for attempts per day.
+- Daily new-card limit: cap for cards first introduced today.
+- Cooldown: temporary penalty for cards shown recently.
+- Weakness boost: extra weight for cards below target accuracy.
+- Session target cards: number of cards planned for current session block.
+- Session stats: cards and duration persisted for daily aggregate.
+- Streak: count of consecutive days with completed sessions.
+- Pronunciation review: premium runtime that analyzes a phrase recording and does not affect mastery for the underlying card.
