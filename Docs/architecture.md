@@ -58,10 +58,11 @@ By default these scripts validate only the active migration path: `number_gym`, 
 
 ## Operational Entry Point
 
-For shipping tasks, `apps/number_gym` is the operational Flutter app.
+For shipping tasks, `apps/number_gym` is the main operational Flutter app.
 
 - Phone/device runs should happen from `tool/run_number_gym.ps1`
-- Web publishing should happen from `tool/publish_number_gym_web.ps1`
+- NumberGym web publishing should happen from `tool/publish_number_gym_web.ps1`
+- VerbGym web publishing can be done separately from `tool/publish_verb_gym_web.ps1`
 
 Legacy root build scripts must not build the root Flutter app anymore.
 

@@ -27,6 +27,7 @@ pwsh ./tool/analyze_all.ps1
 pwsh ./tool/test_all.ps1
 pwsh ./tool/run_number_gym.ps1
 pwsh ./tool/publish_number_gym_web.ps1
+pwsh ./tool/publish_verb_gym_web.ps1
 ```
 
 Use `-IncludeFrozen` only when you intentionally want to validate the frozen verb stubs as well.
@@ -49,6 +50,8 @@ Use `-IncludeFrozen` only when you intentionally want to validate the frozen ver
 
 - Run NumberGym on a connected phone: `pwsh ./tool/run_number_gym.ps1 -DeviceId <device-id>`
 - Publish NumberGym web to GitHub Pages: `pwsh ./tool/publish_number_gym_web.ps1`
+- Publish VerbGym web to GitHub Pages subpath: `pwsh ./tool/publish_verb_gym_web.ps1`
+- Windows bat launchers: `deploy_number_gym_web_pages.bat`, `deploy_verb_gym_web_pages.bat`
 
 ## Docs
 
