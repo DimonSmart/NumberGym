@@ -1,3 +1,0 @@
-﻿Place celebration SFX here for image rewards.
-Supported numeric names: 1.mp3, 2.wav, 3.ogg, ...
-For video rewards (N.mp4), extra SFX is not played.
