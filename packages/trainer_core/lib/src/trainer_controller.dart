@@ -1,0 +1,100 @@
+import 'package:flutter/foundation.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+import 'app_definition.dart';
+import 'exercise_models.dart';
+import 'task_runtime.dart';
+import 'trainer_repositories.dart';
+import 'trainer_services.dart';
+import 'trainer_session.dart';
+import 'trainer_state.dart';
+
+class TrainerController extends ChangeNotifier {
+  TrainerController({
+    required TrainingAppDefinition appDefinition,
+    required SettingsRepositoryBase settingsRepository,
+    required ProgressRepositoryBase progressRepository,
+    TrainingServices? services,
+    stt.SpeechToText? speech,
+  }) : _session = TrainerSession(
+         appDefinition: appDefinition,
+         settingsRepository: settingsRepository,
+         progressRepository: progressRepository,
+         services: services ?? TrainingServices.defaults(speech: speech),
+         onStateChanged: _noop,
+       ) {
+    _session.onStateChanged = _notify;
+  }
+
+  static void _noop() {}
+
+  final TrainerSession _session;
+  bool _disposed = false;
+
+  TrainingState get state => _session.state;
+  TrainingFeedback? get feedback => _session.state.feedback;
+  TaskState? get currentTask => _session.state.currentTask;
+  TrainingCelebration? get celebration => _session.state.celebration;
+  ExerciseMode? get currentMode => _session.state.currentTask?.mode;
+
+  SpeakState? get speakState {
+    final task = _session.state.currentTask;
+    return task is SpeakState ? task : null;
+  }
+
+  ReviewPronunciationState? get reviewState {
+    final task = _session.state.currentTask;
+    return task is ReviewPronunciationState ? task : null;
+  }
+
+  bool get hasRecording => reviewState?.hasRecording ?? false;
+  Stream<List<double>> get soundStream => _session.soundStream;
+  int get dailyGoalCards => _session.dailyGoalCards;
+  int get sessionCardsCompleted => _session.sessionCardsCompleted;
+  int get sessionTargetCards => _session.sessionTargetCards;
+
+  Future<void> initialize() => _session.initialize();
+  Future<void> retryInitSpeech() => _session.retryInitSpeech();
+  Future<void> startTraining() => _session.startTraining();
+  Future<void> stopTraining() => _session.stopTraining();
+  Future<void> continueSession() => _session.continueSession();
+  Future<void> continueAfterCelebration() =>
+      _session.continueAfterCelebration();
+  Future<void> pauseTaskTimer() => _session.pauseTaskTimer();
+  Future<void> resumeTaskTimer() => _session.resumeTaskTimer();
+  Future<void> selectOption(String option) =>
+      _session.handleAction(SelectOptionAction(option));
+  Future<void> repeatListeningPrompt() =>
+      _session.handleAction(const RepeatPromptAction());
+  Future<void> startPronunciationRecording() =>
+      _session.handleAction(const StartRecordingAction());
+  Future<void> stopPronunciationRecording() =>
+      _session.handleAction(const StopRecordingAction());
+  Future<void> cancelPronunciationRecording() =>
+      _session.handleAction(const CancelRecordingAction());
+  Future<void> sendPronunciationRecording() =>
+      _session.handleAction(const SendRecordingAction());
+  Future<void> completePronunciationReview() =>
+      _session.handleAction(const CompleteReviewAction());
+  Future<void> completeCurrentTaskWithOutcome(
+    TrainingOutcome outcome, {
+    bool simulatedUserInteraction = false,
+  }) => _session.completeCurrentTaskWithOutcome(
+    outcome,
+    simulatedUserInteraction: simulatedUserInteraction,
+  );
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _session.dispose();
+    super.dispose();
+  }
+
+  void _notify() {
+    if (_disposed) {
+      return;
+    }
+    notifyListeners();
+  }
+}

@@ -1,0 +1,520 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+
+import '../../data/card_progress.dart';
+import '../../data/progress_repository.dart';
+import '../../data/settings_repository.dart';
+import '../../domain/learning_language.dart';
+import '../../domain/services/internet_checker.dart';
+import '../../domain/services/speech_service.dart';
+import '../../domain/services/tts_service.dart';
+import '../../domain/task_availability.dart';
+import '../../domain/training_task.dart';
+import '../../languages/registry.dart';
+import '../../../../core/logging/app_log_buffer.dart';
+import '../../../../core/theme/app_palette.dart';
+
+class SettingsScreen extends StatefulWidget {
+  final Box<String> settingsBox;
+  final Box<CardProgress> progressBox;
+  final VoidCallback? onProgressChanged;
+
+  const SettingsScreen({
+    super.key,
+    required this.settingsBox,
+    required this.progressBox,
+    this.onProgressChanged,
+  });
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  late final SettingsRepository _settingsRepository;
+  late final ProgressRepository _progressRepository;
+  late final TtsServiceBase _ttsService;
+  late final SpeechServiceBase _speechService;
+  late final TaskAvailabilityRegistry _availabilityRegistry;
+  late LearningLanguage _language;
+  late bool _premiumPronunciation;
+  bool _ttsAvailable = true;
+  bool _ttsLoading = false;
+  List<TtsVoice> _ttsVoices = const [];
+  String? _ttsVoiceId;
+  bool _ttsPreviewing = false;
+  bool _speechAvailable = true;
+  bool _speechLoading = false;
+  String? _speechStatusMessage;
+  Timer? _internetTimer;
+  bool _hasInternet = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _progressRepository = ProgressRepository(widget.progressBox);
+    _ttsService = TtsService();
+    _speechService = SpeechService();
+    _availabilityRegistry = TaskAvailabilityRegistry(
+      providers: [
+        SpeechTaskAvailabilityProvider(_speechService),
+        TtsTaskAvailabilityProvider(_ttsService),
+      ],
+    );
+    _language = _settingsRepository.readLearningLanguage();
+    _premiumPronunciation = _settingsRepository
+        .readPremiumPronunciationEnabled();
+    _loadTtsData();
+    _loadSpeechAvailability();
+    _refreshInternetStatus();
+    _internetTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _refreshInternetStatus(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _internetTimer?.cancel();
+    _ttsService.dispose();
+    _speechService.dispose();
+    super.dispose();
+  }
+
+  Future<void> _confirmReset() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset progress?'),
+        content: const Text(
+          'This will clear progress for the selected language.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    await _progressRepository.reset(language: _language);
+    await _settingsRepository.resetProgressForLanguage(_language);
+    widget.onProgressChanged?.call();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Progress reset for ${LanguageRegistry.of(_language).label}.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _updateLanguage(LearningLanguage value) async {
+    setState(() {
+      _language = value;
+    });
+    await _settingsRepository.setLearningLanguage(value);
+    await _loadTtsData();
+    await _loadSpeechAvailability();
+  }
+
+  Future<void> _updatePremiumPronunciation(bool enabled) async {
+    setState(() {
+      _premiumPronunciation = enabled;
+    });
+    await _settingsRepository.setPremiumPronunciationEnabled(enabled);
+  }
+
+  Future<void> _loadTtsData() async {
+    if (!mounted) return;
+    setState(() {
+      _ttsLoading = true;
+    });
+    final locale = LanguageRegistry.of(_language).locale;
+    final availability = await _availabilityRegistry.check(
+      LearningMethod.listening,
+      TaskAvailabilityContext(
+        language: _language,
+        premiumPronunciationEnabled: _premiumPronunciation,
+      ),
+    );
+    final available = availability.isAvailable;
+    final voices = await _ttsService.listVoices();
+    final filtered = filterVoicesByLocale(voices, locale);
+    String? selected = _settingsRepository.readTtsVoiceId(_language);
+    if (selected != null && filtered.every((voice) => voice.id != selected)) {
+      selected = null;
+    }
+    if (selected == null && filtered.isNotEmpty) {
+      selected = filtered.first.id;
+      await _settingsRepository.setTtsVoiceId(_language, selected);
+    }
+    if (!mounted) return;
+    setState(() {
+      _ttsAvailable = available;
+      _ttsVoices = filtered;
+      _ttsVoiceId = selected;
+      _ttsLoading = false;
+    });
+  }
+
+  Future<void> _loadSpeechAvailability() async {
+    if (!mounted) return;
+    setState(() {
+      _speechLoading = true;
+    });
+    final availability = await _availabilityRegistry.check(
+      LearningMethod.numberPronunciation,
+      TaskAvailabilityContext(
+        language: _language,
+        premiumPronunciationEnabled: _premiumPronunciation,
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _speechAvailable = availability.isAvailable;
+      _speechStatusMessage = availability.message;
+      _speechLoading = false;
+    });
+  }
+
+  Future<void> _updateTtsVoiceId(String? voiceId) async {
+    if (voiceId == null || voiceId.trim().isEmpty) return;
+    setState(() {
+      _ttsVoiceId = voiceId;
+    });
+    await _settingsRepository.setTtsVoiceId(_language, voiceId);
+  }
+
+  Future<void> _previewTtsVoice() async {
+    if (_ttsLoading || _ttsPreviewing) return;
+    if (!_ttsAvailable) {
+      _showSnack('Text-to-speech is not available for this language.');
+      return;
+    }
+    if (_ttsVoices.isEmpty) {
+      _showSnack('No voices found to preview.');
+      return;
+    }
+    final selectedId = _ttsVoiceId;
+    final selectedVoice = selectedId == null
+        ? _ttsVoices.first
+        : _ttsVoices.firstWhere(
+            (voice) => voice.id == selectedId,
+            orElse: () => _ttsVoices.first,
+          );
+    setState(() {
+      _ttsPreviewing = true;
+    });
+    try {
+      await _ttsService.setVoice(selectedVoice);
+      await _ttsService.speak(_ttsPreviewText(_language));
+    } catch (error) {
+      _showSnack('Preview failed: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _ttsPreviewing = false;
+        });
+      }
+    }
+  }
+
+  String _ttsPreviewText(LearningLanguage language) {
+    return LanguageRegistry.of(language).ttsPreviewText;
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _refreshInternetStatus() async {
+    final hasConnection = await hasInternet();
+    if (!mounted || _hasInternet == hasConnection) return;
+    setState(() {
+      _hasInternet = hasConnection;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final logBuffer = AppLogBuffer.instance;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            'Learning language',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<LearningLanguage>(
+            initialValue: _language,
+            onChanged: (value) {
+              if (value != null) {
+                _updateLanguage(value);
+              }
+            },
+            items: LearningLanguage.values
+                .map(
+                  (language) => DropdownMenuItem(
+                    value: language,
+                    child: Text(LanguageRegistry.of(language).label),
+                  ),
+                )
+                .toList(),
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Text-to-speech',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (_ttsLoading)
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: theme.colorScheme.primary,
+                  ),
+                )
+              else
+                Icon(
+                  Icons.record_voice_over,
+                  size: 18,
+                  color: _ttsAvailable
+                      ? AppPalette.deepBlue
+                      : theme.colorScheme.error,
+                ),
+              const SizedBox(width: 8),
+              Text(
+                _ttsLoading
+                    ? 'TTS: Checking...'
+                    : 'TTS: ${_ttsAvailable ? 'Available' : 'Unavailable'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: _ttsAvailable
+                      ? AppPalette.deepBlue
+                      : theme.colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!_ttsAvailable && !_ttsLoading) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Install a voice pack in your device speech settings.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          if (_ttsLoading)
+            const LinearProgressIndicator()
+          else if (_ttsVoices.isEmpty)
+            Text(
+              'No voices found for ${LanguageRegistry.of(_language).label}.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            )
+          else
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _ttsVoiceId,
+                    onChanged: _ttsAvailable ? _updateTtsVoiceId : null,
+                    isExpanded: true,
+                    items: _ttsVoices
+                        .map(
+                          (voice) => DropdownMenuItem(
+                            value: voice.id,
+                            child: Text(
+                              voice.label,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    selectedItemBuilder: (context) => _ttsVoices
+                        .map(
+                          (voice) => Text(
+                            voice.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                        .toList(),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Voice',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.tonalIcon(
+                  onPressed: _ttsAvailable && !_ttsPreviewing
+                      ? _previewTtsVoice
+                      : null,
+                  icon: _ttsPreviewing
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        )
+                      : const Icon(Icons.volume_up),
+                  label: Text(_ttsPreviewing ? 'Playing' : 'Preview'),
+                ),
+              ],
+            ),
+          const SizedBox(height: 24),
+          const Text(
+            'Speech recognition',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (_speechLoading)
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: theme.colorScheme.primary,
+                  ),
+                )
+              else
+                Icon(
+                  _speechAvailable ? Icons.mic : Icons.mic_off,
+                  size: 18,
+                  color: _speechAvailable
+                      ? AppPalette.deepBlue
+                      : theme.colorScheme.error,
+                ),
+              const SizedBox(width: 8),
+              Text(
+                _speechLoading
+                    ? 'Speech recognition: Checking...'
+                    : 'Speech recognition: ${_speechAvailable ? 'Available' : 'Unavailable'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: _speechAvailable
+                      ? AppPalette.deepBlue
+                      : theme.colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          if (!_speechAvailable &&
+              !_speechLoading &&
+              _speechStatusMessage != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              _speechStatusMessage!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
+          SwitchListTile(
+            value: _premiumPronunciation,
+            onChanged: _updatePremiumPronunciation,
+            title: const Text(
+              'Premium pronunciation phrases',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: const Text(
+              'Include phrase-based pronunciation tasks in training flow. '
+              'Requires an internet connection.',
+            ),
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(
+                  _hasInternet ? Icons.wifi : Icons.wifi_off,
+                  size: 18,
+                  color: _hasInternet
+                      ? AppPalette.deepBlue
+                      : theme.colorScheme.error,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Internet: ${_hasInternet ? 'Online' : 'Offline'}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: _hasInternet
+                        ? AppPalette.deepBlue
+                        : theme.colorScheme.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text('Logs', style: TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text(
+            'In-memory buffer (last ${(logBuffer.byteLength / 1024).toStringAsFixed(1)} KB).',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton.tonalIcon(
+            onPressed: logBuffer.isEmpty
+                ? null
+                : () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    await Clipboard.setData(
+                      ClipboardData(text: logBuffer.text),
+                    );
+                    if (!mounted) return;
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        content: Text('Logs copied to clipboard.'),
+                      ),
+                    );
+                  },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy logs'),
+          ),
+          const SizedBox(height: 28),
+          FilledButton.tonal(
+            onPressed: _confirmReset,
+            child: const Text('Reset progress'),
+          ),
+        ],
+      ),
+    );
+  }
+}

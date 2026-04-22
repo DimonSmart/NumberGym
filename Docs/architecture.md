@@ -1,70 +1,71 @@
-# Architecture
+# Workspace Architecture
 
-This document describes the current implementation, not a target-state design.
+This document describes the target working shape of the repository during the monorepo migration.
 
-## High-level layout
+## Working Units
 
-- Feature-first structure under `lib/features/`.
-- Main feature is `lib/features/training/`.
-- Layers inside feature:
-  - `ui/`: screens, widgets, view models;
-  - `domain/`: session orchestration, task scheduling, runtimes, business rules;
-  - `data/`: repositories and local persistence models.
+Only these directories are active sources of truth:
 
-## Runtime flow
+- `apps/number_gym`
+- `packages/trainer_core`
+- `packages/number_gym_content`
 
-- `main.dart` builds repositories/services and creates app root.
-- `TrainingController` (`ChangeNotifier`) is the UI-facing facade.
-- `TrainingSession` is the core orchestrator of one training flow.
-- `TrainingSession` delegates focused responsibilities to small domain components:
-  - `TaskScheduler`;
-  - `ProgressManager`;
-  - `TaskCardFlow`;
-  - `TaskProgressRecorder`;
-  - `SessionLifecycleTracker`;
-  - `SessionStatsRecorder`;
-  - `RuntimeCoordinator`;
-  - `FeedbackCoordinator`.
+These directories are intentionally frozen:
 
-## Dependency policy
+- `apps/verb_gym`
+- `packages/verb_gym_content`
 
-The project is intentionally pragmatic and close to a monolith for delivery speed.
+The old root Flutter app is transitional legacy code. It may still exist on disk until the cutover is complete, but new work should not be anchored to root `lib/`, root `test/`, or root platform folders.
 
-- Preferred direction:
-  - `ui -> domain`;
-  - `domain -> data` through repository interfaces;
-  - persistence details stay in `data`.
-- Practical exceptions exist:
-  - some domain orchestration classes use Flutter/runtime packages directly
-    (`kDebugMode`, speech package models).
+## Responsibility Split
 
-When reviewing changes, prefer reducing coupling and moving pure logic into small
-testable classes rather than enforcing strict layering at any cost.
+- `apps/number_gym`
+  - app bootstrap
+  - branding
+  - app-specific screens and integration glue
+  - app-level tests
+- `packages/trainer_core`
+  - training session orchestration
+  - scheduling
+  - progress and settings repositories
+  - reusable runtime services
+  - shared training UI shell
+- `packages/number_gym_content`
+  - number/time/phone content definitions
+  - language resources
+  - content-specific accepted variants and distractor rules
+  - content tests
 
-## State management
+## Target Dependency Direction
 
-- Global training state is exposed by `TrainingController`.
-- UI subscribes via `ChangeNotifier` listeners.
-- Per-task runtime state is owned by `RuntimeCoordinator` and passed through
-  immutable `TaskState` objects.
+- `apps/* -> packages/*`
+- `packages/number_gym_content -> packages/trainer_core`
+- `packages/trainer_core` must not depend on app-specific branding or content packages
 
-## Persistence
+`trainer_core` should remain reusable across multiple trainer apps. Branding, copy, assets, and content metadata belong in the app or content packages, not in the shared engine.
 
-- Local persistence uses Hive.
-- Settings and progress are scoped by selected language.
-- Session daily stats and streak are stored in settings storage.
+## Validation Flow
 
-## Testing expectations
+The root scripts are the supported way to validate the active workspace:
 
-- Domain helpers and coordinators should have focused unit tests.
-- Session-level behavior should be covered by integration-like domain tests
-  (for example `training_session_behavior_test.dart`).
-- Repository/storage behavior should be covered separately.
+```powershell
+pwsh ./tool/bootstrap.ps1
+pwsh ./tool/analyze_all.ps1
+pwsh ./tool/test_all.ps1
+```
 
-## Review checklist
+By default these scripts validate only the active migration path: `number_gym`, `trainer_core`, and `number_gym_content`.
 
-1. Is responsibility split clear, or did a god object grow again?
-2. Are new dependencies truly needed in each class?
-3. Is storage access still behind repositories?
-4. Are edge cases covered by tests (timeouts, unavailable services, empty pools)?
-5. Does documentation stay aligned with actual behavior?
+## Testing Boundaries
+
+The intended long-term test split is:
+
+- `packages/trainer_core/test`: shared algorithms and orchestration
+- `packages/number_gym_content/test`: NumberGym-specific content rules
+- `apps/number_gym/test`: app shell, branding, and integration behavior
+
+Root `test/` is legacy and should disappear once the cutover is complete.
+
+## Migration Rule
+
+If a change can be expressed in `apps/*` or `packages/*`, put it there. Do not create new root-level product code while the cutover is in progress.
