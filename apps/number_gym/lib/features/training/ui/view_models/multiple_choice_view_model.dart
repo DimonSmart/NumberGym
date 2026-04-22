@@ -42,8 +42,9 @@ class MultipleChoiceViewModel {
     final isNumericMode = isTextToValue;
     final isTimeOptions =
         isTextToValue && task.options.any((option) => option.contains(':'));
-    final title =
-        isTextToValue ? 'Choose the correct value' : 'Choose the correct wording';
+    final title = isTextToValue
+        ? 'Choose the correct value'
+        : 'Choose the correct wording';
     final promptStyle = theme.textTheme.displaySmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: theme.colorScheme.onSurface,
@@ -52,8 +53,7 @@ class MultipleChoiceViewModel {
     final optionStyle = isNumericMode
         ? theme.textTheme.headlineSmall
         : theme.textTheme.titleMedium;
-    final optionWidth =
-        isTextToValue ? (isTimeOptions ? 110.0 : 100.0) : 220.0;
+    final optionWidth = isTextToValue ? (isTimeOptions ? 110.0 : 100.0) : 220.0;
 
     return MultipleChoiceViewModel(
       title: title,

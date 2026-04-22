@@ -200,9 +200,7 @@ class NumberPronunciationRuntime extends TaskRuntimeBase {
   }
 
   TimerState _timerSnapshot() {
-    final remaining = _timerHasStarted
-        ? _cardTimer.remaining()
-        : _cardDuration;
+    final remaining = _timerHasStarted ? _cardTimer.remaining() : _cardDuration;
     return TimerState(
       isRunning: _cardTimer.isRunning,
       duration: _cardDuration,

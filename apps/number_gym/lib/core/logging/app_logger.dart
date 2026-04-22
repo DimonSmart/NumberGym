@@ -108,7 +108,7 @@ class AppLogger {
           print('$prefix stack: $stackTrace');
         }
       }
-      
+
       // Also pipe to dev.log for DevTools integration
       dev.log(
         '[${entry.time.toIso8601String()}] ${entry.message}',
@@ -143,22 +143,22 @@ void appLogI(String category, String message) {
   AppLogger.instance.log(LogLevel.info, category, message);
 }
 
-void appLogW(
-  String category,
-  String message, {
-  Object? error,
-  StackTrace? st,
-}) {
-  AppLogger.instance
-      .log(LogLevel.warn, category, message, error: error, stackTrace: st);
+void appLogW(String category, String message, {Object? error, StackTrace? st}) {
+  AppLogger.instance.log(
+    LogLevel.warn,
+    category,
+    message,
+    error: error,
+    stackTrace: st,
+  );
 }
 
-void appLogE(
-  String category,
-  String message, {
-  Object? error,
-  StackTrace? st,
-}) {
-  AppLogger.instance
-      .log(LogLevel.error, category, message, error: error, stackTrace: st);
+void appLogE(String category, String message, {Object? error, StackTrace? st}) {
+  AppLogger.instance.log(
+    LogLevel.error,
+    category,
+    message,
+    error: error,
+    stackTrace: st,
+  );
 }

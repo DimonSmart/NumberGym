@@ -7,8 +7,8 @@ class RuntimeCoordinator {
   RuntimeCoordinator({
     required void Function() onChanged,
     required void Function(TaskEvent event) onEvent,
-  })  : _onChanged = onChanged,
-        _onEvent = onEvent;
+  }) : _onChanged = onChanged,
+       _onEvent = onEvent;
 
   final void Function() _onChanged;
   final void Function(TaskEvent event) _onEvent;

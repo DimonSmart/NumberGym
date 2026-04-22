@@ -58,7 +58,8 @@ class ProgressManager {
   final Random _random;
 
   List<ExerciseCard> _cards = const <ExerciseCard>[];
-  final Map<String, ExerciseCard> _cardsByProgressKey = <String, ExerciseCard>{};
+  final Map<String, ExerciseCard> _cardsByProgressKey =
+      <String, ExerciseCard>{};
   final Map<String, CardProgress> _progressByKey = <String, CardProgress>{};
   final List<String> _recentPickHistory = <String>[];
   LearningLanguage? _cardsLanguage;
@@ -84,7 +85,7 @@ class ProgressManager {
   }
 
   int hintVisibleUntilCorrectStreak(ExerciseFamily family) {
-    return _learningParams.hintVisibleUntilCorrectStreak(family.difficultyTier);
+    return _learningParams.hintVisibleUntilCorrectStreakForFamily(family);
   }
 
   void refreshCardsIfNeeded(LearningLanguage language) {
@@ -97,15 +98,15 @@ class ProgressManager {
     _cardsByProgressKey
       ..clear()
       ..addEntries(
-        _cards.map(
-          (card) => MapEntry(card.progressId.storageKey, card),
-        ),
+        _cards.map((card) => MapEntry(card.progressId.storageKey, card)),
       );
   }
 
   Future<void> loadProgress(LearningLanguage language) async {
     refreshCardsIfNeeded(language);
-    final storageKeys = _cards.map((card) => card.progressId.storageKey).toList();
+    final storageKeys = _cards
+        .map((card) => card.progressId.storageKey)
+        .toList();
     if (storageKeys.isEmpty) {
       _progressByKey.clear();
       _recentPickHistory.clear();
@@ -218,7 +219,10 @@ class ProgressManager {
     }
 
     if (clusters.length > _learningParams.maxStoredClusters) {
-      clusters.removeRange(0, clusters.length - _learningParams.maxStoredClusters);
+      clusters.removeRange(
+        0,
+        clusters.length - _learningParams.maxStoredClusters,
+      );
     }
 
     var updated = progress.copyWith(
@@ -250,9 +254,9 @@ class ProgressManager {
   LearningQueueDebugSnapshot debugQueueSnapshot({DateTime? now}) {
     final resolvedNow = now ?? DateTime.now();
     final newCardsLimitReached = _isDailyNewLimitReached(resolvedNow);
-    final unlearned = _cards.where(
-      (card) => !(progressFor(card.progressId).learned),
-    ).toList();
+    final unlearned = _cards
+        .where((card) => !(progressFor(card.progressId).learned))
+        .toList();
     final weightByKey = <String, double>{};
     for (final card in unlearned) {
       weightByKey[card.progressId.storageKey] = _cardWeight(
@@ -312,7 +316,7 @@ class ProgressManager {
     final accuracy = progress.recentAccuracy(
       windowAttempts: _learningParams.recentAttemptsWindow,
     );
-    return accuracy >= _learningParams.targetAccuracy(family.difficultyTier);
+    return accuracy >= _learningParams.targetAccuracyForFamily(family);
   }
 
   ExerciseCard? _pickWeightedCard(
@@ -348,8 +352,8 @@ class ProgressManager {
   }) {
     var weight = _learningParams.baseTypeWeight(card.family.difficultyTier);
     if (!progress.learned) {
-      final targetAccuracy = _learningParams.targetAccuracy(
-        card.family.difficultyTier,
+      final targetAccuracy = _learningParams.targetAccuracyForFamily(
+        card.family,
       );
       final recentAccuracy = progress.recentAccuracy(
         windowAttempts: _learningParams.recentAttemptsWindow,
@@ -401,11 +405,16 @@ class ProgressManager {
   }
 
   bool _isDailyNewLimitReached(DateTime now) {
-    return _countNewCardsStartedToday(now) >= _learningParams.dailyNewCardsLimit;
+    return _countNewCardsStartedToday(now) >=
+        _learningParams.dailyNewCardsLimit;
   }
 
   int _countNewCardsStartedToday(DateTime now) {
-    final startOfDay = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    final startOfDay = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).millisecondsSinceEpoch;
     final endOfDay =
         DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch - 1;
     var count = 0;
@@ -419,7 +428,11 @@ class ProgressManager {
   }
 
   int _countAttemptsToday(DateTime now) {
-    final startOfDay = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    final startOfDay = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).millisecondsSinceEpoch;
     final endOfDay =
         DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch - 1;
     var attempts = 0;

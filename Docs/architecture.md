@@ -56,6 +56,15 @@ pwsh ./tool/test_all.ps1
 
 By default these scripts validate only the active migration path: `number_gym`, `trainer_core`, and `number_gym_content`.
 
+## Operational Entry Point
+
+For shipping tasks, `apps/number_gym` is the operational Flutter app.
+
+- Phone/device runs should happen from `tool/run_number_gym.ps1`
+- Web publishing should happen from `tool/publish_number_gym_web.ps1`
+
+Legacy root build scripts must not build the root Flutter app anymore.
+
 ## Testing Boundaries
 
 The intended long-term test split is:

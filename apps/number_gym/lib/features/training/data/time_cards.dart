@@ -33,12 +33,7 @@ List<TrainingItemId> buildTimeCardIds() {
       ),
     );
   }
-  ids.add(
-    const TrainingItemId(
-      type: TrainingItemType.timeRandom,
-      time: null,
-    ),
-  );
+  ids.add(const TrainingItemId(type: TrainingItemType.timeRandom, time: null));
   return ids;
 }
 
@@ -61,8 +56,5 @@ List<TimePronunciationTask> buildTimeCards({
 }
 
 TimeValue _randomTime(Random random) {
-  return TimeValue(
-    hour: random.nextInt(24),
-    minute: random.nextInt(60),
-  );
+  return TimeValue(hour: random.nextInt(24), minute: random.nextInt(60));
 }

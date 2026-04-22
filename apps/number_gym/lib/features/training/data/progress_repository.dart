@@ -60,5 +60,4 @@ class ProgressRepository implements ProgressRepositoryBase {
   String _cardKeyPrefix(LearningLanguage language) {
     return 'card_${language.code}_';
   }
-
 }

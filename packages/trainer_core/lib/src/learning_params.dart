@@ -72,13 +72,31 @@ class LearningParams {
     }
   }
 
+  double targetAccuracyForFamily(ExerciseFamily family) {
+    final override = family.masteryAccuracy;
+    if (override != null) {
+      return override;
+    }
+    return targetAccuracy(family.difficultyTier);
+  }
+
   int requiredCorrectAttemptsToLearn(ExerciseDifficultyTier tier) {
     final required = (minAttemptsToLearn * targetAccuracy(tier)).ceil();
     return required < 1 ? 1 : required;
   }
 
+  int requiredCorrectAttemptsToLearnForFamily(ExerciseFamily family) {
+    final required = (minAttemptsToLearn * targetAccuracyForFamily(family))
+        .ceil();
+    return required < 1 ? 1 : required;
+  }
+
   int hintVisibleUntilCorrectStreak(ExerciseDifficultyTier tier) {
     return requiredCorrectAttemptsToLearn(tier) ~/ 2;
+  }
+
+  int hintVisibleUntilCorrectStreakForFamily(ExerciseFamily family) {
+    return requiredCorrectAttemptsToLearnForFamily(family) ~/ 2;
   }
 
   double baseTypeWeight(ExerciseDifficultyTier tier) {

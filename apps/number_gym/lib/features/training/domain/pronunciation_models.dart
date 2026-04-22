@@ -2,10 +2,7 @@ class PronunciationPhoneme {
   final String phoneme;
   final double accuracyScore;
 
-  PronunciationPhoneme({
-    required this.phoneme,
-    required this.accuracyScore,
-  });
+  PronunciationPhoneme({required this.phoneme, required this.accuracyScore});
 
   factory PronunciationPhoneme.fromJson(Map<String, dynamic> json) {
     return PronunciationPhoneme(

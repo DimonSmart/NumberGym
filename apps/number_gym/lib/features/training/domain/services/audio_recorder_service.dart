@@ -16,7 +16,7 @@ abstract class AudioRecorderServiceBase {
 
 class AudioRecorderService implements AudioRecorderServiceBase {
   AudioRecorderService({AudioRecorder? recorder})
-      : _recorder = recorder ?? AudioRecorder();
+    : _recorder = recorder ?? AudioRecorder();
 
   final AudioRecorder _recorder;
   final StreamController<double> _amplitudeController =
@@ -39,7 +39,8 @@ class AudioRecorderService implements AudioRecorderServiceBase {
       _log('start failed: microphone permission denied');
       throw const AudioRecorderException('Microphone permission denied');
     }
-    final tempPath = '${Directory.systemTemp.path}/number_gym_${DateTime.now().millisecondsSinceEpoch}.wav';
+    final tempPath =
+        '${Directory.systemTemp.path}/number_gym_${DateTime.now().millisecondsSinceEpoch}.wav';
     _log('start: path=$tempPath');
     await _recorder.start(
       const RecordConfig(
@@ -52,13 +53,16 @@ class AudioRecorderService implements AudioRecorderServiceBase {
     _emitAmplitude = true;
     _amplitudeSubscription ??= _recorder
         .onAmplitudeChanged(const Duration(milliseconds: 80))
-        .listen((amplitude) {
-          if (!_emitAmplitude) return;
-          if (_amplitudeController.isClosed) return;
-          _amplitudeController.add(amplitude.current);
-        }, onError: (error) {
-          _log('amplitude error: $error');
-        });
+        .listen(
+          (amplitude) {
+            if (!_emitAmplitude) return;
+            if (_amplitudeController.isClosed) return;
+            _amplitudeController.add(amplitude.current);
+          },
+          onError: (error) {
+            _log('amplitude error: $error');
+          },
+        );
     _isRecording = true;
     _log('start: recording=true');
   }

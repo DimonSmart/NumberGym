@@ -43,7 +43,7 @@ class ListeningViewModel {
     final title = task.timeValue != null
         ? 'Listen and choose the time'
         : 'Listen and choose the number';
-    
+
     return ListeningViewModel(
       title: title,
       displayText: displayText,

@@ -25,6 +25,8 @@ Run everything from the repository root:
 pwsh ./tool/bootstrap.ps1
 pwsh ./tool/analyze_all.ps1
 pwsh ./tool/test_all.ps1
+pwsh ./tool/run_number_gym.ps1
+pwsh ./tool/publish_number_gym_web.ps1
 ```
 
 Use `-IncludeFrozen` only when you intentionally want to validate the frozen verb stubs as well.
@@ -42,6 +44,11 @@ Use `-IncludeFrozen` only when you intentionally want to validate the frozen ver
 
 - App lockfiles are committed.
 - Internal package lockfiles are not treated as source of truth and are ignored.
+
+## Shipping Commands
+
+- Run NumberGym on a connected phone: `pwsh ./tool/run_number_gym.ps1 -DeviceId <device-id>`
+- Publish NumberGym web to GitHub Pages: `pwsh ./tool/publish_number_gym_web.ps1`
 
 ## Docs
 

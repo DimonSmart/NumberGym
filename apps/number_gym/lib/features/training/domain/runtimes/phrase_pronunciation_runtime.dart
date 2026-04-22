@@ -20,22 +20,22 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
     required AudioRecorderServiceBase audioRecorder,
     required SoundWaveServiceBase soundWaveService,
     required AzureSpeechService azureSpeechService,
-  })  : _task = task,
-        _language = language,
-        _audioRecorder = audioRecorder,
-        _soundWaveService = soundWaveService,
-        _azureSpeechService = azureSpeechService,
-        super(
-          PhrasePronunciationState(
-            taskId: task.id,
-            numberValue: task.numberValue,
-            displayText: task.displayText,
-            flow: PhraseFlow.waiting,
-            hasRecording: false,
-            result: null,
-            isWaveVisible: false,
-          ),
-        );
+  }) : _task = task,
+       _language = language,
+       _audioRecorder = audioRecorder,
+       _soundWaveService = soundWaveService,
+       _azureSpeechService = azureSpeechService,
+       super(
+         PhrasePronunciationState(
+           taskId: task.id,
+           numberValue: task.numberValue,
+           displayText: task.displayText,
+           flow: PhraseFlow.waiting,
+           hasRecording: false,
+           result: null,
+           isWaveVisible: false,
+         ),
+       );
 
   final PhrasePronunciationTask _task;
   final LearningLanguage _language;
@@ -114,7 +114,9 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
     } catch (error) {
       _flow = PhraseFlow.waiting;
       emitState(_buildState());
-      emitEvent(TaskError('Cannot start recording: $error', shouldPause: false));
+      emitEvent(
+        TaskError('Cannot start recording: $error', shouldPause: false),
+      );
       _log('Pronunciation recording failed to start: $error');
     }
   }
@@ -176,8 +178,8 @@ class PhrasePronunciationRuntime extends TaskRuntimeBase {
       appLogI(
         'task',
         'Answer: kind=phrasePronunciation id=${_task.id} '
-        'expected="${_task.text}" heard="${result.displayText ?? ''}" '
-        'pronScore=$score',
+            'expected="${_task.text}" heard="${result.displayText ?? ''}" '
+            'pronScore=$score',
       );
       _log('Pronunciation send: completed, awaiting review.');
     } catch (error) {

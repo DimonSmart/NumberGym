@@ -40,7 +40,7 @@ abstract class SpeechServiceBase {
 
 class SpeechService implements SpeechServiceBase {
   SpeechService({stt.SpeechToText? speech})
-      : _speech = speech ?? stt.SpeechToText();
+    : _speech = speech ?? stt.SpeechToText();
 
   final stt.SpeechToText _speech;
   List<stt.LocaleName> _locales = const [];

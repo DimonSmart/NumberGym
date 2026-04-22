@@ -30,8 +30,9 @@ class SoundWaveform extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final barColor = theme.colorScheme.onSurface.withValues(alpha: 0.82);
-    final trackColor =
-        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.7);
+    final trackColor = theme.colorScheme.surfaceContainerHighest.withValues(
+      alpha: 0.7,
+    );
     final borderColor = theme.colorScheme.onSurface.withValues(alpha: 0.12);
     final centerLineColor = theme.colorScheme.onSurface.withValues(alpha: 0.08);
     final barRadius = BorderRadius.circular(barWidth / 2);
@@ -56,10 +57,7 @@ class SoundWaveform extends StatelessWidget {
               Positioned.fill(
                 child: Align(
                   alignment: Alignment.center,
-                  child: Container(
-                    height: 1,
-                    color: centerLineColor,
-                  ),
+                  child: Container(height: 1, color: centerLineColor),
                 ),
               ),
               Row(

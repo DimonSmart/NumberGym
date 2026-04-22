@@ -19,10 +19,8 @@ class NumberPronunciationTask extends NumberTrainingTask
     required this.prompt,
     required this.language,
     required this.answers,
-  })  : assert(id.number == numberValue),
-        super(
-          kind: LearningMethod.numberPronunciation,
-        );
+  }) : assert(id.number == numberValue),
+       super(kind: LearningMethod.numberPronunciation);
 
   @override
   String get displayText => prompt;
@@ -42,9 +40,7 @@ class NumberPronunciationTask extends NumberTrainingTask
       context.toWords(numberValue);
 
   @override
-  List<String> valueToTextCandidateOptions(
-    MultipleChoiceBuildContext context,
-  ) {
+  List<String> valueToTextCandidateOptions(MultipleChoiceBuildContext context) {
     final candidates = <String>[];
     for (final itemId in context.cardIds) {
       if (itemId.type != id.type || itemId.number == null) continue;

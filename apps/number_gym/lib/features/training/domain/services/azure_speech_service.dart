@@ -7,8 +7,8 @@ import '../pronunciation_models.dart';
 
 class AzureSpeechService {
   AzureSpeechService({http.Client? client, Uri? endpoint})
-      : _client = client ?? http.Client(),
-        _endpoint = endpoint ?? Uri.parse(_defaultEndpoint);
+    : _client = client ?? http.Client(),
+      _endpoint = endpoint ?? Uri.parse(_defaultEndpoint);
 
   final http.Client _client;
   final Uri _endpoint;
@@ -29,7 +29,9 @@ class AzureSpeechService {
       ..fields['expectedText'] = expectedText
       ..fields['language'] = language;
 
-    request.files.add(await http.MultipartFile.fromPath('audio', audioFile.path));
+    request.files.add(
+      await http.MultipartFile.fromPath('audio', audioFile.path),
+    );
 
     final response = await _client.send(request);
     final body = await response.stream.bytesToString();

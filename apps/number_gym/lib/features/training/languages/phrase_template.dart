@@ -16,7 +16,8 @@ class PhraseTemplate {
 
   bool supports(int value) => value >= minValue && value <= maxValue;
 
-  String materialize(int value) => templateText.replaceAll('{X}', value.toString());
+  String materialize(int value) =>
+      templateText.replaceAll('{X}', value.toString());
 
   PhrasePronunciationTask toTask({
     required int value,

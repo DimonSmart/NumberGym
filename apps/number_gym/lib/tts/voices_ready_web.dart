@@ -25,9 +25,9 @@ class VoicesReady {
     _sub ??= web.EventStreamProvider<web.Event>('voiceschanged')
         .forTarget(synth)
         .listen((_) {
-      // Let the browser apply updates before checking.
-      scheduleMicrotask(tryComplete);
-    });
+          // Let the browser apply updates before checking.
+          scheduleMicrotask(tryComplete);
+        });
 
     final deadline = DateTime.now().add(timeout);
     while (!completer.isCompleted && DateTime.now().isBefore(deadline)) {

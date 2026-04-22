@@ -18,7 +18,9 @@ class SessionStatsRecorder {
     DateTime? now,
   }) async {
     final resolvedNow = now ?? DateTime.now();
-    var todayStats = _settingsRepository.readDailySessionStats(now: resolvedNow);
+    var todayStats = _settingsRepository.readDailySessionStats(
+      now: resolvedNow,
+    );
     if (cardsCompleted <= 0) {
       return todayStats;
     }

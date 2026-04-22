@@ -1,155 +1,186 @@
-import 'package:flutter/widgets.dart';
+import 'dart:math';
+
 import 'package:trainer_core/trainer_core.dart';
 
-class NumberGymLanguageResources {
-  const NumberGymLanguageResources({
-    required this.profile,
-    required this.numberWords,
-    required this.timeWords,
-    required this.plusWord,
-  });
+import 'domain/time_value.dart';
+import 'languages/language_pack.dart';
+import 'languages/registry.dart';
+import 'number_gym_matcher_tokenizer.dart';
 
-  final BaseLanguageProfile profile;
-  final String Function(int value) numberWords;
-  final String Function(TimeValue time) timeWords;
-  final String plusWord;
-}
+const _numberGymModuleId = 'number_gym';
+const _countryCode = 34;
+const _phoneCardsPerFormat = 16;
+const _phoneGroupSeparator = ' • ';
 
-class TimeValue implements Comparable<TimeValue> {
-  const TimeValue({
-    required this.hour,
-    required this.minute,
-  }) : assert(hour >= 0 && hour <= 23),
-       assert(minute >= 0 && minute <= 59);
+const List<ExerciseMode> _numberModes = <ExerciseMode>[
+  ExerciseMode.speak,
+  ExerciseMode.chooseFromPrompt,
+  ExerciseMode.chooseFromAnswer,
+  ExerciseMode.listenAndChoose,
+  ExerciseMode.reviewPronunciation,
+];
 
-  final int hour;
-  final int minute;
+const List<ExerciseMode> _timeModes = <ExerciseMode>[
+  ExerciseMode.speak,
+  ExerciseMode.chooseFromPrompt,
+  ExerciseMode.chooseFromAnswer,
+  ExerciseMode.listenAndChoose,
+];
 
-  String get displayText =>
-      '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-
-  @override
-  int compareTo(TimeValue other) {
-    final byHour = hour.compareTo(other.hour);
-    if (byHour != 0) {
-      return byHour;
-    }
-    return minute.compareTo(other.minute);
-  }
-}
+const List<ExerciseMode> _phoneModes = <ExerciseMode>[ExerciseMode.speak];
 
 TrainingAppDefinition buildNumberGymAppDefinition({required AppConfig config}) {
-  const supportedLanguages = <LearningLanguage>[
-    LearningLanguage.english,
-    LearningLanguage.spanish,
-  ];
-  final resourcesByLanguage = <LearningLanguage, NumberGymLanguageResources>{
-    LearningLanguage.english: NumberGymLanguageResources(
-      profile: BaseLanguageProfile(
-        language: LearningLanguage.english,
-        code: 'en',
-        label: 'English',
-        locale: 'en-US',
-        textDirection: TextDirection.ltr,
-        ttsPreviewText: 'one two three',
-        preferredSpeechLocaleId: 'en_US',
-        normalizer: _normalizeLatin,
-      ),
-      numberWords: _numberToEnglish,
-      timeWords: _timeToEnglish,
-      plusWord: 'plus',
-    ),
-    LearningLanguage.spanish: NumberGymLanguageResources(
-      profile: BaseLanguageProfile(
-        language: LearningLanguage.spanish,
-        code: 'es',
-        label: 'Spanish',
-        locale: 'es-ES',
-        textDirection: TextDirection.ltr,
-        ttsPreviewText: 'uno dos tres',
-        preferredSpeechLocaleId: 'es_ES',
-        normalizer: _normalizeLatin,
-      ),
-      numberWords: _numberToSpanish,
-      timeWords: _timeToSpanish,
-      plusWord: 'mas',
-    ),
-  };
-
   return TrainingAppDefinition(
     config: config,
-    supportedLanguages: supportedLanguages,
-    profileOf: (language) => resourcesByLanguage[language]!.profile,
-    tokenizerOf: (language) => GenericMatcherTokenizer(
-      resourcesByLanguage[language]!.profile.normalizer,
-    ),
-    catalog: ExerciseCatalog(
-      modules: <TrainingModule>[
-        NumberGymModule(resourcesByLanguage: resourcesByLanguage),
-      ],
-    ),
+    supportedLanguages: LearningLanguage.values,
+    profileOf: (language) => LanguageRegistry.of(language).profile,
+    tokenizerOf: (language) =>
+        NumberGymMatcherTokenizer(LanguageRegistry.of(language)),
+    catalog: ExerciseCatalog(modules: <TrainingModule>[NumberGymModule()]),
   );
 }
 
 class NumberGymModule implements TrainingModule {
-  NumberGymModule({required this.resourcesByLanguage});
+  NumberGymModule({Random? random}) : _random = random ?? Random();
 
-  final Map<LearningLanguage, NumberGymLanguageResources> resourcesByLanguage;
+  final Random _random;
+  final Map<String, TimeValue> _lastRandomTimeByLanguage =
+      <String, TimeValue>{};
+  final Map<String, int> _lastRandomPhoneByFamily = <String, int>{};
 
-  static final ExerciseFamily _numbersFamily = ExerciseFamily(
-    moduleId: 'numbers',
-    id: 'numbers',
-    label: 'Numbers',
-    shortLabel: 'Numbers',
-    difficultyTier: ExerciseDifficultyTier.easy,
-    defaultDuration: const Duration(seconds: 18),
-    supportedModes: const <ExerciseMode>[
-      ExerciseMode.speak,
-      ExerciseMode.chooseFromPrompt,
-      ExerciseMode.chooseFromAnswer,
-      ExerciseMode.listenAndChoose,
-    ],
-  );
+  late final Map<String, ExerciseFamily> _families = <String, ExerciseFamily>{
+    'digits': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'digits',
+      label: 'Digits',
+      shortLabel: 'Digits',
+      difficultyTier: ExerciseDifficultyTier.easy,
+      defaultDuration: const Duration(seconds: 10),
+      supportedModes: _numberModes,
+    ),
+    'base': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'base',
+      label: 'Base',
+      shortLabel: 'Base',
+      difficultyTier: ExerciseDifficultyTier.easy,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _numberModes,
+    ),
+    'hundreds': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'hundreds',
+      label: 'Hundreds',
+      shortLabel: 'Hundreds',
+      difficultyTier: ExerciseDifficultyTier.medium,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _numberModes,
+    ),
+    'thousands': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'thousands',
+      label: 'Thousands',
+      shortLabel: 'Thousands',
+      difficultyTier: ExerciseDifficultyTier.medium,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _numberModes,
+    ),
+    'timeExact': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'timeExact',
+      label: 'Time (exact)',
+      shortLabel: 'Time exact',
+      difficultyTier: ExerciseDifficultyTier.medium,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _timeModes,
+    ),
+    'timeQuarter': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'timeQuarter',
+      label: 'Time (quarter)',
+      shortLabel: 'Time quarter',
+      difficultyTier: ExerciseDifficultyTier.hard,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _timeModes,
+    ),
+    'timeHalf': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'timeHalf',
+      label: 'Time (half)',
+      shortLabel: 'Time half',
+      difficultyTier: ExerciseDifficultyTier.medium,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _timeModes,
+    ),
+    'timeRandom': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'timeRandom',
+      label: 'Time (random)',
+      shortLabel: 'Time random',
+      difficultyTier: ExerciseDifficultyTier.hard,
+      defaultDuration: const Duration(seconds: 15),
+      supportedModes: _timeModes,
+    ),
+    'phone33x3': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'phone33x3',
+      label: 'Phone numbers (3-3-3)',
+      shortLabel: 'Phone 3-3-3',
+      difficultyTier: ExerciseDifficultyTier.hard,
+      defaultDuration: const Duration(seconds: 30),
+      supportedModes: _phoneModes,
+      masteryAccuracy: 0.8,
+    ),
+    'phone3222': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'phone3222',
+      label: 'Phone numbers (3-2-2-2)',
+      shortLabel: 'Phone 3-2-2-2',
+      difficultyTier: ExerciseDifficultyTier.hard,
+      defaultDuration: const Duration(seconds: 30),
+      supportedModes: _phoneModes,
+      masteryAccuracy: 0.8,
+    ),
+    'phone2322': ExerciseFamily(
+      moduleId: moduleId,
+      id: 'phone2322',
+      label: 'Phone numbers (2-3-2-2)',
+      shortLabel: 'Phone 2-3-2-2',
+      difficultyTier: ExerciseDifficultyTier.hard,
+      defaultDuration: const Duration(seconds: 30),
+      supportedModes: _phoneModes,
+      masteryAccuracy: 0.8,
+    ),
+  };
 
-  static final ExerciseFamily _timesFamily = ExerciseFamily(
-    moduleId: 'numbers',
-    id: 'time',
-    label: 'Time',
-    shortLabel: 'Time',
-    difficultyTier: ExerciseDifficultyTier.medium,
-    defaultDuration: const Duration(seconds: 22),
-    supportedModes: const <ExerciseMode>[
-      ExerciseMode.speak,
-      ExerciseMode.chooseFromPrompt,
-      ExerciseMode.chooseFromAnswer,
-      ExerciseMode.listenAndChoose,
-    ],
-  );
-
-  static final ExerciseFamily _phonesFamily = ExerciseFamily(
-    moduleId: 'numbers',
-    id: 'phone',
-    label: 'Phone',
-    shortLabel: 'Phone',
-    difficultyTier: ExerciseDifficultyTier.hard,
-    defaultDuration: const Duration(seconds: 26),
-    supportedModes: const <ExerciseMode>[
-      ExerciseMode.speak,
-      ExerciseMode.chooseFromPrompt,
-      ExerciseMode.chooseFromAnswer,
-      ExerciseMode.listenAndChoose,
-    ],
-  );
+  static const List<String> _familyOrder = <String>[
+    'digits',
+    'base',
+    'hundreds',
+    'thousands',
+    'timeExact',
+    'timeQuarter',
+    'timeHalf',
+    'timeRandom',
+    'phone33x3',
+    'phone3222',
+    'phone2322',
+  ];
 
   @override
-  String get moduleId => 'numbers';
+  String get moduleId => _numberGymModuleId;
 
   @override
   String get displayName => 'Number Gym';
 
   @override
   bool supportsLanguage(LearningLanguage language) {
-    return resourcesByLanguage.containsKey(language);
+    try {
+      LanguageRegistry.of(language);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
@@ -158,229 +189,697 @@ class NumberGymModule implements TrainingModule {
       return const <ExerciseFamily>[];
     }
     return <ExerciseFamily>[
-      _numbersFamily,
-      _timesFamily,
-      _phonesFamily,
+      for (final familyId in _familyOrder) _families[familyId]!,
     ];
   }
 
   @override
   List<ExerciseCard> buildCards(LearningLanguage language) {
-    final resources = resourcesByLanguage[language];
-    if (resources == null) {
+    if (!supportsLanguage(language)) {
       return const <ExerciseCard>[];
     }
 
-    final seeds = <_SeedCard>[
-      ..._buildNumberSeeds(language, resources),
-      ..._buildTimeSeeds(language, resources),
-      ..._buildPhoneSeeds(language, resources),
+    final pack = LanguageRegistry.of(language);
+    final seeds = <_CardSeed>[
+      ..._buildNumberSeeds(language),
+      ..._buildTimeSeeds(language),
+      ..._buildPhoneSeeds(language),
     ];
+    final seedsByFamily = <String, List<_CardSeed>>{};
+    for (final seed in seeds) {
+      seedsByFamily.putIfAbsent(seed.family.id, () => <_CardSeed>[]).add(seed);
+    }
 
-    return seeds.map((seed) {
-      return ExerciseCard(
-        id: seed.id,
-        progressId: seed.id,
-        family: seed.family,
+    return seeds
+        .map((seed) {
+          return _materializeSeed(
+            seed: seed,
+            pack: pack,
+            seedsByFamily: seedsByFamily,
+            dynamic: false,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  List<_CardSeed> _buildNumberSeeds(LearningLanguage language) {
+    final seeds = <_CardSeed>[];
+    void addRange(String familyId, int from, int to, int step) {
+      for (var value = from; value <= to; value += step) {
+        final family = _families[familyId]!;
+        seeds.add(
+          _CardSeed(
+            id: ExerciseId(
+              moduleId: moduleId,
+              familyId: family.id,
+              variantId: value.toString(),
+            ),
+            family: family,
+            language: language,
+            kind: _SeedKind.number,
+            numberValue: value,
+          ),
+        );
+      }
+    }
+
+    addRange('digits', 0, 9, 1);
+    addRange('base', 10, 99, 1);
+    addRange('hundreds', 100, 900, 100);
+    addRange('thousands', 1000, 9000, 1000);
+    return seeds;
+  }
+
+  List<_CardSeed> _buildTimeSeeds(LearningLanguage language) {
+    final seeds = <_CardSeed>[];
+    for (var hour = 0; hour < 24; hour += 1) {
+      seeds.add(
+        _timeSeed(
+          language: language,
+          familyId: 'timeExact',
+          value: TimeValue(hour: hour, minute: 0),
+        ),
+      );
+      seeds.add(
+        _timeSeed(
+          language: language,
+          familyId: 'timeHalf',
+          value: TimeValue(hour: hour, minute: 30),
+        ),
+      );
+      seeds.add(
+        _timeSeed(
+          language: language,
+          familyId: 'timeQuarter',
+          value: TimeValue(hour: hour, minute: 15),
+        ),
+      );
+      seeds.add(
+        _timeSeed(
+          language: language,
+          familyId: 'timeQuarter',
+          value: TimeValue(hour: hour, minute: 45),
+        ),
+      );
+    }
+    seeds.add(
+      _CardSeed(
+        id: ExerciseId(
+          moduleId: moduleId,
+          familyId: 'timeRandom',
+          variantId: 'random',
+        ),
+        family: _families['timeRandom']!,
         language: language,
-        displayText: seed.displayText,
-        promptText: seed.canonicalAnswer,
-        acceptedAnswers: seed.acceptedAnswers,
-        celebrationText: seed.celebrationText,
-        chooseFromPrompt: ChoiceExerciseSpec(
-          prompt: seed.displayText,
-          correctOption: seed.canonicalAnswer,
-          options: _buildOptions(
-            seed: seed,
-            allSeeds: seeds,
-            valueOf: (candidate) => candidate.canonicalAnswer,
-          ),
-        ),
-        chooseFromAnswer: ChoiceExerciseSpec(
-          prompt: seed.canonicalAnswer,
-          correctOption: seed.displayText,
-          options: _buildOptions(
-            seed: seed,
-            allSeeds: seeds,
-            valueOf: (candidate) => candidate.displayText,
-          ),
-        ),
-        listenAndChoose: ListeningExerciseSpec(
-          speechText: seed.audioText,
-          correctOption: seed.displayText,
-          options: _buildOptions(
-            seed: seed,
-            allSeeds: seeds,
-            valueOf: (candidate) => candidate.displayText,
-          ),
-        ),
-      );
-    }).toList(growable: false);
+        kind: _SeedKind.timeRandom,
+      ),
+    );
+    return seeds;
   }
 
-  List<_SeedCard> _buildNumberSeeds(
-    LearningLanguage language,
-    NumberGymLanguageResources resources,
-  ) {
-    final values = <int>[
-      for (var value = 0; value <= 99; value += 1) value,
-      for (var value = 100; value <= 900; value += 100) value,
-      for (var value = 1000; value <= 9000; value += 1000) value,
-    ];
-    return values.map((value) {
-      final answer = resources.numberWords(value);
-      return _SeedCard(
-        id: ExerciseId(
-          moduleId: moduleId,
-          familyId: _numbersFamily.id,
-          variantId: value.toString(),
-        ),
-        family: _numbersFamily,
-        displayText: value.toString(),
-        canonicalAnswer: answer,
-        acceptedAnswers: _uniqueStrings(<String>[
-          answer,
-          value.toString(),
-        ]),
-        celebrationText: '$value -> $answer',
-      );
-    }).toList(growable: false);
-  }
-
-  List<_SeedCard> _buildTimeSeeds(
-    LearningLanguage language,
-    NumberGymLanguageResources resources,
-  ) {
-    final values = <TimeValue>[
-      for (var hour = 0; hour < 24; hour += 1) TimeValue(hour: hour, minute: 0),
-      for (var hour = 0; hour < 24; hour += 1) TimeValue(hour: hour, minute: 15),
-      for (var hour = 0; hour < 24; hour += 1) TimeValue(hour: hour, minute: 30),
-      for (var hour = 0; hour < 24; hour += 1) TimeValue(hour: hour, minute: 45),
-    ]..sort();
-
-    return values.map((time) {
-      final answer = resources.timeWords(time);
-      return _SeedCard(
-        id: ExerciseId(
-          moduleId: moduleId,
-          familyId: _timesFamily.id,
-          variantId: time.displayText,
-        ),
-        family: _timesFamily,
-        displayText: time.displayText,
-        canonicalAnswer: answer,
-        acceptedAnswers: _uniqueStrings(<String>[
-          answer,
-          time.displayText,
-        ]),
-        celebrationText: '${time.displayText} -> $answer',
-      );
-    }).toList(growable: false);
-  }
-
-  List<_SeedCard> _buildPhoneSeeds(
-    LearningLanguage language,
-    NumberGymLanguageResources resources,
-  ) {
-    const countryCode = 34;
-    final numbers = <String>[
-      '612 345 678',
-      '623 456 781',
-      '634 567 812',
-      '645 678 123',
-      '656 781 234',
-      '667 812 345',
-      '678 123 456',
-      '689 234 567',
-      '712 345 678',
-      '723 456 781',
-      '734 567 812',
-      '745 678 123',
-      '812 345 678',
-      '823 456 781',
-      '934 567 812',
-      '945 678 123',
-    ];
-
-    return numbers.asMap().entries.map((entry) {
-      final grouped = entry.value;
-      final compact = grouped.replaceAll(' ', '');
-      final withPrefix = entry.key.isEven
-          ? '+$countryCode $grouped'
-          : grouped;
-      final spoken = _spokenPhone(
-        groupedLocal: grouped,
-        includePrefix: entry.key.isEven,
-        countryCode: countryCode,
-        plusWord: resources.plusWord,
-        numberWords: resources.numberWords,
-      );
-      return _SeedCard(
-        id: ExerciseId(
-          moduleId: moduleId,
-          familyId: _phonesFamily.id,
-          variantId: compact,
-        ),
-        family: _phonesFamily,
-        displayText: withPrefix,
-        canonicalAnswer: spoken,
-        acceptedAnswers: _uniqueStrings(<String>[
-          spoken,
-          withPrefix,
-          compact,
-          grouped,
-          if (entry.key.isEven) '$countryCode$compact',
-        ]),
-        celebrationText: '$withPrefix -> $spoken',
-      );
-    }).toList(growable: false);
-  }
-
-  List<String> _buildOptions({
-    required _SeedCard seed,
-    required List<_SeedCard> allSeeds,
-    required String Function(_SeedCard candidate) valueOf,
+  _CardSeed _timeSeed({
+    required LearningLanguage language,
+    required String familyId,
+    required TimeValue value,
   }) {
-    final options = <String>[valueOf(seed)];
-    for (final candidate in allSeeds) {
-      if (candidate.id == seed.id || candidate.family != seed.family) {
+    final family = _families[familyId]!;
+    return _CardSeed(
+      id: ExerciseId(
+        moduleId: moduleId,
+        familyId: family.id,
+        variantId: value.storageKey,
+      ),
+      family: family,
+      language: language,
+      kind: _SeedKind.timeStatic,
+      timeValue: value,
+    );
+  }
+
+  List<_CardSeed> _buildPhoneSeeds(LearningLanguage language) {
+    final seeds = <_CardSeed>[];
+    final seen = <int>{};
+    final rng = Random(34034);
+    for (var i = 0; i < _phoneCardsPerFormat; i += 1) {
+      seeds.add(
+        _phoneSeed(
+          language: language,
+          familyId: 'phone33x3',
+          localNumber: _uniquePhoneValue('phone33x3', rng, seen),
+        ),
+      );
+      seeds.add(
+        _phoneSeed(
+          language: language,
+          familyId: 'phone3222',
+          localNumber: _uniquePhoneValue('phone3222', rng, seen),
+        ),
+      );
+      seeds.add(
+        _phoneSeed(
+          language: language,
+          familyId: 'phone2322',
+          localNumber: _uniquePhoneValue('phone2322', rng, seen),
+        ),
+      );
+    }
+    return seeds;
+  }
+
+  _CardSeed _phoneSeed({
+    required LearningLanguage language,
+    required String familyId,
+    required int localNumber,
+  }) {
+    final family = _families[familyId]!;
+    return _CardSeed(
+      id: ExerciseId(
+        moduleId: moduleId,
+        familyId: family.id,
+        variantId: localNumber.toString(),
+      ),
+      family: family,
+      language: language,
+      kind: _SeedKind.phone,
+      phoneValue: localNumber,
+    );
+  }
+
+  ExerciseCard _materializeSeed({
+    required _CardSeed seed,
+    required LanguagePack pack,
+    required Map<String, List<_CardSeed>> seedsByFamily,
+    required bool dynamic,
+  }) {
+    switch (seed.kind) {
+      case _SeedKind.number:
+        return _buildNumberCard(
+          seed: seed,
+          pack: pack,
+          familySeeds: seedsByFamily[seed.family.id] ?? const <_CardSeed>[],
+          dynamic: dynamic,
+          dynamicResolver: dynamic
+              ? null
+              : () => _materializeSeed(
+                  seed: seed,
+                  pack: pack,
+                  seedsByFamily: seedsByFamily,
+                  dynamic: true,
+                ),
+        );
+      case _SeedKind.timeStatic:
+        return _buildTimeCard(
+          seed: seed,
+          pack: pack,
+          value: seed.timeValue!,
+          dynamic: dynamic,
+          dynamicResolver: dynamic
+              ? null
+              : () => _materializeSeed(
+                  seed: seed,
+                  pack: pack,
+                  seedsByFamily: seedsByFamily,
+                  dynamic: true,
+                ),
+        );
+      case _SeedKind.timeRandom:
+        final value = dynamic
+            ? _nextRandomTime(seed.language)
+            : const TimeValue(hour: 0, minute: 0);
+        return _buildTimeCard(
+          seed: seed,
+          pack: pack,
+          value: value,
+          dynamic: dynamic,
+          dynamicResolver: dynamic
+              ? null
+              : () => _materializeSeed(
+                  seed: seed,
+                  pack: pack,
+                  seedsByFamily: seedsByFamily,
+                  dynamic: true,
+                ),
+        );
+      case _SeedKind.phone:
+        final localNumber = dynamic
+            ? _nextRandomPhoneValue(seed)
+            : seed.phoneValue!;
+        final includePrefix = dynamic
+            ? _random.nextBool()
+            : (seed.phoneValue!.isEven);
+        return _buildPhoneCard(
+          seed: seed,
+          pack: pack,
+          localNumber: localNumber,
+          includePrefix: includePrefix,
+          dynamicResolver: dynamic
+              ? null
+              : () => _materializeSeed(
+                  seed: seed,
+                  pack: pack,
+                  seedsByFamily: seedsByFamily,
+                  dynamic: true,
+                ),
+        );
+    }
+  }
+
+  ExerciseCard _buildNumberCard({
+    required _CardSeed seed,
+    required LanguagePack pack,
+    required List<_CardSeed> familySeeds,
+    required bool dynamic,
+    required DynamicExerciseResolver? dynamicResolver,
+  }) {
+    final value = seed.numberValue!;
+    final displayText = value.toString();
+    final spoken = pack.numberWordsConverter(value);
+    final reviewSpec = ReviewPronunciationSpec(
+      expectedText: _phraseForValue(value, pack, dynamic: dynamic),
+    );
+
+    return ExerciseCard(
+      id: seed.id,
+      progressId: seed.id,
+      family: seed.family,
+      language: seed.language,
+      displayText: displayText,
+      promptText: displayText,
+      acceptedAnswers: _uniqueStrings(<String>[displayText, spoken]),
+      celebrationText: '$displayText -> $spoken',
+      chooseFromPrompt: ChoiceExerciseSpec(
+        prompt: displayText,
+        correctOption: spoken,
+        options: _buildNumberWordOptions(
+          currentValue: value,
+          correctOption: spoken,
+          familySeeds: familySeeds,
+          pack: pack,
+        ),
+      ),
+      chooseFromAnswer: ChoiceExerciseSpec(
+        prompt: spoken,
+        correctOption: displayText,
+        options: _buildNumberDisplayOptions(
+          currentValue: value,
+          correctOption: displayText,
+          familySeeds: familySeeds,
+        ),
+      ),
+      listenAndChoose: ListeningExerciseSpec(
+        speechText: spoken,
+        correctOption: displayText,
+        options: _buildNumberDisplayOptions(
+          currentValue: value,
+          correctOption: displayText,
+          familySeeds: familySeeds,
+        ),
+      ),
+      reviewPronunciation: reviewSpec,
+      dynamicResolver: dynamicResolver,
+    );
+  }
+
+  ExerciseCard _buildTimeCard({
+    required _CardSeed seed,
+    required LanguagePack pack,
+    required TimeValue value,
+    required bool dynamic,
+    required DynamicExerciseResolver? dynamicResolver,
+  }) {
+    final displayText = value.displayText;
+    final spoken = pack.timeWordsConverter(value);
+    final promptAliases = _timePromptAliases(pack, value);
+
+    return ExerciseCard(
+      id: seed.id,
+      progressId: seed.id,
+      family: seed.family,
+      language: seed.language,
+      displayText: displayText,
+      promptText: displayText,
+      acceptedAnswers: _uniqueStrings(<String>[displayText, spoken]),
+      celebrationText: '$displayText -> $spoken',
+      matcherConfig: ExerciseMatcherConfig(promptAliases: promptAliases),
+      chooseFromPrompt: ChoiceExerciseSpec(
+        prompt: displayText,
+        correctOption: spoken,
+        options: _buildTimeWordOptions(
+          currentValue: value,
+          correctOption: spoken,
+          familyId: seed.family.id,
+          pack: pack,
+          dynamic: dynamic,
+        ),
+      ),
+      chooseFromAnswer: ChoiceExerciseSpec(
+        prompt: spoken,
+        correctOption: displayText,
+        options: _buildTimeDisplayOptions(
+          currentValue: value,
+          correctOption: displayText,
+          familyId: seed.family.id,
+          dynamic: dynamic,
+        ),
+      ),
+      listenAndChoose: ListeningExerciseSpec(
+        speechText: spoken,
+        correctOption: displayText,
+        options: _buildTimeDisplayOptions(
+          currentValue: value,
+          correctOption: displayText,
+          familyId: seed.family.id,
+          dynamic: dynamic,
+        ),
+      ),
+      dynamicResolver: dynamicResolver,
+    );
+  }
+
+  ExerciseCard _buildPhoneCard({
+    required _CardSeed seed,
+    required LanguagePack pack,
+    required int localNumber,
+    required bool includePrefix,
+    required DynamicExerciseResolver? dynamicResolver,
+  }) {
+    final groupedLocal = _groupPhoneNumber(seed.family.id, localNumber);
+    final prompt = includePrefix
+        ? '+$_countryCode $groupedLocal'
+        : groupedLocal;
+    final compact = groupedLocal.replaceAll(' ', '');
+    final spokenPrompt = _spokenPhonePrompt(
+      groupedLocal: groupedLocal,
+      pack: pack,
+      includePrefix: includePrefix,
+    );
+
+    return ExerciseCard(
+      id: seed.id,
+      progressId: seed.id,
+      family: seed.family,
+      language: seed.language,
+      displayText: prompt,
+      promptText: prompt,
+      acceptedAnswers: _uniqueStrings(<String>[
+        prompt,
+        spokenPrompt,
+        groupedLocal,
+        compact,
+        if (includePrefix) '+$_countryCode$compact',
+        if (includePrefix) '$_countryCode$compact',
+      ]),
+      celebrationText: '$prompt -> $spokenPrompt',
+      dynamicResolver: dynamicResolver,
+    );
+  }
+
+  List<String> _buildNumberWordOptions({
+    required int currentValue,
+    required String correctOption,
+    required List<_CardSeed> familySeeds,
+    required LanguagePack pack,
+  }) {
+    final distractors = familySeeds
+        .where(
+          (seed) =>
+              seed.numberValue != null && seed.numberValue != currentValue,
+        )
+        .map((seed) => pack.numberWordsConverter(seed.numberValue!))
+        .toList(growable: false);
+    return _buildOptions(correctOption, distractors);
+  }
+
+  List<String> _buildNumberDisplayOptions({
+    required int currentValue,
+    required String correctOption,
+    required List<_CardSeed> familySeeds,
+  }) {
+    final distractors = familySeeds
+        .where(
+          (seed) =>
+              seed.numberValue != null && seed.numberValue != currentValue,
+        )
+        .map((seed) => seed.numberValue!.toString())
+        .toList(growable: false);
+    return _buildOptions(correctOption, distractors);
+  }
+
+  List<String> _buildTimeWordOptions({
+    required TimeValue currentValue,
+    required String correctOption,
+    required String familyId,
+    required LanguagePack pack,
+    required bool dynamic,
+  }) {
+    final candidateTimes = _timeCandidatesForOptions(
+      familyId: familyId,
+      currentValue: currentValue,
+      dynamic: dynamic,
+    );
+    final distractors = candidateTimes
+        .map(pack.timeWordsConverter)
+        .toList(growable: false);
+    return _buildOptions(correctOption, distractors);
+  }
+
+  List<String> _buildTimeDisplayOptions({
+    required TimeValue currentValue,
+    required String correctOption,
+    required String familyId,
+    required bool dynamic,
+  }) {
+    final candidateTimes = _timeCandidatesForOptions(
+      familyId: familyId,
+      currentValue: currentValue,
+      dynamic: dynamic,
+    );
+    final distractors = candidateTimes
+        .map((value) => value.displayText)
+        .toList(growable: false);
+    return _buildOptions(correctOption, distractors);
+  }
+
+  List<TimeValue> _timeCandidatesForOptions({
+    required String familyId,
+    required TimeValue currentValue,
+    required bool dynamic,
+  }) {
+    if (familyId == 'timeRandom') {
+      final values = <TimeValue>[];
+      while (values.length < 8) {
+        final candidate = TimeValue(
+          hour: _random.nextInt(24),
+          minute: _random.nextInt(60),
+        );
+        if (candidate == currentValue || values.contains(candidate)) {
+          continue;
+        }
+        values.add(candidate);
+      }
+      return values;
+    }
+
+    return _buildTimeSeeds(LearningLanguage.english)
+        .where(
+          (seed) =>
+              seed.family.id == familyId && seed.timeValue != currentValue,
+        )
+        .map((seed) => seed.timeValue!)
+        .toList(growable: false);
+  }
+
+  List<String> _buildOptions(String correctOption, List<String> distractors) {
+    final options = <String>[correctOption];
+    final seen = <String>{correctOption.trim().toLowerCase()};
+    final shuffled = List<String>.from(distractors)..shuffle(_random);
+    for (final candidate in shuffled) {
+      final trimmed = candidate.trim();
+      if (trimmed.isEmpty) {
         continue;
       }
-      final value = valueOf(candidate);
-      if (options.contains(value)) {
+      final key = trimmed.toLowerCase();
+      if (!seen.add(key)) {
         continue;
       }
-      options.add(value);
+      options.add(trimmed);
       if (options.length == 4) {
         break;
       }
     }
+    options.shuffle(_random);
     return options;
+  }
+
+  List<String> _timePromptAliases(LanguagePack pack, TimeValue value) {
+    if (pack.language != LearningLanguage.english || value.minute != 0) {
+      return const <String>[];
+    }
+    return <String>['${value.hour} o clock'];
+  }
+
+  String _phraseForValue(
+    int value,
+    LanguagePack pack, {
+    required bool dynamic,
+  }) {
+    final matching = pack.phraseTemplates
+        .where((template) => template.supports(value))
+        .toList(growable: false);
+    if (matching.isEmpty) {
+      return pack.numberWordsConverter(value);
+    }
+    final template = dynamic
+        ? matching[_random.nextInt(matching.length)]
+        : matching.first;
+    return template.materialize(value);
+  }
+
+  TimeValue _nextRandomTime(LearningLanguage language) {
+    final key = language.code;
+    late TimeValue candidate;
+    var attempts = 0;
+    do {
+      candidate = TimeValue(
+        hour: _random.nextInt(24),
+        minute: _random.nextInt(60),
+      );
+      attempts += 1;
+    } while (_lastRandomTimeByLanguage[key] == candidate && attempts < 8);
+    _lastRandomTimeByLanguage[key] = candidate;
+    return candidate;
+  }
+
+  int _nextRandomPhoneValue(_CardSeed seed) {
+    final key = '${seed.language.code}/${seed.family.id}';
+    final previous = _lastRandomPhoneByFamily[key];
+    late int candidate;
+    var attempts = 0;
+    do {
+      candidate = _buildRandomPhoneValue(seed.family.id);
+      attempts += 1;
+    } while (candidate == previous && attempts < 8);
+    _lastRandomPhoneByFamily[key] = candidate;
+    return candidate;
+  }
+
+  int _uniquePhoneValue(String familyId, Random random, Set<int> seen) {
+    while (true) {
+      final candidate = _buildRandomPhoneValue(familyId, random: random);
+      if (seen.add(candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  int _buildRandomPhoneValue(String familyId, {Random? random}) {
+    final rng = random ?? _random;
+    final firstDigit = switch (familyId) {
+      'phone33x3' || 'phone3222' => rng.nextBool() ? 6 : 7,
+      'phone2322' => rng.nextBool() ? 8 : 9,
+      _ => 6,
+    };
+
+    var value = firstDigit;
+    for (var i = 0; i < 8; i += 1) {
+      value = value * 10 + rng.nextInt(10);
+    }
+    return value;
+  }
+
+  String _groupPhoneNumber(String familyId, int localNumber) {
+    final digits = localNumber.toString().padLeft(9, '0');
+    final pattern = switch (familyId) {
+      'phone33x3' => const <int>[3, 3, 3],
+      'phone3222' => const <int>[3, 2, 2, 2],
+      'phone2322' => const <int>[2, 3, 2, 2],
+      _ => const <int>[3, 3, 3],
+    };
+
+    final groups = <String>[];
+    var cursor = 0;
+    for (final size in pattern) {
+      groups.add(digits.substring(cursor, cursor + size));
+      cursor += size;
+    }
+    return groups.join(' ');
+  }
+
+  String _spokenPhonePrompt({
+    required String groupedLocal,
+    required LanguagePack pack,
+    required bool includePrefix,
+  }) {
+    final localWords = groupedLocal
+        .split(_spaces)
+        .where((group) => group.isNotEmpty)
+        .map((group) => _phoneGroupToWords(group, pack.numberWordsConverter))
+        .join(_phoneGroupSeparator)
+        .trim();
+
+    if (!includePrefix) {
+      return localWords;
+    }
+
+    final prefixWords = pack.numberWordsConverter(_countryCode);
+    if (localWords.isEmpty) {
+      return '${_plusWord(pack)} $prefixWords';
+    }
+    return '${_plusWord(pack)} $prefixWords$_phoneGroupSeparator$localWords';
+  }
+
+  String _phoneGroupToWords(String group, NumberWordsConverter converter) {
+    if (group.length > 1 && group.startsWith('0')) {
+      return group
+          .split('')
+          .map((digit) => converter(int.parse(digit)))
+          .join(' ');
+    }
+
+    final value = int.tryParse(group);
+    if (value == null) {
+      return group
+          .split('')
+          .map((digit) => converter(int.parse(digit)))
+          .join(' ');
+    }
+    return converter(value);
+  }
+
+  String _plusWord(LanguagePack pack) {
+    for (final entry in pack.operatorWords.entries) {
+      if (entry.value == 'PLUS') {
+        return entry.key;
+      }
+    }
+    return 'plus';
   }
 }
 
-class _SeedCard {
-  const _SeedCard({
+enum _SeedKind { number, timeStatic, timeRandom, phone }
+
+class _CardSeed {
+  const _CardSeed({
     required this.id,
     required this.family,
-    required this.displayText,
-    required this.canonicalAnswer,
-    required this.acceptedAnswers,
-    required this.celebrationText,
-    String? audioText,
-  }) : audioText = audioText ?? canonicalAnswer;
+    required this.language,
+    required this.kind,
+    this.numberValue,
+    this.timeValue,
+    this.phoneValue,
+  });
 
   final ExerciseId id;
   final ExerciseFamily family;
-  final String displayText;
-  final String canonicalAnswer;
-  final List<String> acceptedAnswers;
-  final String celebrationText;
-  final String audioText;
+  final LearningLanguage language;
+  final _SeedKind kind;
+  final int? numberValue;
+  final TimeValue? timeValue;
+  final int? phoneValue;
 }
 
 List<String> _uniqueStrings(List<String> values) {
-  final unique = <String>[];
+  final result = <String>[];
   final seen = <String>{};
   for (final value in values) {
     final trimmed = value.trim();
@@ -389,267 +888,10 @@ List<String> _uniqueStrings(List<String> values) {
     }
     final key = trimmed.toLowerCase();
     if (seen.add(key)) {
-      unique.add(trimmed);
+      result.add(trimmed);
     }
   }
-  return unique;
+  return result;
 }
 
-String _spokenPhone({
-  required String groupedLocal,
-  required bool includePrefix,
-  required int countryCode,
-  required String plusWord,
-  required String Function(int value) numberWords,
-}) {
-  final groups = groupedLocal.split(' ');
-  final localWords = groups.map((group) {
-    if (group.startsWith('0')) {
-      return group.split('').map((digit) {
-        return numberWords(int.parse(digit));
-      }).join(' ');
-    }
-    return numberWords(int.parse(group));
-  }).join(' ');
-  if (!includePrefix) {
-    return localWords;
-  }
-  return '$plusWord ${numberWords(countryCode)} $localWords';
-}
-
-String _normalizeLatin(String text) {
-  final lower = text.trim().toLowerCase();
-  if (lower.isEmpty) {
-    return '';
-  }
-  var normalized = lower
-      .replaceAll('á', 'a')
-      .replaceAll('à', 'a')
-      .replaceAll('â', 'a')
-      .replaceAll('ä', 'a')
-      .replaceAll('ã', 'a')
-      .replaceAll('é', 'e')
-      .replaceAll('è', 'e')
-      .replaceAll('ê', 'e')
-      .replaceAll('ë', 'e')
-      .replaceAll('í', 'i')
-      .replaceAll('ì', 'i')
-      .replaceAll('î', 'i')
-      .replaceAll('ï', 'i')
-      .replaceAll('ñ', 'n')
-      .replaceAll('ó', 'o')
-      .replaceAll('ò', 'o')
-      .replaceAll('ô', 'o')
-      .replaceAll('ö', 'o')
-      .replaceAll('õ', 'o')
-      .replaceAll('ú', 'u')
-      .replaceAll('ù', 'u')
-      .replaceAll('û', 'u')
-      .replaceAll('ü', 'u');
-  normalized = normalized.replaceAll(RegExp(r"[^a-z0-9\s'+:.-]"), ' ');
-  normalized = normalized.replaceAll(RegExp(r'\s+'), ' ').trim();
-  return normalized;
-}
-
-String _numberToEnglish(int value) {
-  if (value < 0) {
-    throw RangeError('Negative numbers are not supported.');
-  }
-  if (value < 20) {
-    const words = <String>[
-      'zero',
-      'one',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-      'ten',
-      'eleven',
-      'twelve',
-      'thirteen',
-      'fourteen',
-      'fifteen',
-      'sixteen',
-      'seventeen',
-      'eighteen',
-      'nineteen',
-    ];
-    return words[value];
-  }
-  if (value < 100) {
-    const tens = <int, String>{
-      20: 'twenty',
-      30: 'thirty',
-      40: 'forty',
-      50: 'fifty',
-      60: 'sixty',
-      70: 'seventy',
-      80: 'eighty',
-      90: 'ninety',
-    };
-    final tensValue = (value ~/ 10) * 10;
-    final remainder = value % 10;
-    if (remainder == 0) {
-      return tens[tensValue]!;
-    }
-    return '${tens[tensValue]} ${_numberToEnglish(remainder)}';
-  }
-  if (value < 1000) {
-    final hundreds = value ~/ 100;
-    final remainder = value % 100;
-    if (remainder == 0) {
-      return '${_numberToEnglish(hundreds)} hundred';
-    }
-    return '${_numberToEnglish(hundreds)} hundred ${_numberToEnglish(remainder)}';
-  }
-  if (value < 1000000) {
-    final thousands = value ~/ 1000;
-    final remainder = value % 1000;
-    if (remainder == 0) {
-      return '${_numberToEnglish(thousands)} thousand';
-    }
-    return '${_numberToEnglish(thousands)} thousand ${_numberToEnglish(remainder)}';
-  }
-  return value.toString();
-}
-
-String _numberToSpanish(int value) {
-  if (value < 0) {
-    throw RangeError('Negative numbers are not supported.');
-  }
-  if (value < 30) {
-    const words = <String>[
-      'cero',
-      'uno',
-      'dos',
-      'tres',
-      'cuatro',
-      'cinco',
-      'seis',
-      'siete',
-      'ocho',
-      'nueve',
-      'diez',
-      'once',
-      'doce',
-      'trece',
-      'catorce',
-      'quince',
-      'dieciseis',
-      'diecisiete',
-      'dieciocho',
-      'diecinueve',
-      'veinte',
-      'veintiuno',
-      'veintidos',
-      'veintitres',
-      'veinticuatro',
-      'veinticinco',
-      'veintiseis',
-      'veintisiete',
-      'veintiocho',
-      'veintinueve',
-    ];
-    return words[value];
-  }
-  if (value < 100) {
-    const tens = <int, String>{
-      30: 'treinta',
-      40: 'cuarenta',
-      50: 'cincuenta',
-      60: 'sesenta',
-      70: 'setenta',
-      80: 'ochenta',
-      90: 'noventa',
-    };
-    final tensValue = (value ~/ 10) * 10;
-    final remainder = value % 10;
-    if (remainder == 0) {
-      return tens[tensValue]!;
-    }
-    return '${tens[tensValue]} y ${_numberToSpanish(remainder)}';
-  }
-  if (value == 100) {
-    return 'cien';
-  }
-  if (value < 1000) {
-    final hundreds = value ~/ 100;
-    final remainder = value % 100;
-    const hundredsWords = <int, String>{
-      1: 'ciento',
-      2: 'doscientos',
-      3: 'trescientos',
-      4: 'cuatrocientos',
-      5: 'quinientos',
-      6: 'seiscientos',
-      7: 'setecientos',
-      8: 'ochocientos',
-      9: 'novecientos',
-    };
-    final prefix = hundredsWords[hundreds]!;
-    if (remainder == 0) {
-      return prefix;
-    }
-    return '$prefix ${_numberToSpanish(remainder)}';
-  }
-  if (value < 1000000) {
-    final thousands = value ~/ 1000;
-    final remainder = value % 1000;
-    final prefix = thousands == 1 ? 'mil' : '${_numberToSpanish(thousands)} mil';
-    if (remainder == 0) {
-      return prefix;
-    }
-    return '$prefix ${_numberToSpanish(remainder)}';
-  }
-  return value.toString();
-}
-
-String _timeToEnglish(TimeValue time) {
-  if (time.hour == 0 && time.minute == 0) {
-    return 'midnight';
-  }
-  if (time.hour == 12 && time.minute == 0) {
-    return 'noon';
-  }
-  final hourWords = _numberToEnglish(time.hour);
-  if (time.minute == 0) {
-    return '$hourWords o clock';
-  }
-  if (time.minute == 15) {
-    return 'quarter past $hourWords';
-  }
-  if (time.minute == 30) {
-    return 'half past $hourWords';
-  }
-  if (time.minute == 45) {
-    return 'quarter to ${_numberToEnglish((time.hour + 1) % 24)}';
-  }
-  return '$hourWords ${_numberToEnglish(time.minute)}';
-}
-
-String _timeToSpanish(TimeValue time) {
-  if (time.hour == 0 && time.minute == 0) {
-    return 'medianoche';
-  }
-  if (time.hour == 12 && time.minute == 0) {
-    return 'mediodia';
-  }
-  final hourWords = _numberToSpanish(time.hour);
-  if (time.minute == 0) {
-    return '$hourWords en punto';
-  }
-  if (time.minute == 15) {
-    return '$hourWords y cuarto';
-  }
-  if (time.minute == 30) {
-    return '$hourWords y media';
-  }
-  if (time.minute == 45) {
-    return '${_numberToSpanish((time.hour + 1) % 24)} menos cuarto';
-  }
-  return '$hourWords ${_numberToSpanish(time.minute)}';
-}
+final _spaces = RegExp(r'\s+');

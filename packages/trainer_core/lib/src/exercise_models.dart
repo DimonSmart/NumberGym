@@ -77,6 +77,7 @@ class ExerciseFamily {
     required this.difficultyTier,
     required this.defaultDuration,
     required List<ExerciseMode> supportedModes,
+    this.masteryAccuracy,
   }) : supportedModes = List<ExerciseMode>.unmodifiable(supportedModes);
 
   final String moduleId;
@@ -86,6 +87,7 @@ class ExerciseFamily {
   final ExerciseDifficultyTier difficultyTier;
   final Duration defaultDuration;
   final List<ExerciseMode> supportedModes;
+  final double? masteryAccuracy;
 
   String get storageKey => '$moduleId/$id';
 }
@@ -115,17 +117,13 @@ class ListeningExerciseSpec {
 }
 
 class ReviewPronunciationSpec {
-  const ReviewPronunciationSpec({
-    required this.expectedText,
-  });
+  const ReviewPronunciationSpec({required this.expectedText});
 
   final String expectedText;
 }
 
 class ExerciseMatcherConfig {
-  const ExerciseMatcherConfig({
-    this.promptAliases = const <String>[],
-  });
+  const ExerciseMatcherConfig({this.promptAliases = const <String>[]});
 
   final List<String> promptAliases;
 }
@@ -216,12 +214,10 @@ class ExerciseCatalog {
   }
 }
 
-typedef LanguageProfileResolver = BaseLanguageProfile Function(
-  LearningLanguage language,
-);
+typedef LanguageProfileResolver =
+    BaseLanguageProfile Function(LearningLanguage language);
 
-typedef MatcherTokenizerResolver = MatcherTokenizer Function(
-  LearningLanguage language,
-);
+typedef MatcherTokenizerResolver =
+    MatcherTokenizer Function(LearningLanguage language);
 
 typedef RandomFactory = Random Function();

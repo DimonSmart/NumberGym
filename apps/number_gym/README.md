@@ -57,3 +57,20 @@ dart run flutter_native_splash:create
 After `flutter_native_splash:create`, verify
 `android:screenOrientation="portrait"` in
 `android/app/src/main/AndroidManifest.xml` for `MainActivity`.
+
+## Run And Publish
+
+Canonical root-level commands:
+
+```powershell
+pwsh ./tool/run_number_gym.ps1 -DeviceId <device-id>
+pwsh ./tool/publish_number_gym_web.ps1
+```
+
+Direct app-local commands:
+
+```powershell
+cd apps/number_gym
+flutter run -d <device-id>
+flutter build web --release --base-href /NumberGym/
+```

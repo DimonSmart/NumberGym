@@ -21,7 +21,8 @@ class StatsCardSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final resolvedGradient = gradient ??
+    final resolvedGradient =
+        gradient ??
         LinearGradient(
           colors: [
             scheme.surfaceContainerLow,
