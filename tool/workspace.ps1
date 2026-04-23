@@ -7,7 +7,7 @@ function Get-WorkspaceRoot {
 
 function Get-WorkspaceMembers {
   param(
-    [switch]$IncludeFrozen
+    [switch]$IncludeScaffolds
   )
 
   $members = @(
@@ -24,21 +24,21 @@ function Get-WorkspaceMembers {
     [pscustomobject]@{
       Name = 'number_gym'
       Path = 'apps/number_gym'
-      Status = 'active'
+      Status = 'shipping'
     }
   )
 
-  if ($IncludeFrozen) {
+  if ($IncludeScaffolds) {
     $members += @(
       [pscustomobject]@{
         Name = 'verb_gym_content'
         Path = 'packages/verb_gym_content'
-        Status = 'frozen'
+        Status = 'scaffold'
       }
       [pscustomobject]@{
         Name = 'verb_gym'
         Path = 'apps/verb_gym'
-        Status = 'frozen'
+        Status = 'scaffold'
       }
     )
   }

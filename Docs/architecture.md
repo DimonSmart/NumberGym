@@ -10,7 +10,7 @@ Only these directories are active sources of truth:
 - `packages/trainer_core`
 - `packages/number_gym_content`
 
-These directories are intentionally frozen:
+These directories are already part of the target architecture, but remain scaffold-grade:
 
 - `apps/verb_gym`
 - `packages/verb_gym_content`
@@ -54,7 +54,8 @@ pwsh ./tool/analyze_all.ps1
 pwsh ./tool/test_all.ps1
 ```
 
-By default these scripts validate only the active migration path: `number_gym`, `trainer_core`, and `number_gym_content`.
+By default these scripts validate the shipping NumberGym path: `number_gym`, `trainer_core`, and `number_gym_content`.
+Pass `-IncludeScaffolds` when you also want to validate `verb_gym` and `verb_gym_content`.
 
 ## Operational Entry Point
 

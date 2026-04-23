@@ -54,6 +54,24 @@ function Remove-DirectoryIfExists {
   Remove-Item -LiteralPath $Path -Recurse -Force
 }
 
+function Copy-DirectoryContents {
+  param(
+    [string]$SourcePath,
+    [string]$DestinationPath
+  )
+
+  if (-not (Test-Path $SourcePath)) {
+    throw "Missing source path: $SourcePath"
+  }
+
+  New-Item -ItemType Directory -Path $DestinationPath -Force | Out-Null
+
+  Get-ChildItem -LiteralPath $SourcePath -Force |
+    ForEach-Object {
+      Copy-Item -LiteralPath $_.FullName -Destination $DestinationPath -Recurse -Force
+    }
+}
+
 function Get-NormalizedTargetSubdirectory {
   param([string]$Path)
 
@@ -115,7 +133,7 @@ try {
   if ([string]::IsNullOrEmpty($normalizedTargetSubdirectory)) {
     Copy-Item -LiteralPath $indexPath -Destination (Join-Path $buildWebPath '404.html') -Force
   }
-  Copy-Item -LiteralPath $buildWebPath -Destination $deployCopyPath -Recurse -Force
+  Copy-DirectoryContents -SourcePath $buildWebPath -DestinationPath $deployCopyPath
 
   Write-Host "[3/6] Prepare gh-pages worktree..."
   Invoke-Git -WorkingDirectory $workspaceRoot -Arguments @('fetch', 'origin')
@@ -166,7 +184,7 @@ try {
     New-Item -ItemType Directory -Path $deployTargetPath -Force | Out-Null
   }
 
-  Copy-Item -LiteralPath (Join-Path $deployCopyPath '*') -Destination $deployTargetPath -Recurse -Force
+  Copy-DirectoryContents -SourcePath $deployCopyPath -DestinationPath $deployTargetPath
   New-Item -ItemType File -Path (Join-Path $worktreePath '.nojekyll') -Force | Out-Null
 
   if ($DryRun) {

@@ -1,29 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:number_gym_content/number_gym_content.dart';
-import 'package:trainer_core/trainer_core.dart' hide AppPalette;
 
 import 'core/theme/app_palette.dart';
-import 'home_screen.dart';
-
-const AppConfig numberGymConfig = AppConfig(
-  appId: 'number_gym',
-  title: 'Number Gym',
-  homeTitle: 'Number Gym',
-  repositoryUrl: 'https://github.com/DimonSmart/NumberGym',
-  privacyPolicyUrl: 'https://dimonsmart.github.io/numbergym-privacy/',
-  aboutTitle: 'About Number Gym',
-  aboutBody:
-      'Number Gym drills numbers, time, and phone formats with speech, listening, and fast recognition loops.',
-  settingsBoxName: 'settings',
-  progressBoxName: 'progress_v2',
-  heroAssetPath: 'assets/images/numbers_gym_name.png',
-  mascotAssetPath: 'assets/images/app_icon_transparent.png',
-);
-
-final TrainingAppDefinition numberGymDefinition = buildNumberGymAppDefinition(
-  config: numberGymConfig,
-);
+import 'features/training/data/card_progress.dart';
+import 'features/intro/ui/screens/intro_screen.dart';
 
 class NumbersTrainerApp extends StatelessWidget {
   final Box<String> settingsBox;
@@ -62,9 +42,7 @@ class NumbersTrainerApp extends StatelessWidget {
           foregroundColor: AppPalette.deepBlue,
         ),
       ),
-      home: NumberGymHomeScreen(
-        config: numberGymConfig,
-        appDefinition: numberGymDefinition,
+      home: IntroScreen(
         settingsBox: settingsBox,
         progressBox: progressBox,
       ),

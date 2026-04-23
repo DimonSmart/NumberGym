@@ -12,18 +12,20 @@ Build fast and confident spoken responses with short sessions:
 ## Active architecture
 
 - Languages: English (`en`), Spanish (`es`), French (`fr`), German (`de`), Hebrew (`he`).
-- Active app shell lives in `lib/app.dart`, `lib/main.dart`, and `lib/home_screen.dart`.
-- NumberGym content lives in `../../packages/number_gym_content`.
-- Shared repositories, matcher, scheduler, runtimes, and screens live in `../../packages/trainer_core`.
-- `apps/number_gym` keeps branding, home/about screens, native assets, and shipping entrypoints.
+- Shipping entrypoints live in `lib/app.dart` and `lib/main.dart`.
+- Branded NumberGym screens currently live in `lib/features/...` and are being reduced toward an app-shell role.
+- Shared runtime pieces are being moved into `../../packages/trainer_core`.
+- NumberGym-specific content is being moved into `../../packages/number_gym_content`.
+- `apps/number_gym` remains the source of truth for the shipped NumberGym UI until modular parity is complete.
 
 ## Structure
 
 - `lib/main.dart`: Flutter bootstrap, Hive setup, error logging.
-- `lib/app.dart`: `AppConfig` plus `TrainingAppDefinition` creation via `buildNumberGymAppDefinition`.
-- `lib/home_screen.dart`: branded home shell that routes into `trainer_core` screens.
+- `lib/app.dart`: app theme and branded bootstrap shell.
+- `lib/features/intro/ui/screens/intro_screen.dart`: shipped intro/home flow for NumberGym.
 - `lib/features/intro/ui/screens/about_screen.dart`: app-specific about screen and external links.
-- `test/`: app-shell smoke and navigation tests only.
+- `lib/features/training/...`: transitional NumberGym runtime and UI that is being split into app-specific and shared pieces.
+- `test/`: app-level smoke, widget, and regression tests.
 
 ## Domain scope
 
@@ -38,8 +40,11 @@ Build fast and confident spoken responses with short sessions:
   - `listenAndChoose`
   - `reviewPronunciation` for number families
 
-`number_gym_content` owns accepted variants, prompt aliases, phone spoken variants,
-dynamic random-time and phone generation, and phrase materialization.
+Target ownership:
+
+- `number_gym_content`: accepted variants, prompt aliases, phone spoken variants, random-time and phone generation, phrase materialization.
+- `trainer_core`: reusable session engine, persistence abstractions, generic training flows, shared services.
+- `apps/number_gym`: branding, launch flow, about screen, assets, app-level integration glue.
 
 ## Documentation
 

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [switch]$IncludeFrozen
+  [switch]$IncludeScaffolds
 )
 
 Set-StrictMode -Version Latest
@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'workspace.ps1')
 
 $workspaceRoot = Get-WorkspaceRoot
-$members = Get-WorkspaceMembers -IncludeFrozen:$IncludeFrozen
+$members = Get-WorkspaceMembers -IncludeScaffolds:$IncludeScaffolds
 
 foreach ($member in $members) {
   $memberPath = Join-Path $workspaceRoot $member.Path

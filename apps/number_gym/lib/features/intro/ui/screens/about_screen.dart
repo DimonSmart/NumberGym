@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:trainer_core/trainer_core.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../training/ui/widgets/training_background.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});

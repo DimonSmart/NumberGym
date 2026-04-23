@@ -1,5 +1,5 @@
 name: number_gym
-description: "Number Gym app shell powered by trainer_core and number_gym_content."
+description: "Numbers gym - practice and learn English numbers through speech recognition."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,17 +31,26 @@ dependencies:
   flutter:
     sdk: flutter
 
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
   trainer_core:
     path: ../../packages/trainer_core
-  number_gym_content:
-    path: ../../packages/number_gym_content
+  speech_to_text: ^7.3.0
+  permission_handler: ^12.0.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  wakelock_plus: ^1.2.8
+  http: ^1.1.2
+  record: ^6.2.0
+  lottie: ^3.3.2
+  flutter_tts: ^4.2.5
   package_info_plus: ^9.0.0
   url_launcher: ^6.3.0
+  fl_chart: ^1.1.1
+  web: ^1.1.1
+  video_player: ^2.10.0
+  audioplayers: ^6.5.1
 
 dependency_overrides:
-  # `trainer_core` uses `record`; keep the workspace override at the app root.
+  # Use newer linux implementation that supports startStream from platform interface.
   record_linux: ^1.2.1
 
 dev_dependencies:
