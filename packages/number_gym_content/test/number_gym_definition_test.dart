@@ -184,7 +184,7 @@ const AppConfig _config = AppConfig(
   aboutBody: 'About body',
   settingsBoxName: 'settings_test',
   progressBoxName: 'progress_v2_test',
-  heroAssetPath: 'assets/images/numbers_gym_name.png',
+  heroAssetPath: 'assets/images/branding/wordmark.png',
   mascotAssetPath: 'assets/images/app_icon_transparent.png',
 );
 

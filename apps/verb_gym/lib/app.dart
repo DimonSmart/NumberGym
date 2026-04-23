@@ -10,13 +10,14 @@ const AppConfig verbGymConfig = AppConfig(
   title: 'Verb Gym',
   homeTitle: 'Verb Gym',
   repositoryUrl: 'https://github.com/DimonSmart/NumberGym',
-  privacyPolicyUrl: 'https://github.com/DimonSmart/NumberGym/blob/main/README.md',
+  privacyPolicyUrl:
+      'https://github.com/DimonSmart/NumberGym/blob/main/README.md',
   aboutTitle: 'About Verb Gym',
   aboutBody:
       'Verb Gym drills present, past, and future forms with speech, listening, and fast recognition loops.',
   settingsBoxName: 'verb_gym_settings',
   progressBoxName: 'verb_gym_progress',
-  heroAssetPath: 'assets/images/intro.png',
+  heroAssetPath: 'assets/images/branding/wordmark.png',
   mascotAssetPath: 'assets/images/app_icon.png',
 );
 

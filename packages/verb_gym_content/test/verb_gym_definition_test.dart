@@ -12,14 +12,15 @@ void main() {
       familyId: 'future',
       variantId: 'go::1s',
     );
-    final matcher = AnswerMatcher(
-      normalizer: definition.profileOf(LearningLanguage.english).normalizer,
-      tokenizer: definition.tokenizerOf(LearningLanguage.english),
-    )..reset(
-        prompt: card.promptText,
-        answers: card.acceptedAnswers,
-        promptAliases: card.matcherConfig.promptAliases,
-      );
+    final matcher =
+        AnswerMatcher(
+          normalizer: definition.profileOf(LearningLanguage.english).normalizer,
+          tokenizer: definition.tokenizerOf(LearningLanguage.english),
+        )..reset(
+          prompt: card.promptText,
+          answers: card.acceptedAnswers,
+          promptAliases: card.matcherConfig.promptAliases,
+        );
 
     expect(card.promptText, 'will go');
     expect(matcher.isAcceptedAnswer('will go'), isTrue);
@@ -33,14 +34,15 @@ void main() {
       familyId: 'present',
       variantId: 'hablar::1s',
     );
-    final matcher = AnswerMatcher(
-      normalizer: definition.profileOf(LearningLanguage.spanish).normalizer,
-      tokenizer: definition.tokenizerOf(LearningLanguage.spanish),
-    )..reset(
-        prompt: card.promptText,
-        answers: card.acceptedAnswers,
-        promptAliases: card.matcherConfig.promptAliases,
-      );
+    final matcher =
+        AnswerMatcher(
+          normalizer: definition.profileOf(LearningLanguage.spanish).normalizer,
+          tokenizer: definition.tokenizerOf(LearningLanguage.spanish),
+        )..reset(
+          prompt: card.promptText,
+          answers: card.acceptedAnswers,
+          promptAliases: card.matcherConfig.promptAliases,
+        );
 
     expect(card.promptText, 'hablo');
     expect(matcher.isAcceptedAnswer('hablo'), isTrue);
@@ -90,9 +92,13 @@ ExerciseCard _findCard({
   required String familyId,
   required String variantId,
 }) {
-  return definition.catalog.build(language).cards.firstWhere(
-    (card) => card.id.familyId == familyId && card.id.variantId == variantId,
-  );
+  return definition.catalog
+      .build(language)
+      .cards
+      .firstWhere(
+        (card) =>
+            card.id.familyId == familyId && card.id.variantId == variantId,
+      );
 }
 
 const AppConfig _config = AppConfig(
@@ -105,6 +111,6 @@ const AppConfig _config = AppConfig(
   aboutBody: 'About body',
   settingsBoxName: 'verb_gym_settings_test',
   progressBoxName: 'verb_gym_progress_test',
-  heroAssetPath: 'assets/images/intro.png',
+  heroAssetPath: 'assets/images/branding/wordmark.png',
   mascotAssetPath: 'assets/images/app_icon.png',
 );

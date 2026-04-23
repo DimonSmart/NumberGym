@@ -256,7 +256,7 @@ class _IntroScreenState extends State<IntroScreen> {
                         Align(
                           alignment: Alignment.center,
                           child: Image.asset(
-                            'assets/images/numbers_gym_name.png',
+                            'assets/images/branding/wordmark.png',
                             width: heroImageWidth,
                             fit: BoxFit.contain,
                             filterQuality: FilterQuality.high,

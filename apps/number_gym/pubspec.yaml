@@ -92,6 +92,7 @@ flutter:
     - assets/animations/success/
     - assets/animations/failure/
     - assets/images/
+    - assets/images/branding/
     - assets/images/goal_rewards/
     - assets/images/session_rewards/
     - assets/images/sliders/

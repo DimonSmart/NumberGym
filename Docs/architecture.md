@@ -36,6 +36,14 @@ The old root Flutter app is transitional legacy code. It may still exist on disk
   - content-specific accepted variants and distractor rules
   - content tests
 
+## Brand Asset Layout
+
+- App-specific identity belongs to the app shell, not to `trainer_core` or the content packages.
+- Store unique app branding under `apps/<app>/assets/images/branding/`.
+- Keep shared per-app visuals in the regular app asset folders such as `assets/images/`, `goal_rewards/`, `session_rewards/`, and similar functional directories.
+- Prefer semantic file names inside each app branding folder so references stay predictable across apps. The app-name wordmark lives at `assets/images/branding/wordmark.png`.
+- The root Flutter app is still legacy. If it must keep NumberGym assets during the migration, treat them as a temporary mirror of `apps/number_gym`, not as the source of truth.
+
 ## Target Dependency Direction
 
 - `apps/* -> packages/*`

@@ -26,6 +26,7 @@ pwsh ./tool/bootstrap.ps1
 pwsh ./tool/analyze_all.ps1
 pwsh ./tool/test_all.ps1
 pwsh ./tool/run_number_gym.ps1
+pwsh ./tool/run_verb_gym.ps1
 pwsh ./tool/publish_number_gym_web.ps1
 pwsh ./tool/publish_verb_gym_web.ps1
 ```
@@ -37,9 +38,16 @@ Use `-IncludeScaffolds` when you want root validation scripts to include the Ver
 - `apps/number_gym`: NumberGym app shell, branding, app-level UI, integration tests.
 - `packages/trainer_core`: shared training engine, orchestration, persistence abstractions, reusable UI shell.
 - `packages/number_gym_content`: NumberGym content definition and content-specific tests.
-- `apps/verb_gym`, `packages/verb_gym_content`: scaffold for the future verb trainer app.
+- `apps/verb_gym`, `packages/verb_gym_content`: VerbGym app shell/content scaffold with its own branding assets.
 - `tool`: root scripts for bootstrapping and validating the workspace.
 - `Docs`: root-level migration and workspace architecture notes.
+
+## Brand Assets
+
+- App-specific identity lives in each app shell under `apps/<app>/assets/images/branding/`.
+- Shared visuals that intentionally stay the same for an app remain in the regular app asset folders such as `apps/<app>/assets/images/`, `goal_rewards/`, and `session_rewards/`.
+- Use semantic file names inside each app branding folder so code can stay stable across apps. The current app name wordmark path is `assets/images/branding/wordmark.png`.
+- Do not add new app-specific identity to `packages/trainer_core`. The legacy root Flutter app may keep a transitional NumberGym mirror until the cutover is finished.
 
 ## Lockfile Policy
 
@@ -49,6 +57,7 @@ Use `-IncludeScaffolds` when you want root validation scripts to include the Ver
 ## Shipping Commands
 
 - Run NumberGym on a connected phone: `pwsh ./tool/run_number_gym.ps1 -DeviceId <device-id>`
+- Run VerbGym on a connected phone: `pwsh ./tool/run_verb_gym.ps1 -DeviceId <device-id>`
 - Publish NumberGym web to GitHub Pages: `pwsh ./tool/publish_number_gym_web.ps1`
 - Publish VerbGym web to GitHub Pages subpath: `pwsh ./tool/publish_verb_gym_web.ps1`
 - Windows bat launchers: `deploy_number_gym_web_pages.bat`, `deploy_verb_gym_web_pages.bat`

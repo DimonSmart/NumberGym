@@ -65,9 +65,8 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final currentLanguage = _settingsRepository.readLearningLanguage();
-    final resolvedLanguage = widget.appDefinition.supportedLanguages.contains(
-      currentLanguage,
-    )
+    final resolvedLanguage =
+        widget.appDefinition.supportedLanguages.contains(currentLanguage)
         ? currentLanguage
         : widget.appDefinition.supportedLanguages.first;
     final profile = widget.appDefinition.profileOf(resolvedLanguage);
@@ -96,13 +95,11 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.config.homeTitle,
-                            style: theme.textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -1.2,
-                              color: theme.colorScheme.primary,
-                            ),
+                          Image.asset(
+                            widget.config.heroAssetPath,
+                            height: 92,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -218,8 +215,9 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
                         Text(
                           widget.appDefinition.supportedLanguages
                               .map(
-                                (language) =>
-                                    widget.appDefinition.profileOf(language).label,
+                                (language) => widget.appDefinition
+                                    .profileOf(language)
+                                    .label,
                               )
                               .join('  |  '),
                         ),
