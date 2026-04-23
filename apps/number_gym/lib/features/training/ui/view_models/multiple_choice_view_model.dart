@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trainer_core/trainer_core.dart' show ChoiceState, ExerciseMode, TimerState;
 
-import '../../domain/task_state.dart';
-import '../../domain/training_task.dart';
 import 'training_feedback_view_model.dart';
 
 class MultipleChoiceViewModel {
@@ -35,10 +34,10 @@ class MultipleChoiceViewModel {
 
   factory MultipleChoiceViewModel.fromState({
     required ThemeData theme,
-    required MultipleChoiceState task,
+    required ChoiceState task,
     required TrainingFeedbackViewModel feedback,
   }) {
-    final isTextToValue = task.kind == LearningMethod.textToValue;
+    final isTextToValue = task.mode == ExerciseMode.chooseFromPrompt;
     final isNumericMode = isTextToValue;
     final isTimeOptions =
         isTextToValue && task.options.any((option) => option.contains(':'));
@@ -57,7 +56,7 @@ class MultipleChoiceViewModel {
 
     return MultipleChoiceViewModel(
       title: title,
-      prompt: task.prompt,
+      prompt: task.promptText,
       promptStyle: promptStyle,
       optionStyle: optionStyle,
       options: task.options,
@@ -66,7 +65,7 @@ class MultipleChoiceViewModel {
       feedbackColor: feedback.color,
       timer: task.timer,
       isTimerActive: task.timer.isRunning,
-      taskKey: task.taskId.storageKey,
+      taskKey: task.exerciseId.storageKey,
     );
   }
 }

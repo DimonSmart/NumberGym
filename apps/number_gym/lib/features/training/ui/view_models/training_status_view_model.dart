@@ -1,4 +1,4 @@
-import '../../domain/training_state.dart';
+import 'package:trainer_core/trainer_core.dart' show TrainingState, SessionStats;
 
 class TrainingStatusViewModel {
   const TrainingStatusViewModel({

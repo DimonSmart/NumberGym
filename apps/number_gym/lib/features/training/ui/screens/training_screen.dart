@@ -4,13 +4,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'package:trainer_core/trainer_core.dart' show TrainingAppDefinition;
+import 'package:trainer_core/trainer_core.dart';
 
-import '../../data/card_progress.dart';
-import '../../data/progress_repository.dart';
-import '../../data/settings_repository.dart';
-import '../../domain/training_controller.dart';
-import '../../domain/training_task.dart';
 import '../view_models/listening_view_model.dart';
 import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
@@ -24,13 +19,11 @@ import '../widgets/multiple_choice_view.dart';
 import '../widgets/number_pronunciation_view.dart';
 import '../widgets/phrase_pronunciation_view.dart';
 import '../widgets/slider_peek.dart';
-import '../widgets/training_background.dart';
 import '../widgets/training_status_view.dart';
 
 class TrainingScreen extends StatefulWidget {
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
-  // ignore: unused_field
   final TrainingAppDefinition appDefinition;
 
   const TrainingScreen({
@@ -47,7 +40,7 @@ class TrainingScreen extends StatefulWidget {
 class _TrainingScreenState extends State<TrainingScreen>
     with SingleTickerProviderStateMixin {
   late final SettingsRepository _settingsRepository;
-  late final TrainingController _controller;
+  late final TrainerController _controller;
   bool _startingTraining = false;
   bool _stoppingTraining = false;
   bool _allowSystemPop = false;
@@ -91,10 +84,10 @@ class _TrainingScreenState extends State<TrainingScreen>
   void initState() {
     super.initState();
     _settingsRepository = SettingsRepository(widget.settingsBox);
-    _controller = TrainingController(
+    _controller = TrainerController(
+      appDefinition: widget.appDefinition,
       settingsRepository: _settingsRepository,
       progressRepository: ProgressRepository(widget.progressBox),
-      onAutoStop: _handleAutoStop,
     );
     _loadAutoSimulationSettings();
     _sliderPeekController = AnimationController(
@@ -240,7 +233,7 @@ class _TrainingScreenState extends State<TrainingScreen>
               ? _controller.dailyGoalCards
               : _controller.sessionTargetCards;
           final methodLabel =
-              _controller.currentLearningMethod?.label ?? 'Training';
+              _controller.currentMode?.label ?? 'Training';
           final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
             theme: theme,
             feedback: _controller.feedback,
@@ -412,7 +405,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       if (task == null) {
         return;
       }
-      if (task is ListeningState && task.isPromptPlaying) {
+      if (task is ListenAndChooseState && task.isPromptPlaying) {
         return;
       }
 
@@ -447,7 +440,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     if (task == null) {
       return const SizedBox.shrink();
     }
-    if (task is MultipleChoiceState) {
+    if (task is ChoiceState) {
       final viewModel = MultipleChoiceViewModel.fromState(
         theme: theme,
         task: task,
@@ -458,7 +451,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         onOptionSelected: _controller.selectOption,
       );
     }
-    if (task is ListeningState) {
+    if (task is ListenAndChooseState) {
       final viewModel = ListeningViewModel.fromState(
         theme: theme,
         task: task,
@@ -470,7 +463,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         onReplay: _controller.repeatListeningPrompt,
       );
     }
-    if (task is PhrasePronunciationState) {
+    if (task is ReviewPronunciationState) {
       final viewModel = PhrasePronunciationViewModel.fromState(task: task);
       return PhrasePronunciationView(
         viewModel: viewModel,
@@ -484,7 +477,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     }
 
     final viewModel = NumberPronunciationViewModel.fromState(
-      task: _controller.numberPronunciationState,
+      task: _controller.speakState,
       feedback: feedbackViewModel,
     );
     return NumberPronunciationView(
@@ -562,6 +555,8 @@ class _TrainingScreenState extends State<TrainingScreen>
       child: CelebrationOverlay(
         key: ValueKey(celebration.eventId),
         celebration: celebration,
+        sessionCardsCompleted: _controller.sessionCardsCompleted,
+        sessionTargetCards: _controller.sessionTargetCards,
         onContinue: _handleContinueAfterCelebration,
       ),
     );
@@ -629,16 +624,6 @@ class _TrainingScreenState extends State<TrainingScreen>
         SnackBar(content: Text('Pronunciation scoring failed: $error')),
       );
     }
-  }
-
-  void _handleAutoStop() {
-    if (!mounted) return;
-    if (!_allowSystemPop) {
-      setState(() {
-        _allowSystemPop = true;
-      });
-    }
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   Future<void> _handleContinueSession() async {

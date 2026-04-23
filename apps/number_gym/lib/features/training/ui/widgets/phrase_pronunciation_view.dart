@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:trainer_core/trainer_core.dart' show PronunciationAnalysisResult, PronunciationWord;
+
 import '../../../../core/theme/app_palette.dart';
-import '../../domain/pronunciation_models.dart';
 import '../view_models/phrase_pronunciation_view_model.dart';
 import 'sound_wave_indicator.dart';
 

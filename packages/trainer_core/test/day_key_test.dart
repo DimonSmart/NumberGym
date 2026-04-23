@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/day_key.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 void main() {
   test('formatDayKey uses local YYYY-MM-DD format', () {

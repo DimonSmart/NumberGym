@@ -4,21 +4,9 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:trainer_core/trainer_core.dart' show TrainingAppDefinition;
+import 'package:trainer_core/trainer_core.dart' hide TrainingScreen;
 
-import '../../../../core/theme/app_palette.dart';
-import '../../../training/data/card_progress.dart';
-import '../../../training/data/progress_repository.dart';
-import '../../../training/data/settings_repository.dart';
-import '../../../training/domain/daily_session_stats.dart';
-import '../../../training/domain/daily_study_summary.dart';
-import '../../../training/domain/session_progress_plan.dart';
-import '../../../training/domain/training_stats_loader.dart';
-import '../../../training/ui/screens/debug_settings_screen.dart';
-import '../../../training/ui/screens/settings_screen.dart';
-import '../../../training/ui/screens/statistics_screen.dart';
 import '../../../training/ui/screens/training_screen.dart';
-import '../../../training/ui/widgets/training_background.dart';
 import 'about_screen.dart';
 
 enum _IntroMenuAction { statistics, settings, debug, about }
@@ -64,6 +52,7 @@ class _IntroScreenState extends State<IntroScreen> {
     _statsLoader = TrainingStatsLoader(
       progressRepository: _progressRepository,
       settingsRepository: _settingsRepository,
+      catalog: widget.appDefinition.catalog,
     );
     _loadProgress();
     _progressSubscription = widget.progressBox.watch().listen(
@@ -483,6 +472,7 @@ class _IntroScreenState extends State<IntroScreen> {
         .push(
           MaterialPageRoute(
             builder: (context) => SettingsScreen(
+              appDefinition: widget.appDefinition,
               settingsBox: widget.settingsBox,
               progressBox: widget.progressBox,
               onProgressChanged: _loadProgress,
@@ -498,6 +488,7 @@ class _IntroScreenState extends State<IntroScreen> {
         .push(
           MaterialPageRoute(
             builder: (context) => DebugSettingsScreen(
+              appDefinition: widget.appDefinition,
               settingsBox: widget.settingsBox,
               progressBox: widget.progressBox,
               onProgressChanged: _loadProgress,
@@ -518,7 +509,10 @@ class _IntroScreenState extends State<IntroScreen> {
   void _openStatistics(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => StatisticsScreen(statsLoader: _statsLoader),
+        builder: (context) => StatisticsScreen(
+          appDefinition: widget.appDefinition,
+          statsLoader: _statsLoader,
+        ),
       ),
     );
   }

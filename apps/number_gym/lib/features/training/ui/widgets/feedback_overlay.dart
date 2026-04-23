@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../domain/training_outcome.dart';
-import '../../domain/training_state.dart';
+import 'package:trainer_core/trainer_core.dart' show TrainingFeedback, TrainingOutcome;
+
 import '../view_models/training_feedback_view_model.dart';
 
 class FeedbackOverlay extends StatefulWidget {

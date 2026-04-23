@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/data/card_progress.dart';
-import 'package:number_gym/features/training/domain/daily_study_summary.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 void main() {
   test('daily summary tracks attempts and remaining limits', () {

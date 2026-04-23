@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trainer_core/trainer_core.dart' show SpeakState, TimerState;
 
-import '../../domain/task_state.dart';
-import '../../domain/training_item.dart';
 import 'training_feedback_view_model.dart';
 
 class SpeechRecognitionLine {
@@ -49,7 +48,7 @@ class NumberPronunciationViewModel {
   bool get showSpeechFeedback => speechLines.isNotEmpty;
 
   factory NumberPronunciationViewModel.fromState({
-    required NumberPronunciationState? task,
+    required SpeakState? task,
     required TrainingFeedbackViewModel feedback,
   }) {
     final displayText = task?.displayText ?? '--';
@@ -66,7 +65,7 @@ class NumberPronunciationViewModel {
       feedbackColor: feedback.color,
       timer: task?.timer ?? TimerState.zero,
       isTimerActive: task?.timer.isRunning ?? false,
-      taskKey: task?.taskId.storageKey ?? 'none',
+      taskKey: task?.exerciseId.storageKey ?? 'none',
       showSoundWave: task?.timer.isRunning ?? false,
       heardDisplay: _buildHeardDisplay(task),
       speechLines: _buildSpeechLines(task),
@@ -74,7 +73,7 @@ class NumberPronunciationViewModel {
   }
 
   static List<SpeechRecognitionLine> _buildSpeechLines(
-    NumberPronunciationState? task,
+    SpeakState? task,
   ) {
     if (task == null) {
       return const <SpeechRecognitionLine>[];
@@ -98,7 +97,7 @@ class NumberPronunciationViewModel {
     return List<SpeechRecognitionLine>.unmodifiable(lines);
   }
 
-  static String _buildHeardDisplay(NumberPronunciationState? task) {
+  static String _buildHeardDisplay(SpeakState? task) {
     if (task == null) {
       return '';
     }
@@ -107,24 +106,10 @@ class NumberPronunciationViewModel {
     return (heardTokens.isNotEmpty ? heardTokens.join(' ') : heardText).trim();
   }
 
-  static String _resolveTitle(NumberPronunciationState? task) {
-    final itemType = task?.taskId.type;
-    switch (itemType) {
-      case TrainingItemType.timeExact:
-      case TrainingItemType.timeQuarter:
-      case TrainingItemType.timeHalf:
-      case TrainingItemType.timeRandom:
-        return 'Say the time aloud';
-      case TrainingItemType.phone33x3:
-      case TrainingItemType.phone3222:
-      case TrainingItemType.phone2322:
-        return 'Say the phone number aloud';
-      case TrainingItemType.digits:
-      case TrainingItemType.base:
-      case TrainingItemType.hundreds:
-      case TrainingItemType.thousands:
-      case null:
-        return 'Read the number aloud';
-    }
+  static String _resolveTitle(SpeakState? task) {
+    final familyId = task?.family.id ?? '';
+    if (familyId.contains('time')) return 'Say the time aloud';
+    if (familyId.startsWith('phone')) return 'Say the phone number aloud';
+    return 'Read the number aloud';
   }
 }

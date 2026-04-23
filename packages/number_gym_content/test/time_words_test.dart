@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:number_gym/features/training/domain/learning_language.dart';
-import 'package:number_gym/features/training/domain/time_value.dart';
-import 'package:number_gym/features/training/languages/registry.dart';
+import 'package:trainer_core/trainer_core.dart';
+import 'package:number_gym_content/number_gym_content.dart';
+import 'package:number_gym_content/src/languages/registry.dart';
 
 void main() {
   test('23:45 uses midnight wording in every language', () {

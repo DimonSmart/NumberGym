@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/session_stats_recorder.dart';
-import 'package:number_gym/features/training/domain/study_streak_service.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 import 'helpers/training_fakes.dart';
 

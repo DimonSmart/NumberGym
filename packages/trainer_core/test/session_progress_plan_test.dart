@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/session_progress_plan.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 void main() {
   test('target cards follow started and completed sessions', () {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trainer_core/trainer_core.dart' show TrainingFeedback, TrainingOutcome;
 
 import '../../../../core/theme/app_palette.dart';
-import '../../domain/training_outcome.dart';
-import '../../domain/training_state.dart';
 
 class TrainingFeedbackViewModel {
   const TrainingFeedbackViewModel({

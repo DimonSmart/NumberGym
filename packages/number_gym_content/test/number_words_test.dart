@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/learning_language.dart';
-import 'package:number_gym/features/training/languages/registry.dart';
+import 'package:trainer_core/trainer_core.dart';
+import 'package:number_gym_content/src/languages/registry.dart';
 
 void main() {
   test('numberToEnglish handles edges', () {

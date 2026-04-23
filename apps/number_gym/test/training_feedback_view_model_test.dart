@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/training_outcome.dart';
-import 'package:number_gym/features/training/domain/training_state.dart';
+import 'package:trainer_core/trainer_core.dart' show TrainingFeedback, TrainingOutcome;
 import 'package:number_gym/features/training/ui/view_models/training_feedback_view_model.dart';
 
 void main() {

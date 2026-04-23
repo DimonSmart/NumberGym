@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trainer_core/trainer_core.dart' show ListenAndChooseState, TimerState;
 
-import '../../domain/task_state.dart';
 import 'training_feedback_view_model.dart';
 
 class ListeningViewModel {
@@ -36,14 +36,14 @@ class ListeningViewModel {
 
   factory ListeningViewModel.fromState({
     required ThemeData theme,
-    required ListeningState task,
+    required ListenAndChooseState task,
     required TrainingFeedbackViewModel feedback,
   }) {
     final displayText = task.displayText.isEmpty ? '?' : task.displayText;
-    final title = task.timeValue != null
+    final title = task.exerciseId.familyId.contains('time')
         ? 'Listen and choose the time'
         : 'Listen and choose the number';
-    
+
     return ListeningViewModel(
       title: title,
       displayText: displayText,
@@ -60,7 +60,7 @@ class ListeningViewModel {
       feedbackColor: feedback.color,
       timer: task.timer,
       isTimerActive: task.timer.isRunning,
-      taskKey: task.taskId.storageKey,
+      taskKey: task.exerciseId.storageKey,
     );
   }
 }

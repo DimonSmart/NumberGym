@@ -3,7 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../domain/training_state.dart';
+import 'package:trainer_core/trainer_core.dart' show SessionStats;
+
 import '../view_models/training_status_view_model.dart';
 
 class TrainingStatusView extends StatelessWidget {

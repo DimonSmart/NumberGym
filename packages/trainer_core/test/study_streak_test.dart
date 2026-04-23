@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/learning_language.dart';
-import 'package:number_gym/features/training/domain/study_streak.dart';
-import 'package:number_gym/features/training/domain/study_streak_service.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 import 'helpers/training_fakes.dart';
 
@@ -64,7 +62,7 @@ void main() {
     expect(snapshot.currentStreakDays, 1);
     expect(snapshot.monthDays.length, 28);
     expect(snapshot.monthDays[1].hasActivity, isTrue);
-    expect(snapshot.monthDays[1].hasMultipleSessions, isTrue);
+    expect(snapshot.monthDays[1].sessionsCompleted, greaterThan(1));
     expect(snapshot.monthDays[2].hasActivity, isFalse);
   });
 }

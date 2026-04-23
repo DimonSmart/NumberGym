@@ -5,18 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:trainer_core/trainer_core.dart' show TrainingCelebration;
+
 import '../../../../core/logging/app_logger.dart';
-import '../../domain/training_state.dart';
 import 'celebration_media_resolver.dart';
 
 class CelebrationOverlay extends StatefulWidget {
   const CelebrationOverlay({
     super.key,
     required this.celebration,
+    required this.sessionCardsCompleted,
+    required this.sessionTargetCards,
     required this.onContinue,
   });
 
   final TrainingCelebration celebration;
+  final int sessionCardsCompleted;
+  final int sessionTargetCards;
   final VoidCallback onContinue;
 
   @override
@@ -282,7 +287,7 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   }
 
   Widget _buildTopMetaRow(ThemeData theme) {
-    final methodLabel = widget.celebration.learningMethodLabel.trim();
+    final methodLabel = widget.celebration.modeLabel.trim();
     final leftText = methodLabel.isEmpty ? 'Training' : methodLabel;
     final sessionText = _resolveSessionText();
     final textStyle = theme.textTheme.labelLarge?.copyWith(
@@ -308,11 +313,10 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
   }
 
   String _resolveSessionText() {
-    final celebration = widget.celebration;
-    final target = celebration.sessionTargetCards <= 0
-        ? celebration.sessionCardsCompleted
-        : celebration.sessionTargetCards;
-    return 'Session: ${celebration.sessionCardsCompleted}/$target';
+    final target = widget.sessionTargetCards <= 0
+        ? widget.sessionCardsCompleted
+        : widget.sessionTargetCards;
+    return 'Session: ${widget.sessionCardsCompleted}/$target';
   }
 
   bool _hasConcreteMasteredValue() {

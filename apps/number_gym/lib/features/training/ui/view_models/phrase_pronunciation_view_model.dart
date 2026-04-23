@@ -1,5 +1,5 @@
-import '../../domain/pronunciation_models.dart';
-import '../../domain/task_state.dart';
+import 'package:trainer_core/trainer_core.dart'
+    show ReviewPronunciationState, ReviewFlow, PronunciationAnalysisResult;
 
 class PhrasePronunciationViewModel {
   const PhrasePronunciationViewModel({
@@ -23,7 +23,7 @@ class PhrasePronunciationViewModel {
   final String title;
   final String displayText;
   final PronunciationAnalysisResult? result;
-  final PhraseFlow flow;
+  final ReviewFlow flow;
   final bool hasRecording;
   final bool isWaveVisible;
   final String helperText;
@@ -36,20 +36,20 @@ class PhrasePronunciationViewModel {
   final String sendLabel;
   final bool showSendProgress;
 
-  bool get isRecording => flow == PhraseFlow.recording;
-  bool get isReviewing => flow == PhraseFlow.reviewing;
-  bool get isSending => flow == PhraseFlow.sending;
-  bool get isRecorded => flow == PhraseFlow.recorded;
+  bool get isRecording => flow == ReviewFlow.recording;
+  bool get isReviewing => flow == ReviewFlow.reviewing;
+  bool get isSending => flow == ReviewFlow.sending;
+  bool get isRecorded => flow == ReviewFlow.recorded;
 
   factory PhrasePronunciationViewModel.fromState({
-    required PhrasePronunciationState task,
+    required ReviewPronunciationState task,
   }) {
     final flow = task.flow;
-    final waiting = flow == PhraseFlow.waiting;
-    final isRecording = flow == PhraseFlow.recording;
-    final isReviewing = flow == PhraseFlow.reviewing;
-    final isSending = flow == PhraseFlow.sending;
-    final isRecorded = flow == PhraseFlow.recorded;
+    final waiting = flow == ReviewFlow.waiting;
+    final isRecording = flow == ReviewFlow.recording;
+    final isReviewing = flow == ReviewFlow.reviewing;
+    final isSending = flow == ReviewFlow.sending;
+    final isRecorded = flow == ReviewFlow.recorded;
     final hasRecording = task.hasRecording;
 
     final showRecordButton = !isRecording && !hasRecording && !isReviewing;

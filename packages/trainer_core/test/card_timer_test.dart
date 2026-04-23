@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:number_gym/features/training/domain/services/card_timer.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 void main() {
   test('pause and resume keep remaining time', () async {
