@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:number_gym_content/number_gym_content.dart';
+import 'package:trainer_core/trainer_core.dart';
 
-import 'core/theme/app_palette.dart';
-import 'features/training/data/card_progress.dart';
 import 'features/intro/ui/screens/intro_screen.dart';
+
+const AppConfig numberGymConfig = AppConfig(
+  appId: 'number_gym',
+  title: 'Numbers Gym',
+  homeTitle: 'Numbers Gym',
+  repositoryUrl: 'https://github.com/DimonSmart/NumberGym',
+  privacyPolicyUrl: 'https://dimonsmart.github.io/numbergym-privacy/',
+  aboutTitle: 'About NumberGym',
+  aboutBody:
+      'NumberGym is a numbers-only language trainer built with a strict focus '
+      'on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
+      'Training is based on short cards and quick drills: you repeatedly practice '
+      'the same number until it becomes automatic. Cards you answer correctly and '
+      'consistently are removed from future sessions, so your practice stays '
+      'focused on what still needs work.',
+  settingsBoxName: 'settings',
+  progressBoxName: 'progress_v2',
+  heroAssetPath: 'assets/images/branding/wordmark.png',
+  mascotAssetPath: 'assets/images/app_icon_transparent.png',
+);
+
+final TrainingAppDefinition numberGymDefinition = buildNumberGymAppDefinition(
+  config: numberGymConfig,
+);
 
 class NumbersTrainerApp extends StatelessWidget {
   final Box<String> settingsBox;
@@ -17,7 +41,6 @@ class NumbersTrainerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Creating a custom color scheme based on the brand palette
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppPalette.deepBlue,
       brightness: Brightness.light,
@@ -31,7 +54,7 @@ class NumbersTrainerApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Numbers Gym',
+      title: numberGymConfig.title,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,

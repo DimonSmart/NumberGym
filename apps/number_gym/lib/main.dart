@@ -53,9 +53,11 @@ Future<void> main() async {
       ]);
       await Hive.initFlutter();
       Hive.registerAdapter(CardProgressAdapter());
-      final settingsBox = await Hive.openBox<String>('settings');
-      const progressBoxName = 'progress_v2';
-      final progressBox = await _openProgressBoxWithRecovery(progressBoxName);
+      final settingsBox =
+          await Hive.openBox<String>(numberGymConfig.settingsBoxName);
+      final progressBox = await _openProgressBoxWithRecovery(
+        numberGymConfig.progressBoxName,
+      );
 
       runApp(
         NumbersTrainerApp(settingsBox: settingsBox, progressBox: progressBox),
