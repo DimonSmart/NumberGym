@@ -88,6 +88,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       appDefinition: widget.appDefinition,
       settingsRepository: _settingsRepository,
       progressRepository: ProgressRepository(widget.progressBox),
+      onAutoStop: _handleAutoStop,
     );
     _loadAutoSimulationSettings();
     _sliderPeekController = AnimationController(
@@ -624,6 +625,16 @@ class _TrainingScreenState extends State<TrainingScreen>
         SnackBar(content: Text('Pronunciation scoring failed: $error')),
       );
     }
+  }
+
+  void _handleAutoStop() {
+    if (!mounted) return;
+    if (!_allowSystemPop) {
+      setState(() {
+        _allowSystemPop = true;
+      });
+    }
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   Future<void> _handleContinueSession() async {

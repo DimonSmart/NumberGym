@@ -16,12 +16,14 @@ class TrainerController extends ChangeNotifier {
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
     stt.SpeechToText? speech,
+    VoidCallback? onAutoStop,
   }) : _session = TrainerSession(
          appDefinition: appDefinition,
          settingsRepository: settingsRepository,
          progressRepository: progressRepository,
          services: services ?? TrainingServices.defaults(speech: speech),
          onStateChanged: _noop,
+         onAutoStop: onAutoStop,
        ) {
     _session.onStateChanged = _notify;
   }

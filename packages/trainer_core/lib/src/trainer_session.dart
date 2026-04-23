@@ -14,6 +14,7 @@ import 'runtimes/speak_runtime.dart';
 import 'session_lifecycle_tracker.dart';
 import 'session_progress_plan.dart';
 import 'session_stats_recorder.dart';
+import 'study_streak_service.dart';
 import 'task_availability.dart';
 import 'task_card_flow.dart';
 import 'task_progress_recorder.dart';
@@ -23,6 +24,7 @@ import 'trainer_repositories.dart';
 import 'trainer_services.dart';
 import 'trainer_state.dart';
 import 'training/domain/learning_language.dart';
+import 'training/domain/silent_detector.dart';
 
 class TrainerSession {
   TrainerSession({
@@ -31,10 +33,12 @@ class TrainerSession {
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
     void Function()? onStateChanged,
+    void Function()? onAutoStop,
   }) : _appDefinition = appDefinition,
        _settingsRepository = settingsRepository,
        _services = services ?? TrainingServices.defaults(),
-       _onStateChanged = onStateChanged ?? _noop {
+       _onStateChanged = onStateChanged ?? _noop,
+       _onAutoStop = onAutoStop ?? _noop {
     _progressManager = ProgressManager(
       progressRepository: progressRepository,
       catalog: appDefinition.catalog,
@@ -59,6 +63,12 @@ class TrainerSession {
       internetChecker: _services.internet,
       random: _random,
     );
+    _sessionStatsRecorder = SessionStatsRecorder(
+      settingsRepository: settingsRepository,
+      studyStreakService: StudyStreakService(
+        settingsRepository: settingsRepository,
+      ),
+    );
     _premiumPronunciationEnabled = _settingsRepository
         .readPremiumPronunciationEnabled();
     _syncState();
@@ -69,6 +79,8 @@ class TrainerSession {
   final SettingsRepositoryBase _settingsRepository;
   final TrainingServices _services;
   void Function() _onStateChanged;
+  final void Function() _onAutoStop;
+  final SilentDetector _silentDetector = SilentDetector();
 
   final math.Random _random = math.Random();
   final SessionLifecycleTracker _sessionTracker = SessionLifecycleTracker();
@@ -141,6 +153,7 @@ class TrainerSession {
     }
     _trainingActive = true;
     _runtimeCoordinator.resetInteraction();
+    _silentDetector.reset();
     _errorMessage = null;
     _resetSessionCounters(targetCards: _initialSessionTargetCards());
     _syncState();
@@ -149,6 +162,7 @@ class TrainerSession {
   }
 
   Future<void> continueSession() async {
+    _silentDetector.reset();
     _resetSessionCounters(targetCards: dailyGoalCards);
     _sessionStats = null;
     _syncState();
@@ -488,9 +502,17 @@ class TrainerSession {
     }
 
     final feedbackHold = _feedbackCoordinator.show(outcome);
-    if (!simulatedUserInteraction && !_runtimeCoordinator.taskHadUserInteraction) {
-      // Preserve the old auto-stop extension point even though the new shell
-      // does not yet simulate silent streak detection.
+
+    _silentDetector.record(
+      interacted:
+          simulatedUserInteraction ||
+          _runtimeCoordinator.taskHadUserInteraction,
+      affectsProgress: progressUpdate.affectsProgress,
+    );
+    if (_silentDetector.shouldStop) {
+      await stopTraining();
+      _onAutoStop();
+      return;
     }
 
     await feedbackHold;
