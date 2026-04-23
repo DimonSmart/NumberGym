@@ -97087,7 +97087,7 @@ r.ay=s.f},
 $S:0}
 A.axS.prototype={
 $2(a,b){var s=null,r=Math.max(0,Math.min(Math.min(b.b-48,520)*0.9,Math.max(0,b.d-28-24-176)/1.2316326530612245)),q=this.a,p=t.p
-return new A.bH(B.Hx,A.hk(new A.ep(B.CU,A.d0(A.b([A.dd(A.b([B.iO,new A.xg(new A.axQ(),new A.axR(q,a),"Menu",A.f_(s,B.Iv,B.x,s,s,new A.cE(B.bm,s,s,s,B.LO,s,B.eE),s,s,s,B.HB,s,s,s),s,t.Jg)],p),B.C,B.t,B.z,0),new A.eo(B.V,s,s,A.Cv("assets/images/numbers_gym_name.png",B.V,B.f1,B.eC,r),s),B.aC,B.iO,A.d0(A.b([A.Cv("assets/images/app_icon_transparent.png",B.V,B.f1,B.eC,r),B.cK,q.ac5(this.b,a)],p),B.C,B.t,B.b1)],p),B.au,B.t,B.z),s),s,s),s)},
+return new A.bH(B.Hx,A.hk(new A.ep(B.CU,A.d0(A.b([A.dd(A.b([B.iO,new A.xg(new A.axQ(),new A.axR(q,a),"Menu",A.f_(s,B.Iv,B.x,s,s,new A.cE(B.bm,s,s,s,B.LO,s,B.eE),s,s,s,B.HB,s,s,s),s,t.Jg)],p),B.C,B.t,B.z,0),new A.eo(B.V,s,s,A.Cv("assets/images/branding/wordmark.png",B.V,B.f1,B.eC,r),s),B.aC,B.iO,A.d0(A.b([A.Cv("assets/images/app_icon_transparent.png",B.V,B.f1,B.eC,r),B.cK,q.ac5(this.b,a)],p),B.C,B.t,B.b1)],p),B.au,B.t,B.z),s),s,s),s)},
 $S:545}
 A.axR.prototype={
 $1(a){var s=this
