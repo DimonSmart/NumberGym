@@ -1,12 +1,3 @@
 # Enforce CRLF line endings for all text files in this repo.
 * text=auto eol=crlf
 .gitattributes text eol=lf
-
-# Flutter rewrites these tracked generated files with LF even on Windows.
-**/linux/flutter/generated_plugin_registrant.cc text eol=lf
-**/linux/flutter/generated_plugin_registrant.h text eol=lf
-**/linux/flutter/generated_plugins.cmake text eol=lf
-**/windows/flutter/generated_plugin_registrant.cc text eol=lf
-**/windows/flutter/generated_plugin_registrant.h text eol=lf
-**/windows/flutter/generated_plugins.cmake text eol=lf
-**/macos/Flutter/GeneratedPluginRegistrant.swift text eol=lf
