@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trainer_core/trainer_core.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import 'about_screen.dart';
+
+enum _IntroMenuAction { statistics, settings, debug, about }
 
 class VerbGymHomeScreen extends StatefulWidget {
   const VerbGymHomeScreen({
@@ -24,220 +29,431 @@ class VerbGymHomeScreen extends StatefulWidget {
 }
 
 class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
-  late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
+  late final SettingsRepository _settingsRepository;
   late final TrainingStatsLoader _statsLoader;
-  String? _versionLabel;
+  StreamSubscription<BoxEvent>? _progressSubscription;
+  StreamSubscription<BoxEvent>? _settingsSubscription;
+  int _progressLoadRequestId = 0;
+  bool _allLearned = false;
+  bool _loadingProgress = true;
+  int _cardsCompletedToday = 0;
+  int _cardsTargetToday = DailyStudyPlan.cardLimit;
+  int _sessionCardGoal = DailyStudyPlan.cardLimit;
+  int _currentStreakDays = 0;
+  DailySessionStats _dailySessionStats = DailySessionStats.emptyFor(
+    DateTime.now(),
+  );
 
   @override
   void initState() {
     super.initState();
-    _settingsRepository = SettingsRepository(widget.settingsBox);
     _progressRepository = ProgressRepository(widget.progressBox);
+    _settingsRepository = SettingsRepository(widget.settingsBox);
     _statsLoader = TrainingStatsLoader(
       progressRepository: _progressRepository,
       settingsRepository: _settingsRepository,
       catalog: widget.appDefinition.catalog,
     );
-    _loadVersion();
+    _loadProgress();
+    _progressSubscription = widget.progressBox.watch().listen(
+      (_) => _loadProgress(),
+    );
+    _settingsSubscription = widget.settingsBox.watch().listen(
+      (_) => _loadProgress(),
+    );
   }
 
-  Future<void> _loadVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _versionLabel = '${packageInfo.version} (${packageInfo.buildNumber})';
-      });
-    } catch (_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _versionLabel = null;
-      });
+  @override
+  void dispose() {
+    _progressSubscription?.cancel();
+    _settingsSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadProgress() async {
+    final requestId = ++_progressLoadRequestId;
+    final snapshot = await _statsLoader.load();
+    final dailySummary = snapshot.dailySummary;
+    final dailySessionStats = snapshot.dailySessionStats;
+    final sessionCardGoal = SessionProgressPlan.normalizeSessionSize(
+      dailySummary.targetToday,
+    );
+    final cardsCompletedToday = dailySummary.completedToday < 0
+        ? 0
+        : dailySummary.completedToday;
+    final cardsTargetToday = SessionProgressPlan.targetCards(
+      cardsCompletedToday: cardsCompletedToday,
+      sessionsCompleted: dailySessionStats.sessionsCompleted,
+      sessionSize: sessionCardGoal,
+    );
+
+    if (!mounted || requestId != _progressLoadRequestId) {
+      return;
     }
+    setState(() {
+      _allLearned = snapshot.allLearned;
+      _loadingProgress = false;
+      _cardsCompletedToday = cardsCompletedToday;
+      _cardsTargetToday = cardsTargetToday;
+      _sessionCardGoal = sessionCardGoal;
+      _currentStreakDays = snapshot.streakSnapshot.currentStreakDays;
+      _dailySessionStats = dailySessionStats;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currentLanguage = _settingsRepository.readLearningLanguage();
-    final resolvedLanguage =
-        widget.appDefinition.supportedLanguages.contains(currentLanguage)
-        ? currentLanguage
-        : widget.appDefinition.supportedLanguages.first;
-    final profile = widget.appDefinition.profileOf(resolvedLanguage);
-
     return Scaffold(
       body: TrainingBackground(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: <Color>[
-                Color(0xE6FFF7EA),
-                Color(0xCCF7E8D2),
-                Color(0xAAF4E1C8),
-              ],
-            ),
-          ),
-          child: SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            widget.config.heroAssetPath,
-                            height: 92,
-                            fit: BoxFit.contain,
-                            filterQuality: FilterQuality.high,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Fast tense drills for present, past, and future.',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: const Color(0xFF30413C),
-                            ),
-                          ),
-                        ],
-                      ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const horizontalPadding = 24.0;
+              const verticalPaddingTop = 28.0;
+              const verticalPaddingBottom = 24.0;
+              const maxContentWidth = 520.0;
+              const logoAspectRatio = 227 / 980;
+              const menuHeight = 48.0;
+              const gapAfterLogo = 12.0;
+              const gapAfterMascot = 16.0;
+              const infoCardHeight = 96.0;
+              const layoutSafety = 4.0;
+
+              final contentWidth =
+                  constraints.maxWidth - (horizontalPadding * 2);
+              final contentHeight =
+                  constraints.maxHeight -
+                  verticalPaddingTop -
+                  verticalPaddingBottom;
+              final effectiveWidth = math.min(contentWidth, maxContentWidth);
+              final availableImageHeight = math.max(
+                0.0,
+                contentHeight -
+                    (menuHeight +
+                        gapAfterLogo +
+                        gapAfterMascot +
+                        infoCardHeight +
+                        layoutSafety),
+              );
+              final maxWidthByHeight =
+                  availableImageHeight / (1 + logoAspectRatio);
+              final heroImageWidth = math.max(
+                0.0,
+                math.min(effectiveWidth * 0.9, maxWidthByHeight),
+              );
+
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  verticalPaddingTop,
+                  horizontalPadding,
+                  verticalPaddingBottom,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: maxContentWidth,
                     ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.82),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            const Text('Language'),
-                            Text(
-                              profile.label,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
+                            const Spacer(),
+                            PopupMenuButton<_IntroMenuAction>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case _IntroMenuAction.statistics:
+                                    _openStatistics(context);
+                                    break;
+                                  case _IntroMenuAction.settings:
+                                    _openSettings(context);
+                                    break;
+                                  case _IntroMenuAction.debug:
+                                    _openDebugMenu(context);
+                                    break;
+                                  case _IntroMenuAction.about:
+                                    _openAbout(context);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.statistics,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.bar_chart, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Statistics'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.settings,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.settings, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Settings'),
+                                    ],
+                                  ),
+                                ),
+                                if (kDebugMode)
+                                  PopupMenuItem(
+                                    value: _IntroMenuAction.debug,
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.bug_report_outlined,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Debug'),
+                                      ],
+                                    ),
+                                  ),
+                                PopupMenuItem(
+                                  value: _IntroMenuAction.about,
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.info_outline, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('About'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              icon: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppPalette.deepBlue,
+                                  shape: BoxShape.circle,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.more_vert,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                               ),
+                              tooltip: 'Menu',
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ship v1 with speech first',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            widget.config.heroAssetPath,
+                            width: heroImageWidth,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Each verb card stores explicit accepted forms, so irregulars, multi-word English futures, and Spanish answers with or without pronouns behave predictably.',
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        const SizedBox(height: 18),
-                        FilledButton.icon(
-                          onPressed: _openTraining,
-                          icon: const Icon(Icons.play_arrow),
-                          label: const Text('Start training'),
-                        ),
+                        const SizedBox(height: 12),
+                        const Spacer(),
+                        _buildBottomContent(theme, context, heroImageWidth),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _HomeActionCard(
-                      title: 'Settings',
-                      subtitle: 'Language, voice, progress reset',
-                      icon: Icons.tune,
-                      onTap: _openSettings,
-                    ),
-                    _HomeActionCard(
-                      title: 'Statistics',
-                      subtitle: 'Progress by tense family',
-                      icon: Icons.bar_chart,
-                      onTap: _openStatistics,
-                    ),
-                    _HomeActionCard(
-                      title: 'About',
-                      subtitle: 'Version, repo, privacy links',
-                      icon: Icons.info_outline,
-                      onTap: _openAbout,
-                    ),
-                    if (kDebugMode)
-                      _HomeActionCard(
-                        title: 'Debug',
-                        subtitle: 'Forced family and mode filters',
-                        icon: Icons.bug_report_outlined,
-                        onTap: _openDebug,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Supported languages',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.appDefinition.supportedLanguages
-                              .map(
-                                (language) => widget.appDefinition
-                                    .profileOf(language)
-                                    .label,
-                              )
-                              .join('  |  '),
-                        ),
-                        if (_versionLabel != null) ...[
-                          const SizedBox(height: 14),
-                          Text(
-                            'Version $_versionLabel',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildBottomContent(
+    ThemeData theme,
+    BuildContext context,
+    double heroImageWidth,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          widget.config.mascotAssetPath,
+          width: heroImageWidth,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+        ),
+        const SizedBox(height: 16),
+        _buildDailyPlanActionCard(theme, context),
+      ],
+    );
+  }
+
+  Widget _buildDailyPlanActionCard(ThemeData theme, BuildContext context) {
+    if (_loadingProgress) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: Colors.black87,
+      fontWeight: FontWeight.w600,
+    );
+    final subStyle = theme.textTheme.bodySmall?.copyWith(color: Colors.black54);
+    final completed = _cardsCompletedToday;
+    final goal = _cardsTargetToday;
+    final sessionsCompleted = _dailySessionStats.sessionsCompleted;
+    final sessionWord = sessionsCompleted == 1 ? 'session' : 'sessions';
+    final sessionProgress = SessionProgressPlan.currentSessionProgress(
+      cardsCompletedToday: completed,
+      sessionSize: _sessionCardGoal,
+    );
+    final sessionBoundary = SessionProgressPlan.isSessionBoundary(
+      cardsCompletedToday: completed,
+      sessionSize: _sessionCardGoal,
+    );
+    final durationText = _formatDuration(_dailySessionStats.duration);
+    final statusText = sessionBoundary
+        ? '$sessionsCompleted $sessionWord completed today'
+        : 'Current session: $sessionProgress/$_sessionCardGoal';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+        ],
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 360;
+          final streakIndicator = _buildStreakIndicator(
+            theme: theme,
+            labelStyle: subStyle,
+          );
+          final infoColumn = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: Text('Today\'s plan', style: textStyle)),
+                  const SizedBox(width: 10),
+                  streakIndicator,
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text('$completed of $goal cards', style: subStyle),
+              Text(statusText, style: subStyle),
+              Text('Duration today: $durationText', style: subStyle),
+            ],
+          );
+          final actionButton = _buildStartButton(
+            theme,
+            context,
+            expand: compact,
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [infoColumn, const SizedBox(height: 12), actionButton],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: infoColumn),
+              const SizedBox(width: 12),
+              actionButton,
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStreakIndicator({
+    required ThemeData theme,
+    required TextStyle? labelStyle,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$_currentStreakDays',
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppPalette.warmOrange,
+            fontWeight: FontWeight.w800,
+            height: 1.0,
+          ),
+        ),
+        Text(
+          'streak',
+          style: labelStyle?.copyWith(
+            color: Colors.black54,
+            fontWeight: FontWeight.w600,
+            height: 1.1,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStartButton(
+    ThemeData theme,
+    BuildContext context, {
+    required bool expand,
+  }) {
+    return SizedBox(
+      width: expand ? double.infinity : 120,
+      height: 44,
+      child: FilledButton(
+        onPressed: _allLearned ? null : _openTraining,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppPalette.deepBlue,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.black12,
+          disabledForegroundColor: Colors.black45,
+          textStyle: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(_allLearned ? 'All learned' : 'Start'),
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   Future<void> _openTraining() async {
@@ -250,30 +466,52 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
         ),
       ),
     );
-    if (!mounted) {
-      return;
-    }
-    setState(() {});
+    await _loadProgress();
   }
 
-  Future<void> _openSettings() async {
+  Future<void> _openSettings(BuildContext context) async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => SettingsScreen(
           appDefinition: widget.appDefinition,
           settingsBox: widget.settingsBox,
           progressBox: widget.progressBox,
-          onProgressChanged: () => setState(() {}),
+          onProgressChanged: _loadProgress,
         ),
       ),
     );
-    if (!mounted) {
-      return;
-    }
-    setState(() {});
+    await _loadProgress();
   }
 
-  Future<void> _openStatistics() async {
+  Future<void> _openDebugMenu(BuildContext context) async {
+    if (!kDebugMode) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => DebugSettingsScreen(
+          appDefinition: widget.appDefinition,
+          settingsBox: widget.settingsBox,
+          progressBox: widget.progressBox,
+          onProgressChanged: _loadProgress,
+        ),
+      ),
+    );
+    await _loadProgress();
+  }
+
+  Future<void> _openAbout(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => VerbGymAboutScreen(
+          config: widget.config,
+          appDefinition: widget.appDefinition,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openStatistics(BuildContext context) async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => StatisticsScreen(
@@ -282,115 +520,6 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _openDebug() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => DebugSettingsScreen(
-          appDefinition: widget.appDefinition,
-          settingsBox: widget.settingsBox,
-          progressBox: widget.progressBox,
-          onProgressChanged: () => setState(() {}),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openAbout() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      backgroundColor: const Color(0xFFFFFAF2),
-      builder: (context) {
-        final theme = Theme.of(context);
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.config.aboutTitle,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(widget.config.aboutBody),
-                const SizedBox(height: 16),
-                FilledButton.tonalIcon(
-                  onPressed: () => _launchExternal(widget.config.repositoryUrl),
-                  icon: const Icon(Icons.code),
-                  label: const Text('Open repository'),
-                ),
-                const SizedBox(height: 10),
-                FilledButton.tonalIcon(
-                  onPressed: () =>
-                      _launchExternal(widget.config.privacyPolicyUrl),
-                  icon: const Icon(Icons.privacy_tip_outlined),
-                  label: const Text('Open privacy notes'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _launchExternal(String rawUrl) async {
-    final uri = Uri.tryParse(rawUrl);
-    if (uri == null) {
-      return;
-    }
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-}
-
-class _HomeActionCard extends StatelessWidget {
-  const _HomeActionCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SizedBox(
-      width: 220,
-      child: Card(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(28),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon, color: theme.colorScheme.primary),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(subtitle, style: theme.textTheme.bodyMedium),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    await _loadProgress();
   }
 }

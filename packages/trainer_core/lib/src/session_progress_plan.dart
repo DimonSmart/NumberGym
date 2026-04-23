@@ -59,4 +59,13 @@ class SessionProgressPlan {
     final normalizedCards = cardsCompletedToday < 0 ? 0 : cardsCompletedToday;
     return normalizedCards % normalizedSessionSize;
   }
+
+  static bool isSessionBoundary({
+    required int cardsCompletedToday,
+    required int sessionSize,
+  }) {
+    final normalizedCards = cardsCompletedToday < 0 ? 0 : cardsCompletedToday;
+    final normalizedSessionSize = normalizeSessionSize(sessionSize);
+    return normalizedCards > 0 && normalizedCards % normalizedSessionSize == 0;
+  }
 }

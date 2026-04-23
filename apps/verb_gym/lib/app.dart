@@ -18,7 +18,7 @@ const AppConfig verbGymConfig = AppConfig(
   settingsBoxName: 'verb_gym_settings',
   progressBoxName: 'verb_gym_progress',
   heroAssetPath: 'assets/images/branding/wordmark.png',
-  mascotAssetPath: 'assets/images/app_icon.png',
+  mascotAssetPath: 'assets/images/app_icon_transparent.png',
 );
 
 final TrainingAppDefinition verbGymDefinition = buildVerbGymAppDefinition(
@@ -37,14 +37,15 @@ class VerbGymApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const seed = Color(0xFF0E5A47);
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: seed,
-      primary: const Color(0xFF0E5A47),
-      secondary: const Color(0xFFF28F3B),
-      tertiary: const Color(0xFF2A2D34),
-      surface: const Color(0xFFFFFAF2),
+      seedColor: AppPalette.deepBlue,
       brightness: Brightness.light,
+      primary: AppPalette.deepBlue,
+      onPrimary: Colors.white,
+      secondary: AppPalette.brandGold,
+      tertiary: AppPalette.warmOrange,
+      surface: AppPalette.iceBackground,
+      onSurface: Colors.black87,
     );
 
     return MaterialApp(
@@ -54,18 +55,10 @@ class VerbGymApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: colorScheme,
         fontFamily: 'SpaceGrotesk',
-        scaffoldBackgroundColor: colorScheme.surface,
+        scaffoldBackgroundColor: AppPalette.iceBackground,
         appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.surface,
-          foregroundColor: colorScheme.primary,
-          elevation: 0,
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.white.withValues(alpha: 0.92),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
+          backgroundColor: AppPalette.iceBackground,
+          foregroundColor: AppPalette.deepBlue,
         ),
       ),
       home: VerbGymHomeScreen(
