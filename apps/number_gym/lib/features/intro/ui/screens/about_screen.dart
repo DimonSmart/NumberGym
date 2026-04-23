@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:trainer_core/trainer_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../training/ui/widgets/training_background.dart';
-
 class AboutScreen extends StatefulWidget {
-  const AboutScreen({super.key});
+  const AboutScreen({super.key, required this.config});
+
+  final AppConfig config;
 
   @override
   State<AboutScreen> createState() => _AboutScreenState();
@@ -16,12 +17,6 @@ class AboutScreen extends StatefulWidget {
 
 class _AboutScreenState extends State<AboutScreen> {
   late final Future<PackageInfo> _packageInfoFuture;
-  static final Uri _privacyPolicyUri = Uri.parse(
-    'https://dimonsmart.github.io/numbergym-privacy/',
-  );
-  static final Uri _repositoryUri = Uri.parse(
-    'https://github.com/DimonSmart/NumberGym',
-  );
   static const _nativeLinkChannel = MethodChannel(
     'com.dimonsmart.numbergym/native_links',
   );
@@ -34,14 +29,14 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Future<void> _openPrivacyPolicy() async {
     await _openExternalLink(
-      _privacyPolicyUri,
+      Uri.parse(widget.config.privacyPolicyUrl),
       errorText: 'Could not open privacy policy link.',
     );
   }
 
   Future<void> _openRepository() async {
     await _openExternalLink(
-      _repositoryUri,
+      Uri.parse(widget.config.repositoryUrl),
       errorText: 'Could not open repository link.',
     );
   }
@@ -104,7 +99,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'About',
+                      widget.config.aboutTitle,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -135,19 +130,15 @@ class _AboutScreenState extends State<AboutScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'NumberGym',
+                              widget.config.title,
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: scheme.primary,
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text.rich(
-                              const TextSpan(
-                                text:
-                                    'Is a numbers-only language trainer. It is built with a strict focus on practicing numbers, not general vocabulary, grammar, or themed lessons.\n\n'
-                                    'Training is based on short cards and quick drills: you repeatedly practice the same number until it becomes automatic. Cards you answer correctly and consistently are removed from future sessions, so your practice stays focused on what still needs work.',
-                              ),
+                            Text(
+                              widget.config.aboutBody,
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 height: 1.35,
                                 color: scheme.onSurfaceVariant,
@@ -181,7 +172,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       _InfoTile(
                         icon: Icons.code_outlined,
                         label: 'Repository',
-                        value: 'https://github.com/DimonSmart/NumberGym',
+                        value: widget.config.repositoryUrl,
                         onTap: _openRepository,
                       ),
                       const SizedBox(height: 12),

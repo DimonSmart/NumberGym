@@ -68,6 +68,7 @@ class NumbersTrainerApp extends StatelessWidget {
       home: IntroScreen(
         settingsBox: settingsBox,
         progressBox: progressBox,
+        appDefinition: numberGymDefinition,
       ),
     );
   }

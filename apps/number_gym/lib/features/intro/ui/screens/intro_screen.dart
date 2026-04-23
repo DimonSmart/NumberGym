@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:trainer_core/trainer_core.dart' show TrainingAppDefinition;
 
 import '../../../../core/theme/app_palette.dart';
 import '../../../training/data/card_progress.dart';
@@ -27,10 +28,12 @@ class IntroScreen extends StatefulWidget {
     super.key,
     required this.settingsBox,
     required this.progressBox,
+    required this.appDefinition,
   });
 
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+  final TrainingAppDefinition appDefinition;
 
   @override
   State<IntroScreen> createState() => _IntroScreenState();
@@ -446,6 +449,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     builder: (context) => TrainingScreen(
                       settingsBox: widget.settingsBox,
                       progressBox: widget.progressBox,
+                      appDefinition: widget.appDefinition,
                     ),
                   ),
                 );
@@ -504,9 +508,11 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   void _openAbout(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const AboutScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AboutScreen(config: widget.appDefinition.config),
+      ),
+    );
   }
 
   void _openStatistics(BuildContext context) {

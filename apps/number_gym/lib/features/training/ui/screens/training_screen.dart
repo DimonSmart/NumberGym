@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import 'package:trainer_core/trainer_core.dart' show TrainingAppDefinition;
+
 import '../../data/card_progress.dart';
 import '../../data/progress_repository.dart';
 import '../../data/settings_repository.dart';
@@ -28,11 +30,14 @@ import '../widgets/training_status_view.dart';
 class TrainingScreen extends StatefulWidget {
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+  // ignore: unused_field
+  final TrainingAppDefinition appDefinition;
 
   const TrainingScreen({
     super.key,
     required this.settingsBox,
     required this.progressBox,
+    required this.appDefinition,
   });
 
   @override
