@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:number_gym/features/training/domain/services/azure_speech_service.dart';
+import 'package:trainer_core/trainer_core.dart';
 
 import 'helpers/training_fakes.dart';
 
