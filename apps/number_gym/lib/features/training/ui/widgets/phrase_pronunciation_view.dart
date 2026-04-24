@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:trainer_core/trainer_core.dart' show PronunciationAnalysisResult, PronunciationWord;
-
-import '../../../../core/theme/app_palette.dart';
+import 'package:trainer_core/trainer_core.dart'
+    show AppPalette, PronunciationAnalysisResult, PronunciationWord;
 import '../view_models/phrase_pronunciation_view_model.dart';
 import 'sound_wave_indicator.dart';
 
@@ -40,7 +38,11 @@ class PhrasePronunciationView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        _buildPronunciationPhrase(theme, viewModel.displayText, viewModel.result),
+        _buildPronunciationPhrase(
+          theme,
+          viewModel.displayText,
+          viewModel.result,
+        ),
         if (viewModel.result != null) ...[
           const SizedBox(height: 12),
           _buildPronunciationSummary(theme, viewModel.result!),
@@ -122,7 +124,7 @@ class PhrasePronunciationView extends StatelessWidget {
   ) {
     final baseStyle =
         theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700) ??
-            const TextStyle(fontSize: 24, fontWeight: FontWeight.w700);
+        const TextStyle(fontSize: 24, fontWeight: FontWeight.w700);
     final resolvedText = (result?.displayText?.trim().isNotEmpty ?? false)
         ? result!.displayText!.trim()
         : displayText;

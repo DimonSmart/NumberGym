@@ -13,10 +13,10 @@ Build fast and confident spoken responses with short sessions:
 
 - Languages: English (`en`), Spanish (`es`), French (`fr`), German (`de`), Hebrew (`he`).
 - Shipping entrypoints live in `lib/app.dart` and `lib/main.dart`.
-- Branded NumberGym screens currently live in `lib/features/...` and are being reduced toward an app-shell role.
-- Shared runtime pieces are being moved into `../../packages/trainer_core`.
-- NumberGym-specific content is being moved into `../../packages/number_gym_content`.
-- `apps/number_gym` remains the source of truth for the shipped NumberGym UI until modular parity is complete.
+- Branded NumberGym screens live in `lib/features/...` as the app shell.
+- Shared runtime, repositories, and shared screens live in `../../packages/trainer_core`.
+- NumberGym-specific content and language material live in `../../packages/number_gym_content`.
+- `apps/number_gym` is the source of truth for the shipped NumberGym UI.
 
 ## Structure
 
@@ -24,8 +24,8 @@ Build fast and confident spoken responses with short sessions:
 - `lib/app.dart`: app theme and branded bootstrap shell.
 - `lib/features/intro/ui/screens/intro_screen.dart`: shipped intro/home flow for NumberGym.
 - `lib/features/intro/ui/screens/about_screen.dart`: app-specific about screen and external links.
-- `lib/features/training/...`: transitional NumberGym runtime and UI that is being split into app-specific and shared pieces.
-- `test/`: app-level smoke, widget, and regression tests.
+- `lib/features/training/ui/...`: branded NumberGym training shell, widgets, and view-models.
+- `test/`: app-level smoke, branding, widget, and integration tests.
 
 ## Domain scope
 
@@ -48,10 +48,10 @@ Target ownership:
 
 ## Documentation
 
-- [Specification](Docs/specification.md)
-- [Architecture](Docs/architecture.md)
-- [ExerciseFamily vs ExerciseMode](Docs/itemtype_learning_method.md)
-- [Domain glossary](Docs/glossary.md)
+- [Specification](../../Docs/specification.md)
+- [Architecture](../../Docs/architecture.md)
+- [ExerciseFamily vs ExerciseMode](../../Docs/itemtype_learning_method.md)
+- [Domain glossary](../../Docs/glossary.md)
 
 ## Branding
 
@@ -92,5 +92,5 @@ pwsh ./tool/analyze_all.ps1
 pwsh ./tool/test_all.ps1
 cd apps/number_gym
 flutter build apk --debug
-pwsh ../tool/publish_number_gym_web.ps1 -DryRun
+pwsh ../../tool/publish_number_gym_web.ps1 -DryRun
 ```

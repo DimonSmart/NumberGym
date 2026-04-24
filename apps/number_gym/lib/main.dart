@@ -4,10 +4,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:trainer_core/trainer_core.dart'
+    show
+        AppLogger,
+        CardProgress,
+        CardProgressAdapter,
+        LogLevel,
+        appLogE,
+        appLogW;
 
 import 'app.dart';
-import 'core/logging/app_logger.dart';
-import 'features/training/data/card_progress.dart';
 
 Future<void> main() async {
   await runZonedGuarded(
@@ -53,8 +59,9 @@ Future<void> main() async {
       ]);
       await Hive.initFlutter();
       Hive.registerAdapter(CardProgressAdapter());
-      final settingsBox =
-          await Hive.openBox<String>(numberGymConfig.settingsBoxName);
+      final settingsBox = await Hive.openBox<String>(
+        numberGymConfig.settingsBoxName,
+      );
       final progressBox = await _openProgressBoxWithRecovery(
         numberGymConfig.progressBoxName,
       );

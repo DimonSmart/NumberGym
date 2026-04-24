@@ -1,6 +1,6 @@
 # Workspace Architecture
 
-This document describes the target working shape of the repository during the monorepo migration.
+This document describes the working repository shape after the app split.
 
 ## Working Units
 
@@ -15,7 +15,7 @@ These directories are already part of the target architecture, but remain scaffo
 - `apps/verb_gym`
 - `packages/verb_gym_content`
 
-The old root Flutter app is transitional legacy code. It may still exist on disk until the cutover is complete, but new work should not be anchored to root `lib/`, root `test/`, or root platform folders.
+The repository root is not a product app anymore. Root `tool/` and `Docs/` coordinate the workspace; new product Dart code belongs only in `apps/*` and `packages/*`.
 
 ## Responsibility Split
 
@@ -42,7 +42,6 @@ The old root Flutter app is transitional legacy code. It may still exist on disk
 - Store unique app branding under `apps/<app>/assets/images/branding/`.
 - Keep shared per-app visuals in the regular app asset folders such as `assets/images/`, `goal_rewards/`, `session_rewards/`, and similar functional directories.
 - Prefer semantic file names inside each app branding folder so references stay predictable across apps. The app-name wordmark lives at `assets/images/branding/wordmark.png`.
-- The root Flutter app is still legacy. If it must keep NumberGym assets during the migration, treat them as a temporary mirror of `apps/number_gym`, not as the source of truth.
 
 ## Target Dependency Direction
 
@@ -73,18 +72,14 @@ For shipping tasks, `apps/number_gym` is the main operational Flutter app.
 - NumberGym web publishing should happen from `tool/publish_number_gym_web.ps1`
 - VerbGym web publishing can be done separately from `tool/publish_verb_gym_web.ps1`
 
-Legacy root build scripts must not build the root Flutter app anymore.
-
 ## Testing Boundaries
 
-The intended long-term test split is:
+The supported test split is:
 
 - `packages/trainer_core/test`: shared algorithms and orchestration
 - `packages/number_gym_content/test`: NumberGym-specific content rules
 - `apps/number_gym/test`: app shell, branding, and integration behavior
 
-Root `test/` is legacy and should disappear once the cutover is complete.
-
 ## Migration Rule
 
-If a change can be expressed in `apps/*` or `packages/*`, put it there. Do not create new root-level product code while the cutover is in progress.
+If a change can be expressed in `apps/*` or `packages/*`, put it there. Do not recreate root-level product Dart code.

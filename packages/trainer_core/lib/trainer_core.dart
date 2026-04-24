@@ -31,3 +31,12 @@ export 'src/training_ui/widgets/training_background.dart';
 export 'src/training/data/card_progress.dart'
     show CardCluster, CardProgress, CardProgressAdapter;
 export 'src/training/domain/learning_language.dart';
+export 'src/learning_params.dart';
+export 'src/progress_manager.dart';
+export 'src/task_availability.dart';
+export 'src/task_card_flow.dart';
+export 'src/task_progress_recorder.dart';
+export 'src/task_runtime.dart'
+    show PauseTaskAction, ResumeTaskAction, TaskCompleted, TaskUserInteracted;
+export 'src/task_scheduler.dart';
+export 'src/runtimes/speak_runtime.dart';

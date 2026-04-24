@@ -15,7 +15,7 @@ Scaffold members that are part of the target architecture but still incomplete:
 - `apps/verb_gym`
 - `packages/verb_gym_content`
 
-The legacy root Flutter app still exists physically while the cutover is in progress, but it is no longer the target architecture and should not receive new feature work.
+The root workspace is now orchestration-only: scripts, docs, and historical platform folders live here, but product Dart code belongs only in `apps/*` and `packages/*`.
 
 ## Workspace Commands
 
@@ -47,7 +47,7 @@ Use `-IncludeScaffolds` when you want root validation scripts to include the Ver
 - App-specific identity lives in each app shell under `apps/<app>/assets/images/branding/`.
 - Shared visuals that intentionally stay the same for an app remain in the regular app asset folders such as `apps/<app>/assets/images/`, `goal_rewards/`, and `session_rewards/`.
 - Use semantic file names inside each app branding folder so code can stay stable across apps. The current app name wordmark path is `assets/images/branding/wordmark.png`.
-- Do not add new app-specific identity to `packages/trainer_core`. The legacy root Flutter app may keep a transitional NumberGym mirror until the cutover is finished.
+- Do not add new app-specific identity to `packages/trainer_core`.
 
 ## Lockfile Policy
 

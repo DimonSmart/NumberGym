@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:trainer_core/trainer_core.dart' show TrainingCelebration;
-
-import '../../../../core/logging/app_logger.dart';
+import 'package:trainer_core/trainer_core.dart'
+    show TrainingCelebration, appLogW;
 import 'celebration_media_resolver.dart';
 
 class CelebrationOverlay extends StatefulWidget {

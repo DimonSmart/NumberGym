@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trainer_core/src/learning_params.dart';
 import 'package:trainer_core/trainer_core.dart';
 
 void main() {
