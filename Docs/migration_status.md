@@ -83,17 +83,16 @@ This is the surface that should remain after the engine/content cutover is compl
 
 The largest remaining problem is no longer "missing shared abstractions". It is leftover legacy code and tests that still mirror the old app-local engine.
 
-### Dead local UI now superseded by package screens
+### Dead local UI already removed
 
-These files are no longer on the active runtime path after the `IntroScreen` cutover:
+The old app-local settings/statistics/debug UI that became unreachable after the `IntroScreen` cutover has now been deleted:
 
 - `apps/number_gym/lib/features/training/ui/screens/settings_screen.dart`
 - `apps/number_gym/lib/features/training/ui/screens/statistics_screen.dart`
 - `apps/number_gym/lib/features/training/ui/screens/debug_settings_screen.dart`
-- helper widgets used only by those screens:
-  - `apps/number_gym/lib/features/training/ui/screens/training_item_type_x.dart`
-  - `apps/number_gym/lib/features/training/ui/screens/widgets/stats_card_surface.dart`
-  - `apps/number_gym/lib/features/training/ui/screens/widgets/streak_card.dart`
+- `apps/number_gym/lib/features/training/ui/screens/training_item_type_x.dart`
+- `apps/number_gym/lib/features/training/ui/screens/widgets/stats_card_surface.dart`
+- `apps/number_gym/lib/features/training/ui/screens/widgets/streak_card.dart`
 
 ### App-local legacy engine still present on disk
 
@@ -165,22 +164,19 @@ Tests that should remain app-level after cleanup:
 
 The next steps are now straightforward:
 
-1. Delete dead local UI that is already superseded by package screens.
-   - Remove local `settings_screen.dart`, `statistics_screen.dart`, `debug_settings_screen.dart`, and their private helper widgets.
-
-2. Finish moving legacy tests to the correct package boundaries.
+1. Finish moving legacy tests to the correct package boundaries.
    - Move shared engine tests to `packages/trainer_core/test`.
    - Move NumberGym content tests to `packages/number_gym_content/test`.
    - Rewrite `training_session_behavior_test.dart` against `TrainerSession` / `TrainerController` instead of mechanically carrying the old test forward.
    - Leave only app-shell, branding, and integration coverage in `apps/number_gym/test`.
 
-3. Remove the old app-local engine mirror once tests stop depending on it.
+2. Remove the old app-local engine mirror once tests stop depending on it.
    - Delete `apps/number_gym/lib/features/training/domain/`
    - Delete `apps/number_gym/lib/features/training/data/`
    - Delete `apps/number_gym/lib/features/training/languages/`
    - Delete obsolete test helpers that only support the old engine
 
-4. Remove the root legacy mirror last.
+3. Remove the root legacy mirror last.
    - Delete root `lib/`
    - Delete root `test/`
    - Delete root-only `tts` leftovers
