@@ -57,3 +57,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local run scripts
+/run_number_gym.bat
+/run_verb_gym.bat
