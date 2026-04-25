@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trainer_core/trainer_core.dart' show ChoiceState, ExerciseMode, TimerState;
+import 'package:trainer_core/trainer_core.dart'
+    show ChoiceState, ExerciseMode, TimerState;
 
 import 'training_feedback_view_model.dart';
 
@@ -37,26 +38,28 @@ class MultipleChoiceViewModel {
     required ChoiceState task,
     required TrainingFeedbackViewModel feedback,
   }) {
-    final isTextToValue = task.mode == ExerciseMode.chooseFromPrompt;
-    final isNumericMode = isTextToValue;
-    final isTimeOptions =
-        isTextToValue && task.options.any((option) => option.contains(':'));
-    final title =
-        isTextToValue ? 'Choose the correct value' : 'Choose the correct wording';
+    final promptIsValue = task.mode == ExerciseMode.chooseFromPrompt;
+    final optionsAreValues = task.mode == ExerciseMode.chooseFromAnswer;
+    final hasTimeValueOptions =
+        optionsAreValues && task.options.any((option) => option.contains(':'));
+    final title = optionsAreValues
+        ? 'Choose the correct value'
+        : 'Choose the correct wording';
     final promptStyle = theme.textTheme.displaySmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: theme.colorScheme.onSurface,
-      fontSize: isNumericMode ? 42 : null,
+      fontSize: promptIsValue ? 42 : null,
     );
-    final optionStyle = isNumericMode
+    final optionStyle = optionsAreValues
         ? theme.textTheme.headlineSmall
         : theme.textTheme.titleMedium;
-    final optionWidth =
-        isTextToValue ? (isTimeOptions ? 110.0 : 100.0) : 220.0;
+    final optionWidth = optionsAreValues
+        ? (hasTimeValueOptions ? 110.0 : 100.0)
+        : 220.0;
 
     return MultipleChoiceViewModel(
       title: title,
-      prompt: task.promptText,
+      prompt: task.displayText,
       promptStyle: promptStyle,
       optionStyle: optionStyle,
       options: task.options,
