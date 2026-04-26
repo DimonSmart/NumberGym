@@ -11,6 +11,7 @@ import '../trainer_controller.dart';
 import '../trainer_state.dart';
 import '../training/data/card_progress.dart';
 import 'widgets/training_background.dart';
+import 'widgets/training_timer_bar.dart';
 
 class TrainingScreen extends StatefulWidget {
   const TrainingScreen({
@@ -315,7 +316,7 @@ class _SpeakTaskView extends StatelessWidget {
               style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(height: 12),
-            _TimerText(timer: state.timer),
+            _TaskTimerBar(state: state),
             if (state.hintText != null) ...[
               const SizedBox(height: 12),
               Text('Hint: ${state.hintText}'),
@@ -362,7 +363,7 @@ class _ChoiceTaskView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            _TimerText(timer: state.timer),
+            _TaskTimerBar(state: state),
             const SizedBox(height: 20),
             for (final option in state.options) ...[
               FilledButton.tonal(
@@ -403,7 +404,7 @@ class _ListenTaskView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            _TimerText(timer: state.timer),
+            _TaskTimerBar(state: state),
             const SizedBox(height: 12),
             FilledButton.tonalIcon(
               onPressed: state.isPromptPlaying ? null : onReplay,
@@ -503,14 +504,18 @@ class _ReviewTaskView extends StatelessWidget {
   }
 }
 
-class _TimerText extends StatelessWidget {
-  const _TimerText({required this.timer});
+class _TaskTimerBar extends StatelessWidget {
+  const _TaskTimerBar({required this.state});
 
-  final TimerState timer;
+  final TaskState state;
 
   @override
   Widget build(BuildContext context) {
-    final seconds = timer.remaining.inSeconds.toString().padLeft(2, '0');
-    return Text('Time: $seconds s');
+    return TrainingTimerBar(
+      duration: state.timer.duration,
+      remaining: state.timer.remaining,
+      isActive: state.timer.isRunning,
+      taskKey: '${state.mode.name}:${state.exerciseId.storageKey}',
+    );
   }
 }

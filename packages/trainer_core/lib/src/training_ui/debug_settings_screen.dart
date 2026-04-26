@@ -67,6 +67,8 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
             .values
             .toList()
           ..sort((left, right) => left.label.compareTo(right.label));
+    final forcedFamilyKey = _currentForcedFamilyKey(families);
+    final forcedMode = _currentForcedMode();
 
     return Scaffold(
       body: TrainingBackground(
@@ -86,7 +88,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String?>(
-                initialValue: _forcedFamilyKey,
+                initialValue: forcedFamilyKey,
                 items: [
                   const DropdownMenuItem<String?>(
                     value: null,
@@ -112,7 +114,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String?>(
-                initialValue: _forcedMode,
+                initialValue: forcedMode,
                 items: [
                   const DropdownMenuItem<String?>(
                     value: null,
@@ -147,6 +149,56 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
         ),
       ),
     );
+  }
+
+  String? _currentForcedFamilyKey(List<ExerciseFamily> families) {
+    final value = _forcedFamilyKey;
+    if (value == null) {
+      return null;
+    }
+    final exists = families.any((family) => family.storageKey == value);
+    if (exists) {
+      return value;
+    }
+    _clearStaleForcedFamilyKey();
+    return null;
+  }
+
+  void _clearStaleForcedFamilyKey() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _forcedFamilyKey == null) {
+        return;
+      }
+      setState(() {
+        _forcedFamilyKey = null;
+      });
+      await _settingsRepository.setDebugForcedFamilyKey(null);
+    });
+  }
+
+  String? _currentForcedMode() {
+    final value = _forcedMode;
+    if (value == null) {
+      return null;
+    }
+    final exists = ExerciseMode.values.any((mode) => mode.name == value);
+    if (exists) {
+      return value;
+    }
+    _clearStaleForcedMode();
+    return null;
+  }
+
+  void _clearStaleForcedMode() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _forcedMode == null) {
+        return;
+      }
+      setState(() {
+        _forcedMode = null;
+      });
+      await _settingsRepository.setDebugForcedMode(null);
+    });
   }
 
   Future<void> _copyQueueToClipboard() async {

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'app_definition.dart';
 import 'base_language_profile.dart';
+import 'exercise_option_shuffler.dart';
 import 'exercise_models.dart';
 import 'feedback_coordinator.dart';
 import 'progress_manager.dart';
@@ -39,6 +40,7 @@ class TrainerSession {
        _services = services ?? TrainingServices.defaults(),
        _onStateChanged = onStateChanged ?? _noop,
        _onAutoStop = onAutoStop ?? _noop {
+    _optionShuffler = ExerciseOptionShuffler(_random);
     _progressManager = ProgressManager(
       progressRepository: progressRepository,
       catalog: appDefinition.catalog,
@@ -85,6 +87,7 @@ class TrainerSession {
   final math.Random _random = math.Random();
   final SessionLifecycleTracker _sessionTracker = SessionLifecycleTracker();
   final TaskCardFlow _taskCardFlow = const TaskCardFlow();
+  late final ExerciseOptionShuffler _optionShuffler;
   late ProgressManager _progressManager;
   late TaskProgressRecorder _taskProgressRecorder;
   late FeedbackCoordinator _feedbackCoordinator;
@@ -377,13 +380,14 @@ class TrainerSession {
     _debugForcedMode = _settingsRepository.readDebugForcedMode();
     _debugForcedFamilyKey = _settingsRepository.readDebugForcedFamilyKey();
     final forcedMode = _parseMode(_debugForcedMode);
+    final forcedFamilyKey = _validForcedFamilyKey(_debugForcedFamilyKey);
     final scheduleResult = await _taskScheduler.scheduleNext(
       progressManager: _progressManager,
       language: _currentLanguage(),
       profile: _currentProfile(),
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
       forcedMode: forcedMode,
-      forcedFamilyKey: _debugForcedFamilyKey,
+      forcedFamilyKey: forcedFamilyKey,
     );
     if (scheduleResult is TaskScheduleFinished) {
       _trainingActive = false;
@@ -445,7 +449,7 @@ class TrainerSession {
         return ChoiceRuntime(
           mode: mode,
           card: card,
-          spec: card.chooseFromPrompt!,
+          spec: _optionShuffler.shuffleChoice(card.chooseFromPrompt!),
           cardDuration: cardDuration,
           cardTimer: _services.timer,
         );
@@ -453,14 +457,14 @@ class TrainerSession {
         return ChoiceRuntime(
           mode: mode,
           card: card,
-          spec: card.chooseFromAnswer!,
+          spec: _optionShuffler.shuffleChoice(card.chooseFromAnswer!),
           cardDuration: cardDuration,
           cardTimer: _services.timer,
         );
       case ExerciseMode.listenAndChoose:
         return ListenAndChooseRuntime(
           card: card,
-          spec: card.listenAndChoose!,
+          spec: _optionShuffler.shuffleListening(card.listenAndChoose!),
           cardDuration: cardDuration,
           cardTimer: _services.timer,
           ttsService: _services.tts,
@@ -577,5 +581,16 @@ class TrainerSession {
       }
     }
     return null;
+  }
+
+  String? _validForcedFamilyKey(String? raw) {
+    if (raw == null || raw.trim().isEmpty) {
+      return null;
+    }
+    final key = raw.trim();
+    final exists = _progressManager.cards.any(
+      (card) => card.family.storageKey == key,
+    );
+    return exists ? key : null;
   }
 }

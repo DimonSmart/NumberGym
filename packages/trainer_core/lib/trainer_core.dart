@@ -28,6 +28,7 @@ export 'src/training_ui/settings_screen.dart';
 export 'src/training_ui/statistics_screen.dart';
 export 'src/training_ui/training_screen.dart';
 export 'src/training_ui/widgets/training_background.dart';
+export 'src/training_ui/widgets/training_timer_bar.dart';
 export 'src/training/data/card_progress.dart'
     show CardCluster, CardProgress, CardProgressAdapter;
 export 'src/training/domain/learning_language.dart';
