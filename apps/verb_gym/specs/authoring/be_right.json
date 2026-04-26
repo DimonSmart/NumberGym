@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "languages": ["en", "es"],
+  "entry": {
+    "id": "be_right",
+    "meaning": {
+      "en": {
+        "short": "to be right",
+        "description": "To be correct."
+      },
+      "es": {
+        "short": "tener razón",
+        "description": "Estar en lo correcto."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tengo razón."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I am right."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tienes razón."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You are right."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tiene razón."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He is right."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She is right."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You are right."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tenemos razón."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We are right."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tenéis razón."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You are right."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tienen razón."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They are right."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You are right."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -36,7 +36,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
   @override
   void initState() {
     super.initState();
-    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _settingsRepository = SettingsRepository.forApp(
+      widget.settingsBox,
+      widget.appDefinition.config,
+    );
     _progressRepository = ProgressRepository(widget.progressBox);
     _controller = TrainerController(
       appDefinition: widget.appDefinition,
@@ -115,9 +118,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    Expanded(
-                      child: _buildBody(state),
-                    ),
+                    Expanded(child: _buildBody(state)),
                   ],
                 ),
               ),
@@ -143,16 +144,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (task is SpeakState) {
-      return _SpeakTaskView(
-        state: task,
-        onRetry: _controller.retryInitSpeech,
-      );
+      return _SpeakTaskView(state: task, onRetry: _controller.retryInitSpeech);
     }
     if (task is ChoiceState) {
-      return _ChoiceTaskView(
-        state: task,
-        onSelect: _controller.selectOption,
-      );
+      return _ChoiceTaskView(state: task, onSelect: _controller.selectOption);
     }
     if (task is ListenAndChooseState) {
       return _ListenTaskView(
@@ -209,10 +204,7 @@ class _FeedbackBadge extends StatelessWidget {
 }
 
 class _CelebrationCard extends StatelessWidget {
-  const _CelebrationCard({
-    required this.celebration,
-    required this.onContinue,
-  });
+  const _CelebrationCard({required this.celebration, required this.onContinue});
 
   final TrainingCelebration celebration;
   final Future<void> Function() onContinue;
@@ -235,10 +227,7 @@ class _CelebrationCard extends StatelessWidget {
             Text(celebration.masteredText),
             Text('${celebration.modeLabel} • ${celebration.categoryLabel}'),
             const SizedBox(height: 10),
-            FilledButton(
-              onPressed: onContinue,
-              child: const Text('Continue'),
-            ),
+            FilledButton(onPressed: onContinue, child: const Text('Continue')),
           ],
         ),
       ),
@@ -301,10 +290,7 @@ class _SessionSummary extends StatelessWidget {
 }
 
 class _SpeakTaskView extends StatelessWidget {
-  const _SpeakTaskView({
-    required this.state,
-    required this.onRetry,
-  });
+  const _SpeakTaskView({required this.state, required this.onRetry});
 
   final SpeakState state;
   final Future<void> Function() onRetry;
@@ -357,10 +343,7 @@ class _SpeakTaskView extends StatelessWidget {
 }
 
 class _ChoiceTaskView extends StatelessWidget {
-  const _ChoiceTaskView({
-    required this.state,
-    required this.onSelect,
-  });
+  const _ChoiceTaskView({required this.state, required this.onSelect});
 
   final ChoiceState state;
   final Future<void> Function(String option) onSelect;
@@ -501,9 +484,7 @@ class _ReviewTaskView extends StatelessWidget {
               ReviewFlow.reviewing => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Heard: ${state.result?.displayText ?? '-'}',
-                  ),
+                  Text('Heard: ${state.result?.displayText ?? '-'}'),
                   Text(
                     'Score: ${state.result?.best?.pronScore.toStringAsFixed(1) ?? '-'}',
                   ),

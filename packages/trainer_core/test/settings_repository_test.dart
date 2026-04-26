@@ -38,6 +38,26 @@ void main() {
     expect(repository.readAutoSimulationContinueCount(), 0);
   });
 
+  test(
+    'base and learning languages use configured defaults independently',
+    () async {
+      final repository = SettingsRepository(
+        box,
+        defaultBaseLanguage: LearningLanguage.english,
+        defaultLearningLanguage: LearningLanguage.spanish,
+      );
+
+      expect(repository.readBaseLanguage(), LearningLanguage.english);
+      expect(repository.readLearningLanguage(), LearningLanguage.spanish);
+
+      await repository.setBaseLanguage(LearningLanguage.spanish);
+      await repository.setLearningLanguage(LearningLanguage.english);
+
+      expect(repository.readBaseLanguage(), LearningLanguage.spanish);
+      expect(repository.readLearningLanguage(), LearningLanguage.english);
+    },
+  );
+
   test('auto simulation settings are persisted and normalized', () async {
     final repository = SettingsRepository(box);
     await repository.setAutoSimulationEnabled(true);

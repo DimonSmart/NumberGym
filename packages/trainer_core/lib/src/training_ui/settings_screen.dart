@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../app_definition.dart';
+import '../app_config.dart';
 import '../progress_repository.dart';
 import '../settings_repository.dart';
 import '../trainer_services.dart';
@@ -32,7 +33,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final ProgressRepository _progressRepository;
   late final TtsServiceBase _ttsService;
   late final SpeechServiceBase _speechService;
-  late LearningLanguage _language;
+  late LearningLanguage _baseLanguage;
+  late LearningLanguage _learningLanguage;
   late bool _premiumPronunciation;
   bool _ttsAvailable = true;
   bool _speechAvailable = true;
@@ -42,14 +44,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _settingsRepository = SettingsRepository.forApp(
+      widget.settingsBox,
+      widget.appDefinition.config,
+    );
     _progressRepository = ProgressRepository(widget.progressBox);
     _ttsService = TtsService();
     _speechService = SpeechService();
-    _language = _settingsRepository.readLearningLanguage();
-    if (!widget.appDefinition.supportedLanguages.contains(_language)) {
-      _language = widget.appDefinition.supportedLanguages.first;
-    }
+    _baseLanguage = _supportedLanguageOrDefault(
+      _settingsRepository.readBaseLanguage(),
+      widget.appDefinition.config.defaultBaseLanguage,
+    );
+    _learningLanguage = _supportedLanguageOrDefault(
+      _settingsRepository.readLearningLanguage(),
+      widget.appDefinition.config.defaultLearningLanguage,
+    );
     _premiumPronunciation = _settingsRepository
         .readPremiumPronunciationEnabled();
     _loadAvailability();
@@ -63,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadAvailability() async {
-    final profile = widget.appDefinition.profileOf(_language);
+    final profile = widget.appDefinition.profileOf(_learningLanguage);
     final voices = await _ttsService.listVoices();
     final filtered = filterVoicesByLocale(voices, profile.locale);
     final ttsAvailable = await _ttsService.isLanguageAvailable(profile.locale);
@@ -79,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _ttsVoices = filtered;
       _ttsAvailable = ttsAvailable;
       _speechAvailable = speechAvailability.ready;
-      _ttsVoiceId = _settingsRepository.readTtsVoiceId(_language);
+      _ttsVoiceId = _settingsRepository.readTtsVoiceId(_learningLanguage);
     });
   }
 
@@ -106,28 +115,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirmed != true) {
       return;
     }
-    await _progressRepository.reset(language: _language);
-    await _settingsRepository.resetProgressForLanguage(_language);
+    await _progressRepository.reset(language: _learningLanguage);
+    await _settingsRepository.resetProgressForLanguage(_learningLanguage);
     widget.onProgressChanged?.call();
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Progress reset.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Progress reset.')));
   }
 
-  Future<void> _updateLanguage(LearningLanguage language) async {
+  Future<void> _updateBaseLanguage(LearningLanguage language) async {
     setState(() {
-      _language = language;
+      _baseLanguage = language;
+    });
+    await _settingsRepository.setBaseLanguage(language);
+    widget.onProgressChanged?.call();
+  }
+
+  Future<void> _updateLearningLanguage(LearningLanguage language) async {
+    setState(() {
+      _learningLanguage = language;
     });
     await _settingsRepository.setLearningLanguage(language);
     await _loadAvailability();
+    widget.onProgressChanged?.call();
+  }
+
+  LearningLanguage _supportedLanguageOrDefault(
+    LearningLanguage language,
+    LearningLanguage defaultLanguage,
+  ) {
+    if (widget.appDefinition.supportedLanguages.contains(language)) {
+      return language;
+    }
+    if (widget.appDefinition.supportedLanguages.contains(defaultLanguage)) {
+      return defaultLanguage;
+    }
+    return widget.appDefinition.supportedLanguages.first;
   }
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.appDefinition.profileOf(_language);
+    final profile = widget.appDefinition.profileOf(_learningLanguage);
     return Scaffold(
       body: TrainingBackground(
         child: SafeArea(
@@ -148,28 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<LearningLanguage>(
-                initialValue: _language,
-                items: widget.appDefinition.supportedLanguages
-                    .map(
-                      (language) => DropdownMenuItem(
-                        value: language,
-                        child: Text(
-                          widget.appDefinition.profileOf(language).label,
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    _updateLanguage(value);
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Language',
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              ..._buildLanguageFields(),
               const SizedBox(height: 16),
               SwitchListTile(
                 value: _premiumPronunciation,
@@ -177,7 +187,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   setState(() {
                     _premiumPronunciation = value;
                   });
-                  await _settingsRepository.setPremiumPronunciationEnabled(value);
+                  await _settingsRepository.setPremiumPronunciationEnabled(
+                    value,
+                  );
                 },
                 title: const Text('Premium pronunciation review'),
               ),
@@ -204,7 +216,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     setState(() {
                       _ttsVoiceId = value;
                     });
-                    await _settingsRepository.setTtsVoiceId(_language, value);
+                    await _settingsRepository.setTtsVoiceId(
+                      _learningLanguage,
+                      value,
+                    );
                   },
                   decoration: const InputDecoration(
                     labelText: 'Voice',
@@ -224,6 +239,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  List<Widget> _buildLanguageFields() {
+    if (widget.appDefinition.config.languageSettingsMode ==
+        LanguageSettingsMode.baseAndLearningLanguage) {
+      return <Widget>[
+        _buildLanguageDropdown(
+          label: 'Base language',
+          value: _baseLanguage,
+          onChanged: _updateBaseLanguage,
+        ),
+        const SizedBox(height: 16),
+        _buildLanguageDropdown(
+          label: 'Learning language',
+          value: _learningLanguage,
+          onChanged: _updateLearningLanguage,
+        ),
+      ];
+    }
+
+    return <Widget>[
+      _buildLanguageDropdown(
+        label: 'Language',
+        value: _learningLanguage,
+        onChanged: _updateLearningLanguage,
+      ),
+    ];
+  }
+
+  Widget _buildLanguageDropdown({
+    required String label,
+    required LearningLanguage value,
+    required Future<void> Function(LearningLanguage language) onChanged,
+  }) {
+    return DropdownButtonFormField<LearningLanguage>(
+      initialValue: value,
+      items: widget.appDefinition.supportedLanguages
+          .map(
+            (language) => DropdownMenuItem(
+              value: language,
+              child: Text(widget.appDefinition.profileOf(language).label),
+            ),
+          )
+          .toList(),
+      onChanged: (value) {
+        if (value != null) {
+          onChanged(value);
+        }
+      },
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
     );
   }

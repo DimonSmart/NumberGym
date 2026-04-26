@@ -256,19 +256,30 @@ TrainingServices buildFakeTrainingServices({
 
 class FakeSettingsRepository implements SettingsRepositoryBase {
   FakeSettingsRepository({
+    LearningLanguage baseLanguage = LearningLanguage.english,
     LearningLanguage language = LearningLanguage.english,
     Map<LearningLanguage, DailySessionStats>? dailySessionStatsByLanguage,
     Map<LearningLanguage, StudyStreak>? streakByLanguage,
-  }) : _language = language,
+  }) : _baseLanguage = baseLanguage,
+       _language = language,
        _dailySessionStatsByLanguage =
            dailySessionStatsByLanguage ??
            <LearningLanguage, DailySessionStats>{},
        _streakByLanguage =
            streakByLanguage ?? <LearningLanguage, StudyStreak>{};
 
+  LearningLanguage _baseLanguage;
   LearningLanguage _language;
   final Map<LearningLanguage, DailySessionStats> _dailySessionStatsByLanguage;
   final Map<LearningLanguage, StudyStreak> _streakByLanguage;
+
+  @override
+  LearningLanguage readBaseLanguage() => _baseLanguage;
+
+  @override
+  Future<void> setBaseLanguage(LearningLanguage language) async {
+    _baseLanguage = language;
+  }
 
   @override
   LearningLanguage readLearningLanguage() => _language;
@@ -331,7 +342,10 @@ class FakeSettingsRepository implements SettingsRepositoryBase {
   String? readTtsVoiceId(LearningLanguage language) => null;
 
   @override
-  Future<void> setTtsVoiceId(LearningLanguage language, String? voiceId) async {}
+  Future<void> setTtsVoiceId(
+    LearningLanguage language,
+    String? voiceId,
+  ) async {}
 
   @override
   String? readDebugForcedMode() => null;

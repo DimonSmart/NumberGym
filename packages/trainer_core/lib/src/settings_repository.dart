@@ -1,8 +1,10 @@
 import 'package:hive/hive.dart';
 
+import 'app_config.dart';
 import 'trainer_repositories.dart';
 import 'training/domain/learning_language.dart';
 
+const String baseLanguageKey = 'baseLanguage';
 const String learningLanguageKey = 'learningLanguage';
 const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String autoSimulationEnabledKey = 'autoSimulationEnabled';
@@ -21,13 +23,37 @@ const int autoSimulationContinueCountMax = 500;
 const int autoSimulationContinueCountDefault = 0;
 
 class SettingsRepository implements SettingsRepositoryBase {
-  SettingsRepository(this.settingsBox);
+  SettingsRepository(
+    this.settingsBox, {
+    this.defaultBaseLanguage = LearningLanguage.english,
+    this.defaultLearningLanguage = LearningLanguage.english,
+  });
+
+  factory SettingsRepository.forApp(Box<String> settingsBox, AppConfig config) {
+    return SettingsRepository(
+      settingsBox,
+      defaultBaseLanguage: config.defaultBaseLanguage,
+      defaultLearningLanguage: config.defaultLearningLanguage,
+    );
+  }
 
   final Box<String> settingsBox;
+  final LearningLanguage defaultBaseLanguage;
+  final LearningLanguage defaultLearningLanguage;
+
+  @override
+  LearningLanguage readBaseLanguage() {
+    return _readLanguage(baseLanguageKey, defaultBaseLanguage);
+  }
+
+  @override
+  Future<void> setBaseLanguage(LearningLanguage language) async {
+    await settingsBox.put(baseLanguageKey, language.code);
+  }
 
   @override
   LearningLanguage readLearningLanguage() {
-    return LearningLanguageX.fromCode(settingsBox.get(learningLanguageKey));
+    return _readLanguage(learningLanguageKey, defaultLearningLanguage);
   }
 
   @override
@@ -202,6 +228,19 @@ class SettingsRepository implements SettingsRepositoryBase {
     return defaultValue;
   }
 
+  LearningLanguage _readLanguage(String key, LearningLanguage defaultLanguage) {
+    final raw = settingsBox.get(key);
+    if (raw == null) {
+      return defaultLanguage;
+    }
+    for (final language in LearningLanguage.values) {
+      if (language.code == raw) {
+        return language;
+      }
+    }
+    return defaultLanguage;
+  }
+
   String? _readOptionalString(String key) {
     final raw = settingsBox.get(key);
     if (raw == null) {
@@ -225,7 +264,10 @@ class SettingsRepository implements SettingsRepositoryBase {
         .toInt();
   }
 
-  String _ttsVoiceKey(LearningLanguage language) => '$ttsVoiceIdPrefix.${language.code}';
-  String _dailySessionStatsKey(LearningLanguage language) => '$dailySessionStatsKeyPrefix.${language.code}';
-  String _studyStreakKey(LearningLanguage language) => '$studyStreakKeyPrefix.${language.code}';
+  String _ttsVoiceKey(LearningLanguage language) =>
+      '$ttsVoiceIdPrefix.${language.code}';
+  String _dailySessionStatsKey(LearningLanguage language) =>
+      '$dailySessionStatsKeyPrefix.${language.code}';
+  String _studyStreakKey(LearningLanguage language) =>
+      '$studyStreakKeyPrefix.${language.code}';
 }

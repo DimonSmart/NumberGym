@@ -38,7 +38,10 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _settingsRepository = SettingsRepository.forApp(
+      widget.settingsBox,
+      widget.appDefinition.config,
+    );
     _progressRepository = ProgressRepository(widget.progressBox);
     _forcedMode = _settingsRepository.readDebugForcedMode();
     _forcedFamilyKey = _settingsRepository.readDebugForcedFamilyKey();
@@ -49,13 +52,21 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
     if (!kDebugMode) {
       return Scaffold(
         appBar: AppBar(title: const Text('Debug')),
-        body: const Center(child: Text('Debug menu is available only in debug mode.')),
+        body: const Center(
+          child: Text('Debug menu is available only in debug mode.'),
+        ),
       );
     }
 
+    final baseLanguage = _settingsRepository.readBaseLanguage();
     final language = _settingsRepository.readLearningLanguage();
-    final families = widget.appDefinition.catalog.build(language).familiesByKey.values.toList()
-      ..sort((left, right) => left.label.compareTo(right.label));
+    final families =
+        widget.appDefinition.catalog
+            .build(language, baseLanguage: baseLanguage)
+            .familiesByKey
+            .values
+            .toList()
+          ..sort((left, right) => left.label.compareTo(right.label));
 
     return Scaffold(
       body: TrainingBackground(
@@ -70,10 +81,7 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
                     icon: const Icon(Icons.arrow_back),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Debug',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('Debug', style: Theme.of(context).textTheme.titleLarge),
                 ],
               ),
               const SizedBox(height: 16),
@@ -146,15 +154,20 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
       progressRepository: _progressRepository,
       catalog: widget.appDefinition.catalog,
     );
+    final baseLanguage = _settingsRepository.readBaseLanguage();
     final language = _settingsRepository.readLearningLanguage();
-    await manager.loadProgress(language);
+    await manager.loadProgress(language, baseLanguage: baseLanguage);
     final snapshot = manager.debugQueueSnapshot();
     final buffer = StringBuffer()
+      ..writeln(
+        'Base language: ${widget.appDefinition.profileOf(baseLanguage).code}',
+      )
       ..writeln('Language: ${widget.appDefinition.profileOf(language).code}')
       ..writeln('Cards: ${snapshot.all.length}');
     for (final card in snapshot.prioritized.take(20)) {
       final progress =
-          snapshot.progressByKey[card.progressId.storageKey] ?? CardProgress.empty;
+          snapshot.progressByKey[card.progressId.storageKey] ??
+          CardProgress.empty;
       buffer.writeln(
         '${card.progressId.storageKey} | attempts=${progress.totalAttempts} | learned=${progress.learned}',
       );
@@ -163,8 +176,8 @@ class _DebugSettingsScreenState extends State<DebugSettingsScreen> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Queue snapshot copied.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Queue snapshot copied.')));
   }
 }

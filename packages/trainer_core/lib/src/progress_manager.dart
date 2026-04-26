@@ -62,9 +62,10 @@ class ProgressManager {
       <String, ExerciseCard>{};
   final Map<String, CardProgress> _progressByKey = <String, CardProgress>{};
   final List<String> _recentPickHistory = <String>[];
-  LearningLanguage? _cardsLanguage;
+  TrainingLanguageContext? _cardsContext;
 
-  LearningLanguage? get cardsLanguage => _cardsLanguage;
+  TrainingLanguageContext? get cardsContext => _cardsContext;
+  LearningLanguage? get cardsLanguage => _cardsContext?.learningLanguage;
   List<ExerciseCard> get cards => _cards;
 
   int get totalCards => _cards.length;
@@ -88,12 +89,19 @@ class ProgressManager {
     return _learningParams.hintVisibleUntilCorrectStreakForFamily(family);
   }
 
-  void refreshCardsIfNeeded(LearningLanguage language) {
-    if (_cardsLanguage == language && _cards.isNotEmpty) {
+  void refreshCardsIfNeeded(
+    LearningLanguage language, {
+    LearningLanguage? baseLanguage,
+  }) {
+    final context = TrainingLanguageContext(
+      baseLanguage: baseLanguage ?? language,
+      learningLanguage: language,
+    );
+    if (_cardsContext == context && _cards.isNotEmpty) {
       return;
     }
-    final snapshot = _catalog.build(language);
-    _cardsLanguage = language;
+    final snapshot = _catalog.buildForContext(context);
+    _cardsContext = context;
     _cards = snapshot.cards;
     _cardsByProgressKey
       ..clear()
@@ -102,8 +110,11 @@ class ProgressManager {
       );
   }
 
-  Future<void> loadProgress(LearningLanguage language) async {
-    refreshCardsIfNeeded(language);
+  Future<void> loadProgress(
+    LearningLanguage language, {
+    LearningLanguage? baseLanguage,
+  }) async {
+    refreshCardsIfNeeded(language, baseLanguage: baseLanguage);
     final storageKeys = _cards
         .map((card) => card.progressId.storageKey)
         .toList();
@@ -279,7 +290,7 @@ class ProgressManager {
       });
 
     return LearningQueueDebugSnapshot(
-      language: _cardsLanguage ?? LearningLanguage.english,
+      language: _cardsContext?.learningLanguage ?? LearningLanguage.english,
       prioritized: prioritized.take(60).toList(),
       all: _cards,
       weightByKey: weightByKey,

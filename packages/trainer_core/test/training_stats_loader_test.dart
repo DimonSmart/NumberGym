@@ -119,6 +119,7 @@ void main() {
       final snapshot = await loader.load(now: now);
 
       expect(snapshot.language, language);
+      expect(snapshot.baseLanguage, LearningLanguage.english);
       expect(snapshot.totalCards, 5);
       expect(snapshot.progressById.length, snapshot.totalCards);
       expect(snapshot.progressById[seededId]!.learned, isTrue);

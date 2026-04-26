@@ -83,7 +83,10 @@ class _TrainingScreenState extends State<TrainingScreen>
   @override
   void initState() {
     super.initState();
-    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _settingsRepository = SettingsRepository.forApp(
+      widget.settingsBox,
+      widget.appDefinition.config,
+    );
     _controller = TrainerController(
       appDefinition: widget.appDefinition,
       settingsRepository: _settingsRepository,
@@ -233,8 +236,7 @@ class _TrainingScreenState extends State<TrainingScreen>
           final sessionTarget = _controller.sessionTargetCards <= 0
               ? _controller.dailyGoalCards
               : _controller.sessionTargetCards;
-          final methodLabel =
-              _controller.currentMode?.label ?? 'Training';
+          final methodLabel = _controller.currentMode?.label ?? 'Training';
           final feedbackViewModel = TrainingFeedbackViewModel.fromFeedback(
             theme: theme,
             feedback: _controller.feedback,

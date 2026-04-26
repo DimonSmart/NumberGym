@@ -22,6 +22,8 @@ abstract class ProgressRepositoryBase {
 }
 
 abstract class SettingsRepositoryBase {
+  LearningLanguage readBaseLanguage();
+  Future<void> setBaseLanguage(LearningLanguage language);
   LearningLanguage readLearningLanguage();
   Future<void> setLearningLanguage(LearningLanguage language);
   bool readPremiumPronunciationEnabled();

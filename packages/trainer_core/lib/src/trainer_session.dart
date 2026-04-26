@@ -138,12 +138,13 @@ class TrainerSession {
     _debugForcedMode = _settingsRepository.readDebugForcedMode();
     _debugForcedFamilyKey = _settingsRepository.readDebugForcedFamilyKey();
 
-    if (_progressManager.cardsLanguage != _currentLanguage()) {
+    final context = _currentLanguageContext();
+    if (_progressManager.cardsContext != context) {
       await _loadProgress();
     }
     await _taskScheduler.warmUpAvailability(
-      language: _currentLanguage(),
-      profile: _currentProfile(),
+      language: context.learningLanguage,
+      profile: _appDefinition.profileOf(context.learningLanguage),
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
     );
     if (!_progressManager.hasRemainingCards) {
@@ -234,7 +235,30 @@ class TrainerSession {
   }
 
   Future<void> _loadProgress() async {
-    await _progressManager.loadProgress(_currentLanguage());
+    final context = _currentLanguageContext();
+    await _progressManager.loadProgress(
+      context.learningLanguage,
+      baseLanguage: context.baseLanguage,
+    );
+  }
+
+  TrainingLanguageContext _currentLanguageContext() {
+    return TrainingLanguageContext(
+      baseLanguage: _currentBaseLanguage(),
+      learningLanguage: _currentLanguage(),
+    );
+  }
+
+  LearningLanguage _currentBaseLanguage() {
+    final current = _settingsRepository.readBaseLanguage();
+    if (_appDefinition.supportedLanguages.contains(current)) {
+      return current;
+    }
+    final defaultLanguage = _appDefinition.config.defaultBaseLanguage;
+    if (_appDefinition.supportedLanguages.contains(defaultLanguage)) {
+      return defaultLanguage;
+    }
+    return _currentLanguage();
   }
 
   LearningLanguage _currentLanguage() {

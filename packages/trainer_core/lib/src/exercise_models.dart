@@ -180,6 +180,33 @@ class CatalogSnapshot {
   final Map<String, ExerciseFamily> familiesByKey;
 }
 
+class TrainingLanguageContext {
+  const TrainingLanguageContext({
+    required this.baseLanguage,
+    required this.learningLanguage,
+  });
+
+  factory TrainingLanguageContext.single(LearningLanguage language) {
+    return TrainingLanguageContext(
+      baseLanguage: language,
+      learningLanguage: language,
+    );
+  }
+
+  final LearningLanguage baseLanguage;
+  final LearningLanguage learningLanguage;
+
+  @override
+  bool operator ==(Object other) {
+    return other is TrainingLanguageContext &&
+        other.baseLanguage == baseLanguage &&
+        other.learningLanguage == learningLanguage;
+  }
+
+  @override
+  int get hashCode => Object.hash(baseLanguage, learningLanguage);
+}
+
 abstract class TrainingModule {
   String get moduleId;
   String get displayName;
@@ -191,23 +218,47 @@ abstract class TrainingModule {
   List<ExerciseCard> buildCards(LearningLanguage language);
 }
 
+abstract class ContextualTrainingModule implements TrainingModule {
+  List<ExerciseFamily> buildFamiliesForContext(TrainingLanguageContext context);
+
+  List<ExerciseCard> buildCardsForContext(TrainingLanguageContext context);
+}
+
 class ExerciseCatalog {
   ExerciseCatalog({required List<TrainingModule> modules})
     : _modules = List<TrainingModule>.unmodifiable(modules);
 
   final List<TrainingModule> _modules;
 
-  CatalogSnapshot build(LearningLanguage language) {
+  CatalogSnapshot build(
+    LearningLanguage language, {
+    LearningLanguage? baseLanguage,
+  }) {
+    return buildForContext(
+      TrainingLanguageContext(
+        baseLanguage: baseLanguage ?? language,
+        learningLanguage: language,
+      ),
+    );
+  }
+
+  CatalogSnapshot buildForContext(TrainingLanguageContext context) {
     final families = <String, ExerciseFamily>{};
     final cards = <ExerciseCard>[];
     for (final module in _modules) {
-      if (!module.supportsLanguage(language)) {
+      if (!module.supportsLanguage(context.learningLanguage)) {
         continue;
       }
-      for (final family in module.buildFamilies(language)) {
+      final moduleFamilies = module is ContextualTrainingModule
+          ? module.buildFamiliesForContext(context)
+          : module.buildFamilies(context.learningLanguage);
+      final moduleCards = module is ContextualTrainingModule
+          ? module.buildCardsForContext(context)
+          : module.buildCards(context.learningLanguage);
+      for (final family in moduleFamilies) {
         families[family.storageKey] = family;
       }
-      cards.addAll(module.buildCards(language));
+      cards.addAll(moduleCards);
     }
     cards.sort((left, right) => left.id.compareTo(right.id));
     return CatalogSnapshot(cards: cards, familiesByKey: families);

@@ -19,6 +19,9 @@ const AppConfig verbGymConfig = AppConfig(
   progressBoxName: 'verb_gym_progress',
   heroAssetPath: 'assets/images/branding/wordmark.png',
   mascotAssetPath: 'assets/images/app_icon_transparent.png',
+  languageSettingsMode: LanguageSettingsMode.baseAndLearningLanguage,
+  defaultBaseLanguage: LearningLanguage.english,
+  defaultLearningLanguage: LearningLanguage.spanish,
 );
 
 final TrainingAppDefinition verbGymDefinition = buildVerbGymAppDefinition(

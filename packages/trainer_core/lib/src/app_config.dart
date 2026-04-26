@@ -1,3 +1,7 @@
+import 'training/domain/learning_language.dart';
+
+enum LanguageSettingsMode { learningLanguageOnly, baseAndLearningLanguage }
+
 class AppConfig {
   const AppConfig({
     required this.appId,
@@ -11,6 +15,9 @@ class AppConfig {
     required this.progressBoxName,
     required this.heroAssetPath,
     required this.mascotAssetPath,
+    this.languageSettingsMode = LanguageSettingsMode.learningLanguageOnly,
+    this.defaultBaseLanguage = LearningLanguage.english,
+    this.defaultLearningLanguage = LearningLanguage.english,
   });
 
   final String appId;
@@ -24,4 +31,7 @@ class AppConfig {
   final String progressBoxName;
   final String heroAssetPath;
   final String mascotAssetPath;
+  final LanguageSettingsMode languageSettingsMode;
+  final LearningLanguage defaultBaseLanguage;
+  final LearningLanguage defaultLearningLanguage;
 }

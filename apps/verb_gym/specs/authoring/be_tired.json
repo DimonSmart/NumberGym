@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "languages": ["en", "es"],
+  "entry": {
+    "id": "be_tired",
+    "meaning": {
+      "en": {
+        "short": "to be tired",
+        "description": "To feel tired or low on energy."
+      },
+      "es": {
+        "short": "estar cansado",
+        "description": "Sentir cansancio o falta de energía."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} estoy {adjective}."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "I am tired."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} estás {adjective}."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You are tired."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} está {adjective}."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "He is tired."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "adjective": {
+              "es": "cansada"
+            },
+            "text": {
+              "en": "She is tired."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You are tired."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} estamos {adjective}."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "We are tired."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} estáis {adjective}."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You are tired."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} están {adjective}."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "They are tired."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You are tired."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -48,7 +48,10 @@ class _IntroScreenState extends State<IntroScreen> {
   void initState() {
     super.initState();
     _progressRepository = ProgressRepository(widget.progressBox);
-    _settingsRepository = SettingsRepository(widget.settingsBox);
+    _settingsRepository = SettingsRepository.forApp(
+      widget.settingsBox,
+      widget.appDefinition.config,
+    );
     _statsLoader = TrainingStatsLoader(
       progressRepository: _progressRepository,
       settingsRepository: _settingsRepository,

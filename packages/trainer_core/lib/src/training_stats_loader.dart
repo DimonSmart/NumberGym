@@ -7,6 +7,7 @@ import 'training/data/card_progress.dart';
 
 class TrainingStatsSnapshot {
   TrainingStatsSnapshot({
+    required this.baseLanguage,
     required this.language,
     required List<ExerciseCard> cards,
     required Map<ExerciseId, CardProgress> progressById,
@@ -16,6 +17,7 @@ class TrainingStatsSnapshot {
   }) : cards = List<ExerciseCard>.unmodifiable(cards),
        progressById = Map<ExerciseId, CardProgress>.unmodifiable(progressById);
 
+  final LearningLanguage baseLanguage;
   final LearningLanguage language;
   final List<ExerciseCard> cards;
   final Map<ExerciseId, CardProgress> progressById;
@@ -24,7 +26,8 @@ class TrainingStatsSnapshot {
   final StudyStreakSnapshot streakSnapshot;
 
   int get totalCards => cards.length;
-  int get learnedCount => progressById.values.where((progress) => progress.learned).length;
+  int get learnedCount =>
+      progressById.values.where((progress) => progress.learned).length;
   bool get allLearned => totalCards > 0 && learnedCount == totalCards;
 }
 
@@ -48,19 +51,24 @@ class TrainingStatsLoader {
 
   Future<TrainingStatsSnapshot> load({DateTime? now}) async {
     final resolvedNow = now ?? DateTime.now();
+    final baseLanguage = _settingsRepository.readBaseLanguage();
     final language = _settingsRepository.readLearningLanguage();
-    final snapshot = _catalog.build(language);
-    final storageKeys = snapshot.cards.map((card) => card.progressId.storageKey).toList();
+    final snapshot = _catalog.build(language, baseLanguage: baseLanguage);
+    final storageKeys = snapshot.cards
+        .map((card) => card.progressId.storageKey)
+        .toList();
     final rawProgress = await _progressRepository.loadAll(
       storageKeys,
       language: language,
     );
     final progressById = <ExerciseId, CardProgress>{
       for (final card in snapshot.cards)
-        card.progressId: rawProgress[card.progressId.storageKey] ?? CardProgress.empty,
+        card.progressId:
+            rawProgress[card.progressId.storageKey] ?? CardProgress.empty,
     };
 
     return TrainingStatsSnapshot(
+      baseLanguage: baseLanguage,
       language: language,
       cards: snapshot.cards,
       progressById: progressById,
