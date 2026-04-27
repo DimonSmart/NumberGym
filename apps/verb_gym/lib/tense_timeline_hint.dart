@@ -53,7 +53,7 @@ class VerbTenseTimelineLabels {
     tenseTitles: <String, String>{
       VerbTenseIds.presentIndicative: 'Present indicative',
       VerbTenseIds.presentPerfect: 'Present perfect',
-      VerbTenseIds.preterite: 'Preterite',
+      VerbTenseIds.preterite: 'Simple past',
       VerbTenseIds.imperfectIndicative: 'Imperfect indicative',
       VerbTenseIds.futureSimple: 'Future simple',
       VerbTenseIds.conditionalSimple: 'Conditional simple',

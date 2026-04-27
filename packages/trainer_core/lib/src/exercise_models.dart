@@ -77,8 +77,12 @@ class ExerciseFamily {
     required this.difficultyTier,
     required this.defaultDuration,
     required List<ExerciseMode> supportedModes,
+    Map<LearningLanguage, String> localizedLabels = const {},
     this.masteryAccuracy,
-  }) : supportedModes = List<ExerciseMode>.unmodifiable(supportedModes);
+  }) : supportedModes = List<ExerciseMode>.unmodifiable(supportedModes),
+       localizedLabels = Map<LearningLanguage, String>.unmodifiable(
+         localizedLabels,
+       );
 
   final String moduleId;
   final String id;
@@ -87,9 +91,18 @@ class ExerciseFamily {
   final ExerciseDifficultyTier difficultyTier;
   final Duration defaultDuration;
   final List<ExerciseMode> supportedModes;
+  final Map<LearningLanguage, String> localizedLabels;
   final double? masteryAccuracy;
 
   String get storageKey => '$moduleId/$id';
+
+  String labelFor(LearningLanguage language) {
+    final localizedLabel = localizedLabels[language]?.trim();
+    if (localizedLabel != null && localizedLabel.isNotEmpty) {
+      return localizedLabel;
+    }
+    return label;
+  }
 }
 
 class ExerciseConcept {

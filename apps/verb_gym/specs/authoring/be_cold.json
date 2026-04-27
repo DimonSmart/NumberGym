@@ -154,6 +154,286 @@
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve frío ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I was cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste frío ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo frío ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He was cold yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She was cold yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos frío ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis frío ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron frío ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They were cold yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré frío mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás frío mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá frío mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be cold tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be cold tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos frío mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis frío mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán frío mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be cold tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }

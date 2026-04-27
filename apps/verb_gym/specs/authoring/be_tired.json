@@ -181,6 +181,340 @@
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} estuve {adjective} ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "I was tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} estuviste {adjective} ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} estuvo {adjective} ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "He was tired yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "adjective": {
+              "es": "cansada"
+            },
+            "text": {
+              "en": "She was tired yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} estuvimos {adjective} ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "We were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} estuvisteis {adjective} ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} estuvieron {adjective} ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "They were tired yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} estaré {adjective} mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "I will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} estarás {adjective} mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} estará {adjective} mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "He will be tired tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "adjective": {
+              "es": "cansada"
+            },
+            "text": {
+              "en": "She will be tired tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} estaremos {adjective} mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "We will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} estaréis {adjective} mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} estarán {adjective} mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "They will be tired tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }

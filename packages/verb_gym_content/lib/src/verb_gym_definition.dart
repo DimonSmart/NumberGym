@@ -391,6 +391,7 @@ class _VerbTenseFamilyDefinition {
     required this.id,
     required this.label,
     required this.shortLabel,
+    required this.spanishLabel,
     required this.difficultyTier,
     required this.defaultDuration,
   });
@@ -398,6 +399,7 @@ class _VerbTenseFamilyDefinition {
   final String id;
   final String label;
   final String shortLabel;
+  final String spanishLabel;
   final ExerciseDifficultyTier difficultyTier;
   final Duration defaultDuration;
 
@@ -410,6 +412,10 @@ class _VerbTenseFamilyDefinition {
       difficultyTier: difficultyTier,
       defaultDuration: defaultDuration,
       supportedModes: _verbExerciseModes,
+      localizedLabels: <LearningLanguage, String>{
+        LearningLanguage.english: label,
+        LearningLanguage.spanish: spanishLabel,
+      },
     );
   }
 }
@@ -431,6 +437,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.presentIndicative,
         label: 'Present indicative',
         shortLabel: 'Present',
+        spanishLabel: 'Presente de indicativo',
         difficultyTier: ExerciseDifficultyTier.easy,
         defaultDuration: Duration(seconds: 18),
       ),
@@ -438,13 +445,15 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.presentPerfect,
         label: 'Present perfect',
         shortLabel: 'Present perfect',
+        spanishLabel: 'Pretérito perfecto',
         difficultyTier: ExerciseDifficultyTier.medium,
         defaultDuration: Duration(seconds: 20),
       ),
       VerbTenseIds.preterite: const _VerbTenseFamilyDefinition(
         id: VerbTenseIds.preterite,
-        label: 'Preterite',
-        shortLabel: 'Preterite',
+        label: 'Simple past',
+        shortLabel: 'Simple past',
+        spanishLabel: 'Pretérito indefinido',
         difficultyTier: ExerciseDifficultyTier.medium,
         defaultDuration: Duration(seconds: 20),
       ),
@@ -452,6 +461,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.imperfectIndicative,
         label: 'Imperfect indicative',
         shortLabel: 'Imperfect',
+        spanishLabel: 'Pretérito imperfecto',
         difficultyTier: ExerciseDifficultyTier.medium,
         defaultDuration: Duration(seconds: 20),
       ),
@@ -459,6 +469,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.futureSimple,
         label: 'Future simple',
         shortLabel: 'Future',
+        spanishLabel: 'Futuro simple',
         difficultyTier: ExerciseDifficultyTier.hard,
         defaultDuration: Duration(seconds: 22),
       ),
@@ -466,6 +477,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.conditionalSimple,
         label: 'Conditional simple',
         shortLabel: 'Conditional',
+        spanishLabel: 'Condicional simple',
         difficultyTier: ExerciseDifficultyTier.hard,
         defaultDuration: Duration(seconds: 22),
       ),
@@ -473,6 +485,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.presentSubjunctive,
         label: 'Present subjunctive',
         shortLabel: 'Subjunctive',
+        spanishLabel: 'Presente de subjuntivo',
         difficultyTier: ExerciseDifficultyTier.hard,
         defaultDuration: Duration(seconds: 24),
       ),
@@ -480,6 +493,7 @@ final Map<String, ExerciseFamily> _tenseFamilies =
         id: VerbTenseIds.imperfectSubjunctive,
         label: 'Imperfect subjunctive',
         shortLabel: 'Imperfect subjunctive',
+        spanishLabel: 'Imperfecto de subjuntivo',
         difficultyTier: ExerciseDifficultyTier.hard,
         defaultDuration: Duration(seconds: 24),
       ),

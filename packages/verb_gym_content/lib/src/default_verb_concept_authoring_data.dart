@@ -158,6 +158,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve miedo ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I was afraid yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste miedo ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You were afraid yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo miedo ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He was afraid yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She was afraid yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You were afraid yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos miedo ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We were afraid yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis miedo ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You were afraid yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron miedo ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They were afraid yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You were afraid yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré miedo mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be afraid tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás miedo mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be afraid tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá miedo mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be afraid tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be afraid tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be afraid tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos miedo mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be afraid tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis miedo mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be afraid tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán miedo mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be afraid tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be afraid tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }
@@ -314,6 +594,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
             },
             "text": {
               "en": "You are cold."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve frío ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I was cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste frío ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo frío ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He was cold yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She was cold yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos frío ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis frío ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron frío ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They were cold yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You were cold yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré frío mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás frío mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá frío mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be cold tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be cold tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos frío mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis frío mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán frío mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be cold tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be cold tomorrow."
             }
           }
         }
@@ -478,6 +1038,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve hambre ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I was hungry yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste hambre ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You were hungry yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo hambre ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He was hungry yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She was hungry yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You were hungry yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos hambre ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We were hungry yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis hambre ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You were hungry yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron hambre ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They were hungry yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You were hungry yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré hambre mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be hungry tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás hambre mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be hungry tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá hambre mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be hungry tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be hungry tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be hungry tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos hambre mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be hungry tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis hambre mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be hungry tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán hambre mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be hungry tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be hungry tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }
@@ -634,6 +1474,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
             },
             "text": {
               "en": "You are right."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve razón ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I was right yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste razón ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You were right yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo razón ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He was right yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She was right yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You were right yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos razón ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We were right yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis razón ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You were right yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron razón ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They were right yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You were right yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré razón mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be right tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás razón mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be right tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá razón mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be right tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be right tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be right tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos razón mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be right tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis razón mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be right tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán razón mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be right tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be right tomorrow."
             }
           }
         }
@@ -825,6 +1945,340 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} estuve {adjective} ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "I was tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} estuviste {adjective} ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} estuvo {adjective} ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "He was tired yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "adjective": {
+              "es": "cansada"
+            },
+            "text": {
+              "en": "She was tired yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} estuvimos {adjective} ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "We were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} estuvisteis {adjective} ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} estuvieron {adjective} ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "They were tired yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You were tired yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} estaré {adjective} mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "I will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} estarás {adjective} mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} estará {adjective} mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "He will be tired tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "adjective": {
+              "es": "cansada"
+            },
+            "text": {
+              "en": "She will be tired tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "adjective": {
+              "es": "cansado"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} estaremos {adjective} mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "We will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} estaréis {adjective} mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} estarán {adjective} mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "They will be tired tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "adjective": {
+              "es": "cansados"
+            },
+            "text": {
+              "en": "You will be tired tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }
@@ -981,6 +2435,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
             },
             "text": {
               "en": "You go to the park."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} fui al parque ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I went to the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} fuiste al parque ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You went to the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} fue al parque ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He went to the park yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She went to the park yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You went to the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} fuimos al parque ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We went to the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} fuisteis al parque ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You went to the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} fueron al parque ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They went to the park yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You went to the park yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} iré al parque mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will go to the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} irás al parque mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will go to the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} irá al parque mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will go to the park tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will go to the park tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will go to the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} iremos al parque mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will go to the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} iréis al parque mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will go to the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} irán al parque mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will go to the park tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will go to the park tomorrow."
             }
           }
         }
@@ -1145,6 +2879,146 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
           }
         }
       }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré veinte años mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás veinte años mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá veinte años mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be twenty years old tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be twenty years old tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos veinte años mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis veinte años mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán veinte años mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be twenty years old tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }
@@ -1301,6 +3175,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
             },
             "text": {
               "en": "You have a book."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve un libro ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste un libro ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo un libro ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He had a book yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She had a book yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos un libro ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis un libro ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron un libro ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They had a book yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré un libro mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás un libro mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá un libro mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will have a book tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will have a book tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos un libro mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis un libro mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán un libro mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will have a book tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
             }
           }
         }
@@ -1465,6 +3619,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve que estudiar ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I had to study yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste que estudiar ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You had to study yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo que estudiar ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He had to study yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She had to study yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You had to study yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos que estudiar ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We had to study yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis que estudiar ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You had to study yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron que estudiar ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They had to study yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You had to study yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré que estudiar mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will have to study tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás que estudiar mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will have to study tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá que estudiar mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will have to study tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will have to study tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will have to study tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos que estudiar mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will have to study tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis que estudiar mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will have to study tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán que estudiar mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will have to study tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will have to study tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }
@@ -1621,6 +4055,286 @@ const List<String> defaultVerbConceptAuthoringJsonSources = <String>[
             },
             "text": {
               "en": "You want to travel tomorrow."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} quise viajar ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I wanted to travel yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} quisiste viajar ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You wanted to travel yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} quiso viajar ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He wanted to travel yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She wanted to travel yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You wanted to travel yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} quisimos viajar ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We wanted to travel yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} quisisteis viajar ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You wanted to travel yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} quisieron viajar ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They wanted to travel yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You wanted to travel yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} querré viajar mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will want to travel tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} querrás viajar mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will want to travel tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} querrá viajar mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will want to travel tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will want to travel tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will want to travel tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} querremos viajar mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will want to travel tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} querréis viajar mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will want to travel tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} querrán viajar mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will want to travel tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will want to travel tomorrow."
             }
           }
         }

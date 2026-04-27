@@ -154,6 +154,286 @@
           }
         }
       }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tuve un libro ayer."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tuviste un libro ayer."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tuvo un libro ayer."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He had a book yesterday."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She had a book yesterday."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tuvimos un libro ayer."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tuvisteis un libro ayer."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tuvieron un libro ayer."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They had a book yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You had a book yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré un libro mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás un libro mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá un libro mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will have a book tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will have a book tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos un libro mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis un libro mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán un libro mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will have a book tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will have a book tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }

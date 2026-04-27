@@ -154,6 +154,146 @@
           }
         }
       }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": ["I"],
+        "pattern": {
+          "es": "{subject} tendré veinte años mañana."
+        },
+        "variants": {
+          "I": {
+            "subject": {
+              "es": "Yo"
+            },
+            "text": {
+              "en": "I will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": ["You"],
+        "pattern": {
+          "es": "{subject} tendrás veinte años mañana."
+        },
+        "variants": {
+          "You": {
+            "subject": {
+              "es": "Tú"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": ["He", "She", "YouFormal"],
+        "pattern": {
+          "es": "{subject} tendrá veinte años mañana."
+        },
+        "variants": {
+          "He": {
+            "subject": {
+              "es": "Él"
+            },
+            "text": {
+              "en": "He will be twenty years old tomorrow."
+            }
+          },
+          "She": {
+            "subject": {
+              "es": "Ella"
+            },
+            "text": {
+              "en": "She will be twenty years old tomorrow."
+            }
+          },
+          "YouFormal": {
+            "subject": {
+              "es": "Usted"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": ["We"],
+        "pattern": {
+          "es": "{subject} tendremos veinte años mañana."
+        },
+        "variants": {
+          "We": {
+            "subject": {
+              "es": "Nosotros"
+            },
+            "text": {
+              "en": "We will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": ["YouPlural"],
+        "pattern": {
+          "es": "{subject} tendréis veinte años mañana."
+        },
+        "variants": {
+          "YouPlural": {
+            "subject": {
+              "es": "Vosotros"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": ["They", "YouPluralFormal"],
+        "pattern": {
+          "es": "{subject} tendrán veinte años mañana."
+        },
+        "variants": {
+          "They": {
+            "subject": {
+              "es": "Ellos"
+            },
+            "text": {
+              "en": "They will be twenty years old tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "subject": {
+              "es": "Ustedes"
+            },
+            "text": {
+              "en": "You will be twenty years old tomorrow."
+            }
+          }
+        }
+      }
     ]
   }
 }

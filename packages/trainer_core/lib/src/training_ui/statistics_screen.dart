@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_definition.dart';
 import '../exercise_models.dart';
 import '../training_stats_loader.dart';
+import '../training/domain/learning_language.dart';
 import 'widgets/training_background.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -90,6 +91,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     for (final family in stats.familyProgress)
                       _FamilyProgressCard(
                         family: family,
+                        baseLanguage: stats.baseLanguage,
+                        learningLanguage: stats.language,
                         displayConfig: widget.appDefinition.statisticsDisplay,
                       ),
                   ],
@@ -103,21 +106,30 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 class _FamilyProgressCard extends StatelessWidget {
   const _FamilyProgressCard({
     required this.family,
+    required this.baseLanguage,
+    required this.learningLanguage,
     required this.displayConfig,
   });
 
   final TrainingStatsFamilyProgress family;
+  final LearningLanguage baseLanguage;
+  final LearningLanguage learningLanguage;
   final StatisticsDisplayConfig displayConfig;
 
   @override
   Widget build(BuildContext context) {
     final concepts = family.concepts;
+    final title = _familyTitle(
+      family.family,
+      baseLanguage: baseLanguage,
+      learningLanguage: learningLanguage,
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Card(
         child: concepts.isEmpty
             ? ListTile(
-                title: Text(family.family.label),
+                title: Text(title),
                 subtitle: Text('${family.learnedCards}/${family.totalCards}'),
               )
             : Padding(
@@ -125,10 +137,7 @@ class _FamilyProgressCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      family.family.label,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    Text(title, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(
                       'Concepts: ${family.learnedConcepts}/${family.totalConcepts}'
@@ -322,4 +331,21 @@ String _conceptTitle(ExerciseConcept concept) {
     return baseLabel;
   }
   return concept.learningLabel.trim();
+}
+
+String _familyTitle(
+  ExerciseFamily family, {
+  required LearningLanguage baseLanguage,
+  required LearningLanguage learningLanguage,
+}) {
+  final learningLabel = family.labelFor(learningLanguage).trim();
+  final baseLabel = family.labelFor(baseLanguage).trim();
+  if (baseLabel.isEmpty ||
+      learningLabel.toLowerCase() == baseLabel.toLowerCase()) {
+    return learningLabel.isEmpty ? family.label : learningLabel;
+  }
+  if (learningLabel.isEmpty) {
+    return baseLabel;
+  }
+  return '$learningLabel / $baseLabel';
 }

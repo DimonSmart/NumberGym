@@ -21,12 +21,32 @@ void main() {
 
     expect(catalog.familiesByKey.keys, <String>[
       'verb_gym/${VerbTenseIds.presentIndicative}',
+      'verb_gym/${VerbTenseIds.preterite}',
+      'verb_gym/${VerbTenseIds.futureSimple}',
     ]);
     expect(
       catalog
           .familiesByKey['verb_gym/${VerbTenseIds.presentIndicative}']!
           .label,
       'Present indicative',
+    );
+    expect(
+      catalog.familiesByKey['verb_gym/${VerbTenseIds.presentIndicative}']!
+          .labelFor(LearningLanguage.spanish),
+      'Presente de indicativo',
+    );
+    expect(
+      catalog.familiesByKey['verb_gym/${VerbTenseIds.presentIndicative}']!
+          .labelFor(LearningLanguage.english),
+      'Present indicative',
+    );
+    expect(
+      catalog.familiesByKey['verb_gym/${VerbTenseIds.preterite}']!.label,
+      'Simple past',
+    );
+    expect(
+      catalog.familiesByKey['verb_gym/${VerbTenseIds.futureSimple}']!.label,
+      'Future simple',
     );
   });
 
@@ -79,6 +99,36 @@ void main() {
     expect(card.promptText, 'Yo tengo hambre.');
   });
 
+  test('Spanish cards include simple past examples', () {
+    final card = _findCard(
+      definition: definition,
+      baseLanguage: LearningLanguage.english,
+      language: LearningLanguage.spanish,
+      familyId: VerbTenseIds.preterite,
+      variantId: 'be_hungry::I',
+    );
+
+    expect(card.displayText, 'I was hungry yesterday.');
+    expect(card.promptText, 'Yo tuve hambre ayer.');
+    expect(
+      card.acceptedAnswers,
+      containsAll(<String>['Yo tuve hambre ayer.', 'Yo tuve hambre ayer']),
+    );
+  });
+
+  test('Spanish cards include future simple examples', () {
+    final card = _findCard(
+      definition: definition,
+      baseLanguage: LearningLanguage.english,
+      language: LearningLanguage.spanish,
+      familyId: VerbTenseIds.futureSimple,
+      variantId: 'go_to_place::I',
+    );
+
+    expect(card.displayText, 'I will go to the park tomorrow.');
+    expect(card.promptText, 'Yo iré al parque mañana.');
+  });
+
   test('roles remain card variants instead of separate families', () {
     final catalog = definition.catalog.build(
       LearningLanguage.spanish,
@@ -87,7 +137,11 @@ void main() {
     final familyIds = catalog.cards.map((card) => card.id.familyId).toSet();
     final variantIds = catalog.cards.map((card) => card.id.variantId).toSet();
 
-    expect(familyIds, <String>{VerbTenseIds.presentIndicative});
+    expect(familyIds, <String>{
+      VerbTenseIds.presentIndicative,
+      VerbTenseIds.preterite,
+      VerbTenseIds.futureSimple,
+    });
     expect(variantIds, contains('be_hungry::I'));
     expect(variantIds, contains('be_hungry::You'));
     expect(variantIds, contains('be_hungry::YouPluralFormal'));

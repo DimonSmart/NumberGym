@@ -91,13 +91,32 @@ void main() {
         file.readAsStringSync(),
       );
       expect(runtime.id.value, _fileStem(file));
-      expect(runtime.examples, hasLength(9));
+      _expectTenseExamples(runtime, VerbTenseIds.presentIndicative);
+      _expectTenseExamples(runtime, VerbTenseIds.futureSimple);
+      if (runtime.id.value == 'have_age') {
+        expect(
+          runtime.examplesByTenseAndRole,
+          isNot(contains(VerbTenseIds.preterite)),
+        );
+      } else {
+        _expectTenseExamples(runtime, VerbTenseIds.preterite);
+      }
       for (final example in runtime.examples) {
         expect(example.text['en'], isNotEmpty);
         expect(example.text['es'], isNotEmpty);
       }
     }
   });
+}
+
+void _expectTenseExamples(VerbRuntimeConcept runtime, String tenseId) {
+  final examplesByRole = runtime.examplesByTenseAndRole[tenseId];
+  expect(examplesByRole, isNotNull, reason: runtime.id.value);
+  expect(
+    examplesByRole!.values.expand((examples) => examples),
+    hasLength(9),
+    reason: '${runtime.id.value} $tenseId',
+  );
 }
 
 Directory _findWorkspaceRoot() {
