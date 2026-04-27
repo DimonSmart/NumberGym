@@ -95,24 +95,24 @@ class ExerciseFamily {
 class ExerciseConcept {
   const ExerciseConcept({
     required this.id,
-    required this.label,
-    required this.secondaryLabel,
+    required this.learningLabel,
+    required this.baseLabel,
   });
 
   final String id;
-  final String label;
-  final String secondaryLabel;
+  final String learningLabel;
+  final String baseLabel;
 
   @override
   bool operator ==(Object other) {
     return other is ExerciseConcept &&
         other.id == id &&
-        other.label == label &&
-        other.secondaryLabel == secondaryLabel;
+        other.learningLabel == learningLabel &&
+        other.baseLabel == baseLabel;
   }
 
   @override
-  int get hashCode => Object.hash(id, label, secondaryLabel);
+  int get hashCode => Object.hash(id, learningLabel, baseLabel);
 }
 
 class ChoiceExerciseSpec {

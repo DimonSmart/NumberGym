@@ -68,6 +68,12 @@ class TrainingStatsConceptProgress {
   final int learnedCards;
 
   bool get learned => totalCards > 0 && learnedCards == totalCards;
+  double get progressValue {
+    if (totalCards <= 0) {
+      return 0;
+    }
+    return learnedCards / totalCards;
+  }
 }
 
 class TrainingStatsLoader {
@@ -172,7 +178,8 @@ class _FamilyProgressBuilder {
   TrainingStatsFamilyProgress build() {
     final concepts =
         conceptsById.values.map((concept) => concept.build()).toList()..sort(
-          (left, right) => left.concept.label.compareTo(right.concept.label),
+          (left, right) =>
+              left.concept.baseLabel.compareTo(right.concept.baseLabel),
         );
     return TrainingStatsFamilyProgress(
       family: family,

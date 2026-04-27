@@ -55,6 +55,10 @@ TrainingAppDefinition buildVerbGymAppDefinition({
     tokenizerOf: (language) => GenericMatcherTokenizer(
       resourcesByLanguage[language]!.profile.normalizer,
     ),
+    statisticsDisplay: const StatisticsDisplayConfig(
+      conceptDisplayMode: StatisticsConceptDisplayMode.compactGrid,
+      compactGridMaxColumns: 5,
+    ),
     catalog: ExerciseCatalog(
       modules: <TrainingModule>[
         _VerbGymModule(
@@ -279,8 +283,8 @@ class _VerbGymModule implements ContextualTrainingModule {
   }) {
     return ExerciseConcept(
       id: concept.id.value,
-      label: _conceptLabel(concept, learningResources),
-      secondaryLabel: _conceptLabel(concept, baseResources),
+      learningLabel: _conceptLabel(concept, learningResources),
+      baseLabel: _conceptLabel(concept, baseResources),
     );
   }
 

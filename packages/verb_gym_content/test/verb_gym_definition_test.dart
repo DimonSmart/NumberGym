@@ -5,6 +5,14 @@ import 'package:verb_gym_content/verb_gym_content.dart';
 void main() {
   final definition = buildVerbGymAppDefinition(config: _config);
 
+  test('uses compact concept grid statistics display', () {
+    expect(
+      definition.statisticsDisplay.conceptDisplayMode,
+      StatisticsConceptDisplayMode.compactGrid,
+    );
+    expect(definition.statisticsDisplay.compactGridMaxColumns, 5);
+  });
+
   test('families are built from available verb tenses', () {
     final catalog = definition.catalog.build(
       LearningLanguage.spanish,
@@ -41,8 +49,8 @@ void main() {
     expect(card.celebrationText, 'I am hungry. -> Yo tengo hambre.');
     expect(card.concept, isNotNull);
     expect(card.concept!.id, 'be_hungry');
-    expect(card.concept!.label, 'tener hambre');
-    expect(card.concept!.secondaryLabel, 'to be hungry');
+    expect(card.concept!.learningLabel, 'tener hambre');
+    expect(card.concept!.baseLabel, 'to be hungry');
   });
 
   test('English cards reverse the prompt and answer languages', () {

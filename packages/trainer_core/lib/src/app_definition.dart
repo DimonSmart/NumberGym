@@ -11,6 +11,7 @@ class TrainingAppDefinition {
     required this.profileOf,
     required this.tokenizerOf,
     required this.catalog,
+    this.statisticsDisplay = const StatisticsDisplayConfig(),
   }) : supportedLanguages = List<LearningLanguage>.unmodifiable(
          supportedLanguages,
        );
@@ -20,4 +21,17 @@ class TrainingAppDefinition {
   final BaseLanguageProfile Function(LearningLanguage language) profileOf;
   final MatcherTokenizer Function(LearningLanguage language) tokenizerOf;
   final ExerciseCatalog catalog;
+  final StatisticsDisplayConfig statisticsDisplay;
+}
+
+enum StatisticsConceptDisplayMode { list, compactGrid }
+
+class StatisticsDisplayConfig {
+  const StatisticsDisplayConfig({
+    this.conceptDisplayMode = StatisticsConceptDisplayMode.list,
+    this.compactGridMaxColumns = 5,
+  });
+
+  final StatisticsConceptDisplayMode conceptDisplayMode;
+  final int compactGridMaxColumns;
 }

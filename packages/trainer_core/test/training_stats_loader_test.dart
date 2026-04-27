@@ -39,14 +39,14 @@ final _pastFamily = ExerciseFamily(
 
 const _conceptA = ExerciseConcept(
   id: 'concept_a',
-  label: 'Concept A',
-  secondaryLabel: 'Base concept A',
+  learningLabel: 'Concept A',
+  baseLabel: 'Base concept A',
 );
 
 const _conceptB = ExerciseConcept(
   id: 'concept_b',
-  label: 'Concept B',
-  secondaryLabel: 'Base concept B',
+  learningLabel: 'Concept B',
+  baseLabel: 'Base concept B',
 );
 
 class _TestModule implements TrainingModule {
@@ -288,6 +288,7 @@ void main() {
     expect(presentConceptA.totalCards, 2);
     expect(presentConceptA.learnedCards, 1);
     expect(presentConceptA.learned, isFalse);
+    expect(presentConceptA.progressValue, 0.5);
 
     final presentConceptB = present.concepts.singleWhere(
       (concept) => concept.concept.id == 'concept_b',
