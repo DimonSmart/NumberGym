@@ -1,6 +1,7 @@
 export 'src/app_config.dart';
 export 'src/app_definition.dart';
 export 'src/base_language_profile.dart';
+export 'src/card_learning_progress.dart';
 export 'src/core/logging/app_log_buffer.dart';
 export 'src/core/logging/app_logger.dart';
 export 'src/core/theme/app_palette.dart';

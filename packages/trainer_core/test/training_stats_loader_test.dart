@@ -238,6 +238,10 @@ void main() {
       expect(snapshot.dailySessionStats.sessionsCompleted, 2);
       expect(snapshot.streakSnapshot.currentStreakDays, 3);
       expect(snapshot.allLearned, isFalse);
+
+      final family = snapshot.familyProgress.single;
+      expect(family.creditedCorrectAttempts, 20);
+      expect(family.requiredCorrectAttempts, 100);
     },
   );
 
@@ -262,6 +266,15 @@ void main() {
     await saveLearned('present', 'concept_a::first');
     await saveLearned('present', 'concept_b::first');
     await saveLearned('past', 'concept_a::first');
+    await progressRepository.save(
+      const ExerciseId(
+        moduleId: _conceptStatsModuleId,
+        familyId: 'present',
+        variantId: 'concept_a::second',
+      ).storageKey,
+      _practiceProgress(now, correctCount: 3, wrongCount: 1),
+      language: language,
+    );
 
     final loader = TrainingStatsLoader(
       progressRepository: progressRepository,
@@ -279,6 +292,10 @@ void main() {
     );
     expect(present.totalCards, 3);
     expect(present.learnedCards, 2);
+    expect(present.totalCorrect, 43);
+    expect(present.totalAttempts, 44);
+    expect(present.creditedCorrectAttempts, 43);
+    expect(present.requiredCorrectAttempts, 60);
     expect(present.totalConcepts, 2);
     expect(present.learnedConcepts, 1);
 
@@ -287,13 +304,19 @@ void main() {
     );
     expect(presentConceptA.totalCards, 2);
     expect(presentConceptA.learnedCards, 1);
+    expect(presentConceptA.totalCorrect, 23);
+    expect(presentConceptA.totalAttempts, 24);
+    expect(presentConceptA.creditedCorrectAttempts, 23);
+    expect(presentConceptA.requiredCorrectAttempts, 40);
     expect(presentConceptA.learned, isFalse);
-    expect(presentConceptA.progressValue, 0.5);
+    expect(presentConceptA.progressValue, 23 / 40);
 
     final presentConceptB = present.concepts.singleWhere(
       (concept) => concept.concept.id == 'concept_b',
     );
     expect(presentConceptB.learned, isTrue);
+    expect(presentConceptB.creditedCorrectAttempts, 20);
+    expect(presentConceptB.requiredCorrectAttempts, 20);
 
     final past = snapshot.familyProgress.singleWhere(
       (family) => family.family.id == 'past',
@@ -304,6 +327,8 @@ void main() {
     expect(pastConceptA.totalCards, 1);
     expect(pastConceptA.learnedCards, 1);
     expect(pastConceptA.learned, isTrue);
+    expect(pastConceptA.creditedCorrectAttempts, 17);
+    expect(pastConceptA.requiredCorrectAttempts, 17);
   });
 }
 
@@ -322,5 +347,27 @@ CardProgress _learnedProgress(DateTime now) {
     learnedAt: timestamp,
     firstAttemptAt: timestamp,
     consecutiveCorrect: 20,
+  );
+}
+
+CardProgress _practiceProgress(
+  DateTime now, {
+  required int correctCount,
+  required int wrongCount,
+}) {
+  final timestamp = now.millisecondsSinceEpoch;
+  return CardProgress(
+    learned: false,
+    clusters: <CardCluster>[
+      CardCluster(
+        lastAnswerAt: timestamp,
+        correctCount: correctCount,
+        wrongCount: wrongCount,
+        skippedCount: 0,
+      ),
+    ],
+    learnedAt: 0,
+    firstAttemptAt: timestamp,
+    consecutiveCorrect: correctCount,
   );
 }

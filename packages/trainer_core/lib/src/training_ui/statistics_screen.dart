@@ -130,7 +130,12 @@ class _FamilyProgressCard extends StatelessWidget {
         child: concepts.isEmpty
             ? ListTile(
                 title: Text(title),
-                subtitle: Text('${family.learnedCards}/${family.totalCards}'),
+                subtitle: Text(
+                  _formatCreditedCorrect(
+                    creditedCorrectAttempts: family.creditedCorrectAttempts,
+                    requiredCorrectAttempts: family.requiredCorrectAttempts,
+                  ),
+                ),
               )
             : Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
@@ -138,12 +143,6 @@ class _FamilyProgressCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Concepts: ${family.learnedConcepts}/${family.totalConcepts}'
-                      ' · Cards: ${family.learnedCards}/${family.totalCards}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
                     const SizedBox(height: 12),
                     if (displayConfig.conceptDisplayMode ==
                         StatisticsConceptDisplayMode.compactGrid)
@@ -258,7 +257,12 @@ class _CompactConceptTile extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              '${concept.learnedCards}/${concept.totalCards}',
+              _formatCreditedCorrect(
+                creditedCorrectAttempts: concept.creditedCorrectAttempts,
+                requiredCorrectAttempts: concept.requiredCorrectAttempts,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall,
             ),
           ),
@@ -311,9 +315,21 @@ class _ConceptProgressRow extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    '${concept.learnedCards}/${concept.totalCards}',
-                    style: theme.textTheme.bodySmall,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 2,
+                    alignment: WrapAlignment.end,
+                    children: [
+                      Text(
+                        _formatCreditedCorrect(
+                          creditedCorrectAttempts:
+                              concept.creditedCorrectAttempts,
+                          requiredCorrectAttempts:
+                              concept.requiredCorrectAttempts,
+                        ),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -323,6 +339,13 @@ class _ConceptProgressRow extends StatelessWidget {
       ],
     );
   }
+}
+
+String _formatCreditedCorrect({
+  required int creditedCorrectAttempts,
+  required int requiredCorrectAttempts,
+}) {
+  return '$creditedCorrectAttempts/$requiredCorrectAttempts';
 }
 
 String _conceptTitle(ExerciseConcept concept) {

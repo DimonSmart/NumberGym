@@ -1,5 +1,7 @@
+import 'card_learning_progress.dart';
 import 'daily_study_summary.dart';
 import 'exercise_models.dart';
+import 'learning_params.dart';
 import 'study_streak_service.dart';
 import 'trainer_repositories.dart';
 import 'training/domain/learning_language.dart';
@@ -11,12 +13,17 @@ class TrainingStatsSnapshot {
     required this.language,
     required List<ExerciseCard> cards,
     required Map<ExerciseId, CardProgress> progressById,
+    required LearningParams learningParams,
     required this.dailySummary,
     required this.dailySessionStats,
     required this.streakSnapshot,
   }) : cards = List<ExerciseCard>.unmodifiable(cards),
        progressById = Map<ExerciseId, CardProgress>.unmodifiable(progressById),
-       familyProgress = _buildFamilyProgress(cards, progressById);
+       familyProgress = _buildFamilyProgress(
+         cards,
+         progressById,
+         learningParams,
+       );
 
   final LearningLanguage baseLanguage;
   final LearningLanguage language;
@@ -43,12 +50,20 @@ class TrainingStatsFamilyProgress {
     required this.family,
     required this.totalCards,
     required this.learnedCards,
+    required this.totalCorrect,
+    required this.totalAttempts,
+    required this.creditedCorrectAttempts,
+    required this.requiredCorrectAttempts,
     required List<TrainingStatsConceptProgress> concepts,
   }) : concepts = List<TrainingStatsConceptProgress>.unmodifiable(concepts);
 
   final ExerciseFamily family;
   final int totalCards;
   final int learnedCards;
+  final int totalCorrect;
+  final int totalAttempts;
+  final int creditedCorrectAttempts;
+  final int requiredCorrectAttempts;
   final List<TrainingStatsConceptProgress> concepts;
 
   int get totalConcepts => concepts.length;
@@ -61,18 +76,26 @@ class TrainingStatsConceptProgress {
     required this.concept,
     required this.totalCards,
     required this.learnedCards,
+    required this.totalCorrect,
+    required this.totalAttempts,
+    required this.creditedCorrectAttempts,
+    required this.requiredCorrectAttempts,
   });
 
   final ExerciseConcept concept;
   final int totalCards;
   final int learnedCards;
+  final int totalCorrect;
+  final int totalAttempts;
+  final int creditedCorrectAttempts;
+  final int requiredCorrectAttempts;
 
   bool get learned => totalCards > 0 && learnedCards == totalCards;
   double get progressValue {
-    if (totalCards <= 0) {
+    if (requiredCorrectAttempts <= 0) {
       return 0;
     }
-    return learnedCards / totalCards;
+    return creditedCorrectAttempts / requiredCorrectAttempts;
   }
 }
 
@@ -81,10 +104,12 @@ class TrainingStatsLoader {
     required ProgressRepositoryBase progressRepository,
     required SettingsRepositoryBase settingsRepository,
     required ExerciseCatalog catalog,
+    LearningParams? learningParams,
     StudyStreakService? studyStreakService,
   }) : _progressRepository = progressRepository,
        _settingsRepository = settingsRepository,
        _catalog = catalog,
+       _learningParams = learningParams ?? LearningParams.defaults(),
        _studyStreakService =
            studyStreakService ??
            StudyStreakService(settingsRepository: settingsRepository);
@@ -92,6 +117,7 @@ class TrainingStatsLoader {
   final ProgressRepositoryBase _progressRepository;
   final SettingsRepositoryBase _settingsRepository;
   final ExerciseCatalog _catalog;
+  final LearningParams _learningParams;
   final StudyStreakService _studyStreakService;
 
   Future<TrainingStatsSnapshot> load({DateTime? now}) async {
@@ -117,6 +143,7 @@ class TrainingStatsLoader {
       language: language,
       cards: snapshot.cards,
       progressById: progressById,
+      learningParams: _learningParams,
       dailySummary: DailyStudySummary.fromProgress(
         progressById.values,
         now: resolvedNow,
@@ -134,6 +161,7 @@ class TrainingStatsLoader {
 List<TrainingStatsFamilyProgress> _buildFamilyProgress(
   List<ExerciseCard> cards,
   Map<ExerciseId, CardProgress> progressById,
+  LearningParams learningParams,
 ) {
   final familiesByKey = <String, _FamilyProgressBuilder>{};
   for (final card in cards) {
@@ -142,8 +170,20 @@ List<TrainingStatsFamilyProgress> _buildFamilyProgress(
       familyKey,
       () => _FamilyProgressBuilder(card.family),
     );
-    final learned = progressById[card.progressId]?.learned ?? false;
+    final progress = progressById[card.progressId] ?? CardProgress.empty;
+    final learned = progress.learned;
+    final cardLearningProgress = CardLearningProgress.forCard(
+      family: card.family,
+      progress: progress,
+      learningParams: learningParams,
+    );
     family.totalCards += 1;
+    family.totalCorrect += progress.totalCorrect;
+    family.totalAttempts += progress.totalAttempts;
+    family.creditedCorrectAttempts +=
+        cardLearningProgress.creditedCorrectAttempts;
+    family.requiredCorrectAttempts +=
+        cardLearningProgress.requiredCorrectAttempts;
     if (learned) {
       family.learnedCards += 1;
     }
@@ -157,6 +197,12 @@ List<TrainingStatsFamilyProgress> _buildFamilyProgress(
       () => _ConceptProgressBuilder(concept),
     );
     conceptProgress.totalCards += 1;
+    conceptProgress.totalCorrect += progress.totalCorrect;
+    conceptProgress.totalAttempts += progress.totalAttempts;
+    conceptProgress.creditedCorrectAttempts +=
+        cardLearningProgress.creditedCorrectAttempts;
+    conceptProgress.requiredCorrectAttempts +=
+        cardLearningProgress.requiredCorrectAttempts;
     if (learned) {
       conceptProgress.learnedCards += 1;
     }
@@ -174,6 +220,10 @@ class _FamilyProgressBuilder {
       <String, _ConceptProgressBuilder>{};
   int totalCards = 0;
   int learnedCards = 0;
+  int totalCorrect = 0;
+  int totalAttempts = 0;
+  int creditedCorrectAttempts = 0;
+  int requiredCorrectAttempts = 0;
 
   TrainingStatsFamilyProgress build() {
     final concepts =
@@ -185,6 +235,10 @@ class _FamilyProgressBuilder {
       family: family,
       totalCards: totalCards,
       learnedCards: learnedCards,
+      totalCorrect: totalCorrect,
+      totalAttempts: totalAttempts,
+      creditedCorrectAttempts: creditedCorrectAttempts,
+      requiredCorrectAttempts: requiredCorrectAttempts,
       concepts: concepts,
     );
   }
@@ -196,12 +250,20 @@ class _ConceptProgressBuilder {
   final ExerciseConcept concept;
   int totalCards = 0;
   int learnedCards = 0;
+  int totalCorrect = 0;
+  int totalAttempts = 0;
+  int creditedCorrectAttempts = 0;
+  int requiredCorrectAttempts = 0;
 
   TrainingStatsConceptProgress build() {
     return TrainingStatsConceptProgress(
       concept: concept,
       totalCards: totalCards,
       learnedCards: learnedCards,
+      totalCorrect: totalCorrect,
+      totalAttempts: totalAttempts,
+      creditedCorrectAttempts: creditedCorrectAttempts,
+      requiredCorrectAttempts: requiredCorrectAttempts,
     );
   }
 }

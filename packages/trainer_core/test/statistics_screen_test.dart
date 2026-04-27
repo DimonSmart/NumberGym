@@ -54,6 +54,60 @@ void main() {
 
     expect(find.text('Presente / Present'), findsOneWidget);
   });
+
+  testWidgets(
+    'shows credited correct progress without learned summary labels',
+    (tester) async {
+      _mockBackgroundAsset();
+      final settingsRepository = FakeSettingsRepository(
+        baseLanguage: LearningLanguage.english,
+        language: LearningLanguage.spanish,
+      );
+      final progressRepository = InMemoryProgressRepository();
+      await progressRepository.save(
+        const ExerciseId(
+          moduleId: 'stats_test',
+          familyId: 'present',
+          variantId: 'concept::I',
+        ).storageKey,
+        const CardProgress(
+          learned: false,
+          clusters: <CardCluster>[
+            CardCluster(
+              lastAnswerAt: 1,
+              correctCount: 2,
+              wrongCount: 1,
+              skippedCount: 0,
+            ),
+          ],
+          learnedAt: 0,
+          firstAttemptAt: 1,
+          consecutiveCorrect: 0,
+        ),
+        language: LearningLanguage.spanish,
+      );
+      final statsLoader = TrainingStatsLoader(
+        progressRepository: progressRepository,
+        settingsRepository: settingsRepository,
+        catalog: ExerciseCatalog(modules: [_StatsTestModule()]),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatisticsScreen(
+            appDefinition: _appDefinition,
+            statsLoader: statsLoader,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Learned concepts: 0/1'), findsNothing);
+      expect(find.text('0/1 learned'), findsNothing);
+      expect(find.text('2/3 correct'), findsNothing);
+      expect(find.text('2/20'), findsWidgets);
+    },
+  );
 }
 
 void _mockBackgroundAsset() {
