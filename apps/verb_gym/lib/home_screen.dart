@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:trainer_core/trainer_core.dart';
 
 import 'about_screen.dart';
+import 'tense_timeline_hint.dart';
 
 enum _IntroMenuAction { statistics, settings, debug, about }
 
@@ -466,6 +467,14 @@ class _VerbGymHomeScreenState extends State<VerbGymHomeScreen> {
           appDefinition: widget.appDefinition,
           settingsBox: widget.settingsBox,
           progressBox: widget.progressBox,
+          taskHeaderBuilder: (context, task) {
+            return VerbTenseTimelineHint(
+              currentTenseId: task.family.id,
+              labels: VerbTenseTimelineLabels.forLanguage(
+                _settingsRepository.readBaseLanguage(),
+              ),
+            );
+          },
         ),
       ),
     );

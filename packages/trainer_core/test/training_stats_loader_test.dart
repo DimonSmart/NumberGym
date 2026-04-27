@@ -15,6 +15,40 @@ final _testFamily = ExerciseFamily(
   supportedModes: [ExerciseMode.chooseFromPrompt],
 );
 
+const _conceptStatsModuleId = 'concept_stats';
+
+final _presentFamily = ExerciseFamily(
+  moduleId: _conceptStatsModuleId,
+  id: 'present',
+  label: 'Present',
+  shortLabel: 'Present',
+  difficultyTier: ExerciseDifficultyTier.easy,
+  defaultDuration: Duration(seconds: 15),
+  supportedModes: [ExerciseMode.chooseFromPrompt],
+);
+
+final _pastFamily = ExerciseFamily(
+  moduleId: _conceptStatsModuleId,
+  id: 'past',
+  label: 'Past',
+  shortLabel: 'Past',
+  difficultyTier: ExerciseDifficultyTier.medium,
+  defaultDuration: Duration(seconds: 15),
+  supportedModes: [ExerciseMode.chooseFromPrompt],
+);
+
+const _conceptA = ExerciseConcept(
+  id: 'concept_a',
+  label: 'Concept A',
+  secondaryLabel: 'Base concept A',
+);
+
+const _conceptB = ExerciseConcept(
+  id: 'concept_b',
+  label: 'Concept B',
+  secondaryLabel: 'Base concept B',
+);
+
 class _TestModule implements TrainingModule {
   @override
   String get moduleId => _moduleId;
@@ -54,6 +88,82 @@ class _TestModule implements TrainingModule {
         ),
       );
     });
+  }
+}
+
+class _ConceptStatsModule implements TrainingModule {
+  @override
+  String get moduleId => _conceptStatsModuleId;
+
+  @override
+  String get displayName => 'Concept stats';
+
+  @override
+  bool supportsLanguage(LearningLanguage language) =>
+      language == LearningLanguage.english;
+
+  @override
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _presentFamily,
+    _pastFamily,
+  ];
+
+  @override
+  List<ExerciseCard> buildCards(LearningLanguage language) {
+    return [
+      _card(
+        family: _presentFamily,
+        concept: _conceptA,
+        variantId: 'concept_a::first',
+        language: language,
+      ),
+      _card(
+        family: _presentFamily,
+        concept: _conceptA,
+        variantId: 'concept_a::second',
+        language: language,
+      ),
+      _card(
+        family: _presentFamily,
+        concept: _conceptB,
+        variantId: 'concept_b::first',
+        language: language,
+      ),
+      _card(
+        family: _pastFamily,
+        concept: _conceptA,
+        variantId: 'concept_a::first',
+        language: language,
+      ),
+    ];
+  }
+
+  ExerciseCard _card({
+    required ExerciseFamily family,
+    required ExerciseConcept concept,
+    required String variantId,
+    required LearningLanguage language,
+  }) {
+    final id = ExerciseId(
+      moduleId: moduleId,
+      familyId: family.id,
+      variantId: variantId,
+    );
+    return ExerciseCard(
+      id: id,
+      family: family,
+      language: language,
+      displayText: variantId,
+      promptText: variantId,
+      acceptedAnswers: [variantId],
+      celebrationText: variantId,
+      concept: concept,
+      chooseFromPrompt: ChoiceExerciseSpec(
+        prompt: variantId,
+        correctOption: variantId,
+        options: [variantId, 'other_1', 'other_2', 'other_3'],
+      ),
+    );
   }
 }
 
@@ -129,5 +239,87 @@ void main() {
       expect(snapshot.streakSnapshot.currentStreakDays, 3);
       expect(snapshot.allLearned, isFalse);
     },
+  );
+
+  test('load groups concept progress by family and concept', () async {
+    final now = DateTime(2026, 2, 10, 14, 15);
+    const language = LearningLanguage.english;
+    final progressRepository = InMemoryProgressRepository();
+
+    Future<void> saveLearned(String familyId, String variantId) async {
+      final id = ExerciseId(
+        moduleId: _conceptStatsModuleId,
+        familyId: familyId,
+        variantId: variantId,
+      );
+      await progressRepository.save(
+        id.storageKey,
+        _learnedProgress(now),
+        language: language,
+      );
+    }
+
+    await saveLearned('present', 'concept_a::first');
+    await saveLearned('present', 'concept_b::first');
+    await saveLearned('past', 'concept_a::first');
+
+    final loader = TrainingStatsLoader(
+      progressRepository: progressRepository,
+      settingsRepository: FakeSettingsRepository(language: language),
+      catalog: ExerciseCatalog(modules: [_ConceptStatsModule()]),
+    );
+
+    final snapshot = await loader.load(now: now);
+
+    expect(snapshot.totalConcepts, 3);
+    expect(snapshot.learnedConceptCount, 2);
+
+    final present = snapshot.familyProgress.singleWhere(
+      (family) => family.family.id == 'present',
+    );
+    expect(present.totalCards, 3);
+    expect(present.learnedCards, 2);
+    expect(present.totalConcepts, 2);
+    expect(present.learnedConcepts, 1);
+
+    final presentConceptA = present.concepts.singleWhere(
+      (concept) => concept.concept.id == 'concept_a',
+    );
+    expect(presentConceptA.totalCards, 2);
+    expect(presentConceptA.learnedCards, 1);
+    expect(presentConceptA.learned, isFalse);
+
+    final presentConceptB = present.concepts.singleWhere(
+      (concept) => concept.concept.id == 'concept_b',
+    );
+    expect(presentConceptB.learned, isTrue);
+
+    final past = snapshot.familyProgress.singleWhere(
+      (family) => family.family.id == 'past',
+    );
+    final pastConceptA = past.concepts.singleWhere(
+      (concept) => concept.concept.id == 'concept_a',
+    );
+    expect(pastConceptA.totalCards, 1);
+    expect(pastConceptA.learnedCards, 1);
+    expect(pastConceptA.learned, isTrue);
+  });
+}
+
+CardProgress _learnedProgress(DateTime now) {
+  final timestamp = now.millisecondsSinceEpoch;
+  return CardProgress(
+    learned: true,
+    clusters: <CardCluster>[
+      CardCluster(
+        lastAnswerAt: timestamp,
+        correctCount: 20,
+        wrongCount: 0,
+        skippedCount: 0,
+      ),
+    ],
+    learnedAt: timestamp,
+    firstAttemptAt: timestamp,
+    consecutiveCorrect: 20,
   );
 }

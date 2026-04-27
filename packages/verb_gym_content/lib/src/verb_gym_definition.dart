@@ -155,6 +155,7 @@ class _VerbGymModule implements ContextualTrainingModule {
             promptText: seed.answerText,
             acceptedAnswers: _acceptedAnswerVariants(seed.answerText),
             celebrationText: '${seed.promptText} -> ${seed.answerText}',
+            concept: seed.concept,
             chooseFromPrompt: ChoiceExerciseSpec(
               prompt: seed.promptText,
               correctOption: seed.answerText,
@@ -205,6 +206,11 @@ class _VerbGymModule implements ContextualTrainingModule {
   }) {
     final seeds = <_VerbCardSeed>[];
     for (final concept in runtimeCatalog.concepts) {
+      final exerciseConcept = _exerciseConcept(
+        concept,
+        learningResources: learningResources,
+        baseResources: baseResources,
+      );
       for (final tenseEntry in concept.examplesByTenseAndRole.entries) {
         final family = _tenseFamilies[tenseEntry.key];
         if (family == null) {
@@ -232,6 +238,7 @@ class _VerbGymModule implements ContextualTrainingModule {
                   variantId: '${concept.id.value}::${example.role}$suffix',
                 ),
                 family: family,
+                concept: exerciseConcept,
                 conceptId: concept.id,
                 tenseId: tenseEntry.key,
                 role: example.role,
@@ -262,6 +269,26 @@ class _VerbGymModule implements ContextualTrainingModule {
   ) {
     return example.text[resources.profile.code] ??
         concept.concept.meaning[resources.profile.code]?.short ??
+        concept.id.value;
+  }
+
+  ExerciseConcept _exerciseConcept(
+    VerbRuntimeConcept concept, {
+    required _VerbLanguageResources learningResources,
+    required _VerbLanguageResources baseResources,
+  }) {
+    return ExerciseConcept(
+      id: concept.id.value,
+      label: _conceptLabel(concept, learningResources),
+      secondaryLabel: _conceptLabel(concept, baseResources),
+    );
+  }
+
+  String _conceptLabel(
+    VerbRuntimeConcept concept,
+    _VerbLanguageResources resources,
+  ) {
+    return concept.concept.meaning[resources.profile.code]?.short ??
         concept.id.value;
   }
 
@@ -337,6 +364,7 @@ class _VerbCardSeed {
   const _VerbCardSeed({
     required this.id,
     required this.family,
+    required this.concept,
     required this.conceptId,
     required this.tenseId,
     required this.role,
@@ -346,6 +374,7 @@ class _VerbCardSeed {
 
   final ExerciseId id;
   final ExerciseFamily family;
+  final ExerciseConcept concept;
   final VerbConceptId conceptId;
   final String tenseId;
   final String role;

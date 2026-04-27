@@ -15,12 +15,14 @@ class TrainingStatsSnapshot {
     required this.dailySessionStats,
     required this.streakSnapshot,
   }) : cards = List<ExerciseCard>.unmodifiable(cards),
-       progressById = Map<ExerciseId, CardProgress>.unmodifiable(progressById);
+       progressById = Map<ExerciseId, CardProgress>.unmodifiable(progressById),
+       familyProgress = _buildFamilyProgress(cards, progressById);
 
   final LearningLanguage baseLanguage;
   final LearningLanguage language;
   final List<ExerciseCard> cards;
   final Map<ExerciseId, CardProgress> progressById;
+  final List<TrainingStatsFamilyProgress> familyProgress;
   final DailyStudySummary dailySummary;
   final DailySessionStats dailySessionStats;
   final StudyStreakSnapshot streakSnapshot;
@@ -29,6 +31,43 @@ class TrainingStatsSnapshot {
   int get learnedCount =>
       progressById.values.where((progress) => progress.learned).length;
   bool get allLearned => totalCards > 0 && learnedCount == totalCards;
+  int get totalConcepts =>
+      familyProgress.fold(0, (total, family) => total + family.totalConcepts);
+  int get learnedConceptCount =>
+      familyProgress.fold(0, (total, family) => total + family.learnedConcepts);
+  bool get hasConceptProgress => totalConcepts > 0;
+}
+
+class TrainingStatsFamilyProgress {
+  TrainingStatsFamilyProgress({
+    required this.family,
+    required this.totalCards,
+    required this.learnedCards,
+    required List<TrainingStatsConceptProgress> concepts,
+  }) : concepts = List<TrainingStatsConceptProgress>.unmodifiable(concepts);
+
+  final ExerciseFamily family;
+  final int totalCards;
+  final int learnedCards;
+  final List<TrainingStatsConceptProgress> concepts;
+
+  int get totalConcepts => concepts.length;
+  int get learnedConcepts =>
+      concepts.where((concept) => concept.learned).length;
+}
+
+class TrainingStatsConceptProgress {
+  const TrainingStatsConceptProgress({
+    required this.concept,
+    required this.totalCards,
+    required this.learnedCards,
+  });
+
+  final ExerciseConcept concept;
+  final int totalCards;
+  final int learnedCards;
+
+  bool get learned => totalCards > 0 && learnedCards == totalCards;
 }
 
 class TrainingStatsLoader {
@@ -82,6 +121,80 @@ class TrainingStatsLoader {
       streakSnapshot: _studyStreakService.readCurrentStreakSnapshot(
         now: resolvedNow,
       ),
+    );
+  }
+}
+
+List<TrainingStatsFamilyProgress> _buildFamilyProgress(
+  List<ExerciseCard> cards,
+  Map<ExerciseId, CardProgress> progressById,
+) {
+  final familiesByKey = <String, _FamilyProgressBuilder>{};
+  for (final card in cards) {
+    final familyKey = card.family.storageKey;
+    final family = familiesByKey.putIfAbsent(
+      familyKey,
+      () => _FamilyProgressBuilder(card.family),
+    );
+    final learned = progressById[card.progressId]?.learned ?? false;
+    family.totalCards += 1;
+    if (learned) {
+      family.learnedCards += 1;
+    }
+
+    final concept = card.concept;
+    if (concept == null) {
+      continue;
+    }
+    final conceptProgress = family.conceptsById.putIfAbsent(
+      concept.id,
+      () => _ConceptProgressBuilder(concept),
+    );
+    conceptProgress.totalCards += 1;
+    if (learned) {
+      conceptProgress.learnedCards += 1;
+    }
+  }
+
+  return familiesByKey.values.map((family) => family.build()).toList()
+    ..sort((left, right) => left.family.label.compareTo(right.family.label));
+}
+
+class _FamilyProgressBuilder {
+  _FamilyProgressBuilder(this.family);
+
+  final ExerciseFamily family;
+  final Map<String, _ConceptProgressBuilder> conceptsById =
+      <String, _ConceptProgressBuilder>{};
+  int totalCards = 0;
+  int learnedCards = 0;
+
+  TrainingStatsFamilyProgress build() {
+    final concepts =
+        conceptsById.values.map((concept) => concept.build()).toList()..sort(
+          (left, right) => left.concept.label.compareTo(right.concept.label),
+        );
+    return TrainingStatsFamilyProgress(
+      family: family,
+      totalCards: totalCards,
+      learnedCards: learnedCards,
+      concepts: concepts,
+    );
+  }
+}
+
+class _ConceptProgressBuilder {
+  _ConceptProgressBuilder(this.concept);
+
+  final ExerciseConcept concept;
+  int totalCards = 0;
+  int learnedCards = 0;
+
+  TrainingStatsConceptProgress build() {
+    return TrainingStatsConceptProgress(
+      concept: concept,
+      totalCards: totalCards,
+      learnedCards: learnedCards,
     );
   }
 }

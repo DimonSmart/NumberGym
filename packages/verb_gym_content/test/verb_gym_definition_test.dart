@@ -39,6 +39,10 @@ void main() {
       containsAll(<String>['Yo tengo hambre.', 'Yo tengo hambre']),
     );
     expect(card.celebrationText, 'I am hungry. -> Yo tengo hambre.');
+    expect(card.concept, isNotNull);
+    expect(card.concept!.id, 'be_hungry');
+    expect(card.concept!.label, 'tener hambre');
+    expect(card.concept!.secondaryLabel, 'to be hungry');
   });
 
   test('English cards reverse the prompt and answer languages', () {

@@ -13,17 +13,22 @@ import '../training/data/card_progress.dart';
 import 'widgets/training_background.dart';
 import 'widgets/training_timer_bar.dart';
 
+typedef TrainingTaskHeaderBuilder =
+    Widget? Function(BuildContext context, TaskState task);
+
 class TrainingScreen extends StatefulWidget {
   const TrainingScreen({
     super.key,
     required this.appDefinition,
     required this.settingsBox,
     required this.progressBox,
+    this.taskHeaderBuilder,
   });
 
   final TrainingAppDefinition appDefinition;
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
+  final TrainingTaskHeaderBuilder? taskHeaderBuilder;
 
   @override
   State<TrainingScreen> createState() => _TrainingScreenState();
@@ -144,6 +149,22 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (task == null) {
       return const Center(child: CircularProgressIndicator());
     }
+    final taskBody = _buildTaskBody(task);
+    final taskHeader = widget.taskHeaderBuilder?.call(context, task);
+    if (taskHeader == null) {
+      return taskBody;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        taskHeader,
+        const SizedBox(height: 12),
+        Expanded(child: taskBody),
+      ],
+    );
+  }
+
+  Widget _buildTaskBody(TaskState task) {
     if (task is SpeakState) {
       return _SpeakTaskView(state: task, onRetry: _controller.retryInitSpeech);
     }

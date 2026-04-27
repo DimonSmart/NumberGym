@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_definition.dart';
+import '../exercise_models.dart';
 import '../training_stats_loader.dart';
 import 'widgets/training_background.dart';
 
@@ -70,6 +71,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           children: [
                             Text('Total cards: ${stats.totalCards}'),
                             Text('Learned: ${stats.learnedCount}'),
+                            if (stats.hasConceptProgress)
+                              Text(
+                                'Learned concepts by tense: '
+                                '${stats.learnedConceptCount}/${stats.totalConcepts}',
+                              ),
                             Text(
                               'Completed today: ${stats.dailySummary.completedToday}',
                             ),
@@ -81,45 +87,67 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    for (final family in _familyRows(stats)) ...[
-                      Card(
-                        child: ListTile(
-                          title: Text(family.label),
-                          subtitle: Text('${family.learned}/${family.total}'),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                    for (final family in stats.familyProgress)
+                      _FamilyProgressCard(family: family),
                   ],
                 ),
         ),
       ),
     );
   }
-
-  List<_FamilyRow> _familyRows(TrainingStatsSnapshot stats) {
-    final rows = <String, _FamilyRow>{};
-    for (final card in stats.cards) {
-      rows.putIfAbsent(
-        card.family.storageKey,
-        () => _FamilyRow(label: card.family.label),
-      );
-      final row = rows[card.family.storageKey]!;
-      row.total += 1;
-      final progress = stats.progressById[card.progressId];
-      if (progress?.learned ?? false) {
-        row.learned += 1;
-      }
-    }
-    return rows.values.toList()
-      ..sort((left, right) => left.label.compareTo(right.label));
-  }
 }
 
-class _FamilyRow {
-  _FamilyRow({required this.label});
+class _FamilyProgressCard extends StatelessWidget {
+  const _FamilyProgressCard({required this.family});
 
-  final String label;
-  int total = 0;
-  int learned = 0;
+  final TrainingStatsFamilyProgress family;
+
+  @override
+  Widget build(BuildContext context) {
+    final concepts = family.concepts;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Card(
+        child: concepts.isEmpty
+            ? ListTile(
+                title: Text(family.family.label),
+                subtitle: Text('${family.learnedCards}/${family.totalCards}'),
+              )
+            : ExpansionTile(
+                title: Text(family.family.label),
+                subtitle: Text(
+                  'Concepts: ${family.learnedConcepts}/${family.totalConcepts}'
+                  ' · Cards: ${family.learnedCards}/${family.totalCards}',
+                ),
+                children: [
+                  for (final concept in concepts)
+                    ListTile(
+                      dense: true,
+                      leading: Icon(
+                        concept.learned
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: concept.learned
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.outline,
+                      ),
+                      title: Text(_conceptTitle(concept.concept)),
+                      trailing: Text(
+                        '${concept.learnedCards}/${concept.totalCards}',
+                      ),
+                    ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  String _conceptTitle(ExerciseConcept concept) {
+    final label = concept.label.trim();
+    final secondaryLabel = concept.secondaryLabel.trim();
+    if (secondaryLabel.isEmpty || secondaryLabel == label) {
+      return label;
+    }
+    return '$label / $secondaryLabel';
+  }
 }

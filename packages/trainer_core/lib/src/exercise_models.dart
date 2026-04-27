@@ -92,6 +92,29 @@ class ExerciseFamily {
   String get storageKey => '$moduleId/$id';
 }
 
+class ExerciseConcept {
+  const ExerciseConcept({
+    required this.id,
+    required this.label,
+    required this.secondaryLabel,
+  });
+
+  final String id;
+  final String label;
+  final String secondaryLabel;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ExerciseConcept &&
+        other.id == id &&
+        other.label == label &&
+        other.secondaryLabel == secondaryLabel;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, label, secondaryLabel);
+}
+
 class ChoiceExerciseSpec {
   ChoiceExerciseSpec({
     required this.prompt,
@@ -140,6 +163,7 @@ class ExerciseCard {
     required this.promptText,
     required List<String> acceptedAnswers,
     required this.celebrationText,
+    this.concept,
     this.matcherConfig = const ExerciseMatcherConfig(),
     this.chooseFromPrompt,
     this.chooseFromAnswer,
@@ -157,6 +181,7 @@ class ExerciseCard {
   final String promptText;
   final List<String> acceptedAnswers;
   final String celebrationText;
+  final ExerciseConcept? concept;
   final ExerciseMatcherConfig matcherConfig;
   final ChoiceExerciseSpec? chooseFromPrompt;
   final ChoiceExerciseSpec? chooseFromAnswer;
