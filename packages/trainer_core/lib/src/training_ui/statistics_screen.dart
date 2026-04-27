@@ -163,7 +163,7 @@ class _FamilyProgressCard extends StatelessWidget {
   }
 }
 
-class _ConceptProgressGrid extends StatelessWidget {
+class _ConceptProgressGrid extends StatefulWidget {
   const _ConceptProgressGrid({
     required this.concepts,
     required this.maxColumns,
@@ -173,26 +173,44 @@ class _ConceptProgressGrid extends StatelessWidget {
   final int maxColumns;
 
   @override
+  State<_ConceptProgressGrid> createState() => _ConceptProgressGridState();
+}
+
+class _ConceptProgressGridState extends State<_ConceptProgressGrid> {
+  String? _expandedConceptId;
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = _columnCount(
           width: constraints.maxWidth,
-          maxColumns: maxColumns,
+          maxColumns: widget.maxColumns,
         );
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: concepts.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 1.28,
-          ),
-          itemBuilder: (context, index) {
-            return _CompactConceptTile(concept: concepts[index]);
-          },
+        const spacing = 8.0;
+        final tileWidth =
+            (constraints.maxWidth - spacing * (columns - 1)) / columns;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (final concept in widget.concepts)
+              _CompactConceptTile(
+                concept: concept,
+                expanded: _expandedConceptId == concept.concept.id,
+                width: _expandedConceptId == concept.concept.id
+                    ? constraints.maxWidth
+                    : tileWidth,
+                onTap: () {
+                  setState(() {
+                    _expandedConceptId =
+                        _expandedConceptId == concept.concept.id
+                        ? null
+                        : concept.concept.id;
+                  });
+                },
+              ),
+          ],
         );
       },
     );
@@ -208,66 +226,266 @@ class _ConceptProgressGrid extends StatelessWidget {
 }
 
 class _CompactConceptTile extends StatelessWidget {
-  const _CompactConceptTile({required this.concept});
+  const _CompactConceptTile({
+    required this.concept,
+    required this.expanded,
+    required this.width,
+    required this.onTap,
+  });
 
   final TrainingStatsConceptProgress concept;
+  final bool expanded;
+  final double width;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = _conceptTitle(concept.concept);
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: concept.learned
-              ? theme.colorScheme.primary.withValues(alpha: 0.55)
-              : theme.colorScheme.outlineVariant,
+    return SizedBox(
+      width: width,
+      child: Semantics(
+        button: true,
+        expanded: expanded,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(6),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface.withValues(alpha: 0.88),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: concept.learned
+                    ? theme.colorScheme.primary.withValues(alpha: 0.55)
+                    : theme.colorScheme.outlineVariant,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ConceptTileSummary(concept: concept, expanded: expanded),
+                if (expanded) ...[
+                  const Divider(height: 14),
+                  for (final cardProgress in concept.cards) ...[
+                    _ConceptCardProgressRow(cardProgress: cardProgress),
+                    if (cardProgress != concept.cards.last)
+                      const SizedBox(height: 8),
+                  ],
+                ],
+              ],
+            ),
+          ),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Tooltip(
-              message: title,
-              child: Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  height: 1.1,
-                ),
-              ),
-            ),
+    );
+  }
+}
+
+class _ConceptTileSummary extends StatelessWidget {
+  const _ConceptTileSummary({required this.concept, required this.expanded});
+
+  final TrainingStatsConceptProgress concept;
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final progress = ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: LinearProgressIndicator(
+        value: concept.progressValue,
+        minHeight: 5,
+        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+      ),
+    );
+    final footer = Row(
+      children: [
+        Icon(
+          expanded ? Icons.expand_less : Icons.expand_more,
+          size: 16,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        const Spacer(),
+        Text(
+          _formatCreditedCorrect(
+            creditedCorrectAttempts: concept.creditedCorrectAttempts,
+            requiredCorrectAttempts: concept.requiredCorrectAttempts,
           ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: concept.progressValue,
-              minHeight: 5,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.labelSmall,
+        ),
+      ],
+    );
+
+    final summary = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        expanded
+            ? _ExpandedConceptTitle(concept: concept.concept)
+            : Expanded(child: _CollapsedConceptTitle(concept: concept.concept)),
+        const SizedBox(height: 6),
+        progress,
+        const SizedBox(height: 4),
+        footer,
+      ],
+    );
+
+    if (expanded) {
+      return summary;
+    }
+    return SizedBox(height: 82, child: summary);
+  }
+}
+
+class _CollapsedConceptTitle extends StatelessWidget {
+  const _CollapsedConceptTitle({required this.concept});
+
+  final ExerciseConcept concept;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final title = _conceptTitle(concept);
+    return Tooltip(
+      message: title,
+      child: Text(
+        title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          height: 1.1,
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpandedConceptTitle extends StatelessWidget {
+  const _ExpandedConceptTitle({required this.concept});
+
+  final ExerciseConcept concept;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final baseTitle = concept.baseLabel.trim();
+    final learningTitle = concept.learningLabel.trim();
+    final primaryTitle = baseTitle.isEmpty ? learningTitle : baseTitle;
+    final showLearningTitle =
+        learningTitle.isNotEmpty &&
+        learningTitle.toLowerCase() != primaryTitle.toLowerCase();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          primaryTitle,
+          softWrap: true,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            height: 1.15,
           ),
-          const SizedBox(height: 4),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              _formatCreditedCorrect(
-                creditedCorrectAttempts: concept.creditedCorrectAttempts,
-                requiredCorrectAttempts: concept.requiredCorrectAttempts,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelSmall,
+        ),
+        if (showLearningTitle) ...[
+          const SizedBox(height: 2),
+          Text(
+            learningTitle,
+            softWrap: true,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.15,
             ),
           ),
         ],
-      ),
+      ],
+    );
+  }
+}
+
+class _ConceptCardProgressRow extends StatelessWidget {
+  const _ConceptCardProgressRow({required this.cardProgress});
+
+  final TrainingStatsCardProgress cardProgress;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final label = _cardTitle(cardProgress.card);
+    final labelStyle = theme.textTheme.labelSmall;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const progressWidth = 76.0;
+        const scoreWidth = 42.0;
+        const gap = 8.0;
+        const trailingWidth = progressWidth + scoreWidth + gap * 2;
+        final firstLineWidth = (constraints.maxWidth - trailingWidth).clamp(
+          48.0,
+          constraints.maxWidth,
+        );
+        final split = _splitTextForFirstLine(
+          text: label,
+          style: labelStyle,
+          maxWidth: firstLineWidth,
+          textDirection: Directionality.of(context),
+        );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: firstLineWidth,
+                  child: Text(
+                    split.firstLine,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: labelStyle,
+                  ),
+                ),
+                const SizedBox(width: gap),
+                SizedBox(
+                  width: progressWidth,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: cardProgress.learningProgress.progressValue,
+                      minHeight: 5,
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: gap),
+                SizedBox(
+                  width: scoreWidth,
+                  child: Text(
+                    _formatCreditedCorrect(
+                      creditedCorrectAttempts:
+                          cardProgress.learningProgress.creditedCorrectAttempts,
+                      requiredCorrectAttempts:
+                          cardProgress.learningProgress.requiredCorrectAttempts,
+                    ),
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: labelStyle,
+                  ),
+                ),
+              ],
+            ),
+            if (split.remainingLines.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(split.remainingLines, softWrap: true, style: labelStyle),
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -348,12 +566,88 @@ String _formatCreditedCorrect({
   return '$creditedCorrectAttempts/$requiredCorrectAttempts';
 }
 
+class _SplitText {
+  const _SplitText({required this.firstLine, required this.remainingLines});
+
+  final String firstLine;
+  final String remainingLines;
+}
+
+_SplitText _splitTextForFirstLine({
+  required String text,
+  required TextStyle? style,
+  required double maxWidth,
+  required TextDirection textDirection,
+}) {
+  final normalized = text.trim();
+  if (normalized.isEmpty) {
+    return const _SplitText(firstLine: '', remainingLines: '');
+  }
+  if (_fitsSingleLine(
+    text: normalized,
+    style: style,
+    maxWidth: maxWidth,
+    textDirection: textDirection,
+  )) {
+    return _SplitText(firstLine: normalized, remainingLines: '');
+  }
+
+  var low = 1;
+  var high = normalized.length;
+  while (low < high) {
+    final middle = ((low + high + 1) / 2).floor();
+    if (_fitsSingleLine(
+      text: normalized.substring(0, middle).trimRight(),
+      style: style,
+      maxWidth: maxWidth,
+      textDirection: textDirection,
+    )) {
+      low = middle;
+    } else {
+      high = middle - 1;
+    }
+  }
+
+  final fittedLength = low.clamp(1, normalized.length);
+  final wordBoundary = normalized.lastIndexOf(' ', fittedLength - 1);
+  final splitAt = wordBoundary > 0 ? wordBoundary : fittedLength;
+  final firstLine = normalized.substring(0, splitAt).trimRight();
+  final remainingLines = normalized.substring(splitAt).trimLeft();
+  return _SplitText(firstLine: firstLine, remainingLines: remainingLines);
+}
+
+bool _fitsSingleLine({
+  required String text,
+  required TextStyle? style,
+  required double maxWidth,
+  required TextDirection textDirection,
+}) {
+  final painter = TextPainter(
+    text: TextSpan(text: text, style: style),
+    textDirection: textDirection,
+    maxLines: 1,
+  )..layout(maxWidth: maxWidth);
+  return !painter.didExceedMaxLines && painter.width <= maxWidth;
+}
+
 String _conceptTitle(ExerciseConcept concept) {
   final baseLabel = concept.baseLabel.trim();
   if (baseLabel.isNotEmpty) {
     return baseLabel;
   }
   return concept.learningLabel.trim();
+}
+
+String _cardTitle(ExerciseCard card) {
+  final promptText = card.promptText.trim();
+  if (promptText.isNotEmpty) {
+    return promptText;
+  }
+  final displayText = card.displayText.trim();
+  if (displayText.isNotEmpty) {
+    return displayText;
+  }
+  return card.id.variantId;
 }
 
 String _familyTitle(

@@ -72,7 +72,7 @@ class TrainingStatsFamilyProgress {
 }
 
 class TrainingStatsConceptProgress {
-  const TrainingStatsConceptProgress({
+  TrainingStatsConceptProgress({
     required this.concept,
     required this.totalCards,
     required this.learnedCards,
@@ -80,7 +80,8 @@ class TrainingStatsConceptProgress {
     required this.totalAttempts,
     required this.creditedCorrectAttempts,
     required this.requiredCorrectAttempts,
-  });
+    required List<TrainingStatsCardProgress> cards,
+  }) : cards = List<TrainingStatsCardProgress>.unmodifiable(cards);
 
   final ExerciseConcept concept;
   final int totalCards;
@@ -89,6 +90,7 @@ class TrainingStatsConceptProgress {
   final int totalAttempts;
   final int creditedCorrectAttempts;
   final int requiredCorrectAttempts;
+  final List<TrainingStatsCardProgress> cards;
 
   bool get learned => totalCards > 0 && learnedCards == totalCards;
   double get progressValue {
@@ -97,6 +99,20 @@ class TrainingStatsConceptProgress {
     }
     return creditedCorrectAttempts / requiredCorrectAttempts;
   }
+}
+
+class TrainingStatsCardProgress {
+  const TrainingStatsCardProgress({
+    required this.card,
+    required this.progress,
+    required this.learningProgress,
+  });
+
+  final ExerciseCard card;
+  final CardProgress progress;
+  final CardLearningProgress learningProgress;
+
+  bool get learned => progress.learned;
 }
 
 class TrainingStatsLoader {
@@ -203,6 +219,13 @@ List<TrainingStatsFamilyProgress> _buildFamilyProgress(
         cardLearningProgress.creditedCorrectAttempts;
     conceptProgress.requiredCorrectAttempts +=
         cardLearningProgress.requiredCorrectAttempts;
+    conceptProgress.cards.add(
+      TrainingStatsCardProgress(
+        card: card,
+        progress: progress,
+        learningProgress: cardLearningProgress,
+      ),
+    );
     if (learned) {
       conceptProgress.learnedCards += 1;
     }
@@ -254,8 +277,11 @@ class _ConceptProgressBuilder {
   int totalAttempts = 0;
   int creditedCorrectAttempts = 0;
   int requiredCorrectAttempts = 0;
+  final List<TrainingStatsCardProgress> cards = <TrainingStatsCardProgress>[];
 
   TrainingStatsConceptProgress build() {
+    final sortedCards = List<TrainingStatsCardProgress>.from(cards)
+      ..sort((left, right) => left.card.id.compareTo(right.card.id));
     return TrainingStatsConceptProgress(
       concept: concept,
       totalCards: totalCards,
@@ -264,6 +290,7 @@ class _ConceptProgressBuilder {
       totalAttempts: totalAttempts,
       creditedCorrectAttempts: creditedCorrectAttempts,
       requiredCorrectAttempts: requiredCorrectAttempts,
+      cards: sortedCards,
     );
   }
 }

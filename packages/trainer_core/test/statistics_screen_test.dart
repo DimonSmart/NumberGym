@@ -26,6 +26,9 @@ const _concept = ExerciseConcept(
   learningLabel: 'concepto',
   baseLabel: 'concept',
 );
+const _longSpanishPrompt =
+    'Estoy aquí con un libro muy grande en la mesa durante toda la mañana '
+    'mientras practico español lentamente.';
 
 void main() {
   testWidgets('shows family title in learning and base languages', (
@@ -106,6 +109,16 @@ void main() {
       expect(find.text('0/1 learned'), findsNothing);
       expect(find.text('2/3 correct'), findsNothing);
       expect(find.text('2/20'), findsWidgets);
+      expect(find.text('concepto'), findsNothing);
+      expect(find.textContaining('lentamente'), findsNothing);
+
+      await tester.tap(find.text('concept'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('concepto'), findsOneWidget);
+      expect(find.textContaining('lentamente'), findsOneWidget);
+      expect(find.text('I am here.'), findsNothing);
+      expect(find.text('2/20'), findsWidgets);
     },
   );
 }
@@ -164,15 +177,15 @@ class _StatsTestModule implements TrainingModule {
         family: _localizedFamily,
         language: language,
         displayText: 'I am here.',
-        promptText: 'Estoy aquí.',
-        acceptedAnswers: const <String>['Estoy aquí.'],
-        celebrationText: 'I am here. -> Estoy aquí.',
+        promptText: _longSpanishPrompt,
+        acceptedAnswers: const <String>[_longSpanishPrompt],
+        celebrationText: 'I am here. -> $_longSpanishPrompt',
         concept: _concept,
         chooseFromPrompt: ChoiceExerciseSpec(
           prompt: 'I am here.',
-          correctOption: 'Estoy aquí.',
+          correctOption: _longSpanishPrompt,
           options: const <String>[
-            'Estoy aquí.',
+            _longSpanishPrompt,
             'Estás aquí.',
             'Está aquí.',
             'Estamos aquí.',
@@ -207,6 +220,9 @@ final _appDefinition = TrainingAppDefinition(
   profileOf: _profileOf,
   tokenizerOf: (language) => GenericMatcherTokenizer(_normalize),
   catalog: ExerciseCatalog(modules: [_StatsTestModule()]),
+  statisticsDisplay: const StatisticsDisplayConfig(
+    conceptDisplayMode: StatisticsConceptDisplayMode.compactGrid,
+  ),
 );
 
 BaseLanguageProfile _profileOf(LearningLanguage language) {

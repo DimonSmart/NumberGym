@@ -310,6 +310,17 @@ void main() {
     expect(presentConceptA.requiredCorrectAttempts, 40);
     expect(presentConceptA.learned, isFalse);
     expect(presentConceptA.progressValue, 23 / 40);
+    expect(presentConceptA.cards, hasLength(2));
+    expect(presentConceptA.cards[0].card.id.variantId, 'concept_a::first');
+    expect(
+      presentConceptA.cards[0].learningProgress.creditedCorrectAttempts,
+      20,
+    );
+    expect(presentConceptA.cards[1].card.id.variantId, 'concept_a::second');
+    expect(
+      presentConceptA.cards[1].learningProgress.creditedCorrectAttempts,
+      3,
+    );
 
     final presentConceptB = present.concepts.singleWhere(
       (concept) => concept.concept.id == 'concept_b',
