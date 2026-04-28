@@ -159,7 +159,7 @@ class _VerbGymModule implements ContextualTrainingModule {
             progressId: seed.id,
             family: seed.family,
             language: context.learningLanguage,
-            displayText: seed.promptText,
+            displayText: seed.answerText,
             promptText: seed.answerText,
             acceptedAnswers: _acceptedAnswerVariants(seed.answerText),
             celebrationText: '${seed.promptText} -> ${seed.answerText}',

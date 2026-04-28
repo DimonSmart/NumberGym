@@ -71,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  Future<void> _loadAvailability() async {
+  Future<void> _loadAvailability({bool requestSpeechPermission = false}) async {
     final profile = widget.appDefinition.profileOf(_learningLanguage);
     final voices = await _ttsService.listVoices();
     final filtered = filterVoicesByLocale(voices, profile.locale);
@@ -79,7 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final speechAvailability = await _speechService.initialize(
       onError: (_) {},
       onStatus: (_) {},
-      requestPermission: false,
+      requestPermission: requestSpeechPermission,
     );
     if (!mounted) {
       return;
@@ -231,6 +231,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: const Text('Speech recognition'),
                 subtitle: Text(_speechAvailable ? 'Available' : 'Unavailable'),
               ),
+              if (!_speechAvailable) ...[
+                const SizedBox(height: 8),
+                FilledButton.tonal(
+                  onPressed: () =>
+                      _loadAvailability(requestSpeechPermission: true),
+                  child: const Text('Enable speech recognition'),
+                ),
+              ],
               const SizedBox(height: 16),
               FilledButton.tonal(
                 onPressed: _confirmReset,

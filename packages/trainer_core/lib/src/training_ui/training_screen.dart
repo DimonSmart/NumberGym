@@ -332,10 +332,7 @@ class _SpeakTaskView extends StatelessWidget {
               ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
-            Text(
-              state.displayText,
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
+            _buildPrompt(context),
             const SizedBox(height: 12),
             _TaskTimerBar(state: state),
             if (state.hintText != null) ...[
@@ -361,6 +358,46 @@ class _SpeakTaskView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildPrompt(BuildContext context) {
+    final theme = Theme.of(context);
+    final baseStyle = theme.textTheme.displaySmall;
+    final expectedTokens = state.expectedTokens;
+    final matchedTokens = state.matchedTokens;
+    if (expectedTokens.isEmpty ||
+        matchedTokens.length != expectedTokens.length ||
+        baseStyle == null) {
+      return Text(state.displayText, style: baseStyle);
+    }
+
+    final matchedStyle = baseStyle.copyWith(color: theme.colorScheme.primary);
+    final previewColor = theme.colorScheme.primary.withValues(alpha: 0.6);
+    final previewStyle = baseStyle.copyWith(
+      color: previewColor,
+      decoration: TextDecoration.underline,
+      decorationStyle: TextDecorationStyle.dotted,
+      decorationColor: previewColor,
+    );
+    final previewIndices = state.previewMatchedIndices.toSet();
+    final spans = <TextSpan>[];
+    for (var i = 0; i < expectedTokens.length; i += 1) {
+      final isMatched = matchedTokens[i];
+      final isPreview = previewIndices.contains(i);
+      spans.add(
+        TextSpan(
+          text: expectedTokens[i],
+          style: isMatched
+              ? matchedStyle
+              : (isPreview ? previewStyle : baseStyle),
+        ),
+      );
+      if (i < expectedTokens.length - 1) {
+        spans.add(TextSpan(text: ' ', style: baseStyle));
+      }
+    }
+
+    return Text.rich(TextSpan(style: baseStyle, children: spans));
   }
 }
 

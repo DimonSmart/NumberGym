@@ -73,7 +73,7 @@ void main() {
     );
 
     expect(card.id.moduleId, 'verb_gym');
-    expect(card.displayText, 'I eat a meal.');
+    expect(card.displayText, 'Yo como una comida.');
     expect(card.promptText, 'Yo como una comida.');
     expect(
       card.acceptedAnswers,
@@ -84,6 +84,12 @@ void main() {
     expect(card.concept!.id, 'eat_meal');
     expect(card.concept!.learningLabel, 'comer una comida');
     expect(card.concept!.baseLabel, 'to eat a meal');
+    expect(card.chooseFromPrompt!.prompt, 'I eat a meal.');
+    expect(card.chooseFromPrompt!.correctOption, 'Yo como una comida.');
+    expect(card.chooseFromAnswer!.prompt, 'Yo como una comida.');
+    expect(card.chooseFromAnswer!.correctOption, 'I eat a meal.');
+    expect(card.listenAndChoose!.speechText, 'Yo como una comida.');
+    expect(card.listenAndChoose!.correctOption, 'I eat a meal.');
   });
 
   test('English cards reverse the prompt and answer languages', () {
@@ -95,7 +101,7 @@ void main() {
       variantId: 'eat_meal::I',
     );
 
-    expect(card.displayText, 'Yo como una comida.');
+    expect(card.displayText, 'I eat a meal.');
     expect(card.promptText, 'I eat a meal.');
   });
 
@@ -121,7 +127,7 @@ void main() {
       variantId: 'eat_meal::I',
     );
 
-    expect(card.displayText, 'I ate a meal yesterday.');
+    expect(card.displayText, 'Yo comí una comida ayer.');
     expect(card.promptText, 'Yo comí una comida ayer.');
     expect(
       card.acceptedAnswers,
@@ -141,7 +147,7 @@ void main() {
       variantId: 'travel_to_city::I',
     );
 
-    expect(card.displayText, 'I will travel to the city tomorrow.');
+    expect(card.displayText, 'Yo viajaré a la ciudad mañana.');
     expect(card.promptText, 'Yo viajaré a la ciudad mañana.');
   });
 

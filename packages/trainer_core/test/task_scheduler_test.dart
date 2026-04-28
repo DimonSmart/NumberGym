@@ -28,8 +28,9 @@ class _ChoiceOnlyModule implements TrainingModule {
   bool supportsLanguage(LearningLanguage language) => true;
 
   @override
-  List<ExerciseFamily> buildFamilies(LearningLanguage language) =>
-      [_choiceOnlyFamily];
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _choiceOnlyFamily,
+  ];
 
   @override
   List<ExerciseCard> buildCards(LearningLanguage language) {
@@ -83,8 +84,9 @@ class _AllModesModule implements TrainingModule {
   bool supportsLanguage(LearningLanguage language) => true;
 
   @override
-  List<ExerciseFamily> buildFamilies(LearningLanguage language) =>
-      [_allModesFamily];
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _allModesFamily,
+  ];
 
   @override
   List<ExerciseCard> buildCards(LearningLanguage language) {
@@ -266,5 +268,23 @@ void main() {
       final paused = result as TaskSchedulePaused;
       expect(paused.errorMessage.toLowerCase(), contains('speech'));
     },
+  );
+
+  test('forced speech availability requests microphone permission', () async {
+    final speech = FakeSpeechService(ready: true);
+    final provider = SpeechTaskAvailabilityProvider(speech);
+
+    await provider.check(_availabilityContext(), force: false);
+    await provider.check(_availabilityContext(), force: true);
+
+    expect(speech.requestPermissionValues, [false, true]);
+  });
+}
+
+TaskAvailabilityContext _availabilityContext() {
+  return const TaskAvailabilityContext(
+    language: LearningLanguage.english,
+    locale: 'en-US',
+    premiumPronunciationEnabled: false,
   );
 }

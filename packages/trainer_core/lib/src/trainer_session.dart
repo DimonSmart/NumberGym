@@ -149,6 +149,10 @@ class TrainerSession {
       language: context.learningLanguage,
       profile: _appDefinition.profileOf(context.learningLanguage),
       premiumPronunciationEnabled: _premiumPronunciationEnabled,
+      requestSpeechPermission: _catalogSupportsMode(
+        context,
+        ExerciseMode.speak,
+      ),
     );
     if (!_progressManager.hasRemainingCards) {
       _trainingActive = false;
@@ -274,6 +278,16 @@ class TrainerSession {
 
   BaseLanguageProfile _currentProfile() {
     return _appDefinition.profileOf(_currentLanguage());
+  }
+
+  bool _catalogSupportsMode(
+    TrainingLanguageContext context,
+    ExerciseMode mode,
+  ) {
+    final snapshot = _appDefinition.catalog.buildForContext(context);
+    return snapshot.cards.any(
+      (card) => card.family.supportedModes.contains(mode),
+    );
   }
 
   int _initialSessionTargetCards() {

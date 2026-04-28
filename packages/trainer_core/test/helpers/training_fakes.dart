@@ -42,6 +42,7 @@ class FakeSpeechService implements SpeechServiceBase {
 
   final bool ready;
   bool _isListening = false;
+  final List<bool> requestPermissionValues = <bool>[];
 
   @override
   List<stt.LocaleName> get locales => const <stt.LocaleName>[];
@@ -55,6 +56,7 @@ class FakeSpeechService implements SpeechServiceBase {
     required void Function(String) onStatus,
     bool requestPermission = true,
   }) async {
+    requestPermissionValues.add(requestPermission);
     return SpeechInitResult(ready: ready);
   }
 

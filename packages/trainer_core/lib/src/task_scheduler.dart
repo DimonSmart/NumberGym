@@ -53,15 +53,24 @@ class TaskScheduler {
     required LearningLanguage language,
     required BaseLanguageProfile profile,
     required bool premiumPronunciationEnabled,
+    required bool requestSpeechPermission,
   }) async {
+    final context = _availabilityContext(
+      language: language,
+      profile: profile,
+      premiumPronunciationEnabled: premiumPronunciationEnabled,
+    );
     await _refreshInternet(force: true);
+    if (requestSpeechPermission) {
+      await _availabilityRegistry.check(
+        ExerciseMode.speak,
+        context,
+        force: true,
+      );
+    }
     await _availabilityRegistry.check(
       ExerciseMode.listenAndChoose,
-      _availabilityContext(
-        language: language,
-        profile: profile,
-        premiumPronunciationEnabled: premiumPronunciationEnabled,
-      ),
+      context,
       force: true,
     );
   }
@@ -149,10 +158,7 @@ class TaskScheduler {
       );
     }
 
-    return TaskScheduleReady(
-      card: picked,
-      mode: _pickMode(allowedModes),
-    );
+    return TaskScheduleReady(card: picked, mode: _pickMode(allowedModes));
   }
 
   TaskAvailabilityContext _availabilityContext({
@@ -217,25 +223,13 @@ class TaskScheduler {
       if (modes.contains(ExerciseMode.speak))
         const MapEntry(ExerciseMode.speak, _speakWeight),
       if (modes.contains(ExerciseMode.chooseFromPrompt))
-        const MapEntry(
-          ExerciseMode.chooseFromPrompt,
-          _chooseFromPromptWeight,
-        ),
+        const MapEntry(ExerciseMode.chooseFromPrompt, _chooseFromPromptWeight),
       if (modes.contains(ExerciseMode.chooseFromAnswer))
-        const MapEntry(
-          ExerciseMode.chooseFromAnswer,
-          _chooseFromAnswerWeight,
-        ),
+        const MapEntry(ExerciseMode.chooseFromAnswer, _chooseFromAnswerWeight),
       if (modes.contains(ExerciseMode.listenAndChoose))
-        const MapEntry(
-          ExerciseMode.listenAndChoose,
-          _listenAndChooseWeight,
-        ),
+        const MapEntry(ExerciseMode.listenAndChoose, _listenAndChooseWeight),
       if (modes.contains(ExerciseMode.reviewPronunciation))
-        const MapEntry(
-          ExerciseMode.reviewPronunciation,
-          _reviewWeight,
-        ),
+        const MapEntry(ExerciseMode.reviewPronunciation, _reviewWeight),
     ];
     final total = weighted.fold(0, (sum, entry) => sum + entry.value);
     final roll = _random.nextInt(total);

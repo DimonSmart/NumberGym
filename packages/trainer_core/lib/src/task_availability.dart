@@ -42,9 +42,7 @@ abstract interface class TaskAvailabilityProvider {
 
 class TaskAvailabilityRegistry {
   TaskAvailabilityRegistry({required List<TaskAvailabilityProvider> providers})
-    : _providers = {
-        for (final provider in providers) provider.mode: provider,
-      };
+    : _providers = {for (final provider in providers) provider.mode: provider};
 
   final Map<ExerciseMode, TaskAvailabilityProvider> _providers;
 
@@ -77,7 +75,7 @@ class SpeechTaskAvailabilityProvider implements TaskAvailabilityProvider {
     final result = await _speechService.initialize(
       onError: (_) {},
       onStatus: (_) {},
-      requestPermission: false,
+      requestPermission: force,
     );
     if (result.ready) {
       return TaskAvailability.available;
@@ -104,9 +102,7 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
     TaskAvailabilityContext context, {
     bool force = false,
   }) async {
-    if (!force &&
-        _cachedLocale == context.locale &&
-        _cachedAvailable != null) {
+    if (!force && _cachedLocale == context.locale && _cachedAvailable != null) {
       return _cachedAvailable!
           ? TaskAvailability.available
           : TaskAvailability.unavailable(
