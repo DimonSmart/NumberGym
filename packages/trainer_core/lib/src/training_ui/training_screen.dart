@@ -10,6 +10,7 @@ import '../settings_repository.dart';
 import '../trainer_controller.dart';
 import '../trainer_state.dart';
 import '../training/data/card_progress.dart';
+import 'widgets/sound_wave_indicator.dart';
 import 'widgets/training_background.dart';
 import 'widgets/training_timer_bar.dart';
 
@@ -166,7 +167,11 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Widget _buildTaskBody(TaskState task) {
     if (task is SpeakState) {
-      return _SpeakTaskView(state: task, onRetry: _controller.retryInitSpeech);
+      return _SpeakTaskView(
+        state: task,
+        soundStream: _controller.soundStream,
+        onRetry: _controller.retryInitSpeech,
+      );
     }
     if (task is ChoiceState) {
       return _ChoiceTaskView(state: task, onSelect: _controller.selectOption);
@@ -181,6 +186,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (task is ReviewPronunciationState) {
       return _ReviewTaskView(
         state: task,
+        soundStream: _controller.soundStream,
         onStartRecording: _controller.startPronunciationRecording,
         onStopRecording: _controller.stopPronunciationRecording,
         onCancelRecording: _controller.cancelPronunciationRecording,
@@ -312,9 +318,14 @@ class _SessionSummary extends StatelessWidget {
 }
 
 class _SpeakTaskView extends StatelessWidget {
-  const _SpeakTaskView({required this.state, required this.onRetry});
+  const _SpeakTaskView({
+    required this.state,
+    required this.soundStream,
+    required this.onRetry,
+  });
 
   final SpeakState state;
+  final Stream<List<double>> soundStream;
   final Future<void> Function() onRetry;
 
   @override
@@ -350,14 +361,79 @@ class _SpeakTaskView extends StatelessWidget {
               ),
             ],
             const Spacer(),
-            Text(
-              state.isListening ? 'Listening...' : 'Waiting...',
-              style: Theme.of(context).textTheme.bodyLarge,
+            _buildListeningIndicator(context),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  _statusIcon,
+                  size: 20,
+                  color: _statusColor(Theme.of(context)),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _statusLabel,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: _statusColor(Theme.of(context)),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildListeningIndicator(BuildContext context) {
+    if (state.isListeningPending) {
+      return SizedBox(
+        height: 64,
+        child: Center(
+          child: SizedBox(
+            width: 28,
+            height: 28,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+        ),
+      );
+    }
+    return SoundWaveIndicator(stream: soundStream, visible: state.isListening);
+  }
+
+  String get _statusLabel {
+    if (state.isListening) {
+      return 'Listening...';
+    }
+    if (state.isListeningPending) {
+      return 'Preparing microphone...';
+    }
+    return 'Waiting...';
+  }
+
+  IconData get _statusIcon {
+    if (state.isListening) {
+      return Icons.mic;
+    }
+    if (state.isListeningPending) {
+      return Icons.hourglass_empty;
+    }
+    return Icons.mic_none;
+  }
+
+  Color _statusColor(ThemeData theme) {
+    if (state.isListening) {
+      return theme.colorScheme.primary;
+    }
+    if (state.isListeningPending) {
+      return theme.colorScheme.tertiary;
+    }
+    return theme.colorScheme.onSurfaceVariant;
   }
 
   Widget _buildPrompt(BuildContext context) {
@@ -487,6 +563,7 @@ class _ListenTaskView extends StatelessWidget {
 class _ReviewTaskView extends StatelessWidget {
   const _ReviewTaskView({
     required this.state,
+    required this.soundStream,
     required this.onStartRecording,
     required this.onStopRecording,
     required this.onCancelRecording,
@@ -495,6 +572,7 @@ class _ReviewTaskView extends StatelessWidget {
   });
 
   final ReviewPronunciationState state;
+  final Stream<List<double>> soundStream;
   final Future<void> Function() onStartRecording;
   final Future<void> Function() onStopRecording;
   final Future<void> Function() onCancelRecording;
@@ -555,6 +633,11 @@ class _ReviewTaskView extends StatelessWidget {
                 ],
               ),
             },
+            const SizedBox(height: 16),
+            SoundWaveIndicator(
+              stream: soundStream,
+              visible: state.isWaveVisible,
+            ),
           ],
         ),
       ),

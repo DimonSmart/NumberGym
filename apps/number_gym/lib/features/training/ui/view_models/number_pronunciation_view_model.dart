@@ -66,15 +66,13 @@ class NumberPronunciationViewModel {
       timer: task?.timer ?? TimerState.zero,
       isTimerActive: task?.timer.isRunning ?? false,
       taskKey: task?.exerciseId.storageKey ?? 'none',
-      showSoundWave: task?.timer.isRunning ?? false,
+      showSoundWave: task?.isListening ?? false,
       heardDisplay: _buildHeardDisplay(task),
       speechLines: _buildSpeechLines(task),
     );
   }
 
-  static List<SpeechRecognitionLine> _buildSpeechLines(
-    SpeakState? task,
-  ) {
+  static List<SpeechRecognitionLine> _buildSpeechLines(SpeakState? task) {
     if (task == null) {
       return const <SpeechRecognitionLine>[];
     }

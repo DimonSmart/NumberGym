@@ -248,6 +248,30 @@ void main() {
     expect(matcher.isComplete, isTrue);
   });
 
+  test('matcher accepts Spanish speech without accent over i', () {
+    final card = _findCard(
+      definition: definition,
+      baseLanguage: LearningLanguage.english,
+      language: LearningLanguage.spanish,
+      familyId: VerbTenseIds.presentIndicative,
+      variantId: 'come_here::I',
+    );
+    final matcher =
+        AnswerMatcher(
+          normalizer: definition.profileOf(LearningLanguage.spanish).normalizer,
+          tokenizer: definition.tokenizerOf(LearningLanguage.spanish),
+        )..reset(
+          prompt: card.promptText,
+          answers: card.acceptedAnswers,
+          promptAliases: card.matcherConfig.promptAliases,
+        );
+
+    final result = matcher.applyRecognition('Yo vengo aqui');
+
+    expect(result.acceptedAnswer, isTrue);
+    expect(matcher.isComplete, isTrue);
+  });
+
   test('matcher compares decomposed Spanish diacritics as plain letters', () {
     final matcher =
         AnswerMatcher(

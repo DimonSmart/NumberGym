@@ -36,20 +36,7 @@ class AnswerMatcher {
   List<bool> get matchedTokens => _matchedAtoms;
 
   bool get isComplete {
-    if (_atoms.isEmpty || _requiredAtomCount == 0) {
-      return false;
-    }
-
-    var matchedRequired = 0;
-    for (var i = 0; i < _atoms.length; i += 1) {
-      if (_atoms[i].isRequired && _matchedAtoms[i]) {
-        matchedRequired += 1;
-        if (matchedRequired >= _requiredAtomCount) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return _isCompleteFor(_matchedAtoms);
   }
 
   void reset({
@@ -99,6 +86,38 @@ class AnswerMatcher {
       return false;
     }
     return _acceptedAnswers.contains(normalized);
+  }
+
+  bool wouldCompleteWith(String recognizedText) {
+    final normalizedText = _normalizer(recognizedText);
+    if (normalizedText.isEmpty) {
+      return false;
+    }
+    if (_acceptedAnswers.contains(normalizedText)) {
+      return true;
+    }
+
+    final tokens = _tokenizer.tokenize(recognizedText);
+    if (_atoms.isEmpty || tokens.isEmpty) {
+      return false;
+    }
+
+    final matchedIndices = _matcher.match(
+      atoms: _atoms,
+      tokens: tokens,
+      matched: _matchedAtoms,
+    );
+    if (matchedIndices.isEmpty) {
+      return _isCompleteFor(_matchedAtoms);
+    }
+
+    final matchedAfterRecognition = List<bool>.from(_matchedAtoms);
+    for (final index in matchedIndices) {
+      if (index >= 0 && index < matchedAfterRecognition.length) {
+        matchedAfterRecognition[index] = true;
+      }
+    }
+    return _isCompleteFor(matchedAfterRecognition);
   }
 
   MatchResult previewRecognition(String recognizedText) {
@@ -216,6 +235,23 @@ class AnswerMatcher {
         _matchedAtoms[index] = true;
       }
     }
+  }
+
+  bool _isCompleteFor(List<bool> matchedAtoms) {
+    if (_atoms.isEmpty || _requiredAtomCount == 0) {
+      return false;
+    }
+
+    var matchedRequired = 0;
+    for (var i = 0; i < _atoms.length; i += 1) {
+      if (_atoms[i].isRequired && matchedAtoms[i]) {
+        matchedRequired += 1;
+        if (matchedRequired >= _requiredAtomCount) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
 
@@ -568,21 +604,35 @@ List<_AtomVariant> _buildVariantsFromTexts(
       continue;
     }
 
-    final tokens = tokenizer.tokenize(trimmed);
-    if (tokens.isEmpty) {
-      continue;
-    }
+    for (final variantText in _textVariantsForMatching(trimmed)) {
+      final tokens = tokenizer.tokenize(variantText);
+      if (tokens.isEmpty) {
+        continue;
+      }
 
-    final variant = _AtomVariant(
-      tokens: _variantTokensForText(trimmed, tokens),
-    );
-    final signature = variant.signature();
-    if (seen.add(signature)) {
-      variants.add(variant);
+      final variant = _AtomVariant(
+        tokens: _variantTokensForText(variantText, tokens),
+      );
+      final signature = variant.signature();
+      if (seen.add(signature)) {
+        variants.add(variant);
+      }
     }
   }
 
   variants.sort((a, b) => b.tokens.length.compareTo(a.tokens.length));
+  return variants;
+}
+
+List<String> _textVariantsForMatching(String text) {
+  final variants = <String>[text];
+  final withoutSentencePunctuation = text
+      .replaceFirst(RegExp(r'[.?!]+$'), '')
+      .trim();
+  if (withoutSentencePunctuation.isNotEmpty &&
+      withoutSentencePunctuation != text) {
+    variants.add(withoutSentencePunctuation);
+  }
   return variants;
 }
 

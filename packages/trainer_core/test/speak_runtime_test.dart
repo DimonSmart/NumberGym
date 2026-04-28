@@ -58,8 +58,8 @@ String _identityNormalizer(String text) => text.toLowerCase();
 class _SimpleTokenizer implements MatcherTokenizer {
   @override
   List<MatchingToken> tokenize(String text) => [
-        MatchingToken(display: text, normalized: text.toLowerCase()),
-      ];
+    MatchingToken(display: text, normalized: text.toLowerCase()),
+  ];
 }
 
 class _ControllableSpeechService implements SpeechServiceBase {
@@ -110,32 +110,26 @@ class _ControllableSpeechService implements SpeechServiceBase {
 
   Future<void> emitPartial(String text) async {
     _onResult?.call(
-      SpeechRecognitionResult(
-        <SpeechRecognitionWords>[
-          SpeechRecognitionWords(
-            text,
-            null,
-            SpeechRecognitionWords.missingConfidence,
-          ),
-        ],
-        false,
-      ),
+      SpeechRecognitionResult(<SpeechRecognitionWords>[
+        SpeechRecognitionWords(
+          text,
+          null,
+          SpeechRecognitionWords.missingConfidence,
+        ),
+      ], false),
     );
     await Future<void>.delayed(Duration.zero);
   }
 
   Future<void> emitFinal(String text) async {
     _onResult?.call(
-      SpeechRecognitionResult(
-        <SpeechRecognitionWords>[
-          SpeechRecognitionWords(
-            text,
-            null,
-            SpeechRecognitionWords.missingConfidence,
-          ),
-        ],
-        true,
-      ),
+      SpeechRecognitionResult(<SpeechRecognitionWords>[
+        SpeechRecognitionWords(
+          text,
+          null,
+          SpeechRecognitionWords.missingConfidence,
+        ),
+      ], true),
     );
     await Future<void>.delayed(Duration.zero);
   }
@@ -179,43 +173,75 @@ void main() {
     await runtime.dispose();
   });
 
-  test(
-    'prefers stronger partial over truncated final result',
-    () async {
-      final speech = _ControllableSpeechService();
-      final runtime = SpeakRuntime(
-        card: _buildCard(
-          promptText: 'half past ten',
-          acceptedAnswers: const <String>['half past ten', '10:30'],
-        ),
-        profile: _buildProfile(),
-        tokenizer: _SimpleTokenizer(),
-        speechService: speech,
-        soundWaveService: FakeSoundWaveService(),
-        cardTimer: FakeCardTimer(),
-        cardDuration: const Duration(seconds: 15),
-        hintText: null,
-        onSpeechReady: (ready, errorMessage) {},
-      );
+  test('prefers stronger partial over truncated final result', () async {
+    final speech = _ControllableSpeechService();
+    final runtime = SpeakRuntime(
+      card: _buildCard(
+        promptText: 'half past ten',
+        acceptedAnswers: const <String>['half past ten', '10:30'],
+      ),
+      profile: _buildProfile(),
+      tokenizer: _SimpleTokenizer(),
+      speechService: speech,
+      soundWaveService: FakeSoundWaveService(),
+      cardTimer: FakeCardTimer(),
+      cardDuration: const Duration(seconds: 15),
+      hintText: null,
+      onSpeechReady: (ready, errorMessage) {},
+    );
 
-      final completion = Completer<TaskCompleted>();
-      final subscription = runtime.events.listen((event) {
-        if (event is TaskCompleted && !completion.isCompleted) {
-          completion.complete(event);
-        }
-      });
+    final completion = Completer<TaskCompleted>();
+    final subscription = runtime.events.listen((event) {
+      if (event is TaskCompleted && !completion.isCompleted) {
+        completion.complete(event);
+      }
+    });
 
-      await runtime.start();
-      await speech.emitPartial('half past ten');
-      await speech.emitFinal('10');
+    await runtime.start();
+    await speech.emitPartial('half past ten');
+    await speech.emitFinal('10');
 
-      final event =
-          await completion.future.timeout(const Duration(seconds: 1));
-      expect(event.outcome, TrainingOutcome.correct);
-      expect(speech.listenCallCount, 1);
+    final event = await completion.future.timeout(const Duration(seconds: 1));
+    expect(event.outcome, TrainingOutcome.correct);
+    expect(speech.listenCallCount, 1);
 
-      await subscription.cancel();
-      await runtime.dispose();
-    },
-  );
+    await subscription.cancel();
+    await runtime.dispose();
+  });
+
+  test('accepts partial result when it completes remaining prompt', () async {
+    final speech = _ControllableSpeechService();
+    final runtime = SpeakRuntime(
+      card: _buildCard(
+        promptText: 'open door',
+        acceptedAnswers: const <String>[],
+      ),
+      profile: _buildProfile(),
+      tokenizer: _SimpleTokenizer(),
+      speechService: speech,
+      soundWaveService: FakeSoundWaveService(),
+      cardTimer: FakeCardTimer(),
+      cardDuration: const Duration(seconds: 15),
+      hintText: null,
+      onSpeechReady: (ready, errorMessage) {},
+    );
+
+    final completion = Completer<TaskCompleted>();
+    final subscription = runtime.events.listen((event) {
+      if (event is TaskCompleted && !completion.isCompleted) {
+        completion.complete(event);
+      }
+    });
+
+    await runtime.start();
+    await speech.emitFinal('open');
+    await Future<void>.delayed(const Duration(milliseconds: 700));
+    await speech.emitPartial('door');
+
+    final event = await completion.future.timeout(const Duration(seconds: 1));
+    expect(event.outcome, TrainingOutcome.correct);
+
+    await subscription.cancel();
+    await runtime.dispose();
+  });
 }

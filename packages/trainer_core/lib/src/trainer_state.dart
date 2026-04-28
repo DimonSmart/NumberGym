@@ -104,6 +104,7 @@ final class SpeakState extends TaskState {
     required List<int> previewMatchedIndices,
     required this.hintText,
     required this.isListening,
+    required this.isListeningPending,
     required this.speechReady,
   }) : expectedTokens = List<String>.unmodifiable(expectedTokens),
        matchedTokens = List<bool>.unmodifiable(matchedTokens),
@@ -111,11 +112,7 @@ final class SpeakState extends TaskState {
        lastMatchedIndices = List<int>.unmodifiable(lastMatchedIndices),
        previewHeardTokens = List<String>.unmodifiable(previewHeardTokens),
        previewMatchedIndices = List<int>.unmodifiable(previewMatchedIndices),
-       super(
-         mode: ExerciseMode.speak,
-         affectsProgress: true,
-         usesTimer: true,
-       );
+       super(mode: ExerciseMode.speak, affectsProgress: true, usesTimer: true);
 
   final List<String> expectedTokens;
   final List<bool> matchedTokens;
@@ -127,6 +124,7 @@ final class SpeakState extends TaskState {
   final List<int> previewMatchedIndices;
   final String? hintText;
   final bool isListening;
+  final bool isListeningPending;
   final bool speechReady;
 }
 

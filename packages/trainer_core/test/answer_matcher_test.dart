@@ -20,6 +20,42 @@ void main() {
     expect(result.matchedSegmentIndices, equals(const <int>[0, 1, 2, 3]));
     expect(matcher.isComplete, isTrue);
   });
+
+  test('detects when next recognition would complete the answer', () {
+    final matcher =
+        AnswerMatcher(normalizer: _normalize, tokenizer: const _TestTokenizer())
+          ..reset(
+            prompt: 'open door',
+            answers: const <String>[],
+            promptAliases: const <String>[],
+          );
+
+    matcher.applyRecognition('open');
+
+    expect(matcher.isComplete, isFalse);
+    expect(matcher.wouldCompleteWith('door'), isTrue);
+    expect(matcher.isComplete, isFalse);
+  });
+
+  test('matches final punctuation atom from speech without punctuation', () {
+    final matcher =
+        AnswerMatcher(normalizer: _normalize, tokenizer: const _TestTokenizer())
+          ..reset(
+            prompt: 'vosotros pagais la cuenta.',
+            answers: const <String>[],
+            promptAliases: const <String>[],
+          );
+
+    matcher.applyRecognition('vosotros pagais la');
+
+    expect(matcher.isComplete, isFalse);
+    expect(matcher.wouldCompleteWith('cuenta'), isTrue);
+
+    final result = matcher.applyRecognition('cuenta');
+
+    expect(result.matchedSegmentIndices, equals(const <int>[3]));
+    expect(matcher.isComplete, isTrue);
+  });
 }
 
 String _normalize(String text) {
