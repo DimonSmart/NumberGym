@@ -320,7 +320,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _buildStopButton(theme),
+                        TrainingEndButton(onPressed: _handleStopTraining),
                         const SizedBox(height: 18),
                       ],
                     ),
@@ -486,22 +486,6 @@ class _TrainingScreenState extends State<TrainingScreen>
     return NumberPronunciationView(
       viewModel: viewModel,
       soundStream: _controller.soundStream,
-    );
-  }
-
-  Widget _buildStopButton(ThemeData theme) {
-    return SizedBox(
-      width: 200,
-      height: 48,
-      child: FilledButton.icon(
-        onPressed: _handleStopTraining,
-        style: FilledButton.styleFrom(
-          backgroundColor: theme.colorScheme.secondaryContainer,
-          foregroundColor: theme.colorScheme.onSecondaryContainer,
-        ),
-        icon: const Icon(Icons.flag_outlined),
-        label: const Text('End training'),
-      ),
     );
   }
 

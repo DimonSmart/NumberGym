@@ -3,7 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:trainer_core/trainer_core.dart' show SessionStats;
+import 'package:trainer_core/trainer_core.dart'
+    show SessionStats, TrainingEndButton;
 
 import '../view_models/training_status_view_model.dart';
 
@@ -196,13 +197,7 @@ class _SessionSummaryCardState extends State<_SessionSummaryCard> {
               ),
             ),
             SizedBox(height: buttonGap),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.tonal(
-                onPressed: widget.onEndTraining,
-                child: const Text('End training'),
-              ),
-            ),
+            TrainingEndButton(onPressed: widget.onEndTraining, expand: true),
           ],
         );
 

@@ -12,6 +12,7 @@ import '../trainer_state.dart';
 import '../training/data/card_progress.dart';
 import 'widgets/sound_wave_indicator.dart';
 import 'widgets/training_background.dart';
+import 'widgets/training_end_button.dart';
 import 'widgets/training_timer_bar.dart';
 
 typedef TrainingTaskHeaderBuilder =
@@ -39,6 +40,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
   late final SettingsRepository _settingsRepository;
   late final ProgressRepository _progressRepository;
   late final TrainerController _controller;
+  bool _stoppingTraining = false;
+  bool _allowSystemPop = false;
 
   @override
   void initState() {
@@ -52,6 +55,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
       appDefinition: widget.appDefinition,
       settingsRepository: _settingsRepository,
       progressRepository: _progressRepository,
+      onAutoStop: _handleAutoStop,
     );
     unawaited(_initializeAndStart());
   }
@@ -72,67 +76,88 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        final state = _controller.state;
-        final theme = Theme.of(context);
-        return Scaffold(
-          body: TrainingBackground(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: _handleStopTraining,
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        Expanded(
-                          child: Text(
+    return PopScope(
+      canPop: _allowSystemPop,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop || !mounted) {
+          return;
+        }
+        unawaited(_handleSystemBack());
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final state = _controller.state;
+          final theme = Theme.of(context);
+          final sessionCardsCompleted = _controller.sessionCardsCompleted;
+          final sessionTarget = _controller.sessionTargetCards <= 0
+              ? _controller.dailyGoalCards
+              : _controller.sessionTargetCards;
+          final sessionFinished = state.sessionStats != null;
+
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: TrainingBackground(
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
                             _controller.currentMode?.label ?? 'Training',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
-                            textAlign: TextAlign.center,
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Session: $sessionCardsCompleted/$sessionTarget',
+                            style: theme.textTheme.labelMedium,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      if (state.errorMessage != null) ...[
+                        Card(
+                          color: theme.colorScheme.errorContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Text(state.errorMessage!),
                           ),
                         ),
-                        const SizedBox(width: 48),
+                        const SizedBox(height: 12),
                       ],
-                    ),
-                    const SizedBox(height: 12),
-                    if (state.errorMessage != null) ...[
-                      Card(
-                        color: theme.colorScheme.errorContainer,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Text(state.errorMessage!),
+                      if (state.feedback != null) ...[
+                        _FeedbackBadge(feedback: state.feedback!),
+                        const SizedBox(height: 12),
+                      ],
+                      if (state.celebration != null) ...[
+                        _CelebrationCard(
+                          celebration: state.celebration!,
+                          onContinue: _controller.continueAfterCelebration,
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
+                      ],
+                      Expanded(child: _buildBody(state)),
+                      if (!sessionFinished) ...[
+                        const SizedBox(height: 16),
+                        Center(
+                          child: TrainingEndButton(
+                            onPressed: _handleStopTraining,
+                          ),
+                        ),
+                      ],
                     ],
-                    if (state.feedback != null) ...[
-                      _FeedbackBadge(feedback: state.feedback!),
-                      const SizedBox(height: 12),
-                    ],
-                    if (state.celebration != null) ...[
-                      _CelebrationCard(
-                        celebration: state.celebration!,
-                        onContinue: _controller.continueAfterCelebration,
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    Expanded(child: _buildBody(state)),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -198,11 +223,49 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 
   Future<void> _handleStopTraining() async {
-    await _controller.stopTraining();
+    await _stopTrainingAndExit(popToRoot: true);
+  }
+
+  Future<void> _handleSystemBack() async {
+    await _stopTrainingAndExit(popToRoot: false);
+  }
+
+  Future<void> _stopTrainingAndExit({required bool popToRoot}) async {
+    if (_stoppingTraining) {
+      return;
+    }
+    _stoppingTraining = true;
+    try {
+      await _controller.stopTraining();
+      if (!mounted) {
+        return;
+      }
+      if (!_allowSystemPop) {
+        setState(() {
+          _allowSystemPop = true;
+        });
+      }
+      final navigator = Navigator.of(context);
+      if (popToRoot) {
+        navigator.popUntil((route) => route.isFirst);
+      } else {
+        navigator.pop();
+      }
+    } finally {
+      _stoppingTraining = false;
+    }
+  }
+
+  void _handleAutoStop() {
     if (!mounted) {
       return;
     }
-    Navigator.of(context).pop();
+    if (!_allowSystemPop) {
+      setState(() {
+        _allowSystemPop = true;
+      });
+    }
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }
 
@@ -298,15 +361,12 @@ class _SessionSummary extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FilledButton.tonal(
-                    onPressed: onStop,
-                    child: const Text('Back'),
-                  ),
-                  const SizedBox(width: 12),
                   FilledButton(
                     onPressed: onContinue,
                     child: const Text('Continue'),
                   ),
+                  const SizedBox(width: 12),
+                  TrainingEndButton(onPressed: onStop),
                 ],
               ),
             ],
