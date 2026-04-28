@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "wait_for_bus",
+    "meaning": {
+      "en": {
+        "short": "to wait for the bus",
+        "description": "Practice to wait for the bus in present, past, and future sentences."
+      },
+      "es": {
+        "short": "esperar el autobús",
+        "description": "Practicar esperar el autobús en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo espero el autobús."
+            },
+            "text": {
+              "en": "I wait for the bus."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú esperas el autobús."
+            },
+            "text": {
+              "en": "You wait for the bus."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él espera el autobús."
+            },
+            "text": {
+              "en": "He waits for the bus."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella espera el autobús."
+            },
+            "text": {
+              "en": "She waits for the bus."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted espera el autobús."
+            },
+            "text": {
+              "en": "You wait for the bus."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros esperamos el autobús."
+            },
+            "text": {
+              "en": "We wait for the bus."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros esperáis el autobús."
+            },
+            "text": {
+              "en": "You wait for the bus."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos esperan el autobús."
+            },
+            "text": {
+              "en": "They wait for the bus."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes esperan el autobús."
+            },
+            "text": {
+              "en": "You wait for the bus."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo esperé el autobús ayer."
+            },
+            "text": {
+              "en": "I waited for the bus yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú esperaste el autobús ayer."
+            },
+            "text": {
+              "en": "You waited for the bus yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él esperó el autobús ayer."
+            },
+            "text": {
+              "en": "He waited for the bus yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella esperó el autobús ayer."
+            },
+            "text": {
+              "en": "She waited for the bus yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted esperó el autobús ayer."
+            },
+            "text": {
+              "en": "You waited for the bus yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros esperamos el autobús ayer."
+            },
+            "text": {
+              "en": "We waited for the bus yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros esperasteis el autobús ayer."
+            },
+            "text": {
+              "en": "You waited for the bus yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos esperaron el autobús ayer."
+            },
+            "text": {
+              "en": "They waited for the bus yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes esperaron el autobús ayer."
+            },
+            "text": {
+              "en": "You waited for the bus yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo esperaré el autobús mañana."
+            },
+            "text": {
+              "en": "I will wait for the bus tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú esperarás el autobús mañana."
+            },
+            "text": {
+              "en": "You will wait for the bus tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él esperará el autobús mañana."
+            },
+            "text": {
+              "en": "He will wait for the bus tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella esperará el autobús mañana."
+            },
+            "text": {
+              "en": "She will wait for the bus tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted esperará el autobús mañana."
+            },
+            "text": {
+              "en": "You will wait for the bus tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros esperaremos el autobús mañana."
+            },
+            "text": {
+              "en": "We will wait for the bus tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros esperaréis el autobús mañana."
+            },
+            "text": {
+              "en": "You will wait for the bus tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos esperarán el autobús mañana."
+            },
+            "text": {
+              "en": "They will wait for the bus tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes esperarán el autobús mañana."
+            },
+            "text": {
+              "en": "You will wait for the bus tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

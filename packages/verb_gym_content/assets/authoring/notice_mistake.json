@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "notice_mistake",
+    "meaning": {
+      "en": {
+        "short": "to notice a mistake",
+        "description": "Practice to notice a mistake in present, past, and future sentences."
+      },
+      "es": {
+        "short": "notar un error",
+        "description": "Practicar notar un error en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo noto un error."
+            },
+            "text": {
+              "en": "I notice a mistake."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú notas un error."
+            },
+            "text": {
+              "en": "You notice a mistake."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él nota un error."
+            },
+            "text": {
+              "en": "He notices a mistake."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella nota un error."
+            },
+            "text": {
+              "en": "She notices a mistake."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted nota un error."
+            },
+            "text": {
+              "en": "You notice a mistake."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros notamos un error."
+            },
+            "text": {
+              "en": "We notice a mistake."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros notáis un error."
+            },
+            "text": {
+              "en": "You notice a mistake."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos notan un error."
+            },
+            "text": {
+              "en": "They notice a mistake."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes notan un error."
+            },
+            "text": {
+              "en": "You notice a mistake."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo noté un error ayer."
+            },
+            "text": {
+              "en": "I noticed a mistake yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú notaste un error ayer."
+            },
+            "text": {
+              "en": "You noticed a mistake yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él notó un error ayer."
+            },
+            "text": {
+              "en": "He noticed a mistake yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella notó un error ayer."
+            },
+            "text": {
+              "en": "She noticed a mistake yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted notó un error ayer."
+            },
+            "text": {
+              "en": "You noticed a mistake yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros notamos un error ayer."
+            },
+            "text": {
+              "en": "We noticed a mistake yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros notasteis un error ayer."
+            },
+            "text": {
+              "en": "You noticed a mistake yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos notaron un error ayer."
+            },
+            "text": {
+              "en": "They noticed a mistake yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes notaron un error ayer."
+            },
+            "text": {
+              "en": "You noticed a mistake yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo notaré un error mañana."
+            },
+            "text": {
+              "en": "I will notice a mistake tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú notarás un error mañana."
+            },
+            "text": {
+              "en": "You will notice a mistake tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él notará un error mañana."
+            },
+            "text": {
+              "en": "He will notice a mistake tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella notará un error mañana."
+            },
+            "text": {
+              "en": "She will notice a mistake tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted notará un error mañana."
+            },
+            "text": {
+              "en": "You will notice a mistake tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros notaremos un error mañana."
+            },
+            "text": {
+              "en": "We will notice a mistake tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros notaréis un error mañana."
+            },
+            "text": {
+              "en": "You will notice a mistake tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos notarán un error mañana."
+            },
+            "text": {
+              "en": "They will notice a mistake tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes notarán un error mañana."
+            },
+            "text": {
+              "en": "You will notice a mistake tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

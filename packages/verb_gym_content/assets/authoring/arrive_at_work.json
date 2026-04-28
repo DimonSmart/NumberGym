@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "arrive_at_work",
+    "meaning": {
+      "en": {
+        "short": "to arrive at work",
+        "description": "Practice to arrive at work in present, past, and future sentences."
+      },
+      "es": {
+        "short": "llegar al trabajo",
+        "description": "Practicar llegar al trabajo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llego al trabajo."
+            },
+            "text": {
+              "en": "I arrive at work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegas al trabajo."
+            },
+            "text": {
+              "en": "You arrive at work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llega al trabajo."
+            },
+            "text": {
+              "en": "He arrives at work."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llega al trabajo."
+            },
+            "text": {
+              "en": "She arrives at work."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llega al trabajo."
+            },
+            "text": {
+              "en": "You arrive at work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegamos al trabajo."
+            },
+            "text": {
+              "en": "We arrive at work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegáis al trabajo."
+            },
+            "text": {
+              "en": "You arrive at work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegan al trabajo."
+            },
+            "text": {
+              "en": "They arrive at work."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegan al trabajo."
+            },
+            "text": {
+              "en": "You arrive at work."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llegué al trabajo ayer."
+            },
+            "text": {
+              "en": "I arrived at work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegaste al trabajo ayer."
+            },
+            "text": {
+              "en": "You arrived at work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llegó al trabajo ayer."
+            },
+            "text": {
+              "en": "He arrived at work yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llegó al trabajo ayer."
+            },
+            "text": {
+              "en": "She arrived at work yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llegó al trabajo ayer."
+            },
+            "text": {
+              "en": "You arrived at work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegamos al trabajo ayer."
+            },
+            "text": {
+              "en": "We arrived at work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegasteis al trabajo ayer."
+            },
+            "text": {
+              "en": "You arrived at work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegaron al trabajo ayer."
+            },
+            "text": {
+              "en": "They arrived at work yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegaron al trabajo ayer."
+            },
+            "text": {
+              "en": "You arrived at work yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llegaré al trabajo mañana."
+            },
+            "text": {
+              "en": "I will arrive at work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegarás al trabajo mañana."
+            },
+            "text": {
+              "en": "You will arrive at work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llegará al trabajo mañana."
+            },
+            "text": {
+              "en": "He will arrive at work tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llegará al trabajo mañana."
+            },
+            "text": {
+              "en": "She will arrive at work tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llegará al trabajo mañana."
+            },
+            "text": {
+              "en": "You will arrive at work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegaremos al trabajo mañana."
+            },
+            "text": {
+              "en": "We will arrive at work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegaréis al trabajo mañana."
+            },
+            "text": {
+              "en": "You will arrive at work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegarán al trabajo mañana."
+            },
+            "text": {
+              "en": "They will arrive at work tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegarán al trabajo mañana."
+            },
+            "text": {
+              "en": "You will arrive at work tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

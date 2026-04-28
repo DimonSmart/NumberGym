@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "continue_task",
+    "meaning": {
+      "en": {
+        "short": "to continue a task",
+        "description": "Practice to continue a task in present, past, and future sentences."
+      },
+      "es": {
+        "short": "continuar una tarea",
+        "description": "Practicar continuar una tarea en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo continuo una tarea."
+            },
+            "text": {
+              "en": "I continue a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú continuas una tarea."
+            },
+            "text": {
+              "en": "You continue a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él continua una tarea."
+            },
+            "text": {
+              "en": "He continues a task."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella continua una tarea."
+            },
+            "text": {
+              "en": "She continues a task."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted continua una tarea."
+            },
+            "text": {
+              "en": "You continue a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros continuamos una tarea."
+            },
+            "text": {
+              "en": "We continue a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros continuáis una tarea."
+            },
+            "text": {
+              "en": "You continue a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos continuan una tarea."
+            },
+            "text": {
+              "en": "They continue a task."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes continuan una tarea."
+            },
+            "text": {
+              "en": "You continue a task."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo continué una tarea ayer."
+            },
+            "text": {
+              "en": "I continued a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú continuaste una tarea ayer."
+            },
+            "text": {
+              "en": "You continued a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él continuó una tarea ayer."
+            },
+            "text": {
+              "en": "He continued a task yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella continuó una tarea ayer."
+            },
+            "text": {
+              "en": "She continued a task yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted continuó una tarea ayer."
+            },
+            "text": {
+              "en": "You continued a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros continuamos una tarea ayer."
+            },
+            "text": {
+              "en": "We continued a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros continuasteis una tarea ayer."
+            },
+            "text": {
+              "en": "You continued a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos continuaron una tarea ayer."
+            },
+            "text": {
+              "en": "They continued a task yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes continuaron una tarea ayer."
+            },
+            "text": {
+              "en": "You continued a task yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo continuaré una tarea mañana."
+            },
+            "text": {
+              "en": "I will continue a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú continuarás una tarea mañana."
+            },
+            "text": {
+              "en": "You will continue a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él continuará una tarea mañana."
+            },
+            "text": {
+              "en": "He will continue a task tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella continuará una tarea mañana."
+            },
+            "text": {
+              "en": "She will continue a task tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted continuará una tarea mañana."
+            },
+            "text": {
+              "en": "You will continue a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros continuaremos una tarea mañana."
+            },
+            "text": {
+              "en": "We will continue a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros continuaréis una tarea mañana."
+            },
+            "text": {
+              "en": "You will continue a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos continuarán una tarea mañana."
+            },
+            "text": {
+              "en": "They will continue a task tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes continuarán una tarea mañana."
+            },
+            "text": {
+              "en": "You will continue a task tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

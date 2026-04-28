@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "get_up",
+    "meaning": {
+      "en": {
+        "short": "to get up",
+        "description": "Practice to get up in present, past, and future sentences."
+      },
+      "es": {
+        "short": "levantarse",
+        "description": "Practicar levantarse en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me levanto."
+            },
+            "text": {
+              "en": "I get up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te levantas."
+            },
+            "text": {
+              "en": "You get up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se levanta."
+            },
+            "text": {
+              "en": "He gets up."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se levanta."
+            },
+            "text": {
+              "en": "She gets up."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se levanta."
+            },
+            "text": {
+              "en": "You get up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos levantamos."
+            },
+            "text": {
+              "en": "We get up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os levantáis."
+            },
+            "text": {
+              "en": "You get up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se levantan."
+            },
+            "text": {
+              "en": "They get up."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se levantan."
+            },
+            "text": {
+              "en": "You get up."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me levanté ayer."
+            },
+            "text": {
+              "en": "I got up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te levantaste ayer."
+            },
+            "text": {
+              "en": "You got up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se levantó ayer."
+            },
+            "text": {
+              "en": "He got up yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se levantó ayer."
+            },
+            "text": {
+              "en": "She got up yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se levantó ayer."
+            },
+            "text": {
+              "en": "You got up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos levantamos ayer."
+            },
+            "text": {
+              "en": "We got up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os levantasteis ayer."
+            },
+            "text": {
+              "en": "You got up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se levantaron ayer."
+            },
+            "text": {
+              "en": "They got up yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se levantaron ayer."
+            },
+            "text": {
+              "en": "You got up yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me levantaré mañana."
+            },
+            "text": {
+              "en": "I will get up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te levantarás mañana."
+            },
+            "text": {
+              "en": "You will get up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se levantará mañana."
+            },
+            "text": {
+              "en": "He will get up tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se levantará mañana."
+            },
+            "text": {
+              "en": "She will get up tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se levantará mañana."
+            },
+            "text": {
+              "en": "You will get up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos levantaremos mañana."
+            },
+            "text": {
+              "en": "We will get up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os levantaréis mañana."
+            },
+            "text": {
+              "en": "You will get up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se levantarán mañana."
+            },
+            "text": {
+              "en": "They will get up tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se levantarán mañana."
+            },
+            "text": {
+              "en": "You will get up tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

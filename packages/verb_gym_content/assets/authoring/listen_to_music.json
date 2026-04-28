@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "listen_to_music",
+    "meaning": {
+      "en": {
+        "short": "to listen to music",
+        "description": "Practice to listen to music in present, past, and future sentences."
+      },
+      "es": {
+        "short": "escuchar música",
+        "description": "Practicar escuchar música en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo escucho música."
+            },
+            "text": {
+              "en": "I listen to music."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú escuchas música."
+            },
+            "text": {
+              "en": "You listen to music."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él escucha música."
+            },
+            "text": {
+              "en": "He listens to music."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella escucha música."
+            },
+            "text": {
+              "en": "She listens to music."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted escucha música."
+            },
+            "text": {
+              "en": "You listen to music."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros escuchamos música."
+            },
+            "text": {
+              "en": "We listen to music."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros escucháis música."
+            },
+            "text": {
+              "en": "You listen to music."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos escuchan música."
+            },
+            "text": {
+              "en": "They listen to music."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes escuchan música."
+            },
+            "text": {
+              "en": "You listen to music."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo escuché música ayer."
+            },
+            "text": {
+              "en": "I listened to music yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú escuchaste música ayer."
+            },
+            "text": {
+              "en": "You listened to music yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él escuchó música ayer."
+            },
+            "text": {
+              "en": "He listened to music yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella escuchó música ayer."
+            },
+            "text": {
+              "en": "She listened to music yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted escuchó música ayer."
+            },
+            "text": {
+              "en": "You listened to music yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros escuchamos música ayer."
+            },
+            "text": {
+              "en": "We listened to music yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros escuchasteis música ayer."
+            },
+            "text": {
+              "en": "You listened to music yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos escucharon música ayer."
+            },
+            "text": {
+              "en": "They listened to music yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes escucharon música ayer."
+            },
+            "text": {
+              "en": "You listened to music yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo escucharé música mañana."
+            },
+            "text": {
+              "en": "I will listen to music tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú escucharás música mañana."
+            },
+            "text": {
+              "en": "You will listen to music tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él escuchará música mañana."
+            },
+            "text": {
+              "en": "He will listen to music tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella escuchará música mañana."
+            },
+            "text": {
+              "en": "She will listen to music tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted escuchará música mañana."
+            },
+            "text": {
+              "en": "You will listen to music tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros escucharemos música mañana."
+            },
+            "text": {
+              "en": "We will listen to music tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros escucharéis música mañana."
+            },
+            "text": {
+              "en": "You will listen to music tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos escucharán música mañana."
+            },
+            "text": {
+              "en": "They will listen to music tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes escucharán música mañana."
+            },
+            "text": {
+              "en": "You will listen to music tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

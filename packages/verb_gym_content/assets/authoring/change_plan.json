@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "change_plan",
+    "meaning": {
+      "en": {
+        "short": "to change a plan",
+        "description": "Practice to change a plan in present, past, and future sentences."
+      },
+      "es": {
+        "short": "cambiar un plan",
+        "description": "Practicar cambiar un plan en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cambio un plan."
+            },
+            "text": {
+              "en": "I change a plan."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cambias un plan."
+            },
+            "text": {
+              "en": "You change a plan."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cambia un plan."
+            },
+            "text": {
+              "en": "He changes a plan."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cambia un plan."
+            },
+            "text": {
+              "en": "She changes a plan."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cambia un plan."
+            },
+            "text": {
+              "en": "You change a plan."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cambiamos un plan."
+            },
+            "text": {
+              "en": "We change a plan."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cambiáis un plan."
+            },
+            "text": {
+              "en": "You change a plan."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cambian un plan."
+            },
+            "text": {
+              "en": "They change a plan."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cambian un plan."
+            },
+            "text": {
+              "en": "You change a plan."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cambié un plan ayer."
+            },
+            "text": {
+              "en": "I changed a plan yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cambiaste un plan ayer."
+            },
+            "text": {
+              "en": "You changed a plan yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cambió un plan ayer."
+            },
+            "text": {
+              "en": "He changed a plan yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cambió un plan ayer."
+            },
+            "text": {
+              "en": "She changed a plan yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cambió un plan ayer."
+            },
+            "text": {
+              "en": "You changed a plan yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cambiamos un plan ayer."
+            },
+            "text": {
+              "en": "We changed a plan yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cambiasteis un plan ayer."
+            },
+            "text": {
+              "en": "You changed a plan yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cambiaron un plan ayer."
+            },
+            "text": {
+              "en": "They changed a plan yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cambiaron un plan ayer."
+            },
+            "text": {
+              "en": "You changed a plan yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cambiaré un plan mañana."
+            },
+            "text": {
+              "en": "I will change a plan tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cambiarás un plan mañana."
+            },
+            "text": {
+              "en": "You will change a plan tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cambiará un plan mañana."
+            },
+            "text": {
+              "en": "He will change a plan tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cambiará un plan mañana."
+            },
+            "text": {
+              "en": "She will change a plan tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cambiará un plan mañana."
+            },
+            "text": {
+              "en": "You will change a plan tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cambiaremos un plan mañana."
+            },
+            "text": {
+              "en": "We will change a plan tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cambiaréis un plan mañana."
+            },
+            "text": {
+              "en": "You will change a plan tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cambiarán un plan mañana."
+            },
+            "text": {
+              "en": "They will change a plan tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cambiarán un plan mañana."
+            },
+            "text": {
+              "en": "You will change a plan tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "want_coffee",
+    "meaning": {
+      "en": {
+        "short": "to want coffee",
+        "description": "Practice to want coffee in present, past, and future sentences."
+      },
+      "es": {
+        "short": "querer café",
+        "description": "Practicar querer café en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quiero café."
+            },
+            "text": {
+              "en": "I want coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quieres café."
+            },
+            "text": {
+              "en": "You want coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quiere café."
+            },
+            "text": {
+              "en": "He wants coffee."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quiere café."
+            },
+            "text": {
+              "en": "She wants coffee."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quiere café."
+            },
+            "text": {
+              "en": "You want coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros queremos café."
+            },
+            "text": {
+              "en": "We want coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros queréis café."
+            },
+            "text": {
+              "en": "You want coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quieren café."
+            },
+            "text": {
+              "en": "They want coffee."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quieren café."
+            },
+            "text": {
+              "en": "You want coffee."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quise café ayer."
+            },
+            "text": {
+              "en": "I wanted coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quisiste café ayer."
+            },
+            "text": {
+              "en": "You wanted coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quiso café ayer."
+            },
+            "text": {
+              "en": "He wanted coffee yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quiso café ayer."
+            },
+            "text": {
+              "en": "She wanted coffee yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quiso café ayer."
+            },
+            "text": {
+              "en": "You wanted coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quisimos café ayer."
+            },
+            "text": {
+              "en": "We wanted coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quisisteis café ayer."
+            },
+            "text": {
+              "en": "You wanted coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quisieron café ayer."
+            },
+            "text": {
+              "en": "They wanted coffee yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quisieron café ayer."
+            },
+            "text": {
+              "en": "You wanted coffee yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo querré café mañana."
+            },
+            "text": {
+              "en": "I will want coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú querrás café mañana."
+            },
+            "text": {
+              "en": "You will want coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él querrá café mañana."
+            },
+            "text": {
+              "en": "He will want coffee tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella querrá café mañana."
+            },
+            "text": {
+              "en": "She will want coffee tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted querrá café mañana."
+            },
+            "text": {
+              "en": "You will want coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros querremos café mañana."
+            },
+            "text": {
+              "en": "We will want coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros querréis café mañana."
+            },
+            "text": {
+              "en": "You will want coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos querrán café mañana."
+            },
+            "text": {
+              "en": "They will want coffee tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes querrán café mañana."
+            },
+            "text": {
+              "en": "You will want coffee tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

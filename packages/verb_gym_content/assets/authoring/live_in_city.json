@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "live_in_city",
+    "meaning": {
+      "en": {
+        "short": "to live in the city",
+        "description": "Practice to live in the city in present, past, and future sentences."
+      },
+      "es": {
+        "short": "vivir en la ciudad",
+        "description": "Practicar vivir en la ciudad en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo vivo en la ciudad."
+            },
+            "text": {
+              "en": "I live in the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú vives en la ciudad."
+            },
+            "text": {
+              "en": "You live in the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él vive en la ciudad."
+            },
+            "text": {
+              "en": "He lives in the city."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella vive en la ciudad."
+            },
+            "text": {
+              "en": "She lives in the city."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted vive en la ciudad."
+            },
+            "text": {
+              "en": "You live in the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros vivimos en la ciudad."
+            },
+            "text": {
+              "en": "We live in the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros vivís en la ciudad."
+            },
+            "text": {
+              "en": "You live in the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos viven en la ciudad."
+            },
+            "text": {
+              "en": "They live in the city."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes viven en la ciudad."
+            },
+            "text": {
+              "en": "You live in the city."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo viví en la ciudad ayer."
+            },
+            "text": {
+              "en": "I lived in the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú viviste en la ciudad ayer."
+            },
+            "text": {
+              "en": "You lived in the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él vivió en la ciudad ayer."
+            },
+            "text": {
+              "en": "He lived in the city yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella vivió en la ciudad ayer."
+            },
+            "text": {
+              "en": "She lived in the city yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted vivió en la ciudad ayer."
+            },
+            "text": {
+              "en": "You lived in the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros vivimos en la ciudad ayer."
+            },
+            "text": {
+              "en": "We lived in the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros vivisteis en la ciudad ayer."
+            },
+            "text": {
+              "en": "You lived in the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos vivieron en la ciudad ayer."
+            },
+            "text": {
+              "en": "They lived in the city yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes vivieron en la ciudad ayer."
+            },
+            "text": {
+              "en": "You lived in the city yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo viviré en la ciudad mañana."
+            },
+            "text": {
+              "en": "I will live in the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú vivirás en la ciudad mañana."
+            },
+            "text": {
+              "en": "You will live in the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él vivirá en la ciudad mañana."
+            },
+            "text": {
+              "en": "He will live in the city tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella vivirá en la ciudad mañana."
+            },
+            "text": {
+              "en": "She will live in the city tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted vivirá en la ciudad mañana."
+            },
+            "text": {
+              "en": "You will live in the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros viviremos en la ciudad mañana."
+            },
+            "text": {
+              "en": "We will live in the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros viviréis en la ciudad mañana."
+            },
+            "text": {
+              "en": "You will live in the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos vivirán en la ciudad mañana."
+            },
+            "text": {
+              "en": "They will live in the city tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes vivirán en la ciudad mañana."
+            },
+            "text": {
+              "en": "You will live in the city tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

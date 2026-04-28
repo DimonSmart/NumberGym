@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "feel_good",
+    "meaning": {
+      "en": {
+        "short": "to feel good",
+        "description": "Practice to feel good in present, past, and future sentences."
+      },
+      "es": {
+        "short": "sentirse bien",
+        "description": "Practicar sentirse bien en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me siento bien."
+            },
+            "text": {
+              "en": "I feel good."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sientes bien."
+            },
+            "text": {
+              "en": "You feel good."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se siente bien."
+            },
+            "text": {
+              "en": "He feels good."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se siente bien."
+            },
+            "text": {
+              "en": "She feels good."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se siente bien."
+            },
+            "text": {
+              "en": "You feel good."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentimos bien."
+            },
+            "text": {
+              "en": "We feel good."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentís bien."
+            },
+            "text": {
+              "en": "You feel good."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sienten bien."
+            },
+            "text": {
+              "en": "They feel good."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sienten bien."
+            },
+            "text": {
+              "en": "You feel good."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me sentí bien ayer."
+            },
+            "text": {
+              "en": "I felt good yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentiste bien ayer."
+            },
+            "text": {
+              "en": "You felt good yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sintió bien ayer."
+            },
+            "text": {
+              "en": "He felt good yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sintió bien ayer."
+            },
+            "text": {
+              "en": "She felt good yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sintió bien ayer."
+            },
+            "text": {
+              "en": "You felt good yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentimos bien ayer."
+            },
+            "text": {
+              "en": "We felt good yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentisteis bien ayer."
+            },
+            "text": {
+              "en": "You felt good yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sintieron bien ayer."
+            },
+            "text": {
+              "en": "They felt good yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sintieron bien ayer."
+            },
+            "text": {
+              "en": "You felt good yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me sentiré bien mañana."
+            },
+            "text": {
+              "en": "I will feel good tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentirás bien mañana."
+            },
+            "text": {
+              "en": "You will feel good tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sentirá bien mañana."
+            },
+            "text": {
+              "en": "He will feel good tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sentirá bien mañana."
+            },
+            "text": {
+              "en": "She will feel good tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sentirá bien mañana."
+            },
+            "text": {
+              "en": "You will feel good tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentiremos bien mañana."
+            },
+            "text": {
+              "en": "We will feel good tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentiréis bien mañana."
+            },
+            "text": {
+              "en": "You will feel good tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sentirán bien mañana."
+            },
+            "text": {
+              "en": "They will feel good tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sentirán bien mañana."
+            },
+            "text": {
+              "en": "You will feel good tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

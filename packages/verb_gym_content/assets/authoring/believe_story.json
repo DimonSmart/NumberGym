@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "believe_story",
+    "meaning": {
+      "en": {
+        "short": "to believe a story",
+        "description": "Practice to believe a story in present, past, and future sentences."
+      },
+      "es": {
+        "short": "creer una historia",
+        "description": "Practicar creer una historia en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo creo una historia."
+            },
+            "text": {
+              "en": "I believe a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú crees una historia."
+            },
+            "text": {
+              "en": "You believe a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cree una historia."
+            },
+            "text": {
+              "en": "He believes a story."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cree una historia."
+            },
+            "text": {
+              "en": "She believes a story."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cree una historia."
+            },
+            "text": {
+              "en": "You believe a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros creemos una historia."
+            },
+            "text": {
+              "en": "We believe a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros creéis una historia."
+            },
+            "text": {
+              "en": "You believe a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos creen una historia."
+            },
+            "text": {
+              "en": "They believe a story."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes creen una historia."
+            },
+            "text": {
+              "en": "You believe a story."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo creí una historia ayer."
+            },
+            "text": {
+              "en": "I believed a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú creiste una historia ayer."
+            },
+            "text": {
+              "en": "You believed a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él creió una historia ayer."
+            },
+            "text": {
+              "en": "He believed a story yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella creió una historia ayer."
+            },
+            "text": {
+              "en": "She believed a story yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted creió una historia ayer."
+            },
+            "text": {
+              "en": "You believed a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros creimos una historia ayer."
+            },
+            "text": {
+              "en": "We believed a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros creisteis una historia ayer."
+            },
+            "text": {
+              "en": "You believed a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos creieron una historia ayer."
+            },
+            "text": {
+              "en": "They believed a story yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes creieron una historia ayer."
+            },
+            "text": {
+              "en": "You believed a story yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo creeré una historia mañana."
+            },
+            "text": {
+              "en": "I will believe a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú creerás una historia mañana."
+            },
+            "text": {
+              "en": "You will believe a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él creerá una historia mañana."
+            },
+            "text": {
+              "en": "He will believe a story tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella creerá una historia mañana."
+            },
+            "text": {
+              "en": "She will believe a story tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted creerá una historia mañana."
+            },
+            "text": {
+              "en": "You will believe a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros creeremos una historia mañana."
+            },
+            "text": {
+              "en": "We will believe a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros creeréis una historia mañana."
+            },
+            "text": {
+              "en": "You will believe a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos creerán una historia mañana."
+            },
+            "text": {
+              "en": "They will believe a story tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes creerán una historia mañana."
+            },
+            "text": {
+              "en": "You will believe a story tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

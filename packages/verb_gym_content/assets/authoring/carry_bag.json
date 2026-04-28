@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "carry_bag",
+    "meaning": {
+      "en": {
+        "short": "to carry a bag",
+        "description": "Practice to carry a bag in present, past, and future sentences."
+      },
+      "es": {
+        "short": "llevar una bolsa",
+        "description": "Practicar llevar una bolsa en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevo una bolsa."
+            },
+            "text": {
+              "en": "I carry a bag."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevas una bolsa."
+            },
+            "text": {
+              "en": "You carry a bag."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él lleva una bolsa."
+            },
+            "text": {
+              "en": "He carries a bag."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella lleva una bolsa."
+            },
+            "text": {
+              "en": "She carries a bag."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted lleva una bolsa."
+            },
+            "text": {
+              "en": "You carry a bag."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevamos una bolsa."
+            },
+            "text": {
+              "en": "We carry a bag."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros lleváis una bolsa."
+            },
+            "text": {
+              "en": "You carry a bag."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevan una bolsa."
+            },
+            "text": {
+              "en": "They carry a bag."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevan una bolsa."
+            },
+            "text": {
+              "en": "You carry a bag."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevé una bolsa ayer."
+            },
+            "text": {
+              "en": "I carried a bag yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevaste una bolsa ayer."
+            },
+            "text": {
+              "en": "You carried a bag yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llevó una bolsa ayer."
+            },
+            "text": {
+              "en": "He carried a bag yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llevó una bolsa ayer."
+            },
+            "text": {
+              "en": "She carried a bag yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llevó una bolsa ayer."
+            },
+            "text": {
+              "en": "You carried a bag yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevamos una bolsa ayer."
+            },
+            "text": {
+              "en": "We carried a bag yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llevasteis una bolsa ayer."
+            },
+            "text": {
+              "en": "You carried a bag yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevaron una bolsa ayer."
+            },
+            "text": {
+              "en": "They carried a bag yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevaron una bolsa ayer."
+            },
+            "text": {
+              "en": "You carried a bag yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevaré una bolsa mañana."
+            },
+            "text": {
+              "en": "I will carry a bag tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevarás una bolsa mañana."
+            },
+            "text": {
+              "en": "You will carry a bag tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llevará una bolsa mañana."
+            },
+            "text": {
+              "en": "He will carry a bag tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llevará una bolsa mañana."
+            },
+            "text": {
+              "en": "She will carry a bag tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llevará una bolsa mañana."
+            },
+            "text": {
+              "en": "You will carry a bag tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevaremos una bolsa mañana."
+            },
+            "text": {
+              "en": "We will carry a bag tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llevaréis una bolsa mañana."
+            },
+            "text": {
+              "en": "You will carry a bag tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevarán una bolsa mañana."
+            },
+            "text": {
+              "en": "They will carry a bag tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevarán una bolsa mañana."
+            },
+            "text": {
+              "en": "You will carry a bag tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

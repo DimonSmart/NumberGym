@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "take_item",
+    "meaning": {
+      "en": {
+        "short": "to take the item",
+        "description": "Practice to take the item in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tomar el objeto",
+        "description": "Practicar tomar el objeto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tomo el objeto."
+            },
+            "text": {
+              "en": "I take the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tomas el objeto."
+            },
+            "text": {
+              "en": "You take the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él toma el objeto."
+            },
+            "text": {
+              "en": "He takes the item."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella toma el objeto."
+            },
+            "text": {
+              "en": "She takes the item."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted toma el objeto."
+            },
+            "text": {
+              "en": "You take the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tomamos el objeto."
+            },
+            "text": {
+              "en": "We take the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tomáis el objeto."
+            },
+            "text": {
+              "en": "You take the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos toman el objeto."
+            },
+            "text": {
+              "en": "They take the item."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes toman el objeto."
+            },
+            "text": {
+              "en": "You take the item."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tomé el objeto ayer."
+            },
+            "text": {
+              "en": "I took the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tomaste el objeto ayer."
+            },
+            "text": {
+              "en": "You took the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tomó el objeto ayer."
+            },
+            "text": {
+              "en": "He took the item yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tomó el objeto ayer."
+            },
+            "text": {
+              "en": "She took the item yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tomó el objeto ayer."
+            },
+            "text": {
+              "en": "You took the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tomamos el objeto ayer."
+            },
+            "text": {
+              "en": "We took the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tomasteis el objeto ayer."
+            },
+            "text": {
+              "en": "You took the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tomaron el objeto ayer."
+            },
+            "text": {
+              "en": "They took the item yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tomaron el objeto ayer."
+            },
+            "text": {
+              "en": "You took the item yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tomaré el objeto mañana."
+            },
+            "text": {
+              "en": "I will take the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tomarás el objeto mañana."
+            },
+            "text": {
+              "en": "You will take the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tomará el objeto mañana."
+            },
+            "text": {
+              "en": "He will take the item tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tomará el objeto mañana."
+            },
+            "text": {
+              "en": "She will take the item tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tomará el objeto mañana."
+            },
+            "text": {
+              "en": "You will take the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tomaremos el objeto mañana."
+            },
+            "text": {
+              "en": "We will take the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tomaréis el objeto mañana."
+            },
+            "text": {
+              "en": "You will take the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tomarán el objeto mañana."
+            },
+            "text": {
+              "en": "They will take the item tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tomarán el objeto mañana."
+            },
+            "text": {
+              "en": "You will take the item tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

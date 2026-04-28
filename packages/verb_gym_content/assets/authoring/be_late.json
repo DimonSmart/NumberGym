@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "be_late",
+    "meaning": {
+      "en": {
+        "short": "to be late",
+        "description": "Practice to be late in present, past, and future sentences."
+      },
+      "es": {
+        "short": "llegar tarde",
+        "description": "Practicar llegar tarde en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llego tarde."
+            },
+            "text": {
+              "en": "I am late."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegas tarde."
+            },
+            "text": {
+              "en": "You are late."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llega tarde."
+            },
+            "text": {
+              "en": "He is late."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llega tarde."
+            },
+            "text": {
+              "en": "She is late."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llega tarde."
+            },
+            "text": {
+              "en": "You are late."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegamos tarde."
+            },
+            "text": {
+              "en": "We are late."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegáis tarde."
+            },
+            "text": {
+              "en": "You are late."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegan tarde."
+            },
+            "text": {
+              "en": "They are late."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegan tarde."
+            },
+            "text": {
+              "en": "You are late."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llegué tarde ayer."
+            },
+            "text": {
+              "en": "I was late yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegaste tarde ayer."
+            },
+            "text": {
+              "en": "You were late yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llegó tarde ayer."
+            },
+            "text": {
+              "en": "He was late yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llegó tarde ayer."
+            },
+            "text": {
+              "en": "She was late yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llegó tarde ayer."
+            },
+            "text": {
+              "en": "You were late yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegamos tarde ayer."
+            },
+            "text": {
+              "en": "We were late yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegasteis tarde ayer."
+            },
+            "text": {
+              "en": "You were late yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegaron tarde ayer."
+            },
+            "text": {
+              "en": "They were late yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegaron tarde ayer."
+            },
+            "text": {
+              "en": "You were late yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llegaré tarde mañana."
+            },
+            "text": {
+              "en": "I will be late tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llegarás tarde mañana."
+            },
+            "text": {
+              "en": "You will be late tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llegará tarde mañana."
+            },
+            "text": {
+              "en": "He will be late tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llegará tarde mañana."
+            },
+            "text": {
+              "en": "She will be late tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llegará tarde mañana."
+            },
+            "text": {
+              "en": "You will be late tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llegaremos tarde mañana."
+            },
+            "text": {
+              "en": "We will be late tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llegaréis tarde mañana."
+            },
+            "text": {
+              "en": "You will be late tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llegarán tarde mañana."
+            },
+            "text": {
+              "en": "They will be late tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llegarán tarde mañana."
+            },
+            "text": {
+              "en": "You will be late tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

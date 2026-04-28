@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "feel_bad",
+    "meaning": {
+      "en": {
+        "short": "to feel bad",
+        "description": "Practice to feel bad in present, past, and future sentences."
+      },
+      "es": {
+        "short": "sentirse mal",
+        "description": "Practicar sentirse mal en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me siento mal."
+            },
+            "text": {
+              "en": "I feel bad."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sientes mal."
+            },
+            "text": {
+              "en": "You feel bad."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se siente mal."
+            },
+            "text": {
+              "en": "He feels bad."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se siente mal."
+            },
+            "text": {
+              "en": "She feels bad."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se siente mal."
+            },
+            "text": {
+              "en": "You feel bad."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentimos mal."
+            },
+            "text": {
+              "en": "We feel bad."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentís mal."
+            },
+            "text": {
+              "en": "You feel bad."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sienten mal."
+            },
+            "text": {
+              "en": "They feel bad."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sienten mal."
+            },
+            "text": {
+              "en": "You feel bad."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me sentí mal ayer."
+            },
+            "text": {
+              "en": "I felt bad yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentiste mal ayer."
+            },
+            "text": {
+              "en": "You felt bad yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sintió mal ayer."
+            },
+            "text": {
+              "en": "He felt bad yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sintió mal ayer."
+            },
+            "text": {
+              "en": "She felt bad yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sintió mal ayer."
+            },
+            "text": {
+              "en": "You felt bad yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentimos mal ayer."
+            },
+            "text": {
+              "en": "We felt bad yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentisteis mal ayer."
+            },
+            "text": {
+              "en": "You felt bad yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sintieron mal ayer."
+            },
+            "text": {
+              "en": "They felt bad yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sintieron mal ayer."
+            },
+            "text": {
+              "en": "You felt bad yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me sentiré mal mañana."
+            },
+            "text": {
+              "en": "I will feel bad tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentirás mal mañana."
+            },
+            "text": {
+              "en": "You will feel bad tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sentirá mal mañana."
+            },
+            "text": {
+              "en": "He will feel bad tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sentirá mal mañana."
+            },
+            "text": {
+              "en": "She will feel bad tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sentirá mal mañana."
+            },
+            "text": {
+              "en": "You will feel bad tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentiremos mal mañana."
+            },
+            "text": {
+              "en": "We will feel bad tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentiréis mal mañana."
+            },
+            "text": {
+              "en": "You will feel bad tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sentirán mal mañana."
+            },
+            "text": {
+              "en": "They will feel bad tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sentirán mal mañana."
+            },
+            "text": {
+              "en": "You will feel bad tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

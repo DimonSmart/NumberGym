@@ -1,9 +1,22 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainer_core/trainer_core.dart';
 import 'package:verb_gym_content/verb_gym_content.dart';
 
 void main() {
-  final definition = buildVerbGymAppDefinition(config: _config);
+  late TrainingAppDefinition definition;
+
+  setUpAll(() async {
+    final runtimeCatalog = await VerbAuthoringAssetLoader(
+      bundle: _FileAssetBundle(_authoringAssetDirectory()),
+    ).loadRuntimeCatalog();
+    definition = buildVerbGymAppDefinition(
+      config: _config,
+      runtimeCatalog: runtimeCatalog,
+    );
+  });
 
   test('uses compact concept grid statistics display', () {
     expect(
@@ -56,21 +69,21 @@ void main() {
       baseLanguage: LearningLanguage.english,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.presentIndicative,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
 
     expect(card.id.moduleId, 'verb_gym');
-    expect(card.displayText, 'I am hungry.');
-    expect(card.promptText, 'Yo tengo hambre.');
+    expect(card.displayText, 'I eat a meal.');
+    expect(card.promptText, 'Yo como una comida.');
     expect(
       card.acceptedAnswers,
-      containsAll(<String>['Yo tengo hambre.', 'Yo tengo hambre']),
+      containsAll(<String>['Yo como una comida.', 'Yo como una comida']),
     );
-    expect(card.celebrationText, 'I am hungry. -> Yo tengo hambre.');
+    expect(card.celebrationText, 'I eat a meal. -> Yo como una comida.');
     expect(card.concept, isNotNull);
-    expect(card.concept!.id, 'be_hungry');
-    expect(card.concept!.learningLabel, 'tener hambre');
-    expect(card.concept!.baseLabel, 'to be hungry');
+    expect(card.concept!.id, 'eat_meal');
+    expect(card.concept!.learningLabel, 'comer una comida');
+    expect(card.concept!.baseLabel, 'to eat a meal');
   });
 
   test('English cards reverse the prompt and answer languages', () {
@@ -79,11 +92,11 @@ void main() {
       baseLanguage: LearningLanguage.spanish,
       language: LearningLanguage.english,
       familyId: VerbTenseIds.presentIndicative,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
 
-    expect(card.displayText, 'Yo tengo hambre.');
-    expect(card.promptText, 'I am hungry.');
+    expect(card.displayText, 'Yo como una comida.');
+    expect(card.promptText, 'I eat a meal.');
   });
 
   test('same base and learning language is allowed', () {
@@ -92,11 +105,11 @@ void main() {
       baseLanguage: LearningLanguage.spanish,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.presentIndicative,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
 
-    expect(card.displayText, 'Yo tengo hambre.');
-    expect(card.promptText, 'Yo tengo hambre.');
+    expect(card.displayText, 'Yo como una comida.');
+    expect(card.promptText, 'Yo como una comida.');
   });
 
   test('Spanish cards include simple past examples', () {
@@ -105,14 +118,17 @@ void main() {
       baseLanguage: LearningLanguage.english,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.preterite,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
 
-    expect(card.displayText, 'I was hungry yesterday.');
-    expect(card.promptText, 'Yo tuve hambre ayer.');
+    expect(card.displayText, 'I ate a meal yesterday.');
+    expect(card.promptText, 'Yo comí una comida ayer.');
     expect(
       card.acceptedAnswers,
-      containsAll(<String>['Yo tuve hambre ayer.', 'Yo tuve hambre ayer']),
+      containsAll(<String>[
+        'Yo comí una comida ayer.',
+        'Yo comí una comida ayer',
+      ]),
     );
   });
 
@@ -122,11 +138,11 @@ void main() {
       baseLanguage: LearningLanguage.english,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.futureSimple,
-      variantId: 'go_to_place::I',
+      variantId: 'travel_to_city::I',
     );
 
-    expect(card.displayText, 'I will go to the park tomorrow.');
-    expect(card.promptText, 'Yo iré al parque mañana.');
+    expect(card.displayText, 'I will travel to the city tomorrow.');
+    expect(card.promptText, 'Yo viajaré a la ciudad mañana.');
   });
 
   test('roles remain card variants instead of separate families', () {
@@ -142,9 +158,9 @@ void main() {
       VerbTenseIds.preterite,
       VerbTenseIds.futureSimple,
     });
-    expect(variantIds, contains('be_hungry::I'));
-    expect(variantIds, contains('be_hungry::You'));
-    expect(variantIds, contains('be_hungry::YouPluralFormal'));
+    expect(variantIds, contains('eat_meal::I'));
+    expect(variantIds, contains('eat_meal::You'));
+    expect(variantIds, contains('eat_meal::YouPluralFormal'));
   });
 
   test('answer options prefer the same tense and role', () {
@@ -153,7 +169,7 @@ void main() {
       baseLanguage: LearningLanguage.english,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.presentIndicative,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
 
     final options = card.chooseFromPrompt!.options;
@@ -169,7 +185,7 @@ void main() {
       baseLanguage: LearningLanguage.english,
       language: LearningLanguage.spanish,
       familyId: VerbTenseIds.presentIndicative,
-      variantId: 'be_hungry::I',
+      variantId: 'eat_meal::I',
     );
     final matcher =
         AnswerMatcher(
@@ -181,9 +197,50 @@ void main() {
           promptAliases: card.matcherConfig.promptAliases,
         );
 
-    expect(matcher.isAcceptedAnswer('Yo tengo hambre.'), isTrue);
-    expect(matcher.isAcceptedAnswer('Yo tengo hambre'), isTrue);
+    expect(matcher.isAcceptedAnswer('Yo como una comida.'), isTrue);
+    expect(matcher.isAcceptedAnswer('Yo como una comida'), isTrue);
   });
+}
+
+Directory _authoringAssetDirectory() {
+  var directory = Directory.current;
+  while (true) {
+    final authoringDirectory = directory.uri
+        .resolve('packages/verb_gym_content/assets/authoring/')
+        .toFilePath();
+    if (Directory(authoringDirectory).existsSync()) {
+      return Directory(authoringDirectory);
+    }
+
+    final parent = directory.parent;
+    if (parent.path == directory.path) {
+      throw StateError(
+        'Could not find workspace root from ${Directory.current}',
+      );
+    }
+    directory = parent;
+  }
+}
+
+class _FileAssetBundle extends CachingAssetBundle {
+  _FileAssetBundle(this.directory);
+
+  final Directory directory;
+
+  @override
+  Future<ByteData> load(String key) {
+    throw UnimplementedError('String assets only');
+  }
+
+  @override
+  Future<String> loadString(String key, {bool cache = true}) async {
+    final prefix = '$defaultVerbAuthoringAssetRoot/';
+    if (!key.startsWith(prefix)) {
+      throw ArgumentError.value(key, 'key', 'Unexpected asset key');
+    }
+    final fileName = key.substring(prefix.length);
+    return File.fromUri(directory.uri.resolve(fileName)).readAsString();
+  }
 }
 
 ExerciseCard _findCard({

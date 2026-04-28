@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "speak_spanish",
+    "meaning": {
+      "en": {
+        "short": "to speak Spanish",
+        "description": "Practice to speak Spanish in present, past, and future sentences."
+      },
+      "es": {
+        "short": "hablar español",
+        "description": "Practicar hablar español en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo hablo español."
+            },
+            "text": {
+              "en": "I speak Spanish."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú hablas español."
+            },
+            "text": {
+              "en": "You speak Spanish."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él habla español."
+            },
+            "text": {
+              "en": "He speaks Spanish."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella habla español."
+            },
+            "text": {
+              "en": "She speaks Spanish."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted habla español."
+            },
+            "text": {
+              "en": "You speak Spanish."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros hablamos español."
+            },
+            "text": {
+              "en": "We speak Spanish."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros habláis español."
+            },
+            "text": {
+              "en": "You speak Spanish."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos hablan español."
+            },
+            "text": {
+              "en": "They speak Spanish."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes hablan español."
+            },
+            "text": {
+              "en": "You speak Spanish."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo hablé español ayer."
+            },
+            "text": {
+              "en": "I spoke Spanish yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú hablaste español ayer."
+            },
+            "text": {
+              "en": "You spoke Spanish yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él habló español ayer."
+            },
+            "text": {
+              "en": "He spoke Spanish yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella habló español ayer."
+            },
+            "text": {
+              "en": "She spoke Spanish yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted habló español ayer."
+            },
+            "text": {
+              "en": "You spoke Spanish yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros hablamos español ayer."
+            },
+            "text": {
+              "en": "We spoke Spanish yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros hablasteis español ayer."
+            },
+            "text": {
+              "en": "You spoke Spanish yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos hablaron español ayer."
+            },
+            "text": {
+              "en": "They spoke Spanish yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes hablaron español ayer."
+            },
+            "text": {
+              "en": "You spoke Spanish yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo hablaré español mañana."
+            },
+            "text": {
+              "en": "I will speak Spanish tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú hablarás español mañana."
+            },
+            "text": {
+              "en": "You will speak Spanish tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él hablará español mañana."
+            },
+            "text": {
+              "en": "He will speak Spanish tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella hablará español mañana."
+            },
+            "text": {
+              "en": "She will speak Spanish tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted hablará español mañana."
+            },
+            "text": {
+              "en": "You will speak Spanish tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros hablaremos español mañana."
+            },
+            "text": {
+              "en": "We will speak Spanish tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros hablaréis español mañana."
+            },
+            "text": {
+              "en": "You will speak Spanish tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos hablarán español mañana."
+            },
+            "text": {
+              "en": "They will speak Spanish tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes hablarán español mañana."
+            },
+            "text": {
+              "en": "You will speak Spanish tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

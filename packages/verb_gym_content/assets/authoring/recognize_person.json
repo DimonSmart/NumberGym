@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "recognize_person",
+    "meaning": {
+      "en": {
+        "short": "to recognize a person",
+        "description": "Practice to recognize a person in present, past, and future sentences."
+      },
+      "es": {
+        "short": "reconocer a una persona",
+        "description": "Practicar reconocer a una persona en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo reconozco a una persona."
+            },
+            "text": {
+              "en": "I recognize a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú reconoces a una persona."
+            },
+            "text": {
+              "en": "You recognize a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él reconoce a una persona."
+            },
+            "text": {
+              "en": "He recognizes a person."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella reconoce a una persona."
+            },
+            "text": {
+              "en": "She recognizes a person."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted reconoce a una persona."
+            },
+            "text": {
+              "en": "You recognize a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros reconocemos a una persona."
+            },
+            "text": {
+              "en": "We recognize a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros reconocéis a una persona."
+            },
+            "text": {
+              "en": "You recognize a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos reconocen a una persona."
+            },
+            "text": {
+              "en": "They recognize a person."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes reconocen a una persona."
+            },
+            "text": {
+              "en": "You recognize a person."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo reconocí a una persona ayer."
+            },
+            "text": {
+              "en": "I recognized a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú reconociste a una persona ayer."
+            },
+            "text": {
+              "en": "You recognized a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él reconoció a una persona ayer."
+            },
+            "text": {
+              "en": "He recognized a person yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella reconoció a una persona ayer."
+            },
+            "text": {
+              "en": "She recognized a person yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted reconoció a una persona ayer."
+            },
+            "text": {
+              "en": "You recognized a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros reconocimos a una persona ayer."
+            },
+            "text": {
+              "en": "We recognized a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros reconocisteis a una persona ayer."
+            },
+            "text": {
+              "en": "You recognized a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos reconocieron a una persona ayer."
+            },
+            "text": {
+              "en": "They recognized a person yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes reconocieron a una persona ayer."
+            },
+            "text": {
+              "en": "You recognized a person yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo reconoceré a una persona mañana."
+            },
+            "text": {
+              "en": "I will recognize a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú reconocerás a una persona mañana."
+            },
+            "text": {
+              "en": "You will recognize a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él reconocerá a una persona mañana."
+            },
+            "text": {
+              "en": "He will recognize a person tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella reconocerá a una persona mañana."
+            },
+            "text": {
+              "en": "She will recognize a person tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted reconocerá a una persona mañana."
+            },
+            "text": {
+              "en": "You will recognize a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros reconoceremos a una persona mañana."
+            },
+            "text": {
+              "en": "We will recognize a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros reconoceréis a una persona mañana."
+            },
+            "text": {
+              "en": "You will recognize a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos reconocerán a una persona mañana."
+            },
+            "text": {
+              "en": "They will recognize a person tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes reconocerán a una persona mañana."
+            },
+            "text": {
+              "en": "You will recognize a person tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

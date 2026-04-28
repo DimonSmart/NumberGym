@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "visit_friend",
+    "meaning": {
+      "en": {
+        "short": "to visit a friend",
+        "description": "Practice to visit a friend in present, past, and future sentences."
+      },
+      "es": {
+        "short": "visitar a un amigo",
+        "description": "Practicar visitar a un amigo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo visito a un amigo."
+            },
+            "text": {
+              "en": "I visit a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú visitas a un amigo."
+            },
+            "text": {
+              "en": "You visit a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él visita a un amigo."
+            },
+            "text": {
+              "en": "He visits a friend."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella visita a un amigo."
+            },
+            "text": {
+              "en": "She visits a friend."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted visita a un amigo."
+            },
+            "text": {
+              "en": "You visit a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros visitamos a un amigo."
+            },
+            "text": {
+              "en": "We visit a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros visitáis a un amigo."
+            },
+            "text": {
+              "en": "You visit a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos visitan a un amigo."
+            },
+            "text": {
+              "en": "They visit a friend."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes visitan a un amigo."
+            },
+            "text": {
+              "en": "You visit a friend."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo visité a un amigo ayer."
+            },
+            "text": {
+              "en": "I visited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú visitaste a un amigo ayer."
+            },
+            "text": {
+              "en": "You visited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él visitó a un amigo ayer."
+            },
+            "text": {
+              "en": "He visited a friend yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella visitó a un amigo ayer."
+            },
+            "text": {
+              "en": "She visited a friend yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted visitó a un amigo ayer."
+            },
+            "text": {
+              "en": "You visited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros visitamos a un amigo ayer."
+            },
+            "text": {
+              "en": "We visited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros visitasteis a un amigo ayer."
+            },
+            "text": {
+              "en": "You visited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos visitaron a un amigo ayer."
+            },
+            "text": {
+              "en": "They visited a friend yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes visitaron a un amigo ayer."
+            },
+            "text": {
+              "en": "You visited a friend yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo visitaré a un amigo mañana."
+            },
+            "text": {
+              "en": "I will visit a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú visitarás a un amigo mañana."
+            },
+            "text": {
+              "en": "You will visit a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él visitará a un amigo mañana."
+            },
+            "text": {
+              "en": "He will visit a friend tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella visitará a un amigo mañana."
+            },
+            "text": {
+              "en": "She will visit a friend tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted visitará a un amigo mañana."
+            },
+            "text": {
+              "en": "You will visit a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros visitaremos a un amigo mañana."
+            },
+            "text": {
+              "en": "We will visit a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros visitaréis a un amigo mañana."
+            },
+            "text": {
+              "en": "You will visit a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos visitarán a un amigo mañana."
+            },
+            "text": {
+              "en": "They will visit a friend tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes visitarán a un amigo mañana."
+            },
+            "text": {
+              "en": "You will visit a friend tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

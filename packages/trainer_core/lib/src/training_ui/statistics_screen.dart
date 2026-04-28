@@ -128,13 +128,47 @@ class _FamilyProgressCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Card(
         child: concepts.isEmpty
-            ? ListTile(
-                title: Text(title),
-                subtitle: Text(
-                  _formatCreditedCorrect(
-                    creditedCorrectAttempts: family.creditedCorrectAttempts,
-                    requiredCorrectAttempts: family.requiredCorrectAttempts,
-                  ),
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${family.learnedCards}/${family.totalCards}',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: family.totalCards == 0
+                            ? 0
+                            : family.learnedCards / family.totalCards,
+                        minHeight: 6,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _FamilyCardProgressGrid(
+                      cards: family.cards,
+                      gridConfig: displayConfig.cardGridForFamily(
+                        family.family,
+                      ),
+                    ),
+                  ],
                 ),
               )
             : Padding(
@@ -160,6 +194,139 @@ class _FamilyProgressCard extends StatelessWidget {
               ),
       ),
     );
+  }
+}
+
+class _FamilyCardProgressGrid extends StatelessWidget {
+  const _FamilyCardProgressGrid({
+    required this.cards,
+    required this.gridConfig,
+  });
+
+  final List<TrainingStatsCardProgress> cards;
+  final StatisticsCardGridConfig gridConfig;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = _columnCount(
+          width: constraints.maxWidth,
+          gridConfig: gridConfig,
+        );
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: cards.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            mainAxisSpacing: 6,
+            crossAxisSpacing: 6,
+          ),
+          itemBuilder: (context, index) {
+            return _CompactCardTile(cardProgress: cards[index]);
+          },
+        );
+      },
+    );
+  }
+
+  int _columnCount({
+    required double width,
+    required StatisticsCardGridConfig gridConfig,
+  }) {
+    final maxColumns = gridConfig.maxColumns < 1 ? 1 : gridConfig.maxColumns;
+    final minTileWidth = gridConfig.minTileWidth <= 0
+        ? const StatisticsCardGridConfig().minTileWidth
+        : gridConfig.minTileWidth;
+    final columnsByWidth = (width / minTileWidth).floor();
+    final minColumns = maxColumns < 2 ? 1 : 2;
+    final columns = columnsByWidth.clamp(minColumns, maxColumns);
+    return columns.toInt();
+  }
+}
+
+class _CompactCardTile extends StatelessWidget {
+  const _CompactCardTile({required this.cardProgress});
+
+  final TrainingStatsCardProgress cardProgress;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final score = _formatCreditedCorrect(
+      creditedCorrectAttempts:
+          cardProgress.learningProgress.creditedCorrectAttempts,
+      requiredCorrectAttempts:
+          cardProgress.learningProgress.requiredCorrectAttempts,
+    );
+    final label = _cardDisplayTitle(cardProgress.card);
+    final backgroundColor = _cardProgressColor(theme.colorScheme, cardProgress);
+    final textColor =
+        ThemeData.estimateBrightnessForColor(backgroundColor) == Brightness.dark
+        ? Colors.white
+        : theme.colorScheme.onSurface;
+
+    return Tooltip(
+      message: '$label: $score',
+      child: Semantics(
+        label: '$label, $score',
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: cardProgress.learned
+                  ? theme.colorScheme.primary.withValues(alpha: 0.55)
+                  : theme.colorScheme.outlineVariant,
+            ),
+          ),
+          padding: const EdgeInsets.all(4),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  score,
+                  maxLines: 1,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: textColor.withValues(alpha: 0.78),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _cardProgressColor(
+    ColorScheme colorScheme,
+    TrainingStatsCardProgress cardProgress,
+  ) {
+    if (cardProgress.learned) {
+      return colorScheme.primaryContainer;
+    }
+    if (cardProgress.progress.totalAttempts == 0) {
+      return colorScheme.surfaceContainerHighest;
+    }
+    return Color.lerp(
+      colorScheme.tertiaryContainer,
+      colorScheme.primaryContainer,
+      cardProgress.learningProgress.progressValue,
+    )!;
   }
 }
 
@@ -646,6 +813,18 @@ String _cardTitle(ExerciseCard card) {
   final displayText = card.displayText.trim();
   if (displayText.isNotEmpty) {
     return displayText;
+  }
+  return card.id.variantId;
+}
+
+String _cardDisplayTitle(ExerciseCard card) {
+  final displayText = card.displayText.trim();
+  if (displayText.isNotEmpty) {
+    return displayText;
+  }
+  final promptText = card.promptText.trim();
+  if (promptText.isNotEmpty) {
+    return promptText;
   }
   return card.id.variantId;
 }

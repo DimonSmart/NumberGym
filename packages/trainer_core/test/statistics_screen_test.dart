@@ -30,6 +30,16 @@ const _longSpanishPrompt =
     'Estoy aquí con un libro muy grande en la mesa durante toda la mañana '
     'mientras practico español lentamente.';
 
+final _numberFamily = ExerciseFamily(
+  moduleId: 'number_stats_test',
+  id: 'base',
+  label: 'Base',
+  shortLabel: 'Base',
+  difficultyTier: ExerciseDifficultyTier.easy,
+  defaultDuration: const Duration(seconds: 15),
+  supportedModes: [ExerciseMode.chooseFromPrompt],
+);
+
 void main() {
   testWidgets('shows family title in learning and base languages', (
     tester,
@@ -121,6 +131,64 @@ void main() {
       expect(find.text('2/20'), findsWidgets);
     },
   );
+
+  testWidgets('shows per-card grid for families without concepts', (
+    tester,
+  ) async {
+    _mockBackgroundAsset();
+    final settingsRepository = FakeSettingsRepository(
+      language: LearningLanguage.english,
+    );
+    final progressRepository = InMemoryProgressRepository();
+    await progressRepository.save(
+      const ExerciseId(
+        moduleId: 'number_stats_test',
+        familyId: 'base',
+        variantId: '10',
+      ).storageKey,
+      const CardProgress(
+        learned: false,
+        clusters: <CardCluster>[
+          CardCluster(
+            lastAnswerAt: 1,
+            correctCount: 3,
+            wrongCount: 0,
+            skippedCount: 0,
+          ),
+        ],
+        learnedAt: 0,
+        firstAttemptAt: 1,
+        consecutiveCorrect: 3,
+      ),
+      language: LearningLanguage.english,
+    );
+    final statsLoader = TrainingStatsLoader(
+      progressRepository: progressRepository,
+      settingsRepository: settingsRepository,
+      catalog: ExerciseCatalog(modules: [_NumberStatsModule()]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatisticsScreen(
+          appDefinition: _numberAppDefinition,
+          statsLoader: statsLoader,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Base'), findsOneWidget);
+    expect(find.text('10'), findsOneWidget);
+    expect(find.text('11'), findsOneWidget);
+    expect(find.text('15'), findsOneWidget);
+    expect(find.text('3/20'), findsOneWidget);
+    expect(find.text('0/20'), findsWidgets);
+
+    final firstRowTop = tester.getTopLeft(find.text('10')).dy;
+    final sixthTileTop = tester.getTopLeft(find.text('15')).dy;
+    expect(sixthTileTop, greaterThan(firstRowTop));
+  });
 }
 
 void _mockBackgroundAsset() {
@@ -196,6 +264,59 @@ class _StatsTestModule implements TrainingModule {
   }
 }
 
+class _NumberStatsModule implements TrainingModule {
+  @override
+  String get moduleId => 'number_stats_test';
+
+  @override
+  String get displayName => 'Number stats test';
+
+  @override
+  bool supportsLanguage(LearningLanguage language) {
+    return language == LearningLanguage.english;
+  }
+
+  @override
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) {
+    return <ExerciseFamily>[_numberFamily];
+  }
+
+  @override
+  List<ExerciseCard> buildCards(LearningLanguage language) {
+    return <ExerciseCard>[
+      for (var value = 10; value <= 15; value += 1)
+        _numberCard(language: language, value: value, answer: '$value answer'),
+    ];
+  }
+
+  ExerciseCard _numberCard({
+    required LearningLanguage language,
+    required int value,
+    required String answer,
+  }) {
+    final id = ExerciseId(
+      moduleId: moduleId,
+      familyId: _numberFamily.id,
+      variantId: value.toString(),
+    );
+    final displayText = value.toString();
+    return ExerciseCard(
+      id: id,
+      family: _numberFamily,
+      language: language,
+      displayText: displayText,
+      promptText: displayText,
+      acceptedAnswers: <String>[displayText, answer],
+      celebrationText: '$displayText -> $answer',
+      chooseFromPrompt: ChoiceExerciseSpec(
+        prompt: displayText,
+        correctOption: answer,
+        options: <String>[answer, 'one', 'two', 'three'],
+      ),
+    );
+  }
+}
+
 final _appDefinition = TrainingAppDefinition(
   config: const AppConfig(
     appId: 'stats_test',
@@ -222,6 +343,34 @@ final _appDefinition = TrainingAppDefinition(
   catalog: ExerciseCatalog(modules: [_StatsTestModule()]),
   statisticsDisplay: const StatisticsDisplayConfig(
     conceptDisplayMode: StatisticsConceptDisplayMode.compactGrid,
+  ),
+);
+
+final _numberAppDefinition = TrainingAppDefinition(
+  config: const AppConfig(
+    appId: 'number_stats_test',
+    title: 'Number Stats Test',
+    homeTitle: 'Number Stats Test',
+    repositoryUrl: 'https://example.com/repo',
+    privacyPolicyUrl: 'https://example.com/privacy',
+    aboutTitle: 'About',
+    aboutBody: 'About body',
+    settingsBoxName: 'number_stats_test_settings',
+    progressBoxName: 'number_stats_test_progress',
+    heroAssetPath: 'assets/images/branding/wordmark.png',
+    mascotAssetPath: 'assets/images/app_icon.png',
+    languageSettingsMode: LanguageSettingsMode.learningLanguageOnly,
+    defaultBaseLanguage: LearningLanguage.english,
+    defaultLearningLanguage: LearningLanguage.english,
+  ),
+  supportedLanguages: const <LearningLanguage>[LearningLanguage.english],
+  profileOf: _profileOf,
+  tokenizerOf: (language) => GenericMatcherTokenizer(_normalize),
+  catalog: ExerciseCatalog(modules: [_NumberStatsModule()]),
+  statisticsDisplay: const StatisticsDisplayConfig(
+    cardGridByFamilyKey: <String, StatisticsCardGridConfig>{
+      'number_stats_test/base': StatisticsCardGridConfig(maxColumns: 5),
+    },
   ),
 );
 

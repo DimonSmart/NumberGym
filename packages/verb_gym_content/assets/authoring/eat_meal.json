@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "eat_meal",
+    "meaning": {
+      "en": {
+        "short": "to eat a meal",
+        "description": "Practice to eat a meal in present, past, and future sentences."
+      },
+      "es": {
+        "short": "comer una comida",
+        "description": "Practicar comer una comida en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo como una comida."
+            },
+            "text": {
+              "en": "I eat a meal."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú comes una comida."
+            },
+            "text": {
+              "en": "You eat a meal."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él come una comida."
+            },
+            "text": {
+              "en": "He eats a meal."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella come una comida."
+            },
+            "text": {
+              "en": "She eats a meal."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted come una comida."
+            },
+            "text": {
+              "en": "You eat a meal."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros comemos una comida."
+            },
+            "text": {
+              "en": "We eat a meal."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros coméis una comida."
+            },
+            "text": {
+              "en": "You eat a meal."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos comen una comida."
+            },
+            "text": {
+              "en": "They eat a meal."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes comen una comida."
+            },
+            "text": {
+              "en": "You eat a meal."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo comí una comida ayer."
+            },
+            "text": {
+              "en": "I ate a meal yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú comiste una comida ayer."
+            },
+            "text": {
+              "en": "You ate a meal yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él comió una comida ayer."
+            },
+            "text": {
+              "en": "He ate a meal yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella comió una comida ayer."
+            },
+            "text": {
+              "en": "She ate a meal yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted comió una comida ayer."
+            },
+            "text": {
+              "en": "You ate a meal yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros comimos una comida ayer."
+            },
+            "text": {
+              "en": "We ate a meal yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros comisteis una comida ayer."
+            },
+            "text": {
+              "en": "You ate a meal yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos comieron una comida ayer."
+            },
+            "text": {
+              "en": "They ate a meal yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes comieron una comida ayer."
+            },
+            "text": {
+              "en": "You ate a meal yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo comeré una comida mañana."
+            },
+            "text": {
+              "en": "I will eat a meal tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú comerás una comida mañana."
+            },
+            "text": {
+              "en": "You will eat a meal tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él comerá una comida mañana."
+            },
+            "text": {
+              "en": "He will eat a meal tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella comerá una comida mañana."
+            },
+            "text": {
+              "en": "She will eat a meal tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted comerá una comida mañana."
+            },
+            "text": {
+              "en": "You will eat a meal tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros comeremos una comida mañana."
+            },
+            "text": {
+              "en": "We will eat a meal tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros comeréis una comida mañana."
+            },
+            "text": {
+              "en": "You will eat a meal tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos comerán una comida mañana."
+            },
+            "text": {
+              "en": "They will eat a meal tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes comerán una comida mañana."
+            },
+            "text": {
+              "en": "You will eat a meal tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

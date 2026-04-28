@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "put_item",
+    "meaning": {
+      "en": {
+        "short": "to put the item down",
+        "description": "Practice to put the item down in present, past, and future sentences."
+      },
+      "es": {
+        "short": "poner el objeto",
+        "description": "Practicar poner el objeto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pongo el objeto."
+            },
+            "text": {
+              "en": "I put down the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pones el objeto."
+            },
+            "text": {
+              "en": "You put down the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pone el objeto."
+            },
+            "text": {
+              "en": "He puts down the item."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pone el objeto."
+            },
+            "text": {
+              "en": "She puts down the item."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pone el objeto."
+            },
+            "text": {
+              "en": "You put down the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros ponemos el objeto."
+            },
+            "text": {
+              "en": "We put down the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros ponéis el objeto."
+            },
+            "text": {
+              "en": "You put down the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos ponen el objeto."
+            },
+            "text": {
+              "en": "They put down the item."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes ponen el objeto."
+            },
+            "text": {
+              "en": "You put down the item."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo puse el objeto ayer."
+            },
+            "text": {
+              "en": "I put down the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pusiste el objeto ayer."
+            },
+            "text": {
+              "en": "You put down the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él puso el objeto ayer."
+            },
+            "text": {
+              "en": "He put down the item yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella puso el objeto ayer."
+            },
+            "text": {
+              "en": "She put down the item yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted puso el objeto ayer."
+            },
+            "text": {
+              "en": "You put down the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pusimos el objeto ayer."
+            },
+            "text": {
+              "en": "We put down the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pusisteis el objeto ayer."
+            },
+            "text": {
+              "en": "You put down the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pusieron el objeto ayer."
+            },
+            "text": {
+              "en": "They put down the item yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pusieron el objeto ayer."
+            },
+            "text": {
+              "en": "You put down the item yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pondré el objeto mañana."
+            },
+            "text": {
+              "en": "I will put down the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pondrás el objeto mañana."
+            },
+            "text": {
+              "en": "You will put down the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pondrá el objeto mañana."
+            },
+            "text": {
+              "en": "He will put down the item tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pondrá el objeto mañana."
+            },
+            "text": {
+              "en": "She will put down the item tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pondrá el objeto mañana."
+            },
+            "text": {
+              "en": "You will put down the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pondremos el objeto mañana."
+            },
+            "text": {
+              "en": "We will put down the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pondréis el objeto mañana."
+            },
+            "text": {
+              "en": "You will put down the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pondrán el objeto mañana."
+            },
+            "text": {
+              "en": "They will put down the item tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pondrán el objeto mañana."
+            },
+            "text": {
+              "en": "You will put down the item tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "know_person",
+    "meaning": {
+      "en": {
+        "short": "to know a person",
+        "description": "Practice to know a person in present, past, and future sentences."
+      },
+      "es": {
+        "short": "conocer a una persona",
+        "description": "Practicar conocer a una persona en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conozco a una persona."
+            },
+            "text": {
+              "en": "I know a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú conoces a una persona."
+            },
+            "text": {
+              "en": "You know a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él conoce a una persona."
+            },
+            "text": {
+              "en": "He knows a person."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella conoce a una persona."
+            },
+            "text": {
+              "en": "She knows a person."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted conoce a una persona."
+            },
+            "text": {
+              "en": "You know a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros conocemos a una persona."
+            },
+            "text": {
+              "en": "We know a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros conocéis a una persona."
+            },
+            "text": {
+              "en": "You know a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos conocen a una persona."
+            },
+            "text": {
+              "en": "They know a person."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes conocen a una persona."
+            },
+            "text": {
+              "en": "You know a person."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conocí a una persona ayer."
+            },
+            "text": {
+              "en": "I knew a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú conociste a una persona ayer."
+            },
+            "text": {
+              "en": "You knew a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él conoció a una persona ayer."
+            },
+            "text": {
+              "en": "He knew a person yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella conoció a una persona ayer."
+            },
+            "text": {
+              "en": "She knew a person yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted conoció a una persona ayer."
+            },
+            "text": {
+              "en": "You knew a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros conocimos a una persona ayer."
+            },
+            "text": {
+              "en": "We knew a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros conocisteis a una persona ayer."
+            },
+            "text": {
+              "en": "You knew a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos conocieron a una persona ayer."
+            },
+            "text": {
+              "en": "They knew a person yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes conocieron a una persona ayer."
+            },
+            "text": {
+              "en": "You knew a person yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conoceré a una persona mañana."
+            },
+            "text": {
+              "en": "I will know a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú conocerás a una persona mañana."
+            },
+            "text": {
+              "en": "You will know a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él conocerá a una persona mañana."
+            },
+            "text": {
+              "en": "He will know a person tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella conocerá a una persona mañana."
+            },
+            "text": {
+              "en": "She will know a person tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted conocerá a una persona mañana."
+            },
+            "text": {
+              "en": "You will know a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros conoceremos a una persona mañana."
+            },
+            "text": {
+              "en": "We will know a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros conoceréis a una persona mañana."
+            },
+            "text": {
+              "en": "You will know a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos conocerán a una persona mañana."
+            },
+            "text": {
+              "en": "They will know a person tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes conocerán a una persona mañana."
+            },
+            "text": {
+              "en": "You will know a person tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

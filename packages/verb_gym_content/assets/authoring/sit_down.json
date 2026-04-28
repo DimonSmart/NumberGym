@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "sit_down",
+    "meaning": {
+      "en": {
+        "short": "to sit down",
+        "description": "Practice to sit down in present, past, and future sentences."
+      },
+      "es": {
+        "short": "sentarse",
+        "description": "Practicar sentarse en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me siento."
+            },
+            "text": {
+              "en": "I sit down."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sientas."
+            },
+            "text": {
+              "en": "You sit down."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sienta."
+            },
+            "text": {
+              "en": "He sits down."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sienta."
+            },
+            "text": {
+              "en": "She sits down."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sienta."
+            },
+            "text": {
+              "en": "You sit down."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentamos."
+            },
+            "text": {
+              "en": "We sit down."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentáis."
+            },
+            "text": {
+              "en": "You sit down."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sientan."
+            },
+            "text": {
+              "en": "They sit down."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sientan."
+            },
+            "text": {
+              "en": "You sit down."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me senté ayer."
+            },
+            "text": {
+              "en": "I sat down yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentaste ayer."
+            },
+            "text": {
+              "en": "You sat down yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sentó ayer."
+            },
+            "text": {
+              "en": "He sat down yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sentó ayer."
+            },
+            "text": {
+              "en": "She sat down yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sentó ayer."
+            },
+            "text": {
+              "en": "You sat down yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentamos ayer."
+            },
+            "text": {
+              "en": "We sat down yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentasteis ayer."
+            },
+            "text": {
+              "en": "You sat down yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sentaron ayer."
+            },
+            "text": {
+              "en": "They sat down yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sentaron ayer."
+            },
+            "text": {
+              "en": "You sat down yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me sentaré mañana."
+            },
+            "text": {
+              "en": "I will sit down tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te sentarás mañana."
+            },
+            "text": {
+              "en": "You will sit down tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se sentará mañana."
+            },
+            "text": {
+              "en": "He will sit down tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se sentará mañana."
+            },
+            "text": {
+              "en": "She will sit down tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se sentará mañana."
+            },
+            "text": {
+              "en": "You will sit down tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos sentaremos mañana."
+            },
+            "text": {
+              "en": "We will sit down tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os sentaréis mañana."
+            },
+            "text": {
+              "en": "You will sit down tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se sentarán mañana."
+            },
+            "text": {
+              "en": "They will sit down tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se sentarán mañana."
+            },
+            "text": {
+              "en": "You will sit down tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

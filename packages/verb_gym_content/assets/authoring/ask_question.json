@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "ask_question",
+    "meaning": {
+      "en": {
+        "short": "to ask a question",
+        "description": "Practice to ask a question in present, past, and future sentences."
+      },
+      "es": {
+        "short": "preguntar una pregunta",
+        "description": "Practicar preguntar una pregunta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pregunto una pregunta."
+            },
+            "text": {
+              "en": "I ask a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preguntas una pregunta."
+            },
+            "text": {
+              "en": "You ask a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pregunta una pregunta."
+            },
+            "text": {
+              "en": "He asks a question."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pregunta una pregunta."
+            },
+            "text": {
+              "en": "She asks a question."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pregunta una pregunta."
+            },
+            "text": {
+              "en": "You ask a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preguntamos una pregunta."
+            },
+            "text": {
+              "en": "We ask a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preguntáis una pregunta."
+            },
+            "text": {
+              "en": "You ask a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos preguntan una pregunta."
+            },
+            "text": {
+              "en": "They ask a question."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes preguntan una pregunta."
+            },
+            "text": {
+              "en": "You ask a question."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pregunté una pregunta ayer."
+            },
+            "text": {
+              "en": "I asked a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preguntaste una pregunta ayer."
+            },
+            "text": {
+              "en": "You asked a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él preguntó una pregunta ayer."
+            },
+            "text": {
+              "en": "He asked a question yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella preguntó una pregunta ayer."
+            },
+            "text": {
+              "en": "She asked a question yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted preguntó una pregunta ayer."
+            },
+            "text": {
+              "en": "You asked a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preguntamos una pregunta ayer."
+            },
+            "text": {
+              "en": "We asked a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preguntasteis una pregunta ayer."
+            },
+            "text": {
+              "en": "You asked a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos preguntaron una pregunta ayer."
+            },
+            "text": {
+              "en": "They asked a question yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes preguntaron una pregunta ayer."
+            },
+            "text": {
+              "en": "You asked a question yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo preguntaré una pregunta mañana."
+            },
+            "text": {
+              "en": "I will ask a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preguntarás una pregunta mañana."
+            },
+            "text": {
+              "en": "You will ask a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él preguntará una pregunta mañana."
+            },
+            "text": {
+              "en": "He will ask a question tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella preguntará una pregunta mañana."
+            },
+            "text": {
+              "en": "She will ask a question tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted preguntará una pregunta mañana."
+            },
+            "text": {
+              "en": "You will ask a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preguntaremos una pregunta mañana."
+            },
+            "text": {
+              "en": "We will ask a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preguntaréis una pregunta mañana."
+            },
+            "text": {
+              "en": "You will ask a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos preguntarán una pregunta mañana."
+            },
+            "text": {
+              "en": "They will ask a question tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes preguntarán una pregunta mañana."
+            },
+            "text": {
+              "en": "You will ask a question tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

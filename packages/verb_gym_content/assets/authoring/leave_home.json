@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "leave_home",
+    "meaning": {
+      "en": {
+        "short": "to leave home",
+        "description": "Practice to leave home in present, past, and future sentences."
+      },
+      "es": {
+        "short": "salir de casa",
+        "description": "Practicar salir de casa en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo salgo de casa."
+            },
+            "text": {
+              "en": "I leave home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú sales de casa."
+            },
+            "text": {
+              "en": "You leave home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él sale de casa."
+            },
+            "text": {
+              "en": "He leaves home."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella sale de casa."
+            },
+            "text": {
+              "en": "She leaves home."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted sale de casa."
+            },
+            "text": {
+              "en": "You leave home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros salimos de casa."
+            },
+            "text": {
+              "en": "We leave home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros salís de casa."
+            },
+            "text": {
+              "en": "You leave home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos salen de casa."
+            },
+            "text": {
+              "en": "They leave home."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes salen de casa."
+            },
+            "text": {
+              "en": "You leave home."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo salí de casa ayer."
+            },
+            "text": {
+              "en": "I left home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú saliste de casa ayer."
+            },
+            "text": {
+              "en": "You left home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él salió de casa ayer."
+            },
+            "text": {
+              "en": "He left home yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella salió de casa ayer."
+            },
+            "text": {
+              "en": "She left home yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted salió de casa ayer."
+            },
+            "text": {
+              "en": "You left home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros salimos de casa ayer."
+            },
+            "text": {
+              "en": "We left home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros salisteis de casa ayer."
+            },
+            "text": {
+              "en": "You left home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos salieron de casa ayer."
+            },
+            "text": {
+              "en": "They left home yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes salieron de casa ayer."
+            },
+            "text": {
+              "en": "You left home yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo saldré de casa mañana."
+            },
+            "text": {
+              "en": "I will leave home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú saldrás de casa mañana."
+            },
+            "text": {
+              "en": "You will leave home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él saldrá de casa mañana."
+            },
+            "text": {
+              "en": "He will leave home tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella saldrá de casa mañana."
+            },
+            "text": {
+              "en": "She will leave home tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted saldrá de casa mañana."
+            },
+            "text": {
+              "en": "You will leave home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros saldremos de casa mañana."
+            },
+            "text": {
+              "en": "We will leave home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros saldréis de casa mañana."
+            },
+            "text": {
+              "en": "You will leave home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos saldrán de casa mañana."
+            },
+            "text": {
+              "en": "They will leave home tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes saldrán de casa mañana."
+            },
+            "text": {
+              "en": "You will leave home tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

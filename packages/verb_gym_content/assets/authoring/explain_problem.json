@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "explain_problem",
+    "meaning": {
+      "en": {
+        "short": "to explain a problem",
+        "description": "Practice to explain a problem in present, past, and future sentences."
+      },
+      "es": {
+        "short": "explicar un problema",
+        "description": "Practicar explicar un problema en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo explico un problema."
+            },
+            "text": {
+              "en": "I explain a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú explicas un problema."
+            },
+            "text": {
+              "en": "You explain a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él explica un problema."
+            },
+            "text": {
+              "en": "He explains a problem."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella explica un problema."
+            },
+            "text": {
+              "en": "She explains a problem."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted explica un problema."
+            },
+            "text": {
+              "en": "You explain a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros explicamos un problema."
+            },
+            "text": {
+              "en": "We explain a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros explicáis un problema."
+            },
+            "text": {
+              "en": "You explain a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos explican un problema."
+            },
+            "text": {
+              "en": "They explain a problem."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes explican un problema."
+            },
+            "text": {
+              "en": "You explain a problem."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo expliqué un problema ayer."
+            },
+            "text": {
+              "en": "I explained a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú explicaste un problema ayer."
+            },
+            "text": {
+              "en": "You explained a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él explicó un problema ayer."
+            },
+            "text": {
+              "en": "He explained a problem yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella explicó un problema ayer."
+            },
+            "text": {
+              "en": "She explained a problem yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted explicó un problema ayer."
+            },
+            "text": {
+              "en": "You explained a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros explicamos un problema ayer."
+            },
+            "text": {
+              "en": "We explained a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros explicasteis un problema ayer."
+            },
+            "text": {
+              "en": "You explained a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos explicaron un problema ayer."
+            },
+            "text": {
+              "en": "They explained a problem yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes explicaron un problema ayer."
+            },
+            "text": {
+              "en": "You explained a problem yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo explicaré un problema mañana."
+            },
+            "text": {
+              "en": "I will explain a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú explicarás un problema mañana."
+            },
+            "text": {
+              "en": "You will explain a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él explicará un problema mañana."
+            },
+            "text": {
+              "en": "He will explain a problem tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella explicará un problema mañana."
+            },
+            "text": {
+              "en": "She will explain a problem tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted explicará un problema mañana."
+            },
+            "text": {
+              "en": "You will explain a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros explicaremos un problema mañana."
+            },
+            "text": {
+              "en": "We will explain a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros explicaréis un problema mañana."
+            },
+            "text": {
+              "en": "You will explain a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos explicarán un problema mañana."
+            },
+            "text": {
+              "en": "They will explain a problem tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes explicarán un problema mañana."
+            },
+            "text": {
+              "en": "You will explain a problem tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

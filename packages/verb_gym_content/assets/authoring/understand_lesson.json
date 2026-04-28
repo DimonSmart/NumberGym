@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "understand_lesson",
+    "meaning": {
+      "en": {
+        "short": "to understand the lesson",
+        "description": "Practice to understand the lesson in present, past, and future sentences."
+      },
+      "es": {
+        "short": "entender la lección",
+        "description": "Practicar entender la lección en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entiendo la lección."
+            },
+            "text": {
+              "en": "I understand the lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entiendes la lección."
+            },
+            "text": {
+              "en": "You understand the lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entiende la lección."
+            },
+            "text": {
+              "en": "He understands the lesson."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entiende la lección."
+            },
+            "text": {
+              "en": "She understands the lesson."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entiende la lección."
+            },
+            "text": {
+              "en": "You understand the lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entendemos la lección."
+            },
+            "text": {
+              "en": "We understand the lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entendéis la lección."
+            },
+            "text": {
+              "en": "You understand the lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entienden la lección."
+            },
+            "text": {
+              "en": "They understand the lesson."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entienden la lección."
+            },
+            "text": {
+              "en": "You understand the lesson."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entendí la lección ayer."
+            },
+            "text": {
+              "en": "I understood the lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entendiste la lección ayer."
+            },
+            "text": {
+              "en": "You understood the lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entendió la lección ayer."
+            },
+            "text": {
+              "en": "He understood the lesson yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entendió la lección ayer."
+            },
+            "text": {
+              "en": "She understood the lesson yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entendió la lección ayer."
+            },
+            "text": {
+              "en": "You understood the lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entendimos la lección ayer."
+            },
+            "text": {
+              "en": "We understood the lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entendisteis la lección ayer."
+            },
+            "text": {
+              "en": "You understood the lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entendieron la lección ayer."
+            },
+            "text": {
+              "en": "They understood the lesson yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entendieron la lección ayer."
+            },
+            "text": {
+              "en": "You understood the lesson yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entenderé la lección mañana."
+            },
+            "text": {
+              "en": "I will understand the lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entenderás la lección mañana."
+            },
+            "text": {
+              "en": "You will understand the lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entenderá la lección mañana."
+            },
+            "text": {
+              "en": "He will understand the lesson tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entenderá la lección mañana."
+            },
+            "text": {
+              "en": "She will understand the lesson tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entenderá la lección mañana."
+            },
+            "text": {
+              "en": "You will understand the lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entenderemos la lección mañana."
+            },
+            "text": {
+              "en": "We will understand the lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entenderéis la lección mañana."
+            },
+            "text": {
+              "en": "You will understand the lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entenderán la lección mañana."
+            },
+            "text": {
+              "en": "They will understand the lesson tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entenderán la lección mañana."
+            },
+            "text": {
+              "en": "You will understand the lesson tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

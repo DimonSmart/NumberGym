@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "use_phone",
+    "meaning": {
+      "en": {
+        "short": "to use the phone",
+        "description": "Practice to use the phone in present, past, and future sentences."
+      },
+      "es": {
+        "short": "usar el teléfono",
+        "description": "Practicar usar el teléfono en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo uso el teléfono."
+            },
+            "text": {
+              "en": "I use the phone."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú usas el teléfono."
+            },
+            "text": {
+              "en": "You use the phone."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él usa el teléfono."
+            },
+            "text": {
+              "en": "He uses the phone."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella usa el teléfono."
+            },
+            "text": {
+              "en": "She uses the phone."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted usa el teléfono."
+            },
+            "text": {
+              "en": "You use the phone."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros usamos el teléfono."
+            },
+            "text": {
+              "en": "We use the phone."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros usáis el teléfono."
+            },
+            "text": {
+              "en": "You use the phone."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos usan el teléfono."
+            },
+            "text": {
+              "en": "They use the phone."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes usan el teléfono."
+            },
+            "text": {
+              "en": "You use the phone."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo usé el teléfono ayer."
+            },
+            "text": {
+              "en": "I used the phone yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú usaste el teléfono ayer."
+            },
+            "text": {
+              "en": "You used the phone yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él usó el teléfono ayer."
+            },
+            "text": {
+              "en": "He used the phone yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella usó el teléfono ayer."
+            },
+            "text": {
+              "en": "She used the phone yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted usó el teléfono ayer."
+            },
+            "text": {
+              "en": "You used the phone yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros usamos el teléfono ayer."
+            },
+            "text": {
+              "en": "We used the phone yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros usasteis el teléfono ayer."
+            },
+            "text": {
+              "en": "You used the phone yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos usaron el teléfono ayer."
+            },
+            "text": {
+              "en": "They used the phone yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes usaron el teléfono ayer."
+            },
+            "text": {
+              "en": "You used the phone yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo usaré el teléfono mañana."
+            },
+            "text": {
+              "en": "I will use the phone tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú usarás el teléfono mañana."
+            },
+            "text": {
+              "en": "You will use the phone tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él usará el teléfono mañana."
+            },
+            "text": {
+              "en": "He will use the phone tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella usará el teléfono mañana."
+            },
+            "text": {
+              "en": "She will use the phone tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted usará el teléfono mañana."
+            },
+            "text": {
+              "en": "You will use the phone tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros usaremos el teléfono mañana."
+            },
+            "text": {
+              "en": "We will use the phone tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros usaréis el teléfono mañana."
+            },
+            "text": {
+              "en": "You will use the phone tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos usarán el teléfono mañana."
+            },
+            "text": {
+              "en": "They will use the phone tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes usarán el teléfono mañana."
+            },
+            "text": {
+              "en": "You will use the phone tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

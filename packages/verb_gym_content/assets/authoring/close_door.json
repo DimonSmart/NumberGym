@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "close_door",
+    "meaning": {
+      "en": {
+        "short": "to close the door",
+        "description": "Practice to close the door in present, past, and future sentences."
+      },
+      "es": {
+        "short": "cerrar la puerta",
+        "description": "Practicar cerrar la puerta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cierro la puerta."
+            },
+            "text": {
+              "en": "I close the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cierras la puerta."
+            },
+            "text": {
+              "en": "You close the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cierra la puerta."
+            },
+            "text": {
+              "en": "He closes the door."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cierra la puerta."
+            },
+            "text": {
+              "en": "She closes the door."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cierra la puerta."
+            },
+            "text": {
+              "en": "You close the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cerramos la puerta."
+            },
+            "text": {
+              "en": "We close the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cerráis la puerta."
+            },
+            "text": {
+              "en": "You close the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cierran la puerta."
+            },
+            "text": {
+              "en": "They close the door."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cierran la puerta."
+            },
+            "text": {
+              "en": "You close the door."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cerré la puerta ayer."
+            },
+            "text": {
+              "en": "I closed the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cerraste la puerta ayer."
+            },
+            "text": {
+              "en": "You closed the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cerró la puerta ayer."
+            },
+            "text": {
+              "en": "He closed the door yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cerró la puerta ayer."
+            },
+            "text": {
+              "en": "She closed the door yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cerró la puerta ayer."
+            },
+            "text": {
+              "en": "You closed the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cerramos la puerta ayer."
+            },
+            "text": {
+              "en": "We closed the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cerrasteis la puerta ayer."
+            },
+            "text": {
+              "en": "You closed the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cerraron la puerta ayer."
+            },
+            "text": {
+              "en": "They closed the door yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cerraron la puerta ayer."
+            },
+            "text": {
+              "en": "You closed the door yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cerraré la puerta mañana."
+            },
+            "text": {
+              "en": "I will close the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cerrarás la puerta mañana."
+            },
+            "text": {
+              "en": "You will close the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cerrará la puerta mañana."
+            },
+            "text": {
+              "en": "He will close the door tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cerrará la puerta mañana."
+            },
+            "text": {
+              "en": "She will close the door tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cerrará la puerta mañana."
+            },
+            "text": {
+              "en": "You will close the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cerraremos la puerta mañana."
+            },
+            "text": {
+              "en": "We will close the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cerraréis la puerta mañana."
+            },
+            "text": {
+              "en": "You will close the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cerrarán la puerta mañana."
+            },
+            "text": {
+              "en": "They will close the door tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cerrarán la puerta mañana."
+            },
+            "text": {
+              "en": "You will close the door tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

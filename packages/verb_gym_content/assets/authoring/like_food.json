@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "like_food",
+    "meaning": {
+      "en": {
+        "short": "to like the food",
+        "description": "Practice to like the food in present, past, and future sentences."
+      },
+      "es": {
+        "short": "disfrutar la comida",
+        "description": "Practicar disfrutar la comida en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo disfruto la comida."
+            },
+            "text": {
+              "en": "I like the food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú disfrutas la comida."
+            },
+            "text": {
+              "en": "You like the food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él disfruta la comida."
+            },
+            "text": {
+              "en": "He likes the food."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella disfruta la comida."
+            },
+            "text": {
+              "en": "She likes the food."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted disfruta la comida."
+            },
+            "text": {
+              "en": "You like the food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros disfrutamos la comida."
+            },
+            "text": {
+              "en": "We like the food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros disfrutáis la comida."
+            },
+            "text": {
+              "en": "You like the food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos disfrutan la comida."
+            },
+            "text": {
+              "en": "They like the food."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes disfrutan la comida."
+            },
+            "text": {
+              "en": "You like the food."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo disfruté la comida ayer."
+            },
+            "text": {
+              "en": "I liked the food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú disfrutaste la comida ayer."
+            },
+            "text": {
+              "en": "You liked the food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él disfrutó la comida ayer."
+            },
+            "text": {
+              "en": "He liked the food yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella disfrutó la comida ayer."
+            },
+            "text": {
+              "en": "She liked the food yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted disfrutó la comida ayer."
+            },
+            "text": {
+              "en": "You liked the food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros disfrutamos la comida ayer."
+            },
+            "text": {
+              "en": "We liked the food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros disfrutasteis la comida ayer."
+            },
+            "text": {
+              "en": "You liked the food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos disfrutaron la comida ayer."
+            },
+            "text": {
+              "en": "They liked the food yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes disfrutaron la comida ayer."
+            },
+            "text": {
+              "en": "You liked the food yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo disfrutaré la comida mañana."
+            },
+            "text": {
+              "en": "I will like the food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú disfrutarás la comida mañana."
+            },
+            "text": {
+              "en": "You will like the food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él disfrutará la comida mañana."
+            },
+            "text": {
+              "en": "He will like the food tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella disfrutará la comida mañana."
+            },
+            "text": {
+              "en": "She will like the food tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted disfrutará la comida mañana."
+            },
+            "text": {
+              "en": "You will like the food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros disfrutaremos la comida mañana."
+            },
+            "text": {
+              "en": "We will like the food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros disfrutaréis la comida mañana."
+            },
+            "text": {
+              "en": "You will like the food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos disfrutarán la comida mañana."
+            },
+            "text": {
+              "en": "They will like the food tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes disfrutarán la comida mañana."
+            },
+            "text": {
+              "en": "You will like the food tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

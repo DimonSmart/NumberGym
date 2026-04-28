@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "call_friend",
+    "meaning": {
+      "en": {
+        "short": "to call a friend",
+        "description": "Practice to call a friend in present, past, and future sentences."
+      },
+      "es": {
+        "short": "llamar a un amigo",
+        "description": "Practicar llamar a un amigo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llamo a un amigo."
+            },
+            "text": {
+              "en": "I call a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llamas a un amigo."
+            },
+            "text": {
+              "en": "You call a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llama a un amigo."
+            },
+            "text": {
+              "en": "He calls a friend."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llama a un amigo."
+            },
+            "text": {
+              "en": "She calls a friend."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llama a un amigo."
+            },
+            "text": {
+              "en": "You call a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llamamos a un amigo."
+            },
+            "text": {
+              "en": "We call a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llamáis a un amigo."
+            },
+            "text": {
+              "en": "You call a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llaman a un amigo."
+            },
+            "text": {
+              "en": "They call a friend."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llaman a un amigo."
+            },
+            "text": {
+              "en": "You call a friend."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llamé a un amigo ayer."
+            },
+            "text": {
+              "en": "I called a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llamaste a un amigo ayer."
+            },
+            "text": {
+              "en": "You called a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llamó a un amigo ayer."
+            },
+            "text": {
+              "en": "He called a friend yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llamó a un amigo ayer."
+            },
+            "text": {
+              "en": "She called a friend yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llamó a un amigo ayer."
+            },
+            "text": {
+              "en": "You called a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llamamos a un amigo ayer."
+            },
+            "text": {
+              "en": "We called a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llamasteis a un amigo ayer."
+            },
+            "text": {
+              "en": "You called a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llamaron a un amigo ayer."
+            },
+            "text": {
+              "en": "They called a friend yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llamaron a un amigo ayer."
+            },
+            "text": {
+              "en": "You called a friend yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llamaré a un amigo mañana."
+            },
+            "text": {
+              "en": "I will call a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llamarás a un amigo mañana."
+            },
+            "text": {
+              "en": "You will call a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llamará a un amigo mañana."
+            },
+            "text": {
+              "en": "He will call a friend tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llamará a un amigo mañana."
+            },
+            "text": {
+              "en": "She will call a friend tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llamará a un amigo mañana."
+            },
+            "text": {
+              "en": "You will call a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llamaremos a un amigo mañana."
+            },
+            "text": {
+              "en": "We will call a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llamaréis a un amigo mañana."
+            },
+            "text": {
+              "en": "You will call a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llamarán a un amigo mañana."
+            },
+            "text": {
+              "en": "They will call a friend tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llamarán a un amigo mañana."
+            },
+            "text": {
+              "en": "You will call a friend tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

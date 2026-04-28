@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "there_is_problem",
+    "meaning": {
+      "en": {
+        "short": "there to be a problem",
+        "description": "Practice there to be a problem in present, past, and future sentences."
+      },
+      "es": {
+        "short": "haber un problema",
+        "description": "Practicar haber un problema en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Hay un problema."
+            },
+            "text": {
+              "en": "There is a problem."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Hubo un problema ayer."
+            },
+            "text": {
+              "en": "There was a problem yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Habrá un problema mañana."
+            },
+            "text": {
+              "en": "There will be a problem tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

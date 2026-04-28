@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "work_today",
+    "meaning": {
+      "en": {
+        "short": "to work today",
+        "description": "Practice to work today in present, past, and future sentences."
+      },
+      "es": {
+        "short": "trabajar hoy",
+        "description": "Practicar trabajar hoy en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo trabajo hoy."
+            },
+            "text": {
+              "en": "I work today."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú trabajas hoy."
+            },
+            "text": {
+              "en": "You work today."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él trabaja hoy."
+            },
+            "text": {
+              "en": "He works today."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella trabaja hoy."
+            },
+            "text": {
+              "en": "She works today."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted trabaja hoy."
+            },
+            "text": {
+              "en": "You work today."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros trabajamos hoy."
+            },
+            "text": {
+              "en": "We work today."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros trabajáis hoy."
+            },
+            "text": {
+              "en": "You work today."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos trabajan hoy."
+            },
+            "text": {
+              "en": "They work today."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes trabajan hoy."
+            },
+            "text": {
+              "en": "You work today."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo trabajé hoy ayer."
+            },
+            "text": {
+              "en": "I worked today yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú trabajaste hoy ayer."
+            },
+            "text": {
+              "en": "You worked today yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él trabajó hoy ayer."
+            },
+            "text": {
+              "en": "He worked today yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella trabajó hoy ayer."
+            },
+            "text": {
+              "en": "She worked today yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted trabajó hoy ayer."
+            },
+            "text": {
+              "en": "You worked today yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros trabajamos hoy ayer."
+            },
+            "text": {
+              "en": "We worked today yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros trabajasteis hoy ayer."
+            },
+            "text": {
+              "en": "You worked today yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos trabajaron hoy ayer."
+            },
+            "text": {
+              "en": "They worked today yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes trabajaron hoy ayer."
+            },
+            "text": {
+              "en": "You worked today yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo trabajaré hoy mañana."
+            },
+            "text": {
+              "en": "I will work today tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú trabajarás hoy mañana."
+            },
+            "text": {
+              "en": "You will work today tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él trabajará hoy mañana."
+            },
+            "text": {
+              "en": "He will work today tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella trabajará hoy mañana."
+            },
+            "text": {
+              "en": "She will work today tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted trabajará hoy mañana."
+            },
+            "text": {
+              "en": "You will work today tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros trabajaremos hoy mañana."
+            },
+            "text": {
+              "en": "We will work today tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros trabajaréis hoy mañana."
+            },
+            "text": {
+              "en": "You will work today tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos trabajarán hoy mañana."
+            },
+            "text": {
+              "en": "They will work today tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes trabajarán hoy mañana."
+            },
+            "text": {
+              "en": "You will work today tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

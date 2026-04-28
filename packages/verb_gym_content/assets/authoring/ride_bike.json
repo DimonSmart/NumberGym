@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "ride_bike",
+    "meaning": {
+      "en": {
+        "short": "to ride a bike",
+        "description": "Practice to ride a bike in present, past, and future sentences."
+      },
+      "es": {
+        "short": "montar en bicicleta",
+        "description": "Practicar montar en bicicleta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo monto en bicicleta."
+            },
+            "text": {
+              "en": "I ride a bike."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú montas en bicicleta."
+            },
+            "text": {
+              "en": "You ride a bike."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él monta en bicicleta."
+            },
+            "text": {
+              "en": "He rides a bike."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella monta en bicicleta."
+            },
+            "text": {
+              "en": "She rides a bike."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted monta en bicicleta."
+            },
+            "text": {
+              "en": "You ride a bike."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros montamos en bicicleta."
+            },
+            "text": {
+              "en": "We ride a bike."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros montáis en bicicleta."
+            },
+            "text": {
+              "en": "You ride a bike."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos montan en bicicleta."
+            },
+            "text": {
+              "en": "They ride a bike."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes montan en bicicleta."
+            },
+            "text": {
+              "en": "You ride a bike."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo monté en bicicleta ayer."
+            },
+            "text": {
+              "en": "I rode a bike yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú montaste en bicicleta ayer."
+            },
+            "text": {
+              "en": "You rode a bike yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él montó en bicicleta ayer."
+            },
+            "text": {
+              "en": "He rode a bike yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella montó en bicicleta ayer."
+            },
+            "text": {
+              "en": "She rode a bike yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted montó en bicicleta ayer."
+            },
+            "text": {
+              "en": "You rode a bike yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros montamos en bicicleta ayer."
+            },
+            "text": {
+              "en": "We rode a bike yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros montasteis en bicicleta ayer."
+            },
+            "text": {
+              "en": "You rode a bike yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos montaron en bicicleta ayer."
+            },
+            "text": {
+              "en": "They rode a bike yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes montaron en bicicleta ayer."
+            },
+            "text": {
+              "en": "You rode a bike yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo montaré en bicicleta mañana."
+            },
+            "text": {
+              "en": "I will ride a bike tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú montarás en bicicleta mañana."
+            },
+            "text": {
+              "en": "You will ride a bike tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él montará en bicicleta mañana."
+            },
+            "text": {
+              "en": "He will ride a bike tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella montará en bicicleta mañana."
+            },
+            "text": {
+              "en": "She will ride a bike tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted montará en bicicleta mañana."
+            },
+            "text": {
+              "en": "You will ride a bike tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros montaremos en bicicleta mañana."
+            },
+            "text": {
+              "en": "We will ride a bike tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros montaréis en bicicleta mañana."
+            },
+            "text": {
+              "en": "You will ride a bike tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos montarán en bicicleta mañana."
+            },
+            "text": {
+              "en": "They will ride a bike tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes montarán en bicicleta mañana."
+            },
+            "text": {
+              "en": "You will ride a bike tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

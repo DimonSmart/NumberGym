@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "send_message",
+    "meaning": {
+      "en": {
+        "short": "to send a message",
+        "description": "Practice to send a message in present, past, and future sentences."
+      },
+      "es": {
+        "short": "enviar un mensaje",
+        "description": "Practicar enviar un mensaje en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo envio un mensaje."
+            },
+            "text": {
+              "en": "I send a message."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú envias un mensaje."
+            },
+            "text": {
+              "en": "You send a message."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él envia un mensaje."
+            },
+            "text": {
+              "en": "He sends a message."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella envia un mensaje."
+            },
+            "text": {
+              "en": "She sends a message."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted envia un mensaje."
+            },
+            "text": {
+              "en": "You send a message."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros enviamos un mensaje."
+            },
+            "text": {
+              "en": "We send a message."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros enviáis un mensaje."
+            },
+            "text": {
+              "en": "You send a message."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos envian un mensaje."
+            },
+            "text": {
+              "en": "They send a message."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes envian un mensaje."
+            },
+            "text": {
+              "en": "You send a message."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo envié un mensaje ayer."
+            },
+            "text": {
+              "en": "I sent a message yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú enviaste un mensaje ayer."
+            },
+            "text": {
+              "en": "You sent a message yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él envió un mensaje ayer."
+            },
+            "text": {
+              "en": "He sent a message yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella envió un mensaje ayer."
+            },
+            "text": {
+              "en": "She sent a message yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted envió un mensaje ayer."
+            },
+            "text": {
+              "en": "You sent a message yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros enviamos un mensaje ayer."
+            },
+            "text": {
+              "en": "We sent a message yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros enviasteis un mensaje ayer."
+            },
+            "text": {
+              "en": "You sent a message yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos enviaron un mensaje ayer."
+            },
+            "text": {
+              "en": "They sent a message yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes enviaron un mensaje ayer."
+            },
+            "text": {
+              "en": "You sent a message yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo enviaré un mensaje mañana."
+            },
+            "text": {
+              "en": "I will send a message tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú enviarás un mensaje mañana."
+            },
+            "text": {
+              "en": "You will send a message tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él enviará un mensaje mañana."
+            },
+            "text": {
+              "en": "He will send a message tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella enviará un mensaje mañana."
+            },
+            "text": {
+              "en": "She will send a message tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted enviará un mensaje mañana."
+            },
+            "text": {
+              "en": "You will send a message tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros enviaremos un mensaje mañana."
+            },
+            "text": {
+              "en": "We will send a message tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros enviaréis un mensaje mañana."
+            },
+            "text": {
+              "en": "You will send a message tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos enviarán un mensaje mañana."
+            },
+            "text": {
+              "en": "They will send a message tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes enviarán un mensaje mañana."
+            },
+            "text": {
+              "en": "You will send a message tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

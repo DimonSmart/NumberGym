@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "be_ready",
+    "meaning": {
+      "en": {
+        "short": "to be ready",
+        "description": "Practice to be ready in present, past, and future sentences."
+      },
+      "es": {
+        "short": "estar listo",
+        "description": "Practicar estar listo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estoy listo."
+            },
+            "text": {
+              "en": "I am ready."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estás listo."
+            },
+            "text": {
+              "en": "You are ready."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él está listo."
+            },
+            "text": {
+              "en": "He is ready."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella está lista."
+            },
+            "text": {
+              "en": "She is ready."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted está listo."
+            },
+            "text": {
+              "en": "You are ready."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estamos listos."
+            },
+            "text": {
+              "en": "We are ready."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estáis listos."
+            },
+            "text": {
+              "en": "You are ready."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos están listos."
+            },
+            "text": {
+              "en": "They are ready."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes están listos."
+            },
+            "text": {
+              "en": "You are ready."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estuve listo ayer."
+            },
+            "text": {
+              "en": "I was ready yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estuviste listo ayer."
+            },
+            "text": {
+              "en": "You were ready yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estuvo listo ayer."
+            },
+            "text": {
+              "en": "He was ready yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estuvo lista ayer."
+            },
+            "text": {
+              "en": "She was ready yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estuvo listo ayer."
+            },
+            "text": {
+              "en": "You were ready yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estuvimos listos ayer."
+            },
+            "text": {
+              "en": "We were ready yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estuvisteis listos ayer."
+            },
+            "text": {
+              "en": "You were ready yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estuvieron listos ayer."
+            },
+            "text": {
+              "en": "They were ready yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estuvieron listos ayer."
+            },
+            "text": {
+              "en": "You were ready yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estaré listo mañana."
+            },
+            "text": {
+              "en": "I will be ready tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estarás listo mañana."
+            },
+            "text": {
+              "en": "You will be ready tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estará listo mañana."
+            },
+            "text": {
+              "en": "He will be ready tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estará lista mañana."
+            },
+            "text": {
+              "en": "She will be ready tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estará listo mañana."
+            },
+            "text": {
+              "en": "You will be ready tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estaremos listos mañana."
+            },
+            "text": {
+              "en": "We will be ready tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estaréis listos mañana."
+            },
+            "text": {
+              "en": "You will be ready tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estarán listos mañana."
+            },
+            "text": {
+              "en": "They will be ready tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estarán listos mañana."
+            },
+            "text": {
+              "en": "You will be ready tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

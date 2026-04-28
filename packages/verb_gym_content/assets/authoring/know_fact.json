@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "know_fact",
+    "meaning": {
+      "en": {
+        "short": "to know a fact",
+        "description": "Practice to know a fact in present, past, and future sentences."
+      },
+      "es": {
+        "short": "saber un dato",
+        "description": "Practicar saber un dato en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo sé un dato."
+            },
+            "text": {
+              "en": "I know a fact."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú sabes un dato."
+            },
+            "text": {
+              "en": "You know a fact."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él sabe un dato."
+            },
+            "text": {
+              "en": "He knows a fact."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella sabe un dato."
+            },
+            "text": {
+              "en": "She knows a fact."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted sabe un dato."
+            },
+            "text": {
+              "en": "You know a fact."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros sabemos un dato."
+            },
+            "text": {
+              "en": "We know a fact."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros sabéis un dato."
+            },
+            "text": {
+              "en": "You know a fact."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos saben un dato."
+            },
+            "text": {
+              "en": "They know a fact."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes saben un dato."
+            },
+            "text": {
+              "en": "You know a fact."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo supe un dato ayer."
+            },
+            "text": {
+              "en": "I knew a fact yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú supiste un dato ayer."
+            },
+            "text": {
+              "en": "You knew a fact yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él supo un dato ayer."
+            },
+            "text": {
+              "en": "He knew a fact yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella supo un dato ayer."
+            },
+            "text": {
+              "en": "She knew a fact yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted supo un dato ayer."
+            },
+            "text": {
+              "en": "You knew a fact yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros supimos un dato ayer."
+            },
+            "text": {
+              "en": "We knew a fact yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros supisteis un dato ayer."
+            },
+            "text": {
+              "en": "You knew a fact yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos supieron un dato ayer."
+            },
+            "text": {
+              "en": "They knew a fact yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes supieron un dato ayer."
+            },
+            "text": {
+              "en": "You knew a fact yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo sabré un dato mañana."
+            },
+            "text": {
+              "en": "I will know a fact tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú sabrás un dato mañana."
+            },
+            "text": {
+              "en": "You will know a fact tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él sabrá un dato mañana."
+            },
+            "text": {
+              "en": "He will know a fact tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella sabrá un dato mañana."
+            },
+            "text": {
+              "en": "She will know a fact tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted sabrá un dato mañana."
+            },
+            "text": {
+              "en": "You will know a fact tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros sabremos un dato mañana."
+            },
+            "text": {
+              "en": "We will know a fact tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros sabréis un dato mañana."
+            },
+            "text": {
+              "en": "You will know a fact tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos sabrán un dato mañana."
+            },
+            "text": {
+              "en": "They will know a fact tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes sabrán un dato mañana."
+            },
+            "text": {
+              "en": "You will know a fact tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

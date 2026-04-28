@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "tell_story",
+    "meaning": {
+      "en": {
+        "short": "to tell a story",
+        "description": "Practice to tell a story in present, past, and future sentences."
+      },
+      "es": {
+        "short": "contar una historia",
+        "description": "Practicar contar una historia en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cuento una historia."
+            },
+            "text": {
+              "en": "I tell a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cuentas una historia."
+            },
+            "text": {
+              "en": "You tell a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cuenta una historia."
+            },
+            "text": {
+              "en": "He tells a story."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cuenta una historia."
+            },
+            "text": {
+              "en": "She tells a story."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cuenta una historia."
+            },
+            "text": {
+              "en": "You tell a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros contamos una historia."
+            },
+            "text": {
+              "en": "We tell a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros contáis una historia."
+            },
+            "text": {
+              "en": "You tell a story."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cuentan una historia."
+            },
+            "text": {
+              "en": "They tell a story."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cuentan una historia."
+            },
+            "text": {
+              "en": "You tell a story."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conté una historia ayer."
+            },
+            "text": {
+              "en": "I told a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú contaste una historia ayer."
+            },
+            "text": {
+              "en": "You told a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él contó una historia ayer."
+            },
+            "text": {
+              "en": "He told a story yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella contó una historia ayer."
+            },
+            "text": {
+              "en": "She told a story yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted contó una historia ayer."
+            },
+            "text": {
+              "en": "You told a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros contamos una historia ayer."
+            },
+            "text": {
+              "en": "We told a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros contasteis una historia ayer."
+            },
+            "text": {
+              "en": "You told a story yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos contaron una historia ayer."
+            },
+            "text": {
+              "en": "They told a story yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes contaron una historia ayer."
+            },
+            "text": {
+              "en": "You told a story yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo contaré una historia mañana."
+            },
+            "text": {
+              "en": "I will tell a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú contarás una historia mañana."
+            },
+            "text": {
+              "en": "You will tell a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él contará una historia mañana."
+            },
+            "text": {
+              "en": "He will tell a story tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella contará una historia mañana."
+            },
+            "text": {
+              "en": "She will tell a story tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted contará una historia mañana."
+            },
+            "text": {
+              "en": "You will tell a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros contaremos una historia mañana."
+            },
+            "text": {
+              "en": "We will tell a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros contaréis una historia mañana."
+            },
+            "text": {
+              "en": "You will tell a story tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos contarán una historia mañana."
+            },
+            "text": {
+              "en": "They will tell a story tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes contarán una historia mañana."
+            },
+            "text": {
+              "en": "You will tell a story tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

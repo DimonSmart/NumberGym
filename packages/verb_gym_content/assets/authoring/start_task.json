@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "start_task",
+    "meaning": {
+      "en": {
+        "short": "to start a task",
+        "description": "Practice to start a task in present, past, and future sentences."
+      },
+      "es": {
+        "short": "empezar una tarea",
+        "description": "Practicar empezar una tarea en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo empiezo una tarea."
+            },
+            "text": {
+              "en": "I start a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú empiezas una tarea."
+            },
+            "text": {
+              "en": "You start a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él empieza una tarea."
+            },
+            "text": {
+              "en": "He starts a task."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella empieza una tarea."
+            },
+            "text": {
+              "en": "She starts a task."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted empieza una tarea."
+            },
+            "text": {
+              "en": "You start a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros empezamos una tarea."
+            },
+            "text": {
+              "en": "We start a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros empezáis una tarea."
+            },
+            "text": {
+              "en": "You start a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos empiezan una tarea."
+            },
+            "text": {
+              "en": "They start a task."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes empiezan una tarea."
+            },
+            "text": {
+              "en": "You start a task."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo empecé una tarea ayer."
+            },
+            "text": {
+              "en": "I started a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú empezaste una tarea ayer."
+            },
+            "text": {
+              "en": "You started a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él empezó una tarea ayer."
+            },
+            "text": {
+              "en": "He started a task yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella empezó una tarea ayer."
+            },
+            "text": {
+              "en": "She started a task yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted empezó una tarea ayer."
+            },
+            "text": {
+              "en": "You started a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros empezamos una tarea ayer."
+            },
+            "text": {
+              "en": "We started a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros empezasteis una tarea ayer."
+            },
+            "text": {
+              "en": "You started a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos empezaron una tarea ayer."
+            },
+            "text": {
+              "en": "They started a task yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes empezaron una tarea ayer."
+            },
+            "text": {
+              "en": "You started a task yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo empezaré una tarea mañana."
+            },
+            "text": {
+              "en": "I will start a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú empezarás una tarea mañana."
+            },
+            "text": {
+              "en": "You will start a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él empezará una tarea mañana."
+            },
+            "text": {
+              "en": "He will start a task tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella empezará una tarea mañana."
+            },
+            "text": {
+              "en": "She will start a task tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted empezará una tarea mañana."
+            },
+            "text": {
+              "en": "You will start a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros empezaremos una tarea mañana."
+            },
+            "text": {
+              "en": "We will start a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros empezaréis una tarea mañana."
+            },
+            "text": {
+              "en": "You will start a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos empezarán una tarea mañana."
+            },
+            "text": {
+              "en": "They will start a task tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes empezarán una tarea mañana."
+            },
+            "text": {
+              "en": "You will start a task tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "stand_up",
+    "meaning": {
+      "en": {
+        "short": "to stand up",
+        "description": "Practice to stand up in present, past, and future sentences."
+      },
+      "es": {
+        "short": "ponerse de pie",
+        "description": "Practicar ponerse de pie en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me pongo de pie."
+            },
+            "text": {
+              "en": "I stand up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te pones de pie."
+            },
+            "text": {
+              "en": "You stand up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se pone de pie."
+            },
+            "text": {
+              "en": "He stands up."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se pone de pie."
+            },
+            "text": {
+              "en": "She stands up."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se pone de pie."
+            },
+            "text": {
+              "en": "You stand up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos ponemos de pie."
+            },
+            "text": {
+              "en": "We stand up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os ponéis de pie."
+            },
+            "text": {
+              "en": "You stand up."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se ponen de pie."
+            },
+            "text": {
+              "en": "They stand up."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se ponen de pie."
+            },
+            "text": {
+              "en": "You stand up."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me puse de pie ayer."
+            },
+            "text": {
+              "en": "I stood up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te pusiste de pie ayer."
+            },
+            "text": {
+              "en": "You stood up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se puso de pie ayer."
+            },
+            "text": {
+              "en": "He stood up yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se puso de pie ayer."
+            },
+            "text": {
+              "en": "She stood up yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se puso de pie ayer."
+            },
+            "text": {
+              "en": "You stood up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos pusimos de pie ayer."
+            },
+            "text": {
+              "en": "We stood up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os pusisteis de pie ayer."
+            },
+            "text": {
+              "en": "You stood up yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se pusieron de pie ayer."
+            },
+            "text": {
+              "en": "They stood up yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se pusieron de pie ayer."
+            },
+            "text": {
+              "en": "You stood up yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo me pondré de pie mañana."
+            },
+            "text": {
+              "en": "I will stand up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú te pondrás de pie mañana."
+            },
+            "text": {
+              "en": "You will stand up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él se pondrá de pie mañana."
+            },
+            "text": {
+              "en": "He will stand up tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella se pondrá de pie mañana."
+            },
+            "text": {
+              "en": "She will stand up tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted se pondrá de pie mañana."
+            },
+            "text": {
+              "en": "You will stand up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros nos pondremos de pie mañana."
+            },
+            "text": {
+              "en": "We will stand up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros os pondréis de pie mañana."
+            },
+            "text": {
+              "en": "You will stand up tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos se pondrán de pie mañana."
+            },
+            "text": {
+              "en": "They will stand up tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes se pondrán de pie mañana."
+            },
+            "text": {
+              "en": "You will stand up tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

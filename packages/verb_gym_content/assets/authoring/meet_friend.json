@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "meet_friend",
+    "meaning": {
+      "en": {
+        "short": "to meet a friend",
+        "description": "Practice to meet a friend in present, past, and future sentences."
+      },
+      "es": {
+        "short": "quedar con un amigo",
+        "description": "Practicar quedar con un amigo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedo con un amigo."
+            },
+            "text": {
+              "en": "I meet a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedas con un amigo."
+            },
+            "text": {
+              "en": "You meet a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él queda con un amigo."
+            },
+            "text": {
+              "en": "He meets a friend."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella queda con un amigo."
+            },
+            "text": {
+              "en": "She meets a friend."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted queda con un amigo."
+            },
+            "text": {
+              "en": "You meet a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedamos con un amigo."
+            },
+            "text": {
+              "en": "We meet a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedáis con un amigo."
+            },
+            "text": {
+              "en": "You meet a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedan con un amigo."
+            },
+            "text": {
+              "en": "They meet a friend."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedan con un amigo."
+            },
+            "text": {
+              "en": "You meet a friend."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedé con un amigo ayer."
+            },
+            "text": {
+              "en": "I met a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedaste con un amigo ayer."
+            },
+            "text": {
+              "en": "You met a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quedó con un amigo ayer."
+            },
+            "text": {
+              "en": "He met a friend yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quedó con un amigo ayer."
+            },
+            "text": {
+              "en": "She met a friend yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quedó con un amigo ayer."
+            },
+            "text": {
+              "en": "You met a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedamos con un amigo ayer."
+            },
+            "text": {
+              "en": "We met a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedasteis con un amigo ayer."
+            },
+            "text": {
+              "en": "You met a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedaron con un amigo ayer."
+            },
+            "text": {
+              "en": "They met a friend yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedaron con un amigo ayer."
+            },
+            "text": {
+              "en": "You met a friend yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedaré con un amigo mañana."
+            },
+            "text": {
+              "en": "I will meet a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedarás con un amigo mañana."
+            },
+            "text": {
+              "en": "You will meet a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quedará con un amigo mañana."
+            },
+            "text": {
+              "en": "He will meet a friend tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quedará con un amigo mañana."
+            },
+            "text": {
+              "en": "She will meet a friend tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quedará con un amigo mañana."
+            },
+            "text": {
+              "en": "You will meet a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedaremos con un amigo mañana."
+            },
+            "text": {
+              "en": "We will meet a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedaréis con un amigo mañana."
+            },
+            "text": {
+              "en": "You will meet a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedarán con un amigo mañana."
+            },
+            "text": {
+              "en": "They will meet a friend tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedarán con un amigo mañana."
+            },
+            "text": {
+              "en": "You will meet a friend tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

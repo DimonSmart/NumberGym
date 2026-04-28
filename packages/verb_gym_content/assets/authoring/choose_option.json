@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "choose_option",
+    "meaning": {
+      "en": {
+        "short": "to choose an option",
+        "description": "Practice to choose an option in present, past, and future sentences."
+      },
+      "es": {
+        "short": "elegir una opción",
+        "description": "Practicar elegir una opción en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo elijo una opción."
+            },
+            "text": {
+              "en": "I choose an option."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú eliges una opción."
+            },
+            "text": {
+              "en": "You choose an option."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él elige una opción."
+            },
+            "text": {
+              "en": "He chooses an option."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella elige una opción."
+            },
+            "text": {
+              "en": "She chooses an option."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted elige una opción."
+            },
+            "text": {
+              "en": "You choose an option."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros elegimos una opción."
+            },
+            "text": {
+              "en": "We choose an option."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros elegís una opción."
+            },
+            "text": {
+              "en": "You choose an option."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos eligen una opción."
+            },
+            "text": {
+              "en": "They choose an option."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes eligen una opción."
+            },
+            "text": {
+              "en": "You choose an option."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo elegí una opción ayer."
+            },
+            "text": {
+              "en": "I chose an option yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú elegiste una opción ayer."
+            },
+            "text": {
+              "en": "You chose an option yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él eligió una opción ayer."
+            },
+            "text": {
+              "en": "He chose an option yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella eligió una opción ayer."
+            },
+            "text": {
+              "en": "She chose an option yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted eligió una opción ayer."
+            },
+            "text": {
+              "en": "You chose an option yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros elegimos una opción ayer."
+            },
+            "text": {
+              "en": "We chose an option yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros elegisteis una opción ayer."
+            },
+            "text": {
+              "en": "You chose an option yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos eligieron una opción ayer."
+            },
+            "text": {
+              "en": "They chose an option yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes eligieron una opción ayer."
+            },
+            "text": {
+              "en": "You chose an option yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo elegiré una opción mañana."
+            },
+            "text": {
+              "en": "I will choose an option tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú elegirás una opción mañana."
+            },
+            "text": {
+              "en": "You will choose an option tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él elegirá una opción mañana."
+            },
+            "text": {
+              "en": "He will choose an option tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella elegirá una opción mañana."
+            },
+            "text": {
+              "en": "She will choose an option tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted elegirá una opción mañana."
+            },
+            "text": {
+              "en": "You will choose an option tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros elegiremos una opción mañana."
+            },
+            "text": {
+              "en": "We will choose an option tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros elegiréis una opción mañana."
+            },
+            "text": {
+              "en": "You will choose an option tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos elegirán una opción mañana."
+            },
+            "text": {
+              "en": "They will choose an option tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes elegirán una opción mañana."
+            },
+            "text": {
+              "en": "You will choose an option tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

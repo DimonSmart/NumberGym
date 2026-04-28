@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "answer_question",
+    "meaning": {
+      "en": {
+        "short": "to answer a question",
+        "description": "Practice to answer a question in present, past, and future sentences."
+      },
+      "es": {
+        "short": "responder a una pregunta",
+        "description": "Practicar responder a una pregunta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo respondo a una pregunta."
+            },
+            "text": {
+              "en": "I answer a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú respondes a una pregunta."
+            },
+            "text": {
+              "en": "You answer a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él responde a una pregunta."
+            },
+            "text": {
+              "en": "He answers a question."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella responde a una pregunta."
+            },
+            "text": {
+              "en": "She answers a question."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted responde a una pregunta."
+            },
+            "text": {
+              "en": "You answer a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros respondemos a una pregunta."
+            },
+            "text": {
+              "en": "We answer a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros respondéis a una pregunta."
+            },
+            "text": {
+              "en": "You answer a question."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos responden a una pregunta."
+            },
+            "text": {
+              "en": "They answer a question."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes responden a una pregunta."
+            },
+            "text": {
+              "en": "You answer a question."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo respondí a una pregunta ayer."
+            },
+            "text": {
+              "en": "I answered a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú respondiste a una pregunta ayer."
+            },
+            "text": {
+              "en": "You answered a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él respondió a una pregunta ayer."
+            },
+            "text": {
+              "en": "He answered a question yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella respondió a una pregunta ayer."
+            },
+            "text": {
+              "en": "She answered a question yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted respondió a una pregunta ayer."
+            },
+            "text": {
+              "en": "You answered a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros respondimos a una pregunta ayer."
+            },
+            "text": {
+              "en": "We answered a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros respondisteis a una pregunta ayer."
+            },
+            "text": {
+              "en": "You answered a question yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos respondieron a una pregunta ayer."
+            },
+            "text": {
+              "en": "They answered a question yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes respondieron a una pregunta ayer."
+            },
+            "text": {
+              "en": "You answered a question yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo responderé a una pregunta mañana."
+            },
+            "text": {
+              "en": "I will answer a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú responderás a una pregunta mañana."
+            },
+            "text": {
+              "en": "You will answer a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él responderá a una pregunta mañana."
+            },
+            "text": {
+              "en": "He will answer a question tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella responderá a una pregunta mañana."
+            },
+            "text": {
+              "en": "She will answer a question tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted responderá a una pregunta mañana."
+            },
+            "text": {
+              "en": "You will answer a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros responderemos a una pregunta mañana."
+            },
+            "text": {
+              "en": "We will answer a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros responderéis a una pregunta mañana."
+            },
+            "text": {
+              "en": "You will answer a question tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos responderán a una pregunta mañana."
+            },
+            "text": {
+              "en": "They will answer a question tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes responderán a una pregunta mañana."
+            },
+            "text": {
+              "en": "You will answer a question tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

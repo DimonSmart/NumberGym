@@ -27,6 +27,23 @@ void main() {
     );
   });
 
+  test('phone families use larger statistics card grid', () {
+    for (final familyKey in const <String>[
+      'number_gym/phone33x3',
+      'number_gym/phone3222',
+      'number_gym/phone2322',
+    ]) {
+      final gridConfig =
+          definition.statisticsDisplay.cardGridByFamilyKey[familyKey];
+
+      expect(gridConfig, isNotNull);
+      expect(gridConfig!.maxColumns, 5);
+      expect(gridConfig.minTileWidth, 64);
+    }
+
+    expect(definition.statisticsDisplay.defaultCardGrid.maxColumns, 10);
+  });
+
   test('english exact-time cards accept numeric o clock aliases', () {
     final card = _findCard(
       definition: definition,

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "run_in_park",
+    "meaning": {
+      "en": {
+        "short": "to run in the park",
+        "description": "Practice to run in the park in present, past, and future sentences."
+      },
+      "es": {
+        "short": "correr en el parque",
+        "description": "Practicar correr en el parque en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo corro en el parque."
+            },
+            "text": {
+              "en": "I run in the park."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú corres en el parque."
+            },
+            "text": {
+              "en": "You run in the park."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él corre en el parque."
+            },
+            "text": {
+              "en": "He runs in the park."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella corre en el parque."
+            },
+            "text": {
+              "en": "She runs in the park."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted corre en el parque."
+            },
+            "text": {
+              "en": "You run in the park."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros corremos en el parque."
+            },
+            "text": {
+              "en": "We run in the park."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros corréis en el parque."
+            },
+            "text": {
+              "en": "You run in the park."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos corren en el parque."
+            },
+            "text": {
+              "en": "They run in the park."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes corren en el parque."
+            },
+            "text": {
+              "en": "You run in the park."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo corrí en el parque ayer."
+            },
+            "text": {
+              "en": "I ran in the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú corriste en el parque ayer."
+            },
+            "text": {
+              "en": "You ran in the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él corrió en el parque ayer."
+            },
+            "text": {
+              "en": "He ran in the park yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella corrió en el parque ayer."
+            },
+            "text": {
+              "en": "She ran in the park yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted corrió en el parque ayer."
+            },
+            "text": {
+              "en": "You ran in the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros corrimos en el parque ayer."
+            },
+            "text": {
+              "en": "We ran in the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros corristeis en el parque ayer."
+            },
+            "text": {
+              "en": "You ran in the park yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos corrieron en el parque ayer."
+            },
+            "text": {
+              "en": "They ran in the park yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes corrieron en el parque ayer."
+            },
+            "text": {
+              "en": "You ran in the park yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo correré en el parque mañana."
+            },
+            "text": {
+              "en": "I will run in the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú correrás en el parque mañana."
+            },
+            "text": {
+              "en": "You will run in the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él correrá en el parque mañana."
+            },
+            "text": {
+              "en": "He will run in the park tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella correrá en el parque mañana."
+            },
+            "text": {
+              "en": "She will run in the park tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted correrá en el parque mañana."
+            },
+            "text": {
+              "en": "You will run in the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros correremos en el parque mañana."
+            },
+            "text": {
+              "en": "We will run in the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros correréis en el parque mañana."
+            },
+            "text": {
+              "en": "You will run in the park tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos correrán en el parque mañana."
+            },
+            "text": {
+              "en": "They will run in the park tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes correrán en el parque mañana."
+            },
+            "text": {
+              "en": "You will run in the park tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "have_money",
+    "meaning": {
+      "en": {
+        "short": "to have money",
+        "description": "Practice to have money in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tener dinero",
+        "description": "Practicar tener dinero en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tengo dinero."
+            },
+            "text": {
+              "en": "I have money."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tienes dinero."
+            },
+            "text": {
+              "en": "You have money."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tiene dinero."
+            },
+            "text": {
+              "en": "He has money."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tiene dinero."
+            },
+            "text": {
+              "en": "She has money."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tiene dinero."
+            },
+            "text": {
+              "en": "You have money."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tenemos dinero."
+            },
+            "text": {
+              "en": "We have money."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tenéis dinero."
+            },
+            "text": {
+              "en": "You have money."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tienen dinero."
+            },
+            "text": {
+              "en": "They have money."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tienen dinero."
+            },
+            "text": {
+              "en": "You have money."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tuve dinero ayer."
+            },
+            "text": {
+              "en": "I had money yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tuviste dinero ayer."
+            },
+            "text": {
+              "en": "You had money yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tuvo dinero ayer."
+            },
+            "text": {
+              "en": "He had money yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tuvo dinero ayer."
+            },
+            "text": {
+              "en": "She had money yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tuvo dinero ayer."
+            },
+            "text": {
+              "en": "You had money yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tuvimos dinero ayer."
+            },
+            "text": {
+              "en": "We had money yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tuvisteis dinero ayer."
+            },
+            "text": {
+              "en": "You had money yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tuvieron dinero ayer."
+            },
+            "text": {
+              "en": "They had money yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tuvieron dinero ayer."
+            },
+            "text": {
+              "en": "You had money yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tendré dinero mañana."
+            },
+            "text": {
+              "en": "I will have money tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tendrás dinero mañana."
+            },
+            "text": {
+              "en": "You will have money tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tendrá dinero mañana."
+            },
+            "text": {
+              "en": "He will have money tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tendrá dinero mañana."
+            },
+            "text": {
+              "en": "She will have money tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tendrá dinero mañana."
+            },
+            "text": {
+              "en": "You will have money tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tendremos dinero mañana."
+            },
+            "text": {
+              "en": "We will have money tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tendréis dinero mañana."
+            },
+            "text": {
+              "en": "You will have money tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tendrán dinero mañana."
+            },
+            "text": {
+              "en": "They will have money tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tendrán dinero mañana."
+            },
+            "text": {
+              "en": "You will have money tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

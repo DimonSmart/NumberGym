@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "read_book",
+    "meaning": {
+      "en": {
+        "short": "to read a book",
+        "description": "Practice to read a book in present, past, and future sentences."
+      },
+      "es": {
+        "short": "leer un libro",
+        "description": "Practicar leer un libro en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo leo un libro."
+            },
+            "text": {
+              "en": "I read a book."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú lees un libro."
+            },
+            "text": {
+              "en": "You read a book."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él lee un libro."
+            },
+            "text": {
+              "en": "He reads a book."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella lee un libro."
+            },
+            "text": {
+              "en": "She reads a book."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted lee un libro."
+            },
+            "text": {
+              "en": "You read a book."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros leemos un libro."
+            },
+            "text": {
+              "en": "We read a book."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros leéis un libro."
+            },
+            "text": {
+              "en": "You read a book."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos leen un libro."
+            },
+            "text": {
+              "en": "They read a book."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes leen un libro."
+            },
+            "text": {
+              "en": "You read a book."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo leí un libro ayer."
+            },
+            "text": {
+              "en": "I read a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú leíste un libro ayer."
+            },
+            "text": {
+              "en": "You read a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él leyó un libro ayer."
+            },
+            "text": {
+              "en": "He read a book yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella leyó un libro ayer."
+            },
+            "text": {
+              "en": "She read a book yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted leyó un libro ayer."
+            },
+            "text": {
+              "en": "You read a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros leímos un libro ayer."
+            },
+            "text": {
+              "en": "We read a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros leísteis un libro ayer."
+            },
+            "text": {
+              "en": "You read a book yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos leyeron un libro ayer."
+            },
+            "text": {
+              "en": "They read a book yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes leyeron un libro ayer."
+            },
+            "text": {
+              "en": "You read a book yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo leeré un libro mañana."
+            },
+            "text": {
+              "en": "I will read a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú leerás un libro mañana."
+            },
+            "text": {
+              "en": "You will read a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él leerá un libro mañana."
+            },
+            "text": {
+              "en": "He will read a book tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella leerá un libro mañana."
+            },
+            "text": {
+              "en": "She will read a book tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted leerá un libro mañana."
+            },
+            "text": {
+              "en": "You will read a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros leeremos un libro mañana."
+            },
+            "text": {
+              "en": "We will read a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros leeréis un libro mañana."
+            },
+            "text": {
+              "en": "You will read a book tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos leerán un libro mañana."
+            },
+            "text": {
+              "en": "They will read a book tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes leerán un libro mañana."
+            },
+            "text": {
+              "en": "You will read a book tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

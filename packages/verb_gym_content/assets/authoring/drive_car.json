@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "drive_car",
+    "meaning": {
+      "en": {
+        "short": "to drive a car",
+        "description": "Practice to drive a car in present, past, and future sentences."
+      },
+      "es": {
+        "short": "conducir un coche",
+        "description": "Practicar conducir un coche en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conduzco un coche."
+            },
+            "text": {
+              "en": "I drive a car."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú conduces un coche."
+            },
+            "text": {
+              "en": "You drive a car."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él conduce un coche."
+            },
+            "text": {
+              "en": "He drives a car."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella conduce un coche."
+            },
+            "text": {
+              "en": "She drives a car."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted conduce un coche."
+            },
+            "text": {
+              "en": "You drive a car."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros conducimos un coche."
+            },
+            "text": {
+              "en": "We drive a car."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros conducís un coche."
+            },
+            "text": {
+              "en": "You drive a car."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos conducen un coche."
+            },
+            "text": {
+              "en": "They drive a car."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes conducen un coche."
+            },
+            "text": {
+              "en": "You drive a car."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conduje un coche ayer."
+            },
+            "text": {
+              "en": "I drove a car yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú condujiste un coche ayer."
+            },
+            "text": {
+              "en": "You drove a car yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él condujo un coche ayer."
+            },
+            "text": {
+              "en": "He drove a car yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella condujo un coche ayer."
+            },
+            "text": {
+              "en": "She drove a car yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted condujo un coche ayer."
+            },
+            "text": {
+              "en": "You drove a car yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros condujimos un coche ayer."
+            },
+            "text": {
+              "en": "We drove a car yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros condujisteis un coche ayer."
+            },
+            "text": {
+              "en": "You drove a car yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos condujeron un coche ayer."
+            },
+            "text": {
+              "en": "They drove a car yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes condujeron un coche ayer."
+            },
+            "text": {
+              "en": "You drove a car yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo conduciré un coche mañana."
+            },
+            "text": {
+              "en": "I will drive a car tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú conducirás un coche mañana."
+            },
+            "text": {
+              "en": "You will drive a car tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él conducirá un coche mañana."
+            },
+            "text": {
+              "en": "He will drive a car tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella conducirá un coche mañana."
+            },
+            "text": {
+              "en": "She will drive a car tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted conducirá un coche mañana."
+            },
+            "text": {
+              "en": "You will drive a car tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros conduciremos un coche mañana."
+            },
+            "text": {
+              "en": "We will drive a car tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros conduciréis un coche mañana."
+            },
+            "text": {
+              "en": "You will drive a car tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos conducirán un coche mañana."
+            },
+            "text": {
+              "en": "They will drive a car tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes conducirán un coche mañana."
+            },
+            "text": {
+              "en": "You will drive a car tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

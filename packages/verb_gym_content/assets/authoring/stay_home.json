@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "stay_home",
+    "meaning": {
+      "en": {
+        "short": "to stay home",
+        "description": "Practice to stay home in present, past, and future sentences."
+      },
+      "es": {
+        "short": "quedarse en casa",
+        "description": "Practicar quedarse en casa en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedo en casa."
+            },
+            "text": {
+              "en": "I stay home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedas en casa."
+            },
+            "text": {
+              "en": "You stay home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él queda en casa."
+            },
+            "text": {
+              "en": "He stays home."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella queda en casa."
+            },
+            "text": {
+              "en": "She stays home."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted queda en casa."
+            },
+            "text": {
+              "en": "You stay home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedamos en casa."
+            },
+            "text": {
+              "en": "We stay home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedáis en casa."
+            },
+            "text": {
+              "en": "You stay home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedan en casa."
+            },
+            "text": {
+              "en": "They stay home."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedan en casa."
+            },
+            "text": {
+              "en": "You stay home."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedé en casa ayer."
+            },
+            "text": {
+              "en": "I stayed home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedaste en casa ayer."
+            },
+            "text": {
+              "en": "You stayed home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quedó en casa ayer."
+            },
+            "text": {
+              "en": "He stayed home yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quedó en casa ayer."
+            },
+            "text": {
+              "en": "She stayed home yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quedó en casa ayer."
+            },
+            "text": {
+              "en": "You stayed home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedamos en casa ayer."
+            },
+            "text": {
+              "en": "We stayed home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedasteis en casa ayer."
+            },
+            "text": {
+              "en": "You stayed home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedaron en casa ayer."
+            },
+            "text": {
+              "en": "They stayed home yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedaron en casa ayer."
+            },
+            "text": {
+              "en": "You stayed home yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo quedarseé en casa mañana."
+            },
+            "text": {
+              "en": "I will stay home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú quedarseás en casa mañana."
+            },
+            "text": {
+              "en": "You will stay home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él quedarseá en casa mañana."
+            },
+            "text": {
+              "en": "He will stay home tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella quedarseá en casa mañana."
+            },
+            "text": {
+              "en": "She will stay home tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted quedarseá en casa mañana."
+            },
+            "text": {
+              "en": "You will stay home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros quedarseemos en casa mañana."
+            },
+            "text": {
+              "en": "We will stay home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros quedarseéis en casa mañana."
+            },
+            "text": {
+              "en": "You will stay home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos quedarseán en casa mañana."
+            },
+            "text": {
+              "en": "They will stay home tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes quedarseán en casa mañana."
+            },
+            "text": {
+              "en": "You will stay home tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

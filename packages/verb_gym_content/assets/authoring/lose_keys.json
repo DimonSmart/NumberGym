@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "lose_keys",
+    "meaning": {
+      "en": {
+        "short": "to lose keys",
+        "description": "Practice to lose keys in present, past, and future sentences."
+      },
+      "es": {
+        "short": "perder las llaves",
+        "description": "Practicar perder las llaves en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pierdo las llaves."
+            },
+            "text": {
+              "en": "I lose keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pierdes las llaves."
+            },
+            "text": {
+              "en": "You lose keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pierde las llaves."
+            },
+            "text": {
+              "en": "He loses keys."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pierde las llaves."
+            },
+            "text": {
+              "en": "She loses keys."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pierde las llaves."
+            },
+            "text": {
+              "en": "You lose keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros perdemos las llaves."
+            },
+            "text": {
+              "en": "We lose keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros perdéis las llaves."
+            },
+            "text": {
+              "en": "You lose keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pierden las llaves."
+            },
+            "text": {
+              "en": "They lose keys."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pierden las llaves."
+            },
+            "text": {
+              "en": "You lose keys."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo perdí las llaves ayer."
+            },
+            "text": {
+              "en": "I lost keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú perdiste las llaves ayer."
+            },
+            "text": {
+              "en": "You lost keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él perdió las llaves ayer."
+            },
+            "text": {
+              "en": "He lost keys yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella perdió las llaves ayer."
+            },
+            "text": {
+              "en": "She lost keys yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted perdió las llaves ayer."
+            },
+            "text": {
+              "en": "You lost keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros perdimos las llaves ayer."
+            },
+            "text": {
+              "en": "We lost keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros perdisteis las llaves ayer."
+            },
+            "text": {
+              "en": "You lost keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos perdieron las llaves ayer."
+            },
+            "text": {
+              "en": "They lost keys yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes perdieron las llaves ayer."
+            },
+            "text": {
+              "en": "You lost keys yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo perderé las llaves mañana."
+            },
+            "text": {
+              "en": "I will lose keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú perderás las llaves mañana."
+            },
+            "text": {
+              "en": "You will lose keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él perderá las llaves mañana."
+            },
+            "text": {
+              "en": "He will lose keys tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella perderá las llaves mañana."
+            },
+            "text": {
+              "en": "She will lose keys tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted perderá las llaves mañana."
+            },
+            "text": {
+              "en": "You will lose keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros perderemos las llaves mañana."
+            },
+            "text": {
+              "en": "We will lose keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros perderéis las llaves mañana."
+            },
+            "text": {
+              "en": "You will lose keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos perderán las llaves mañana."
+            },
+            "text": {
+              "en": "They will lose keys tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes perderán las llaves mañana."
+            },
+            "text": {
+              "en": "You will lose keys tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "forget_name",
+    "meaning": {
+      "en": {
+        "short": "to forget a name",
+        "description": "Practice to forget a name in present, past, and future sentences."
+      },
+      "es": {
+        "short": "olvidar un nombre",
+        "description": "Practicar olvidar un nombre en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo olvido un nombre."
+            },
+            "text": {
+              "en": "I forget a name."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú olvidas un nombre."
+            },
+            "text": {
+              "en": "You forget a name."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él olvida un nombre."
+            },
+            "text": {
+              "en": "He forgets a name."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella olvida un nombre."
+            },
+            "text": {
+              "en": "She forgets a name."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted olvida un nombre."
+            },
+            "text": {
+              "en": "You forget a name."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros olvidamos un nombre."
+            },
+            "text": {
+              "en": "We forget a name."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros olvidáis un nombre."
+            },
+            "text": {
+              "en": "You forget a name."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos olvidan un nombre."
+            },
+            "text": {
+              "en": "They forget a name."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes olvidan un nombre."
+            },
+            "text": {
+              "en": "You forget a name."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo olvidé un nombre ayer."
+            },
+            "text": {
+              "en": "I forgot a name yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú olvidaste un nombre ayer."
+            },
+            "text": {
+              "en": "You forgot a name yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él olvidó un nombre ayer."
+            },
+            "text": {
+              "en": "He forgot a name yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella olvidó un nombre ayer."
+            },
+            "text": {
+              "en": "She forgot a name yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted olvidó un nombre ayer."
+            },
+            "text": {
+              "en": "You forgot a name yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros olvidamos un nombre ayer."
+            },
+            "text": {
+              "en": "We forgot a name yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros olvidasteis un nombre ayer."
+            },
+            "text": {
+              "en": "You forgot a name yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos olvidaron un nombre ayer."
+            },
+            "text": {
+              "en": "They forgot a name yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes olvidaron un nombre ayer."
+            },
+            "text": {
+              "en": "You forgot a name yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo olvidaré un nombre mañana."
+            },
+            "text": {
+              "en": "I will forget a name tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú olvidarás un nombre mañana."
+            },
+            "text": {
+              "en": "You will forget a name tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él olvidará un nombre mañana."
+            },
+            "text": {
+              "en": "He will forget a name tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella olvidará un nombre mañana."
+            },
+            "text": {
+              "en": "She will forget a name tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted olvidará un nombre mañana."
+            },
+            "text": {
+              "en": "You will forget a name tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros olvidaremos un nombre mañana."
+            },
+            "text": {
+              "en": "We will forget a name tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros olvidaréis un nombre mañana."
+            },
+            "text": {
+              "en": "You will forget a name tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos olvidarán un nombre mañana."
+            },
+            "text": {
+              "en": "They will forget a name tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes olvidarán un nombre mañana."
+            },
+            "text": {
+              "en": "You will forget a name tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

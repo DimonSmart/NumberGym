@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "bring_item",
+    "meaning": {
+      "en": {
+        "short": "to bring the item",
+        "description": "Practice to bring the item in present, past, and future sentences."
+      },
+      "es": {
+        "short": "traer el objeto",
+        "description": "Practicar traer el objeto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo traigo el objeto."
+            },
+            "text": {
+              "en": "I bring the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú traes el objeto."
+            },
+            "text": {
+              "en": "You bring the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él trae el objeto."
+            },
+            "text": {
+              "en": "He brings the item."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella trae el objeto."
+            },
+            "text": {
+              "en": "She brings the item."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted trae el objeto."
+            },
+            "text": {
+              "en": "You bring the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros traemos el objeto."
+            },
+            "text": {
+              "en": "We bring the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros traéis el objeto."
+            },
+            "text": {
+              "en": "You bring the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos traen el objeto."
+            },
+            "text": {
+              "en": "They bring the item."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes traen el objeto."
+            },
+            "text": {
+              "en": "You bring the item."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo traje el objeto ayer."
+            },
+            "text": {
+              "en": "I brought the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú trajiste el objeto ayer."
+            },
+            "text": {
+              "en": "You brought the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él trajo el objeto ayer."
+            },
+            "text": {
+              "en": "He brought the item yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella trajo el objeto ayer."
+            },
+            "text": {
+              "en": "She brought the item yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted trajo el objeto ayer."
+            },
+            "text": {
+              "en": "You brought the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros trajimos el objeto ayer."
+            },
+            "text": {
+              "en": "We brought the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros trajisteis el objeto ayer."
+            },
+            "text": {
+              "en": "You brought the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos trajeron el objeto ayer."
+            },
+            "text": {
+              "en": "They brought the item yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes trajeron el objeto ayer."
+            },
+            "text": {
+              "en": "You brought the item yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo traeré el objeto mañana."
+            },
+            "text": {
+              "en": "I will bring the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú traerás el objeto mañana."
+            },
+            "text": {
+              "en": "You will bring the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él traerá el objeto mañana."
+            },
+            "text": {
+              "en": "He will bring the item tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella traerá el objeto mañana."
+            },
+            "text": {
+              "en": "She will bring the item tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted traerá el objeto mañana."
+            },
+            "text": {
+              "en": "You will bring the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros traeremos el objeto mañana."
+            },
+            "text": {
+              "en": "We will bring the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros traeréis el objeto mañana."
+            },
+            "text": {
+              "en": "You will bring the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos traerán el objeto mañana."
+            },
+            "text": {
+              "en": "They will bring the item tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes traerán el objeto mañana."
+            },
+            "text": {
+              "en": "You will bring the item tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

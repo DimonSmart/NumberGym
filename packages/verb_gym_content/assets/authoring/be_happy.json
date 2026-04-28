@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "be_happy",
+    "meaning": {
+      "en": {
+        "short": "to be happy",
+        "description": "Practice to be happy in present, past, and future sentences."
+      },
+      "es": {
+        "short": "estar feliz",
+        "description": "Practicar estar feliz en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estoy feliz."
+            },
+            "text": {
+              "en": "I am happy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estás feliz."
+            },
+            "text": {
+              "en": "You are happy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él está feliz."
+            },
+            "text": {
+              "en": "He is happy."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella está feliz."
+            },
+            "text": {
+              "en": "She is happy."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted está feliz."
+            },
+            "text": {
+              "en": "You are happy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estamos felices."
+            },
+            "text": {
+              "en": "We are happy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estáis felices."
+            },
+            "text": {
+              "en": "You are happy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos están felices."
+            },
+            "text": {
+              "en": "They are happy."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes están felices."
+            },
+            "text": {
+              "en": "You are happy."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estuve feliz ayer."
+            },
+            "text": {
+              "en": "I was happy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estuviste feliz ayer."
+            },
+            "text": {
+              "en": "You were happy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estuvo feliz ayer."
+            },
+            "text": {
+              "en": "He was happy yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estuvo feliz ayer."
+            },
+            "text": {
+              "en": "She was happy yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estuvo feliz ayer."
+            },
+            "text": {
+              "en": "You were happy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estuvimos felices ayer."
+            },
+            "text": {
+              "en": "We were happy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estuvisteis felices ayer."
+            },
+            "text": {
+              "en": "You were happy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estuvieron felices ayer."
+            },
+            "text": {
+              "en": "They were happy yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estuvieron felices ayer."
+            },
+            "text": {
+              "en": "You were happy yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estaré feliz mañana."
+            },
+            "text": {
+              "en": "I will be happy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estarás feliz mañana."
+            },
+            "text": {
+              "en": "You will be happy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estará feliz mañana."
+            },
+            "text": {
+              "en": "He will be happy tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estará feliz mañana."
+            },
+            "text": {
+              "en": "She will be happy tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estará feliz mañana."
+            },
+            "text": {
+              "en": "You will be happy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estaremos felices mañana."
+            },
+            "text": {
+              "en": "We will be happy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estaréis felices mañana."
+            },
+            "text": {
+              "en": "You will be happy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estarán felices mañana."
+            },
+            "text": {
+              "en": "They will be happy tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estarán felices mañana."
+            },
+            "text": {
+              "en": "You will be happy tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

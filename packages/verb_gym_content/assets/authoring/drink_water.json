@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "drink_water",
+    "meaning": {
+      "en": {
+        "short": "to drink water",
+        "description": "Practice to drink water in present, past, and future sentences."
+      },
+      "es": {
+        "short": "beber agua",
+        "description": "Practicar beber agua en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo bebo agua."
+            },
+            "text": {
+              "en": "I drink water."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú bebes agua."
+            },
+            "text": {
+              "en": "You drink water."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él bebe agua."
+            },
+            "text": {
+              "en": "He drinks water."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella bebe agua."
+            },
+            "text": {
+              "en": "She drinks water."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted bebe agua."
+            },
+            "text": {
+              "en": "You drink water."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros bebemos agua."
+            },
+            "text": {
+              "en": "We drink water."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros bebéis agua."
+            },
+            "text": {
+              "en": "You drink water."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos beben agua."
+            },
+            "text": {
+              "en": "They drink water."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes beben agua."
+            },
+            "text": {
+              "en": "You drink water."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo bebí agua ayer."
+            },
+            "text": {
+              "en": "I drank water yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú bebiste agua ayer."
+            },
+            "text": {
+              "en": "You drank water yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él bebió agua ayer."
+            },
+            "text": {
+              "en": "He drank water yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella bebió agua ayer."
+            },
+            "text": {
+              "en": "She drank water yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted bebió agua ayer."
+            },
+            "text": {
+              "en": "You drank water yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros bebimos agua ayer."
+            },
+            "text": {
+              "en": "We drank water yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros bebisteis agua ayer."
+            },
+            "text": {
+              "en": "You drank water yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos bebieron agua ayer."
+            },
+            "text": {
+              "en": "They drank water yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes bebieron agua ayer."
+            },
+            "text": {
+              "en": "You drank water yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo beberé agua mañana."
+            },
+            "text": {
+              "en": "I will drink water tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú beberás agua mañana."
+            },
+            "text": {
+              "en": "You will drink water tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él beberá agua mañana."
+            },
+            "text": {
+              "en": "He will drink water tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella beberá agua mañana."
+            },
+            "text": {
+              "en": "She will drink water tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted beberá agua mañana."
+            },
+            "text": {
+              "en": "You will drink water tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros beberemos agua mañana."
+            },
+            "text": {
+              "en": "We will drink water tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros beberéis agua mañana."
+            },
+            "text": {
+              "en": "You will drink water tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos beberán agua mañana."
+            },
+            "text": {
+              "en": "They will drink water tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes beberán agua mañana."
+            },
+            "text": {
+              "en": "You will drink water tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

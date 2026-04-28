@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "rest_at_home",
+    "meaning": {
+      "en": {
+        "short": "to rest at home",
+        "description": "Practice to rest at home in present, past, and future sentences."
+      },
+      "es": {
+        "short": "descansar en casa",
+        "description": "Practicar descansar en casa en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo descanso en casa."
+            },
+            "text": {
+              "en": "I rest at home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú descansas en casa."
+            },
+            "text": {
+              "en": "You rest at home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él descansa en casa."
+            },
+            "text": {
+              "en": "He rests at home."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella descansa en casa."
+            },
+            "text": {
+              "en": "She rests at home."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted descansa en casa."
+            },
+            "text": {
+              "en": "You rest at home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros descansamos en casa."
+            },
+            "text": {
+              "en": "We rest at home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros descansáis en casa."
+            },
+            "text": {
+              "en": "You rest at home."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos descansan en casa."
+            },
+            "text": {
+              "en": "They rest at home."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes descansan en casa."
+            },
+            "text": {
+              "en": "You rest at home."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo descansé en casa ayer."
+            },
+            "text": {
+              "en": "I rested at home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú descansaste en casa ayer."
+            },
+            "text": {
+              "en": "You rested at home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él descansó en casa ayer."
+            },
+            "text": {
+              "en": "He rested at home yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella descansó en casa ayer."
+            },
+            "text": {
+              "en": "She rested at home yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted descansó en casa ayer."
+            },
+            "text": {
+              "en": "You rested at home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros descansamos en casa ayer."
+            },
+            "text": {
+              "en": "We rested at home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros descansasteis en casa ayer."
+            },
+            "text": {
+              "en": "You rested at home yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos descansaron en casa ayer."
+            },
+            "text": {
+              "en": "They rested at home yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes descansaron en casa ayer."
+            },
+            "text": {
+              "en": "You rested at home yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo descansaré en casa mañana."
+            },
+            "text": {
+              "en": "I will rest at home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú descansarás en casa mañana."
+            },
+            "text": {
+              "en": "You will rest at home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él descansará en casa mañana."
+            },
+            "text": {
+              "en": "He will rest at home tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella descansará en casa mañana."
+            },
+            "text": {
+              "en": "She will rest at home tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted descansará en casa mañana."
+            },
+            "text": {
+              "en": "You will rest at home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros descansaremos en casa mañana."
+            },
+            "text": {
+              "en": "We will rest at home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros descansaréis en casa mañana."
+            },
+            "text": {
+              "en": "You will rest at home tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos descansarán en casa mañana."
+            },
+            "text": {
+              "en": "They will rest at home tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes descansarán en casa mañana."
+            },
+            "text": {
+              "en": "You will rest at home tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

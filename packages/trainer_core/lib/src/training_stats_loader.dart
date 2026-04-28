@@ -54,8 +54,10 @@ class TrainingStatsFamilyProgress {
     required this.totalAttempts,
     required this.creditedCorrectAttempts,
     required this.requiredCorrectAttempts,
+    required List<TrainingStatsCardProgress> cards,
     required List<TrainingStatsConceptProgress> concepts,
-  }) : concepts = List<TrainingStatsConceptProgress>.unmodifiable(concepts);
+  }) : cards = List<TrainingStatsCardProgress>.unmodifiable(cards),
+       concepts = List<TrainingStatsConceptProgress>.unmodifiable(concepts);
 
   final ExerciseFamily family;
   final int totalCards;
@@ -64,6 +66,7 @@ class TrainingStatsFamilyProgress {
   final int totalAttempts;
   final int creditedCorrectAttempts;
   final int requiredCorrectAttempts;
+  final List<TrainingStatsCardProgress> cards;
   final List<TrainingStatsConceptProgress> concepts;
 
   int get totalConcepts => concepts.length;
@@ -203,6 +206,13 @@ List<TrainingStatsFamilyProgress> _buildFamilyProgress(
     if (learned) {
       family.learnedCards += 1;
     }
+    family.cards.add(
+      TrainingStatsCardProgress(
+        card: card,
+        progress: progress,
+        learningProgress: cardLearningProgress,
+      ),
+    );
 
     final concept = card.concept;
     if (concept == null) {
@@ -247,8 +257,11 @@ class _FamilyProgressBuilder {
   int totalAttempts = 0;
   int creditedCorrectAttempts = 0;
   int requiredCorrectAttempts = 0;
+  final List<TrainingStatsCardProgress> cards = <TrainingStatsCardProgress>[];
 
   TrainingStatsFamilyProgress build() {
+    final sortedCards = List<TrainingStatsCardProgress>.from(cards)
+      ..sort((left, right) => left.card.id.compareTo(right.card.id));
     final concepts =
         conceptsById.values.map((concept) => concept.build()).toList()..sort(
           (left, right) =>
@@ -262,6 +275,7 @@ class _FamilyProgressBuilder {
       totalAttempts: totalAttempts,
       creditedCorrectAttempts: creditedCorrectAttempts,
       requiredCorrectAttempts: requiredCorrectAttempts,
+      cards: sortedCards,
       concepts: concepts,
     );
   }

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "ask_for_help",
+    "meaning": {
+      "en": {
+        "short": "to ask for help",
+        "description": "Practice to ask for help in present, past, and future sentences."
+      },
+      "es": {
+        "short": "pedir ayuda",
+        "description": "Practicar pedir ayuda en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pido ayuda."
+            },
+            "text": {
+              "en": "I ask for help."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pides ayuda."
+            },
+            "text": {
+              "en": "You ask for help."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pide ayuda."
+            },
+            "text": {
+              "en": "He asks for help."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pide ayuda."
+            },
+            "text": {
+              "en": "She asks for help."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pide ayuda."
+            },
+            "text": {
+              "en": "You ask for help."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pedimos ayuda."
+            },
+            "text": {
+              "en": "We ask for help."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pedís ayuda."
+            },
+            "text": {
+              "en": "You ask for help."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos piden ayuda."
+            },
+            "text": {
+              "en": "They ask for help."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes piden ayuda."
+            },
+            "text": {
+              "en": "You ask for help."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pedí ayuda ayer."
+            },
+            "text": {
+              "en": "I asked for help yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pediste ayuda ayer."
+            },
+            "text": {
+              "en": "You asked for help yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pidió ayuda ayer."
+            },
+            "text": {
+              "en": "He asked for help yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pidió ayuda ayer."
+            },
+            "text": {
+              "en": "She asked for help yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pidió ayuda ayer."
+            },
+            "text": {
+              "en": "You asked for help yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pedimos ayuda ayer."
+            },
+            "text": {
+              "en": "We asked for help yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pedisteis ayuda ayer."
+            },
+            "text": {
+              "en": "You asked for help yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pidieron ayuda ayer."
+            },
+            "text": {
+              "en": "They asked for help yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pidieron ayuda ayer."
+            },
+            "text": {
+              "en": "You asked for help yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pediré ayuda mañana."
+            },
+            "text": {
+              "en": "I will ask for help tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pedirás ayuda mañana."
+            },
+            "text": {
+              "en": "You will ask for help tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pedirá ayuda mañana."
+            },
+            "text": {
+              "en": "He will ask for help tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pedirá ayuda mañana."
+            },
+            "text": {
+              "en": "She will ask for help tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pedirá ayuda mañana."
+            },
+            "text": {
+              "en": "You will ask for help tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pediremos ayuda mañana."
+            },
+            "text": {
+              "en": "We will ask for help tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pediréis ayuda mañana."
+            },
+            "text": {
+              "en": "You will ask for help tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pedirán ayuda mañana."
+            },
+            "text": {
+              "en": "They will ask for help tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pedirán ayuda mañana."
+            },
+            "text": {
+              "en": "You will ask for help tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

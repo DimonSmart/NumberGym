@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "be_from_country",
+    "meaning": {
+      "en": {
+        "short": "to be from Spain",
+        "description": "Practice to be from Spain in present, past, and future sentences."
+      },
+      "es": {
+        "short": "ser de España",
+        "description": "Practicar ser de España en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo soy de España."
+            },
+            "text": {
+              "en": "I am from Spain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú eres de España."
+            },
+            "text": {
+              "en": "You are from Spain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él es de España."
+            },
+            "text": {
+              "en": "He is from Spain."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella es de España."
+            },
+            "text": {
+              "en": "She is from Spain."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted es de España."
+            },
+            "text": {
+              "en": "You are from Spain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros somos de España."
+            },
+            "text": {
+              "en": "We are from Spain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros sois de España."
+            },
+            "text": {
+              "en": "You are from Spain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos son de España."
+            },
+            "text": {
+              "en": "They are from Spain."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes son de España."
+            },
+            "text": {
+              "en": "You are from Spain."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo fui de España ayer."
+            },
+            "text": {
+              "en": "I was from Spain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú fuiste de España ayer."
+            },
+            "text": {
+              "en": "You were from Spain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él fue de España ayer."
+            },
+            "text": {
+              "en": "He was from Spain yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella fue de España ayer."
+            },
+            "text": {
+              "en": "She was from Spain yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted fue de España ayer."
+            },
+            "text": {
+              "en": "You were from Spain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros fuimos de España ayer."
+            },
+            "text": {
+              "en": "We were from Spain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros fuisteis de España ayer."
+            },
+            "text": {
+              "en": "You were from Spain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos fueron de España ayer."
+            },
+            "text": {
+              "en": "They were from Spain yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes fueron de España ayer."
+            },
+            "text": {
+              "en": "You were from Spain yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo seré de España mañana."
+            },
+            "text": {
+              "en": "I will be from Spain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú serás de España mañana."
+            },
+            "text": {
+              "en": "You will be from Spain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él será de España mañana."
+            },
+            "text": {
+              "en": "He will be from Spain tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella será de España mañana."
+            },
+            "text": {
+              "en": "She will be from Spain tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted será de España mañana."
+            },
+            "text": {
+              "en": "You will be from Spain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros seremos de España mañana."
+            },
+            "text": {
+              "en": "We will be from Spain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros seréis de España mañana."
+            },
+            "text": {
+              "en": "You will be from Spain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos serán de España mañana."
+            },
+            "text": {
+              "en": "They will be from Spain tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes serán de España mañana."
+            },
+            "text": {
+              "en": "You will be from Spain tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

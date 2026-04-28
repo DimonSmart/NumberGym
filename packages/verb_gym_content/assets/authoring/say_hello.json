@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "say_hello",
+    "meaning": {
+      "en": {
+        "short": "to say hello",
+        "description": "Practice to say hello in present, past, and future sentences."
+      },
+      "es": {
+        "short": "decir hola",
+        "description": "Practicar decir hola en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo digo hola."
+            },
+            "text": {
+              "en": "I say hello."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú dices hola."
+            },
+            "text": {
+              "en": "You say hello."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dice hola."
+            },
+            "text": {
+              "en": "He says hello."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dice hola."
+            },
+            "text": {
+              "en": "She says hello."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dice hola."
+            },
+            "text": {
+              "en": "You say hello."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros decimos hola."
+            },
+            "text": {
+              "en": "We say hello."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros decís hola."
+            },
+            "text": {
+              "en": "You say hello."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dicen hola."
+            },
+            "text": {
+              "en": "They say hello."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dicen hola."
+            },
+            "text": {
+              "en": "You say hello."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo dije hola ayer."
+            },
+            "text": {
+              "en": "I said hello yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú dijiste hola ayer."
+            },
+            "text": {
+              "en": "You said hello yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dijo hola ayer."
+            },
+            "text": {
+              "en": "He said hello yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dijo hola ayer."
+            },
+            "text": {
+              "en": "She said hello yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dijo hola ayer."
+            },
+            "text": {
+              "en": "You said hello yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros dijimos hola ayer."
+            },
+            "text": {
+              "en": "We said hello yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros dijisteis hola ayer."
+            },
+            "text": {
+              "en": "You said hello yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dijeron hola ayer."
+            },
+            "text": {
+              "en": "They said hello yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dijeron hola ayer."
+            },
+            "text": {
+              "en": "You said hello yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo diré hola mañana."
+            },
+            "text": {
+              "en": "I will say hello tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú dirás hola mañana."
+            },
+            "text": {
+              "en": "You will say hello tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dirá hola mañana."
+            },
+            "text": {
+              "en": "He will say hello tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dirá hola mañana."
+            },
+            "text": {
+              "en": "She will say hello tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dirá hola mañana."
+            },
+            "text": {
+              "en": "You will say hello tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros diremos hola mañana."
+            },
+            "text": {
+              "en": "We will say hello tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros diréis hola mañana."
+            },
+            "text": {
+              "en": "You will say hello tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dirán hola mañana."
+            },
+            "text": {
+              "en": "They will say hello tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dirán hola mañana."
+            },
+            "text": {
+              "en": "You will say hello tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

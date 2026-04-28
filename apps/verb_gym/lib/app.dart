@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:trainer_core/trainer_core.dart';
-import 'package:verb_gym_content/verb_gym_content.dart';
 
 import 'home_screen.dart';
 
@@ -24,17 +23,15 @@ const AppConfig verbGymConfig = AppConfig(
   defaultLearningLanguage: LearningLanguage.spanish,
 );
 
-final TrainingAppDefinition verbGymDefinition = buildVerbGymAppDefinition(
-  config: verbGymConfig,
-);
-
 class VerbGymApp extends StatelessWidget {
   const VerbGymApp({
     super.key,
+    required this.appDefinition,
     required this.settingsBox,
     required this.progressBox,
   });
 
+  final TrainingAppDefinition appDefinition;
   final Box<String> settingsBox;
   final Box<CardProgress> progressBox;
 
@@ -66,7 +63,7 @@ class VerbGymApp extends StatelessWidget {
       ),
       home: VerbGymHomeScreen(
         config: verbGymConfig,
-        appDefinition: verbGymDefinition,
+        appDefinition: appDefinition,
         settingsBox: settingsBox,
         progressBox: progressBox,
       ),

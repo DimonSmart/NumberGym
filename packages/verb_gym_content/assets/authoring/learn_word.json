@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "learn_word",
+    "meaning": {
+      "en": {
+        "short": "to learn a word",
+        "description": "Practice to learn a word in present, past, and future sentences."
+      },
+      "es": {
+        "short": "aprender una palabra",
+        "description": "Practicar aprender una palabra en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo aprendo una palabra."
+            },
+            "text": {
+              "en": "I learn a word."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú aprendes una palabra."
+            },
+            "text": {
+              "en": "You learn a word."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él aprende una palabra."
+            },
+            "text": {
+              "en": "He learns a word."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella aprende una palabra."
+            },
+            "text": {
+              "en": "She learns a word."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted aprende una palabra."
+            },
+            "text": {
+              "en": "You learn a word."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros aprendemos una palabra."
+            },
+            "text": {
+              "en": "We learn a word."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros aprendéis una palabra."
+            },
+            "text": {
+              "en": "You learn a word."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos aprenden una palabra."
+            },
+            "text": {
+              "en": "They learn a word."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes aprenden una palabra."
+            },
+            "text": {
+              "en": "You learn a word."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo aprendí una palabra ayer."
+            },
+            "text": {
+              "en": "I learned a word yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú aprendiste una palabra ayer."
+            },
+            "text": {
+              "en": "You learned a word yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él aprendió una palabra ayer."
+            },
+            "text": {
+              "en": "He learned a word yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella aprendió una palabra ayer."
+            },
+            "text": {
+              "en": "She learned a word yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted aprendió una palabra ayer."
+            },
+            "text": {
+              "en": "You learned a word yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros aprendimos una palabra ayer."
+            },
+            "text": {
+              "en": "We learned a word yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros aprendisteis una palabra ayer."
+            },
+            "text": {
+              "en": "You learned a word yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos aprendieron una palabra ayer."
+            },
+            "text": {
+              "en": "They learned a word yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes aprendieron una palabra ayer."
+            },
+            "text": {
+              "en": "You learned a word yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo aprenderé una palabra mañana."
+            },
+            "text": {
+              "en": "I will learn a word tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú aprenderás una palabra mañana."
+            },
+            "text": {
+              "en": "You will learn a word tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él aprenderá una palabra mañana."
+            },
+            "text": {
+              "en": "He will learn a word tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella aprenderá una palabra mañana."
+            },
+            "text": {
+              "en": "She will learn a word tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted aprenderá una palabra mañana."
+            },
+            "text": {
+              "en": "You will learn a word tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros aprenderemos una palabra mañana."
+            },
+            "text": {
+              "en": "We will learn a word tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros aprenderéis una palabra mañana."
+            },
+            "text": {
+              "en": "You will learn a word tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos aprenderán una palabra mañana."
+            },
+            "text": {
+              "en": "They will learn a word tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes aprenderán una palabra mañana."
+            },
+            "text": {
+              "en": "You will learn a word tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

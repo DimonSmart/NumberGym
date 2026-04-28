@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "receive_item",
+    "meaning": {
+      "en": {
+        "short": "to receive the item",
+        "description": "Practice to receive the item in present, past, and future sentences."
+      },
+      "es": {
+        "short": "recibir el objeto",
+        "description": "Practicar recibir el objeto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo recibo el objeto."
+            },
+            "text": {
+              "en": "I receive the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú recibes el objeto."
+            },
+            "text": {
+              "en": "You receive the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él recibe el objeto."
+            },
+            "text": {
+              "en": "He receives the item."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella recibe el objeto."
+            },
+            "text": {
+              "en": "She receives the item."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted recibe el objeto."
+            },
+            "text": {
+              "en": "You receive the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros recibimos el objeto."
+            },
+            "text": {
+              "en": "We receive the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros recibís el objeto."
+            },
+            "text": {
+              "en": "You receive the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos reciben el objeto."
+            },
+            "text": {
+              "en": "They receive the item."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes reciben el objeto."
+            },
+            "text": {
+              "en": "You receive the item."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo recibí el objeto ayer."
+            },
+            "text": {
+              "en": "I received the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú recibiste el objeto ayer."
+            },
+            "text": {
+              "en": "You received the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él recibió el objeto ayer."
+            },
+            "text": {
+              "en": "He received the item yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella recibió el objeto ayer."
+            },
+            "text": {
+              "en": "She received the item yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted recibió el objeto ayer."
+            },
+            "text": {
+              "en": "You received the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros recibimos el objeto ayer."
+            },
+            "text": {
+              "en": "We received the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros recibisteis el objeto ayer."
+            },
+            "text": {
+              "en": "You received the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos recibieron el objeto ayer."
+            },
+            "text": {
+              "en": "They received the item yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes recibieron el objeto ayer."
+            },
+            "text": {
+              "en": "You received the item yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo recibiré el objeto mañana."
+            },
+            "text": {
+              "en": "I will receive the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú recibirás el objeto mañana."
+            },
+            "text": {
+              "en": "You will receive the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él recibirá el objeto mañana."
+            },
+            "text": {
+              "en": "He will receive the item tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella recibirá el objeto mañana."
+            },
+            "text": {
+              "en": "She will receive the item tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted recibirá el objeto mañana."
+            },
+            "text": {
+              "en": "You will receive the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros recibiremos el objeto mañana."
+            },
+            "text": {
+              "en": "We will receive the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros recibiréis el objeto mañana."
+            },
+            "text": {
+              "en": "You will receive the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos recibirán el objeto mañana."
+            },
+            "text": {
+              "en": "They will receive the item tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes recibirán el objeto mañana."
+            },
+            "text": {
+              "en": "You will receive the item tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

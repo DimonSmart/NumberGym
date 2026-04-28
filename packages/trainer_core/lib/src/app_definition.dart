@@ -30,8 +30,26 @@ class StatisticsDisplayConfig {
   const StatisticsDisplayConfig({
     this.conceptDisplayMode = StatisticsConceptDisplayMode.list,
     this.compactGridMaxColumns = 5,
+    this.defaultCardGrid = const StatisticsCardGridConfig(),
+    this.cardGridByFamilyKey = const <String, StatisticsCardGridConfig>{},
   });
 
   final StatisticsConceptDisplayMode conceptDisplayMode;
   final int compactGridMaxColumns;
+  final StatisticsCardGridConfig defaultCardGrid;
+  final Map<String, StatisticsCardGridConfig> cardGridByFamilyKey;
+
+  StatisticsCardGridConfig cardGridForFamily(ExerciseFamily family) {
+    return cardGridByFamilyKey[family.storageKey] ?? defaultCardGrid;
+  }
+}
+
+class StatisticsCardGridConfig {
+  const StatisticsCardGridConfig({
+    this.minTileWidth = 44,
+    this.maxColumns = 10,
+  });
+
+  final double minTileWidth;
+  final int maxColumns;
 }

@@ -11,6 +11,10 @@ const _numberGymModuleId = 'number_gym';
 const _countryCode = 34;
 const _phoneCardsPerFormat = 16;
 const _phoneGroupSeparator = ' • ';
+const _phoneCardGridConfig = StatisticsCardGridConfig(
+  minTileWidth: 64,
+  maxColumns: 5,
+);
 
 const List<ExerciseMode> _numberModes = <ExerciseMode>[
   ExerciseMode.speak,
@@ -36,6 +40,13 @@ TrainingAppDefinition buildNumberGymAppDefinition({required AppConfig config}) {
     profileOf: (language) => LanguageRegistry.of(language).profile,
     tokenizerOf: (language) =>
         NumberGymMatcherTokenizer(LanguageRegistry.of(language)),
+    statisticsDisplay: const StatisticsDisplayConfig(
+      cardGridByFamilyKey: <String, StatisticsCardGridConfig>{
+        'number_gym/phone33x3': _phoneCardGridConfig,
+        'number_gym/phone3222': _phoneCardGridConfig,
+        'number_gym/phone2322': _phoneCardGridConfig,
+      },
+    ),
     catalog: ExerciseCatalog(modules: <TrainingModule>[NumberGymModule()]),
   );
 }

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "open_door",
+    "meaning": {
+      "en": {
+        "short": "to open the door",
+        "description": "Practice to open the door in present, past, and future sentences."
+      },
+      "es": {
+        "short": "abrir la puerta",
+        "description": "Practicar abrir la puerta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo abro la puerta."
+            },
+            "text": {
+              "en": "I open the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú abres la puerta."
+            },
+            "text": {
+              "en": "You open the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él abre la puerta."
+            },
+            "text": {
+              "en": "He opens the door."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella abre la puerta."
+            },
+            "text": {
+              "en": "She opens the door."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted abre la puerta."
+            },
+            "text": {
+              "en": "You open the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros abrimos la puerta."
+            },
+            "text": {
+              "en": "We open the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros abrís la puerta."
+            },
+            "text": {
+              "en": "You open the door."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos abren la puerta."
+            },
+            "text": {
+              "en": "They open the door."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes abren la puerta."
+            },
+            "text": {
+              "en": "You open the door."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo abrí la puerta ayer."
+            },
+            "text": {
+              "en": "I opened the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú abriste la puerta ayer."
+            },
+            "text": {
+              "en": "You opened the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él abrió la puerta ayer."
+            },
+            "text": {
+              "en": "He opened the door yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella abrió la puerta ayer."
+            },
+            "text": {
+              "en": "She opened the door yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted abrió la puerta ayer."
+            },
+            "text": {
+              "en": "You opened the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros abrimos la puerta ayer."
+            },
+            "text": {
+              "en": "We opened the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros abristeis la puerta ayer."
+            },
+            "text": {
+              "en": "You opened the door yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos abrieron la puerta ayer."
+            },
+            "text": {
+              "en": "They opened the door yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes abrieron la puerta ayer."
+            },
+            "text": {
+              "en": "You opened the door yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo abriré la puerta mañana."
+            },
+            "text": {
+              "en": "I will open the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú abrirás la puerta mañana."
+            },
+            "text": {
+              "en": "You will open the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él abrirá la puerta mañana."
+            },
+            "text": {
+              "en": "He will open the door tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella abrirá la puerta mañana."
+            },
+            "text": {
+              "en": "She will open the door tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted abrirá la puerta mañana."
+            },
+            "text": {
+              "en": "You will open the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros abriremos la puerta mañana."
+            },
+            "text": {
+              "en": "We will open the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros abriréis la puerta mañana."
+            },
+            "text": {
+              "en": "You will open the door tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos abrirán la puerta mañana."
+            },
+            "text": {
+              "en": "They will open the door tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes abrirán la puerta mañana."
+            },
+            "text": {
+              "en": "You will open the door tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

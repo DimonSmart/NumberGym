@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:trainer_core/trainer_core.dart';
 
-import 'default_verb_concept_authoring_data.dart';
-import 'verb_authoring_loader.dart';
 import 'verb_authoring_models.dart';
 
 const String _verbGymModuleId = 'verb_gym';
@@ -14,12 +12,9 @@ const List<ExerciseMode> _verbExerciseModes = <ExerciseMode>[
   ExerciseMode.listenAndChoose,
 ];
 
-final VerbRuntimeCatalog _defaultRuntimeCatalog = const VerbAuthoringLoader()
-    .loadRuntimeCatalogFromJsonStrings(defaultVerbConceptAuthoringJsonSources);
-
 TrainingAppDefinition buildVerbGymAppDefinition({
   required AppConfig config,
-  VerbRuntimeCatalog? runtimeCatalog,
+  required VerbRuntimeCatalog runtimeCatalog,
 }) {
   final resourcesByLanguage = <LearningLanguage, _VerbLanguageResources>{
     LearningLanguage.english: _VerbLanguageResources(
@@ -62,7 +57,7 @@ TrainingAppDefinition buildVerbGymAppDefinition({
     catalog: ExerciseCatalog(
       modules: <TrainingModule>[
         _VerbGymModule(
-          runtimeCatalog: runtimeCatalog ?? _defaultRuntimeCatalog,
+          runtimeCatalog: runtimeCatalog,
           resourcesByLanguage: resourcesByLanguage,
           defaultBaseLanguage: config.defaultBaseLanguage,
         ),

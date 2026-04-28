@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "sleep_at_night",
+    "meaning": {
+      "en": {
+        "short": "to sleep at night",
+        "description": "Practice to sleep at night in present, past, and future sentences."
+      },
+      "es": {
+        "short": "dormir por la noche",
+        "description": "Practicar dormir por la noche en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo duermo por la noche."
+            },
+            "text": {
+              "en": "I sleep at night."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú duermes por la noche."
+            },
+            "text": {
+              "en": "You sleep at night."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él duerme por la noche."
+            },
+            "text": {
+              "en": "He sleeps at night."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella duerme por la noche."
+            },
+            "text": {
+              "en": "She sleeps at night."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted duerme por la noche."
+            },
+            "text": {
+              "en": "You sleep at night."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros dormimos por la noche."
+            },
+            "text": {
+              "en": "We sleep at night."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros dormís por la noche."
+            },
+            "text": {
+              "en": "You sleep at night."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos duermen por la noche."
+            },
+            "text": {
+              "en": "They sleep at night."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes duermen por la noche."
+            },
+            "text": {
+              "en": "You sleep at night."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo dormí por la noche ayer."
+            },
+            "text": {
+              "en": "I slept at night yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú dormiste por la noche ayer."
+            },
+            "text": {
+              "en": "You slept at night yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él durmió por la noche ayer."
+            },
+            "text": {
+              "en": "He slept at night yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella durmió por la noche ayer."
+            },
+            "text": {
+              "en": "She slept at night yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted durmió por la noche ayer."
+            },
+            "text": {
+              "en": "You slept at night yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros dormimos por la noche ayer."
+            },
+            "text": {
+              "en": "We slept at night yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros dormisteis por la noche ayer."
+            },
+            "text": {
+              "en": "You slept at night yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos durmieron por la noche ayer."
+            },
+            "text": {
+              "en": "They slept at night yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes durmieron por la noche ayer."
+            },
+            "text": {
+              "en": "You slept at night yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo dormiré por la noche mañana."
+            },
+            "text": {
+              "en": "I will sleep at night tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú dormirás por la noche mañana."
+            },
+            "text": {
+              "en": "You will sleep at night tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dormirá por la noche mañana."
+            },
+            "text": {
+              "en": "He will sleep at night tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dormirá por la noche mañana."
+            },
+            "text": {
+              "en": "She will sleep at night tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dormirá por la noche mañana."
+            },
+            "text": {
+              "en": "You will sleep at night tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros dormiremos por la noche mañana."
+            },
+            "text": {
+              "en": "We will sleep at night tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros dormiréis por la noche mañana."
+            },
+            "text": {
+              "en": "You will sleep at night tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dormirán por la noche mañana."
+            },
+            "text": {
+              "en": "They will sleep at night tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dormirán por la noche mañana."
+            },
+            "text": {
+              "en": "You will sleep at night tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

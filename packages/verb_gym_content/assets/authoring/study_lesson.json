@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "study_lesson",
+    "meaning": {
+      "en": {
+        "short": "to study a lesson",
+        "description": "Practice to study a lesson in present, past, and future sentences."
+      },
+      "es": {
+        "short": "estudiar una lección",
+        "description": "Practicar estudiar una lección en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estudio una lección."
+            },
+            "text": {
+              "en": "I study a lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estudias una lección."
+            },
+            "text": {
+              "en": "You study a lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estudia una lección."
+            },
+            "text": {
+              "en": "He studies a lesson."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estudia una lección."
+            },
+            "text": {
+              "en": "She studies a lesson."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estudia una lección."
+            },
+            "text": {
+              "en": "You study a lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estudiamos una lección."
+            },
+            "text": {
+              "en": "We study a lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estudiáis una lección."
+            },
+            "text": {
+              "en": "You study a lesson."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estudian una lección."
+            },
+            "text": {
+              "en": "They study a lesson."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estudian una lección."
+            },
+            "text": {
+              "en": "You study a lesson."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estudié una lección ayer."
+            },
+            "text": {
+              "en": "I studied a lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estudiaste una lección ayer."
+            },
+            "text": {
+              "en": "You studied a lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estudió una lección ayer."
+            },
+            "text": {
+              "en": "He studied a lesson yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estudió una lección ayer."
+            },
+            "text": {
+              "en": "She studied a lesson yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estudió una lección ayer."
+            },
+            "text": {
+              "en": "You studied a lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estudiamos una lección ayer."
+            },
+            "text": {
+              "en": "We studied a lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estudiasteis una lección ayer."
+            },
+            "text": {
+              "en": "You studied a lesson yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estudiaron una lección ayer."
+            },
+            "text": {
+              "en": "They studied a lesson yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estudiaron una lección ayer."
+            },
+            "text": {
+              "en": "You studied a lesson yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo estudiaré una lección mañana."
+            },
+            "text": {
+              "en": "I will study a lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú estudiarás una lección mañana."
+            },
+            "text": {
+              "en": "You will study a lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él estudiará una lección mañana."
+            },
+            "text": {
+              "en": "He will study a lesson tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella estudiará una lección mañana."
+            },
+            "text": {
+              "en": "She will study a lesson tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted estudiará una lección mañana."
+            },
+            "text": {
+              "en": "You will study a lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros estudiaremos una lección mañana."
+            },
+            "text": {
+              "en": "We will study a lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros estudiaréis una lección mañana."
+            },
+            "text": {
+              "en": "You will study a lesson tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos estudiarán una lección mañana."
+            },
+            "text": {
+              "en": "They will study a lesson tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes estudiarán una lección mañana."
+            },
+            "text": {
+              "en": "You will study a lesson tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

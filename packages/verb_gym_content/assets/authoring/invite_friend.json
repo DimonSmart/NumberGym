@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "invite_friend",
+    "meaning": {
+      "en": {
+        "short": "to invite a friend",
+        "description": "Practice to invite a friend in present, past, and future sentences."
+      },
+      "es": {
+        "short": "invitar a un amigo",
+        "description": "Practicar invitar a un amigo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo invito a un amigo."
+            },
+            "text": {
+              "en": "I invite a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú invitas a un amigo."
+            },
+            "text": {
+              "en": "You invite a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él invita a un amigo."
+            },
+            "text": {
+              "en": "He invites a friend."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella invita a un amigo."
+            },
+            "text": {
+              "en": "She invites a friend."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted invita a un amigo."
+            },
+            "text": {
+              "en": "You invite a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros invitamos a un amigo."
+            },
+            "text": {
+              "en": "We invite a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros invitáis a un amigo."
+            },
+            "text": {
+              "en": "You invite a friend."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos invitan a un amigo."
+            },
+            "text": {
+              "en": "They invite a friend."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes invitan a un amigo."
+            },
+            "text": {
+              "en": "You invite a friend."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo invité a un amigo ayer."
+            },
+            "text": {
+              "en": "I invited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú invitaste a un amigo ayer."
+            },
+            "text": {
+              "en": "You invited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él invitó a un amigo ayer."
+            },
+            "text": {
+              "en": "He invited a friend yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella invitó a un amigo ayer."
+            },
+            "text": {
+              "en": "She invited a friend yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted invitó a un amigo ayer."
+            },
+            "text": {
+              "en": "You invited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros invitamos a un amigo ayer."
+            },
+            "text": {
+              "en": "We invited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros invitasteis a un amigo ayer."
+            },
+            "text": {
+              "en": "You invited a friend yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos invitaron a un amigo ayer."
+            },
+            "text": {
+              "en": "They invited a friend yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes invitaron a un amigo ayer."
+            },
+            "text": {
+              "en": "You invited a friend yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo invitaré a un amigo mañana."
+            },
+            "text": {
+              "en": "I will invite a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú invitarás a un amigo mañana."
+            },
+            "text": {
+              "en": "You will invite a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él invitará a un amigo mañana."
+            },
+            "text": {
+              "en": "He will invite a friend tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella invitará a un amigo mañana."
+            },
+            "text": {
+              "en": "She will invite a friend tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted invitará a un amigo mañana."
+            },
+            "text": {
+              "en": "You will invite a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros invitaremos a un amigo mañana."
+            },
+            "text": {
+              "en": "We will invite a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros invitaréis a un amigo mañana."
+            },
+            "text": {
+              "en": "You will invite a friend tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos invitarán a un amigo mañana."
+            },
+            "text": {
+              "en": "They will invite a friend tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes invitarán a un amigo mañana."
+            },
+            "text": {
+              "en": "You will invite a friend tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

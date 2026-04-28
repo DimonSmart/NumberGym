@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "think_about_problem",
+    "meaning": {
+      "en": {
+        "short": "to think about a problem",
+        "description": "Practice to think about a problem in present, past, and future sentences."
+      },
+      "es": {
+        "short": "pensar en un problema",
+        "description": "Practicar pensar en un problema en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo penso en un problema."
+            },
+            "text": {
+              "en": "I think about a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pensas en un problema."
+            },
+            "text": {
+              "en": "You think about a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pensa en un problema."
+            },
+            "text": {
+              "en": "He thinks about a problem."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pensa en un problema."
+            },
+            "text": {
+              "en": "She thinks about a problem."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pensa en un problema."
+            },
+            "text": {
+              "en": "You think about a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pensamos en un problema."
+            },
+            "text": {
+              "en": "We think about a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pensáis en un problema."
+            },
+            "text": {
+              "en": "You think about a problem."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pensan en un problema."
+            },
+            "text": {
+              "en": "They think about a problem."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pensan en un problema."
+            },
+            "text": {
+              "en": "You think about a problem."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pensé en un problema ayer."
+            },
+            "text": {
+              "en": "I thought about a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pensaste en un problema ayer."
+            },
+            "text": {
+              "en": "You thought about a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pensó en un problema ayer."
+            },
+            "text": {
+              "en": "He thought about a problem yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pensó en un problema ayer."
+            },
+            "text": {
+              "en": "She thought about a problem yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pensó en un problema ayer."
+            },
+            "text": {
+              "en": "You thought about a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pensamos en un problema ayer."
+            },
+            "text": {
+              "en": "We thought about a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pensasteis en un problema ayer."
+            },
+            "text": {
+              "en": "You thought about a problem yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pensaron en un problema ayer."
+            },
+            "text": {
+              "en": "They thought about a problem yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pensaron en un problema ayer."
+            },
+            "text": {
+              "en": "You thought about a problem yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pensaré en un problema mañana."
+            },
+            "text": {
+              "en": "I will think about a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pensarás en un problema mañana."
+            },
+            "text": {
+              "en": "You will think about a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pensará en un problema mañana."
+            },
+            "text": {
+              "en": "He will think about a problem tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pensará en un problema mañana."
+            },
+            "text": {
+              "en": "She will think about a problem tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pensará en un problema mañana."
+            },
+            "text": {
+              "en": "You will think about a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pensaremos en un problema mañana."
+            },
+            "text": {
+              "en": "We will think about a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pensaréis en un problema mañana."
+            },
+            "text": {
+              "en": "You will think about a problem tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pensarán en un problema mañana."
+            },
+            "text": {
+              "en": "They will think about a problem tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pensarán en un problema mañana."
+            },
+            "text": {
+              "en": "You will think about a problem tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

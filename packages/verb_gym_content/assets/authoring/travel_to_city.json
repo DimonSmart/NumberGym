@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "travel_to_city",
+    "meaning": {
+      "en": {
+        "short": "to travel to the city",
+        "description": "Practice to travel to the city in present, past, and future sentences."
+      },
+      "es": {
+        "short": "viajar a la ciudad",
+        "description": "Practicar viajar a la ciudad en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo viajo a la ciudad."
+            },
+            "text": {
+              "en": "I travel to the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú viajas a la ciudad."
+            },
+            "text": {
+              "en": "You travel to the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él viaja a la ciudad."
+            },
+            "text": {
+              "en": "He travels to the city."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella viaja a la ciudad."
+            },
+            "text": {
+              "en": "She travels to the city."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted viaja a la ciudad."
+            },
+            "text": {
+              "en": "You travel to the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros viajamos a la ciudad."
+            },
+            "text": {
+              "en": "We travel to the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros viajáis a la ciudad."
+            },
+            "text": {
+              "en": "You travel to the city."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos viajan a la ciudad."
+            },
+            "text": {
+              "en": "They travel to the city."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes viajan a la ciudad."
+            },
+            "text": {
+              "en": "You travel to the city."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo viajé a la ciudad ayer."
+            },
+            "text": {
+              "en": "I traveled to the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú viajaste a la ciudad ayer."
+            },
+            "text": {
+              "en": "You traveled to the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él viajó a la ciudad ayer."
+            },
+            "text": {
+              "en": "He traveled to the city yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella viajó a la ciudad ayer."
+            },
+            "text": {
+              "en": "She traveled to the city yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted viajó a la ciudad ayer."
+            },
+            "text": {
+              "en": "You traveled to the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros viajamos a la ciudad ayer."
+            },
+            "text": {
+              "en": "We traveled to the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros viajasteis a la ciudad ayer."
+            },
+            "text": {
+              "en": "You traveled to the city yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos viajaron a la ciudad ayer."
+            },
+            "text": {
+              "en": "They traveled to the city yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes viajaron a la ciudad ayer."
+            },
+            "text": {
+              "en": "You traveled to the city yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo viajaré a la ciudad mañana."
+            },
+            "text": {
+              "en": "I will travel to the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú viajarás a la ciudad mañana."
+            },
+            "text": {
+              "en": "You will travel to the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él viajará a la ciudad mañana."
+            },
+            "text": {
+              "en": "He will travel to the city tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella viajará a la ciudad mañana."
+            },
+            "text": {
+              "en": "She will travel to the city tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted viajará a la ciudad mañana."
+            },
+            "text": {
+              "en": "You will travel to the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros viajaremos a la ciudad mañana."
+            },
+            "text": {
+              "en": "We will travel to the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros viajaréis a la ciudad mañana."
+            },
+            "text": {
+              "en": "You will travel to the city tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos viajarán a la ciudad mañana."
+            },
+            "text": {
+              "en": "They will travel to the city tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes viajarán a la ciudad mañana."
+            },
+            "text": {
+              "en": "You will travel to the city tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

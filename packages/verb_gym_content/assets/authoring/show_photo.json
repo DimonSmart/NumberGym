@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "show_photo",
+    "meaning": {
+      "en": {
+        "short": "to show a photo",
+        "description": "Practice to show a photo in present, past, and future sentences."
+      },
+      "es": {
+        "short": "mostrar una foto",
+        "description": "Practicar mostrar una foto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo muestro una foto."
+            },
+            "text": {
+              "en": "I show a photo."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú muestras una foto."
+            },
+            "text": {
+              "en": "You show a photo."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él muestra una foto."
+            },
+            "text": {
+              "en": "He shows a photo."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella muestra una foto."
+            },
+            "text": {
+              "en": "She shows a photo."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted muestra una foto."
+            },
+            "text": {
+              "en": "You show a photo."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros mostramos una foto."
+            },
+            "text": {
+              "en": "We show a photo."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros mostráis una foto."
+            },
+            "text": {
+              "en": "You show a photo."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos muestran una foto."
+            },
+            "text": {
+              "en": "They show a photo."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes muestran una foto."
+            },
+            "text": {
+              "en": "You show a photo."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo mostré una foto ayer."
+            },
+            "text": {
+              "en": "I showed a photo yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú mostraste una foto ayer."
+            },
+            "text": {
+              "en": "You showed a photo yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él mostró una foto ayer."
+            },
+            "text": {
+              "en": "He showed a photo yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella mostró una foto ayer."
+            },
+            "text": {
+              "en": "She showed a photo yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted mostró una foto ayer."
+            },
+            "text": {
+              "en": "You showed a photo yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros mostramos una foto ayer."
+            },
+            "text": {
+              "en": "We showed a photo yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros mostrasteis una foto ayer."
+            },
+            "text": {
+              "en": "You showed a photo yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos mostraron una foto ayer."
+            },
+            "text": {
+              "en": "They showed a photo yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes mostraron una foto ayer."
+            },
+            "text": {
+              "en": "You showed a photo yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo mostraré una foto mañana."
+            },
+            "text": {
+              "en": "I will show a photo tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú mostrarás una foto mañana."
+            },
+            "text": {
+              "en": "You will show a photo tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él mostrará una foto mañana."
+            },
+            "text": {
+              "en": "He will show a photo tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella mostrará una foto mañana."
+            },
+            "text": {
+              "en": "She will show a photo tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted mostrará una foto mañana."
+            },
+            "text": {
+              "en": "You will show a photo tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros mostraremos una foto mañana."
+            },
+            "text": {
+              "en": "We will show a photo tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros mostraréis una foto mañana."
+            },
+            "text": {
+              "en": "You will show a photo tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos mostrarán una foto mañana."
+            },
+            "text": {
+              "en": "They will show a photo tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes mostrarán una foto mañana."
+            },
+            "text": {
+              "en": "You will show a photo tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

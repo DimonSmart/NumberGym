@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "watch_movie",
+    "meaning": {
+      "en": {
+        "short": "to watch a movie",
+        "description": "Practice to watch a movie in present, past, and future sentences."
+      },
+      "es": {
+        "short": "ver una película",
+        "description": "Practicar ver una película en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo veo una película."
+            },
+            "text": {
+              "en": "I watch a movie."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú ves una película."
+            },
+            "text": {
+              "en": "You watch a movie."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él ve una película."
+            },
+            "text": {
+              "en": "He watches a movie."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella ve una película."
+            },
+            "text": {
+              "en": "She watches a movie."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted ve una película."
+            },
+            "text": {
+              "en": "You watch a movie."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros vemos una película."
+            },
+            "text": {
+              "en": "We watch a movie."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros veis una película."
+            },
+            "text": {
+              "en": "You watch a movie."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos ven una película."
+            },
+            "text": {
+              "en": "They watch a movie."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes ven una película."
+            },
+            "text": {
+              "en": "You watch a movie."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo vi una película ayer."
+            },
+            "text": {
+              "en": "I watched a movie yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú viste una película ayer."
+            },
+            "text": {
+              "en": "You watched a movie yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él vio una película ayer."
+            },
+            "text": {
+              "en": "He watched a movie yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella vio una película ayer."
+            },
+            "text": {
+              "en": "She watched a movie yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted vio una película ayer."
+            },
+            "text": {
+              "en": "You watched a movie yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros vimos una película ayer."
+            },
+            "text": {
+              "en": "We watched a movie yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros visteis una película ayer."
+            },
+            "text": {
+              "en": "You watched a movie yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos vieron una película ayer."
+            },
+            "text": {
+              "en": "They watched a movie yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes vieron una película ayer."
+            },
+            "text": {
+              "en": "You watched a movie yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo veré una película mañana."
+            },
+            "text": {
+              "en": "I will watch a movie tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú verás una película mañana."
+            },
+            "text": {
+              "en": "You will watch a movie tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él verá una película mañana."
+            },
+            "text": {
+              "en": "He will watch a movie tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella verá una película mañana."
+            },
+            "text": {
+              "en": "She will watch a movie tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted verá una película mañana."
+            },
+            "text": {
+              "en": "You will watch a movie tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros veremos una película mañana."
+            },
+            "text": {
+              "en": "We will watch a movie tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros veréis una película mañana."
+            },
+            "text": {
+              "en": "You will watch a movie tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos verán una película mañana."
+            },
+            "text": {
+              "en": "They will watch a movie tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes verán una película mañana."
+            },
+            "text": {
+              "en": "You will watch a movie tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

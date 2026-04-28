@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "have_to_work",
+    "meaning": {
+      "en": {
+        "short": "to have to work",
+        "description": "Practice to have to work in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tener que trabajar",
+        "description": "Practicar tener que trabajar en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tengo que trabajar."
+            },
+            "text": {
+              "en": "I have to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tienes que trabajar."
+            },
+            "text": {
+              "en": "You have to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tiene que trabajar."
+            },
+            "text": {
+              "en": "He has to work."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tiene que trabajar."
+            },
+            "text": {
+              "en": "She has to work."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tiene que trabajar."
+            },
+            "text": {
+              "en": "You have to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tenemos que trabajar."
+            },
+            "text": {
+              "en": "We have to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tenéis que trabajar."
+            },
+            "text": {
+              "en": "You have to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tienen que trabajar."
+            },
+            "text": {
+              "en": "They have to work."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tienen que trabajar."
+            },
+            "text": {
+              "en": "You have to work."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tuve que trabajar ayer."
+            },
+            "text": {
+              "en": "I had to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tuviste que trabajar ayer."
+            },
+            "text": {
+              "en": "You had to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tuvo que trabajar ayer."
+            },
+            "text": {
+              "en": "He had to work yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tuvo que trabajar ayer."
+            },
+            "text": {
+              "en": "She had to work yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tuvo que trabajar ayer."
+            },
+            "text": {
+              "en": "You had to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tuvimos que trabajar ayer."
+            },
+            "text": {
+              "en": "We had to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tuvisteis que trabajar ayer."
+            },
+            "text": {
+              "en": "You had to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tuvieron que trabajar ayer."
+            },
+            "text": {
+              "en": "They had to work yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tuvieron que trabajar ayer."
+            },
+            "text": {
+              "en": "You had to work yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tendré que trabajar mañana."
+            },
+            "text": {
+              "en": "I will have to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tendrás que trabajar mañana."
+            },
+            "text": {
+              "en": "You will have to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tendrá que trabajar mañana."
+            },
+            "text": {
+              "en": "He will have to work tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tendrá que trabajar mañana."
+            },
+            "text": {
+              "en": "She will have to work tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tendrá que trabajar mañana."
+            },
+            "text": {
+              "en": "You will have to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tendremos que trabajar mañana."
+            },
+            "text": {
+              "en": "We will have to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tendréis que trabajar mañana."
+            },
+            "text": {
+              "en": "You will have to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tendrán que trabajar mañana."
+            },
+            "text": {
+              "en": "They will have to work tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tendrán que trabajar mañana."
+            },
+            "text": {
+              "en": "You will have to work tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

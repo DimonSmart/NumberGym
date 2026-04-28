@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "plan_trip",
+    "meaning": {
+      "en": {
+        "short": "to plan a trip",
+        "description": "Practice to plan a trip in present, past, and future sentences."
+      },
+      "es": {
+        "short": "planear un viaje",
+        "description": "Practicar planear un viaje en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo planeo un viaje."
+            },
+            "text": {
+              "en": "I plan a trip."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú planeas un viaje."
+            },
+            "text": {
+              "en": "You plan a trip."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él planea un viaje."
+            },
+            "text": {
+              "en": "He plans a trip."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella planea un viaje."
+            },
+            "text": {
+              "en": "She plans a trip."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted planea un viaje."
+            },
+            "text": {
+              "en": "You plan a trip."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros planeamos un viaje."
+            },
+            "text": {
+              "en": "We plan a trip."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros planeáis un viaje."
+            },
+            "text": {
+              "en": "You plan a trip."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos planean un viaje."
+            },
+            "text": {
+              "en": "They plan a trip."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes planean un viaje."
+            },
+            "text": {
+              "en": "You plan a trip."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo planeé un viaje ayer."
+            },
+            "text": {
+              "en": "I planned a trip yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú planeaste un viaje ayer."
+            },
+            "text": {
+              "en": "You planned a trip yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él planeó un viaje ayer."
+            },
+            "text": {
+              "en": "He planned a trip yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella planeó un viaje ayer."
+            },
+            "text": {
+              "en": "She planned a trip yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted planeó un viaje ayer."
+            },
+            "text": {
+              "en": "You planned a trip yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros planeamos un viaje ayer."
+            },
+            "text": {
+              "en": "We planned a trip yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros planeasteis un viaje ayer."
+            },
+            "text": {
+              "en": "You planned a trip yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos planearon un viaje ayer."
+            },
+            "text": {
+              "en": "They planned a trip yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes planearon un viaje ayer."
+            },
+            "text": {
+              "en": "You planned a trip yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo planearé un viaje mañana."
+            },
+            "text": {
+              "en": "I will plan a trip tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú planearás un viaje mañana."
+            },
+            "text": {
+              "en": "You will plan a trip tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él planeará un viaje mañana."
+            },
+            "text": {
+              "en": "He will plan a trip tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella planeará un viaje mañana."
+            },
+            "text": {
+              "en": "She will plan a trip tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted planeará un viaje mañana."
+            },
+            "text": {
+              "en": "You will plan a trip tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros planearemos un viaje mañana."
+            },
+            "text": {
+              "en": "We will plan a trip tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros planearéis un viaje mañana."
+            },
+            "text": {
+              "en": "You will plan a trip tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos planearán un viaje mañana."
+            },
+            "text": {
+              "en": "They will plan a trip tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes planearán un viaje mañana."
+            },
+            "text": {
+              "en": "You will plan a trip tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "find_keys",
+    "meaning": {
+      "en": {
+        "short": "to find keys",
+        "description": "Practice to find keys in present, past, and future sentences."
+      },
+      "es": {
+        "short": "encontrar las llaves",
+        "description": "Practicar encontrar las llaves en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo encuentro las llaves."
+            },
+            "text": {
+              "en": "I find keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú encuentras las llaves."
+            },
+            "text": {
+              "en": "You find keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él encuentra las llaves."
+            },
+            "text": {
+              "en": "He finds keys."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella encuentra las llaves."
+            },
+            "text": {
+              "en": "She finds keys."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted encuentra las llaves."
+            },
+            "text": {
+              "en": "You find keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros encontramos las llaves."
+            },
+            "text": {
+              "en": "We find keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros encontráis las llaves."
+            },
+            "text": {
+              "en": "You find keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos encuentran las llaves."
+            },
+            "text": {
+              "en": "They find keys."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes encuentran las llaves."
+            },
+            "text": {
+              "en": "You find keys."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo encontré las llaves ayer."
+            },
+            "text": {
+              "en": "I found keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú encontraste las llaves ayer."
+            },
+            "text": {
+              "en": "You found keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él encontró las llaves ayer."
+            },
+            "text": {
+              "en": "He found keys yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella encontró las llaves ayer."
+            },
+            "text": {
+              "en": "She found keys yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted encontró las llaves ayer."
+            },
+            "text": {
+              "en": "You found keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros encontramos las llaves ayer."
+            },
+            "text": {
+              "en": "We found keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros encontrasteis las llaves ayer."
+            },
+            "text": {
+              "en": "You found keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos encontraron las llaves ayer."
+            },
+            "text": {
+              "en": "They found keys yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes encontraron las llaves ayer."
+            },
+            "text": {
+              "en": "You found keys yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo encontraré las llaves mañana."
+            },
+            "text": {
+              "en": "I will find keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú encontrarás las llaves mañana."
+            },
+            "text": {
+              "en": "You will find keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él encontrará las llaves mañana."
+            },
+            "text": {
+              "en": "He will find keys tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella encontrará las llaves mañana."
+            },
+            "text": {
+              "en": "She will find keys tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted encontrará las llaves mañana."
+            },
+            "text": {
+              "en": "You will find keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros encontraremos las llaves mañana."
+            },
+            "text": {
+              "en": "We will find keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros encontraréis las llaves mañana."
+            },
+            "text": {
+              "en": "You will find keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos encontrarán las llaves mañana."
+            },
+            "text": {
+              "en": "They will find keys tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes encontrarán las llaves mañana."
+            },
+            "text": {
+              "en": "You will find keys tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

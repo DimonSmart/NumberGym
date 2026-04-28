@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "try_again",
+    "meaning": {
+      "en": {
+        "short": "to try again",
+        "description": "Practice to try again in present, past, and future sentences."
+      },
+      "es": {
+        "short": "intentar otra vez",
+        "description": "Practicar intentar otra vez en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo intento otra vez."
+            },
+            "text": {
+              "en": "I try again."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú intentas otra vez."
+            },
+            "text": {
+              "en": "You try again."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él intenta otra vez."
+            },
+            "text": {
+              "en": "He tries again."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella intenta otra vez."
+            },
+            "text": {
+              "en": "She tries again."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted intenta otra vez."
+            },
+            "text": {
+              "en": "You try again."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros intentamos otra vez."
+            },
+            "text": {
+              "en": "We try again."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros intentáis otra vez."
+            },
+            "text": {
+              "en": "You try again."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos intentan otra vez."
+            },
+            "text": {
+              "en": "They try again."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes intentan otra vez."
+            },
+            "text": {
+              "en": "You try again."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo intenté otra vez ayer."
+            },
+            "text": {
+              "en": "I tried again yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú intentaste otra vez ayer."
+            },
+            "text": {
+              "en": "You tried again yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él intentó otra vez ayer."
+            },
+            "text": {
+              "en": "He tried again yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella intentó otra vez ayer."
+            },
+            "text": {
+              "en": "She tried again yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted intentó otra vez ayer."
+            },
+            "text": {
+              "en": "You tried again yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros intentamos otra vez ayer."
+            },
+            "text": {
+              "en": "We tried again yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros intentasteis otra vez ayer."
+            },
+            "text": {
+              "en": "You tried again yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos intentaron otra vez ayer."
+            },
+            "text": {
+              "en": "They tried again yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes intentaron otra vez ayer."
+            },
+            "text": {
+              "en": "You tried again yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo intentaré otra vez mañana."
+            },
+            "text": {
+              "en": "I will try again tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú intentarás otra vez mañana."
+            },
+            "text": {
+              "en": "You will try again tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él intentará otra vez mañana."
+            },
+            "text": {
+              "en": "He will try again tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella intentará otra vez mañana."
+            },
+            "text": {
+              "en": "She will try again tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted intentará otra vez mañana."
+            },
+            "text": {
+              "en": "You will try again tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros intentaremos otra vez mañana."
+            },
+            "text": {
+              "en": "We will try again tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros intentaréis otra vez mañana."
+            },
+            "text": {
+              "en": "You will try again tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos intentarán otra vez mañana."
+            },
+            "text": {
+              "en": "They will try again tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes intentarán otra vez mañana."
+            },
+            "text": {
+              "en": "You will try again tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "have_pain",
+    "meaning": {
+      "en": {
+        "short": "to have pain",
+        "description": "Practice to have pain in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tener dolor",
+        "description": "Practicar tener dolor en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tengo dolor."
+            },
+            "text": {
+              "en": "I have pain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tienes dolor."
+            },
+            "text": {
+              "en": "You have pain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tiene dolor."
+            },
+            "text": {
+              "en": "He has pain."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tiene dolor."
+            },
+            "text": {
+              "en": "She has pain."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tiene dolor."
+            },
+            "text": {
+              "en": "You have pain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tenemos dolor."
+            },
+            "text": {
+              "en": "We have pain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tenéis dolor."
+            },
+            "text": {
+              "en": "You have pain."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tienen dolor."
+            },
+            "text": {
+              "en": "They have pain."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tienen dolor."
+            },
+            "text": {
+              "en": "You have pain."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tuve dolor ayer."
+            },
+            "text": {
+              "en": "I had pain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tuviste dolor ayer."
+            },
+            "text": {
+              "en": "You had pain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tuvo dolor ayer."
+            },
+            "text": {
+              "en": "He had pain yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tuvo dolor ayer."
+            },
+            "text": {
+              "en": "She had pain yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tuvo dolor ayer."
+            },
+            "text": {
+              "en": "You had pain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tuvimos dolor ayer."
+            },
+            "text": {
+              "en": "We had pain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tuvisteis dolor ayer."
+            },
+            "text": {
+              "en": "You had pain yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tuvieron dolor ayer."
+            },
+            "text": {
+              "en": "They had pain yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tuvieron dolor ayer."
+            },
+            "text": {
+              "en": "You had pain yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tendré dolor mañana."
+            },
+            "text": {
+              "en": "I will have pain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tendrás dolor mañana."
+            },
+            "text": {
+              "en": "You will have pain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tendrá dolor mañana."
+            },
+            "text": {
+              "en": "He will have pain tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tendrá dolor mañana."
+            },
+            "text": {
+              "en": "She will have pain tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tendrá dolor mañana."
+            },
+            "text": {
+              "en": "You will have pain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tendremos dolor mañana."
+            },
+            "text": {
+              "en": "We will have pain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tendréis dolor mañana."
+            },
+            "text": {
+              "en": "You will have pain tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tendrán dolor mañana."
+            },
+            "text": {
+              "en": "They will have pain tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tendrán dolor mañana."
+            },
+            "text": {
+              "en": "You will have pain tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

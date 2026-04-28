@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "have_time",
+    "meaning": {
+      "en": {
+        "short": "to have time",
+        "description": "Practice to have time in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tener tiempo",
+        "description": "Practicar tener tiempo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tengo tiempo."
+            },
+            "text": {
+              "en": "I have time."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tienes tiempo."
+            },
+            "text": {
+              "en": "You have time."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tiene tiempo."
+            },
+            "text": {
+              "en": "He has time."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tiene tiempo."
+            },
+            "text": {
+              "en": "She has time."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tiene tiempo."
+            },
+            "text": {
+              "en": "You have time."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tenemos tiempo."
+            },
+            "text": {
+              "en": "We have time."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tenéis tiempo."
+            },
+            "text": {
+              "en": "You have time."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tienen tiempo."
+            },
+            "text": {
+              "en": "They have time."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tienen tiempo."
+            },
+            "text": {
+              "en": "You have time."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tuve tiempo ayer."
+            },
+            "text": {
+              "en": "I had time yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tuviste tiempo ayer."
+            },
+            "text": {
+              "en": "You had time yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tuvo tiempo ayer."
+            },
+            "text": {
+              "en": "He had time yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tuvo tiempo ayer."
+            },
+            "text": {
+              "en": "She had time yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tuvo tiempo ayer."
+            },
+            "text": {
+              "en": "You had time yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tuvimos tiempo ayer."
+            },
+            "text": {
+              "en": "We had time yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tuvisteis tiempo ayer."
+            },
+            "text": {
+              "en": "You had time yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tuvieron tiempo ayer."
+            },
+            "text": {
+              "en": "They had time yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tuvieron tiempo ayer."
+            },
+            "text": {
+              "en": "You had time yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tendré tiempo mañana."
+            },
+            "text": {
+              "en": "I will have time tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tendrás tiempo mañana."
+            },
+            "text": {
+              "en": "You will have time tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tendrá tiempo mañana."
+            },
+            "text": {
+              "en": "He will have time tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tendrá tiempo mañana."
+            },
+            "text": {
+              "en": "She will have time tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tendrá tiempo mañana."
+            },
+            "text": {
+              "en": "You will have time tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tendremos tiempo mañana."
+            },
+            "text": {
+              "en": "We will have time tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tendréis tiempo mañana."
+            },
+            "text": {
+              "en": "You will have time tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tendrán tiempo mañana."
+            },
+            "text": {
+              "en": "They will have time tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tendrán tiempo mañana."
+            },
+            "text": {
+              "en": "You will have time tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

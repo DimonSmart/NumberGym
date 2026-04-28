@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "go_shopping",
+    "meaning": {
+      "en": {
+        "short": "to go shopping",
+        "description": "Practice to go shopping in present, past, and future sentences."
+      },
+      "es": {
+        "short": "ir de compras",
+        "description": "Practicar ir de compras en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo voy de compras."
+            },
+            "text": {
+              "en": "I go shopping."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú vas de compras."
+            },
+            "text": {
+              "en": "You go shopping."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él va de compras."
+            },
+            "text": {
+              "en": "He goes shopping."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella va de compras."
+            },
+            "text": {
+              "en": "She goes shopping."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted va de compras."
+            },
+            "text": {
+              "en": "You go shopping."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros vamos de compras."
+            },
+            "text": {
+              "en": "We go shopping."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros vais de compras."
+            },
+            "text": {
+              "en": "You go shopping."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos van de compras."
+            },
+            "text": {
+              "en": "They go shopping."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes van de compras."
+            },
+            "text": {
+              "en": "You go shopping."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo fui de compras ayer."
+            },
+            "text": {
+              "en": "I went shopping yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú fuiste de compras ayer."
+            },
+            "text": {
+              "en": "You went shopping yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él fue de compras ayer."
+            },
+            "text": {
+              "en": "He went shopping yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella fue de compras ayer."
+            },
+            "text": {
+              "en": "She went shopping yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted fue de compras ayer."
+            },
+            "text": {
+              "en": "You went shopping yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros fuimos de compras ayer."
+            },
+            "text": {
+              "en": "We went shopping yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros fuisteis de compras ayer."
+            },
+            "text": {
+              "en": "You went shopping yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos fueron de compras ayer."
+            },
+            "text": {
+              "en": "They went shopping yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes fueron de compras ayer."
+            },
+            "text": {
+              "en": "You went shopping yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo iré de compras mañana."
+            },
+            "text": {
+              "en": "I will go shopping tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú irás de compras mañana."
+            },
+            "text": {
+              "en": "You will go shopping tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él irá de compras mañana."
+            },
+            "text": {
+              "en": "He will go shopping tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella irá de compras mañana."
+            },
+            "text": {
+              "en": "She will go shopping tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted irá de compras mañana."
+            },
+            "text": {
+              "en": "You will go shopping tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros iremos de compras mañana."
+            },
+            "text": {
+              "en": "We will go shopping tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros iréis de compras mañana."
+            },
+            "text": {
+              "en": "You will go shopping tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos irán de compras mañana."
+            },
+            "text": {
+              "en": "They will go shopping tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes irán de compras mañana."
+            },
+            "text": {
+              "en": "You will go shopping tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

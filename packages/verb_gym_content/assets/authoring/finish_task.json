@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "finish_task",
+    "meaning": {
+      "en": {
+        "short": "to finish a task",
+        "description": "Practice to finish a task in present, past, and future sentences."
+      },
+      "es": {
+        "short": "terminar una tarea",
+        "description": "Practicar terminar una tarea en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo termino una tarea."
+            },
+            "text": {
+              "en": "I finish a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú terminas una tarea."
+            },
+            "text": {
+              "en": "You finish a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él termina una tarea."
+            },
+            "text": {
+              "en": "He finishes a task."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella termina una tarea."
+            },
+            "text": {
+              "en": "She finishes a task."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted termina una tarea."
+            },
+            "text": {
+              "en": "You finish a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros terminamos una tarea."
+            },
+            "text": {
+              "en": "We finish a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros termináis una tarea."
+            },
+            "text": {
+              "en": "You finish a task."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos terminan una tarea."
+            },
+            "text": {
+              "en": "They finish a task."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes terminan una tarea."
+            },
+            "text": {
+              "en": "You finish a task."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo terminé una tarea ayer."
+            },
+            "text": {
+              "en": "I finished a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú terminaste una tarea ayer."
+            },
+            "text": {
+              "en": "You finished a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él terminó una tarea ayer."
+            },
+            "text": {
+              "en": "He finished a task yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella terminó una tarea ayer."
+            },
+            "text": {
+              "en": "She finished a task yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted terminó una tarea ayer."
+            },
+            "text": {
+              "en": "You finished a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros terminamos una tarea ayer."
+            },
+            "text": {
+              "en": "We finished a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros terminasteis una tarea ayer."
+            },
+            "text": {
+              "en": "You finished a task yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos terminaron una tarea ayer."
+            },
+            "text": {
+              "en": "They finished a task yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes terminaron una tarea ayer."
+            },
+            "text": {
+              "en": "You finished a task yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo terminaré una tarea mañana."
+            },
+            "text": {
+              "en": "I will finish a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú terminarás una tarea mañana."
+            },
+            "text": {
+              "en": "You will finish a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él terminará una tarea mañana."
+            },
+            "text": {
+              "en": "He will finish a task tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella terminará una tarea mañana."
+            },
+            "text": {
+              "en": "She will finish a task tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted terminará una tarea mañana."
+            },
+            "text": {
+              "en": "You will finish a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros terminaremos una tarea mañana."
+            },
+            "text": {
+              "en": "We will finish a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros terminaréis una tarea mañana."
+            },
+            "text": {
+              "en": "You will finish a task tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos terminarán una tarea mañana."
+            },
+            "text": {
+              "en": "They will finish a task tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes terminarán una tarea mañana."
+            },
+            "text": {
+              "en": "You will finish a task tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

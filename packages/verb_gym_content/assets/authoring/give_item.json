@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "give_item",
+    "meaning": {
+      "en": {
+        "short": "to give the item",
+        "description": "Practice to give the item in present, past, and future sentences."
+      },
+      "es": {
+        "short": "dar el objeto",
+        "description": "Practicar dar el objeto en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo doy el objeto."
+            },
+            "text": {
+              "en": "I give the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú das el objeto."
+            },
+            "text": {
+              "en": "You give the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él da el objeto."
+            },
+            "text": {
+              "en": "He gives the item."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella da el objeto."
+            },
+            "text": {
+              "en": "She gives the item."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted da el objeto."
+            },
+            "text": {
+              "en": "You give the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros damos el objeto."
+            },
+            "text": {
+              "en": "We give the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros dais el objeto."
+            },
+            "text": {
+              "en": "You give the item."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dan el objeto."
+            },
+            "text": {
+              "en": "They give the item."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dan el objeto."
+            },
+            "text": {
+              "en": "You give the item."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo di el objeto ayer."
+            },
+            "text": {
+              "en": "I gave the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú diste el objeto ayer."
+            },
+            "text": {
+              "en": "You gave the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dio el objeto ayer."
+            },
+            "text": {
+              "en": "He gave the item yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dio el objeto ayer."
+            },
+            "text": {
+              "en": "She gave the item yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dio el objeto ayer."
+            },
+            "text": {
+              "en": "You gave the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros dimos el objeto ayer."
+            },
+            "text": {
+              "en": "We gave the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros disteis el objeto ayer."
+            },
+            "text": {
+              "en": "You gave the item yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos dieron el objeto ayer."
+            },
+            "text": {
+              "en": "They gave the item yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes dieron el objeto ayer."
+            },
+            "text": {
+              "en": "You gave the item yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo daré el objeto mañana."
+            },
+            "text": {
+              "en": "I will give the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú darás el objeto mañana."
+            },
+            "text": {
+              "en": "You will give the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él dará el objeto mañana."
+            },
+            "text": {
+              "en": "He will give the item tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella dará el objeto mañana."
+            },
+            "text": {
+              "en": "She will give the item tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted dará el objeto mañana."
+            },
+            "text": {
+              "en": "You will give the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros daremos el objeto mañana."
+            },
+            "text": {
+              "en": "We will give the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros daréis el objeto mañana."
+            },
+            "text": {
+              "en": "You will give the item tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos darán el objeto mañana."
+            },
+            "text": {
+              "en": "They will give the item tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes darán el objeto mañana."
+            },
+            "text": {
+              "en": "You will give the item tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

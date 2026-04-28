@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "wear_jacket",
+    "meaning": {
+      "en": {
+        "short": "to wear a jacket",
+        "description": "Practice to wear a jacket in present, past, and future sentences."
+      },
+      "es": {
+        "short": "llevar una chaqueta",
+        "description": "Practicar llevar una chaqueta en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevo una chaqueta."
+            },
+            "text": {
+              "en": "I wear a jacket."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevas una chaqueta."
+            },
+            "text": {
+              "en": "You wear a jacket."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él lleva una chaqueta."
+            },
+            "text": {
+              "en": "He wears a jacket."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella lleva una chaqueta."
+            },
+            "text": {
+              "en": "She wears a jacket."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted lleva una chaqueta."
+            },
+            "text": {
+              "en": "You wear a jacket."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevamos una chaqueta."
+            },
+            "text": {
+              "en": "We wear a jacket."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros lleváis una chaqueta."
+            },
+            "text": {
+              "en": "You wear a jacket."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevan una chaqueta."
+            },
+            "text": {
+              "en": "They wear a jacket."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevan una chaqueta."
+            },
+            "text": {
+              "en": "You wear a jacket."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevé una chaqueta ayer."
+            },
+            "text": {
+              "en": "I wore a jacket yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevaste una chaqueta ayer."
+            },
+            "text": {
+              "en": "You wore a jacket yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llevó una chaqueta ayer."
+            },
+            "text": {
+              "en": "He wore a jacket yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llevó una chaqueta ayer."
+            },
+            "text": {
+              "en": "She wore a jacket yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llevó una chaqueta ayer."
+            },
+            "text": {
+              "en": "You wore a jacket yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevamos una chaqueta ayer."
+            },
+            "text": {
+              "en": "We wore a jacket yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llevasteis una chaqueta ayer."
+            },
+            "text": {
+              "en": "You wore a jacket yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevaron una chaqueta ayer."
+            },
+            "text": {
+              "en": "They wore a jacket yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevaron una chaqueta ayer."
+            },
+            "text": {
+              "en": "You wore a jacket yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo llevaré una chaqueta mañana."
+            },
+            "text": {
+              "en": "I will wear a jacket tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú llevarás una chaqueta mañana."
+            },
+            "text": {
+              "en": "You will wear a jacket tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él llevará una chaqueta mañana."
+            },
+            "text": {
+              "en": "He will wear a jacket tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella llevará una chaqueta mañana."
+            },
+            "text": {
+              "en": "She will wear a jacket tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted llevará una chaqueta mañana."
+            },
+            "text": {
+              "en": "You will wear a jacket tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros llevaremos una chaqueta mañana."
+            },
+            "text": {
+              "en": "We will wear a jacket tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros llevaréis una chaqueta mañana."
+            },
+            "text": {
+              "en": "You will wear a jacket tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos llevarán una chaqueta mañana."
+            },
+            "text": {
+              "en": "They will wear a jacket tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes llevarán una chaqueta mañana."
+            },
+            "text": {
+              "en": "You will wear a jacket tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

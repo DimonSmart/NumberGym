@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "buy_food",
+    "meaning": {
+      "en": {
+        "short": "to buy food",
+        "description": "Practice to buy food in present, past, and future sentences."
+      },
+      "es": {
+        "short": "comprar comida",
+        "description": "Practicar comprar comida en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo compro comida."
+            },
+            "text": {
+              "en": "I buy food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú compras comida."
+            },
+            "text": {
+              "en": "You buy food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él compra comida."
+            },
+            "text": {
+              "en": "He buys food."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella compra comida."
+            },
+            "text": {
+              "en": "She buys food."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted compra comida."
+            },
+            "text": {
+              "en": "You buy food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros compramos comida."
+            },
+            "text": {
+              "en": "We buy food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros compráis comida."
+            },
+            "text": {
+              "en": "You buy food."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos compran comida."
+            },
+            "text": {
+              "en": "They buy food."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes compran comida."
+            },
+            "text": {
+              "en": "You buy food."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo compré comida ayer."
+            },
+            "text": {
+              "en": "I bought food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú compraste comida ayer."
+            },
+            "text": {
+              "en": "You bought food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él compró comida ayer."
+            },
+            "text": {
+              "en": "He bought food yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella compró comida ayer."
+            },
+            "text": {
+              "en": "She bought food yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted compró comida ayer."
+            },
+            "text": {
+              "en": "You bought food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros compramos comida ayer."
+            },
+            "text": {
+              "en": "We bought food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros comprasteis comida ayer."
+            },
+            "text": {
+              "en": "You bought food yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos compraron comida ayer."
+            },
+            "text": {
+              "en": "They bought food yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes compraron comida ayer."
+            },
+            "text": {
+              "en": "You bought food yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo compraré comida mañana."
+            },
+            "text": {
+              "en": "I will buy food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú comprarás comida mañana."
+            },
+            "text": {
+              "en": "You will buy food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él comprará comida mañana."
+            },
+            "text": {
+              "en": "He will buy food tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella comprará comida mañana."
+            },
+            "text": {
+              "en": "She will buy food tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted comprará comida mañana."
+            },
+            "text": {
+              "en": "You will buy food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros compraremos comida mañana."
+            },
+            "text": {
+              "en": "We will buy food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros compraréis comida mañana."
+            },
+            "text": {
+              "en": "You will buy food tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos comprarán comida mañana."
+            },
+            "text": {
+              "en": "They will buy food tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes comprarán comida mañana."
+            },
+            "text": {
+              "en": "You will buy food tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

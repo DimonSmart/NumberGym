@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "can_do",
+    "meaning": {
+      "en": {
+        "short": "to be able to do it",
+        "description": "Practice to be able to do it in present, past, and future sentences."
+      },
+      "es": {
+        "short": "poder hacerlo",
+        "description": "Practicar poder hacerlo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo puedo hacerlo."
+            },
+            "text": {
+              "en": "I can do it."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú puedes hacerlo."
+            },
+            "text": {
+              "en": "You can do it."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él puede hacerlo."
+            },
+            "text": {
+              "en": "He can do it."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella puede hacerlo."
+            },
+            "text": {
+              "en": "She can do it."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted puede hacerlo."
+            },
+            "text": {
+              "en": "You can do it."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros podemos hacerlo."
+            },
+            "text": {
+              "en": "We can do it."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros podéis hacerlo."
+            },
+            "text": {
+              "en": "You can do it."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pueden hacerlo."
+            },
+            "text": {
+              "en": "They can do it."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pueden hacerlo."
+            },
+            "text": {
+              "en": "You can do it."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo pude hacerlo ayer."
+            },
+            "text": {
+              "en": "I could do it yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú pudiste hacerlo ayer."
+            },
+            "text": {
+              "en": "You could do it yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él pudo hacerlo ayer."
+            },
+            "text": {
+              "en": "He could do it yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella pudo hacerlo ayer."
+            },
+            "text": {
+              "en": "She could do it yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted pudo hacerlo ayer."
+            },
+            "text": {
+              "en": "You could do it yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros pudimos hacerlo ayer."
+            },
+            "text": {
+              "en": "We could do it yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros pudisteis hacerlo ayer."
+            },
+            "text": {
+              "en": "You could do it yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos pudieron hacerlo ayer."
+            },
+            "text": {
+              "en": "They could do it yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes pudieron hacerlo ayer."
+            },
+            "text": {
+              "en": "You could do it yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo podré hacerlo mañana."
+            },
+            "text": {
+              "en": "I will be able to do it tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú podrás hacerlo mañana."
+            },
+            "text": {
+              "en": "You will be able to do it tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él podrá hacerlo mañana."
+            },
+            "text": {
+              "en": "He will be able to do it tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella podrá hacerlo mañana."
+            },
+            "text": {
+              "en": "She will be able to do it tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted podrá hacerlo mañana."
+            },
+            "text": {
+              "en": "You will be able to do it tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros podremos hacerlo mañana."
+            },
+            "text": {
+              "en": "We will be able to do it tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros podréis hacerlo mañana."
+            },
+            "text": {
+              "en": "You will be able to do it tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos podrán hacerlo mañana."
+            },
+            "text": {
+              "en": "They will be able to do it tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes podrán hacerlo mañana."
+            },
+            "text": {
+              "en": "You will be able to do it tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

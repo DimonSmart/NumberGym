@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "walk_to_work",
+    "meaning": {
+      "en": {
+        "short": "to walk to work",
+        "description": "Practice to walk to work in present, past, and future sentences."
+      },
+      "es": {
+        "short": "caminar al trabajo",
+        "description": "Practicar caminar al trabajo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo camino al trabajo."
+            },
+            "text": {
+              "en": "I walk to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú caminas al trabajo."
+            },
+            "text": {
+              "en": "You walk to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él camina al trabajo."
+            },
+            "text": {
+              "en": "He walks to work."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella camina al trabajo."
+            },
+            "text": {
+              "en": "She walks to work."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted camina al trabajo."
+            },
+            "text": {
+              "en": "You walk to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros caminamos al trabajo."
+            },
+            "text": {
+              "en": "We walk to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros camináis al trabajo."
+            },
+            "text": {
+              "en": "You walk to work."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos caminan al trabajo."
+            },
+            "text": {
+              "en": "They walk to work."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes caminan al trabajo."
+            },
+            "text": {
+              "en": "You walk to work."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo caminé al trabajo ayer."
+            },
+            "text": {
+              "en": "I walked to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú caminaste al trabajo ayer."
+            },
+            "text": {
+              "en": "You walked to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él caminó al trabajo ayer."
+            },
+            "text": {
+              "en": "He walked to work yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella caminó al trabajo ayer."
+            },
+            "text": {
+              "en": "She walked to work yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted caminó al trabajo ayer."
+            },
+            "text": {
+              "en": "You walked to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros caminamos al trabajo ayer."
+            },
+            "text": {
+              "en": "We walked to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros caminasteis al trabajo ayer."
+            },
+            "text": {
+              "en": "You walked to work yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos caminaron al trabajo ayer."
+            },
+            "text": {
+              "en": "They walked to work yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes caminaron al trabajo ayer."
+            },
+            "text": {
+              "en": "You walked to work yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo caminaré al trabajo mañana."
+            },
+            "text": {
+              "en": "I will walk to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú caminarás al trabajo mañana."
+            },
+            "text": {
+              "en": "You will walk to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él caminará al trabajo mañana."
+            },
+            "text": {
+              "en": "He will walk to work tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella caminará al trabajo mañana."
+            },
+            "text": {
+              "en": "She will walk to work tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted caminará al trabajo mañana."
+            },
+            "text": {
+              "en": "You will walk to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros caminaremos al trabajo mañana."
+            },
+            "text": {
+              "en": "We will walk to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros caminaréis al trabajo mañana."
+            },
+            "text": {
+              "en": "You will walk to work tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos caminarán al trabajo mañana."
+            },
+            "text": {
+              "en": "They will walk to work tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes caminarán al trabajo mañana."
+            },
+            "text": {
+              "en": "You will walk to work tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

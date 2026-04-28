@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "decide_now",
+    "meaning": {
+      "en": {
+        "short": "to decide now",
+        "description": "Practice to decide now in present, past, and future sentences."
+      },
+      "es": {
+        "short": "decidir ahora",
+        "description": "Practicar decidir ahora en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo decido ahora."
+            },
+            "text": {
+              "en": "I decide now."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú decides ahora."
+            },
+            "text": {
+              "en": "You decide now."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él decide ahora."
+            },
+            "text": {
+              "en": "He decides now."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella decide ahora."
+            },
+            "text": {
+              "en": "She decides now."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted decide ahora."
+            },
+            "text": {
+              "en": "You decide now."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros decidimos ahora."
+            },
+            "text": {
+              "en": "We decide now."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros decidís ahora."
+            },
+            "text": {
+              "en": "You decide now."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos deciden ahora."
+            },
+            "text": {
+              "en": "They decide now."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes deciden ahora."
+            },
+            "text": {
+              "en": "You decide now."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo decidí ahora ayer."
+            },
+            "text": {
+              "en": "I decided now yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú decidiste ahora ayer."
+            },
+            "text": {
+              "en": "You decided now yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él decidió ahora ayer."
+            },
+            "text": {
+              "en": "He decided now yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella decidió ahora ayer."
+            },
+            "text": {
+              "en": "She decided now yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted decidió ahora ayer."
+            },
+            "text": {
+              "en": "You decided now yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros decidimos ahora ayer."
+            },
+            "text": {
+              "en": "We decided now yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros decidisteis ahora ayer."
+            },
+            "text": {
+              "en": "You decided now yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos decidieron ahora ayer."
+            },
+            "text": {
+              "en": "They decided now yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes decidieron ahora ayer."
+            },
+            "text": {
+              "en": "You decided now yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo decidiré ahora mañana."
+            },
+            "text": {
+              "en": "I will decide now tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú decidirás ahora mañana."
+            },
+            "text": {
+              "en": "You will decide now tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él decidirá ahora mañana."
+            },
+            "text": {
+              "en": "He will decide now tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella decidirá ahora mañana."
+            },
+            "text": {
+              "en": "She will decide now tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted decidirá ahora mañana."
+            },
+            "text": {
+              "en": "You will decide now tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros decidiremos ahora mañana."
+            },
+            "text": {
+              "en": "We will decide now tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros decidiréis ahora mañana."
+            },
+            "text": {
+              "en": "You will decide now tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos decidirán ahora mañana."
+            },
+            "text": {
+              "en": "They will decide now tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes decidirán ahora mañana."
+            },
+            "text": {
+              "en": "You will decide now tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

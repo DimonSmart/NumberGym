@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "need_doctor",
+    "meaning": {
+      "en": {
+        "short": "to need a doctor",
+        "description": "Practice to need a doctor in present, past, and future sentences."
+      },
+      "es": {
+        "short": "necesitar un médico",
+        "description": "Practicar necesitar un médico en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo necesito un médico."
+            },
+            "text": {
+              "en": "I need a doctor."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú necesitas un médico."
+            },
+            "text": {
+              "en": "You need a doctor."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él necesita un médico."
+            },
+            "text": {
+              "en": "He needs a doctor."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella necesita un médico."
+            },
+            "text": {
+              "en": "She needs a doctor."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted necesita un médico."
+            },
+            "text": {
+              "en": "You need a doctor."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros necesitamos un médico."
+            },
+            "text": {
+              "en": "We need a doctor."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros necesitáis un médico."
+            },
+            "text": {
+              "en": "You need a doctor."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos necesitan un médico."
+            },
+            "text": {
+              "en": "They need a doctor."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes necesitan un médico."
+            },
+            "text": {
+              "en": "You need a doctor."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo necesité un médico ayer."
+            },
+            "text": {
+              "en": "I needed a doctor yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú necesitaste un médico ayer."
+            },
+            "text": {
+              "en": "You needed a doctor yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él necesitó un médico ayer."
+            },
+            "text": {
+              "en": "He needed a doctor yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella necesitó un médico ayer."
+            },
+            "text": {
+              "en": "She needed a doctor yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted necesitó un médico ayer."
+            },
+            "text": {
+              "en": "You needed a doctor yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros necesitamos un médico ayer."
+            },
+            "text": {
+              "en": "We needed a doctor yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros necesitasteis un médico ayer."
+            },
+            "text": {
+              "en": "You needed a doctor yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos necesitaron un médico ayer."
+            },
+            "text": {
+              "en": "They needed a doctor yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes necesitaron un médico ayer."
+            },
+            "text": {
+              "en": "You needed a doctor yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo necesitaré un médico mañana."
+            },
+            "text": {
+              "en": "I will need a doctor tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú necesitarás un médico mañana."
+            },
+            "text": {
+              "en": "You will need a doctor tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él necesitará un médico mañana."
+            },
+            "text": {
+              "en": "He will need a doctor tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella necesitará un médico mañana."
+            },
+            "text": {
+              "en": "She will need a doctor tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted necesitará un médico mañana."
+            },
+            "text": {
+              "en": "You will need a doctor tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros necesitaremos un médico mañana."
+            },
+            "text": {
+              "en": "We will need a doctor tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros necesitaréis un médico mañana."
+            },
+            "text": {
+              "en": "You will need a doctor tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos necesitarán un médico mañana."
+            },
+            "text": {
+              "en": "They will need a doctor tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes necesitarán un médico mañana."
+            },
+            "text": {
+              "en": "You will need a doctor tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

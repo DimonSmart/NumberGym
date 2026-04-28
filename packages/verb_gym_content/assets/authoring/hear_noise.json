@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "hear_noise",
+    "meaning": {
+      "en": {
+        "short": "to hear a noise",
+        "description": "Practice to hear a noise in present, past, and future sentences."
+      },
+      "es": {
+        "short": "oír un ruido",
+        "description": "Practicar oír un ruido en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo oigo un ruido."
+            },
+            "text": {
+              "en": "I hear a noise."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú oyes un ruido."
+            },
+            "text": {
+              "en": "You hear a noise."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él oye un ruido."
+            },
+            "text": {
+              "en": "He hears a noise."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella oye un ruido."
+            },
+            "text": {
+              "en": "She hears a noise."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted oye un ruido."
+            },
+            "text": {
+              "en": "You hear a noise."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros oímos un ruido."
+            },
+            "text": {
+              "en": "We hear a noise."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros oís un ruido."
+            },
+            "text": {
+              "en": "You hear a noise."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos oyen un ruido."
+            },
+            "text": {
+              "en": "They hear a noise."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes oyen un ruido."
+            },
+            "text": {
+              "en": "You hear a noise."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo oí un ruido ayer."
+            },
+            "text": {
+              "en": "I heard a noise yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú oíste un ruido ayer."
+            },
+            "text": {
+              "en": "You heard a noise yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él oyó un ruido ayer."
+            },
+            "text": {
+              "en": "He heard a noise yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella oyó un ruido ayer."
+            },
+            "text": {
+              "en": "She heard a noise yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted oyó un ruido ayer."
+            },
+            "text": {
+              "en": "You heard a noise yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros oímos un ruido ayer."
+            },
+            "text": {
+              "en": "We heard a noise yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros oísteis un ruido ayer."
+            },
+            "text": {
+              "en": "You heard a noise yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos oyeron un ruido ayer."
+            },
+            "text": {
+              "en": "They heard a noise yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes oyeron un ruido ayer."
+            },
+            "text": {
+              "en": "You heard a noise yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo oiré un ruido mañana."
+            },
+            "text": {
+              "en": "I will hear a noise tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú oirás un ruido mañana."
+            },
+            "text": {
+              "en": "You will hear a noise tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él oirá un ruido mañana."
+            },
+            "text": {
+              "en": "He will hear a noise tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella oirá un ruido mañana."
+            },
+            "text": {
+              "en": "She will hear a noise tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted oirá un ruido mañana."
+            },
+            "text": {
+              "en": "You will hear a noise tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros oiremos un ruido mañana."
+            },
+            "text": {
+              "en": "We will hear a noise tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros oiréis un ruido mañana."
+            },
+            "text": {
+              "en": "You will hear a noise tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos oirán un ruido mañana."
+            },
+            "text": {
+              "en": "They will hear a noise tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes oirán un ruido mañana."
+            },
+            "text": {
+              "en": "You will hear a noise tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

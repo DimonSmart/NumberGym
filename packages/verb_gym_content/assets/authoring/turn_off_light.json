@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "turn_off_light",
+    "meaning": {
+      "en": {
+        "short": "to turn off the light",
+        "description": "Practice to turn off the light in present, past, and future sentences."
+      },
+      "es": {
+        "short": "apagar la luz",
+        "description": "Practicar apagar la luz en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo apago la luz."
+            },
+            "text": {
+              "en": "I turn off the light."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú apagas la luz."
+            },
+            "text": {
+              "en": "You turn off the light."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él apaga la luz."
+            },
+            "text": {
+              "en": "He turns off the light."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella apaga la luz."
+            },
+            "text": {
+              "en": "She turns off the light."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted apaga la luz."
+            },
+            "text": {
+              "en": "You turn off the light."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros apagamos la luz."
+            },
+            "text": {
+              "en": "We turn off the light."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros apagáis la luz."
+            },
+            "text": {
+              "en": "You turn off the light."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos apagan la luz."
+            },
+            "text": {
+              "en": "They turn off the light."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes apagan la luz."
+            },
+            "text": {
+              "en": "You turn off the light."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo apagé la luz ayer."
+            },
+            "text": {
+              "en": "I turned off the light yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú apagaste la luz ayer."
+            },
+            "text": {
+              "en": "You turned off the light yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él apagó la luz ayer."
+            },
+            "text": {
+              "en": "He turned off the light yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella apagó la luz ayer."
+            },
+            "text": {
+              "en": "She turned off the light yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted apagó la luz ayer."
+            },
+            "text": {
+              "en": "You turned off the light yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros apagamos la luz ayer."
+            },
+            "text": {
+              "en": "We turned off the light yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros apagasteis la luz ayer."
+            },
+            "text": {
+              "en": "You turned off the light yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos apagaron la luz ayer."
+            },
+            "text": {
+              "en": "They turned off the light yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes apagaron la luz ayer."
+            },
+            "text": {
+              "en": "You turned off the light yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo apagaré la luz mañana."
+            },
+            "text": {
+              "en": "I will turn off the light tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú apagarás la luz mañana."
+            },
+            "text": {
+              "en": "You will turn off the light tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él apagará la luz mañana."
+            },
+            "text": {
+              "en": "He will turn off the light tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella apagará la luz mañana."
+            },
+            "text": {
+              "en": "She will turn off the light tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted apagará la luz mañana."
+            },
+            "text": {
+              "en": "You will turn off the light tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros apagaremos la luz mañana."
+            },
+            "text": {
+              "en": "We will turn off the light tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros apagaréis la luz mañana."
+            },
+            "text": {
+              "en": "You will turn off the light tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos apagarán la luz mañana."
+            },
+            "text": {
+              "en": "They will turn off the light tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes apagarán la luz mañana."
+            },
+            "text": {
+              "en": "You will turn off the light tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

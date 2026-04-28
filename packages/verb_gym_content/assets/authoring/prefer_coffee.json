@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "prefer_coffee",
+    "meaning": {
+      "en": {
+        "short": "to prefer coffee",
+        "description": "Practice to prefer coffee in present, past, and future sentences."
+      },
+      "es": {
+        "short": "preferir café",
+        "description": "Practicar preferir café en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo prefiero café."
+            },
+            "text": {
+              "en": "I prefer coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú prefieres café."
+            },
+            "text": {
+              "en": "You prefer coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él prefiere café."
+            },
+            "text": {
+              "en": "He prefers coffee."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella prefiere café."
+            },
+            "text": {
+              "en": "She prefers coffee."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted prefiere café."
+            },
+            "text": {
+              "en": "You prefer coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preferimos café."
+            },
+            "text": {
+              "en": "We prefer coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preferís café."
+            },
+            "text": {
+              "en": "You prefer coffee."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos prefieren café."
+            },
+            "text": {
+              "en": "They prefer coffee."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes prefieren café."
+            },
+            "text": {
+              "en": "You prefer coffee."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo preferí café ayer."
+            },
+            "text": {
+              "en": "I preferred coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preferiste café ayer."
+            },
+            "text": {
+              "en": "You preferred coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él prefirió café ayer."
+            },
+            "text": {
+              "en": "He preferred coffee yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella prefirió café ayer."
+            },
+            "text": {
+              "en": "She preferred coffee yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted prefirió café ayer."
+            },
+            "text": {
+              "en": "You preferred coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preferimos café ayer."
+            },
+            "text": {
+              "en": "We preferred coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preferisteis café ayer."
+            },
+            "text": {
+              "en": "You preferred coffee yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos prefirieron café ayer."
+            },
+            "text": {
+              "en": "They preferred coffee yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes prefirieron café ayer."
+            },
+            "text": {
+              "en": "You preferred coffee yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo preferiré café mañana."
+            },
+            "text": {
+              "en": "I will prefer coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preferirás café mañana."
+            },
+            "text": {
+              "en": "You will prefer coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él preferirá café mañana."
+            },
+            "text": {
+              "en": "He will prefer coffee tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella preferirá café mañana."
+            },
+            "text": {
+              "en": "She will prefer coffee tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted preferirá café mañana."
+            },
+            "text": {
+              "en": "You will prefer coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preferiremos café mañana."
+            },
+            "text": {
+              "en": "We will prefer coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preferiréis café mañana."
+            },
+            "text": {
+              "en": "You will prefer coffee tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos preferirán café mañana."
+            },
+            "text": {
+              "en": "They will prefer coffee tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes preferirán café mañana."
+            },
+            "text": {
+              "en": "You will prefer coffee tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

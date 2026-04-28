@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "cook_dinner",
+    "meaning": {
+      "en": {
+        "short": "to cook dinner",
+        "description": "Practice to cook dinner in present, past, and future sentences."
+      },
+      "es": {
+        "short": "cocinar la cena",
+        "description": "Practicar cocinar la cena en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cocino la cena."
+            },
+            "text": {
+              "en": "I cook dinner."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cocinas la cena."
+            },
+            "text": {
+              "en": "You cook dinner."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cocina la cena."
+            },
+            "text": {
+              "en": "He cooks dinner."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cocina la cena."
+            },
+            "text": {
+              "en": "She cooks dinner."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cocina la cena."
+            },
+            "text": {
+              "en": "You cook dinner."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cocinamos la cena."
+            },
+            "text": {
+              "en": "We cook dinner."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cocináis la cena."
+            },
+            "text": {
+              "en": "You cook dinner."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cocinan la cena."
+            },
+            "text": {
+              "en": "They cook dinner."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cocinan la cena."
+            },
+            "text": {
+              "en": "You cook dinner."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cociné la cena ayer."
+            },
+            "text": {
+              "en": "I cooked dinner yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cocinaste la cena ayer."
+            },
+            "text": {
+              "en": "You cooked dinner yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cocinó la cena ayer."
+            },
+            "text": {
+              "en": "He cooked dinner yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cocinó la cena ayer."
+            },
+            "text": {
+              "en": "She cooked dinner yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cocinó la cena ayer."
+            },
+            "text": {
+              "en": "You cooked dinner yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cocinamos la cena ayer."
+            },
+            "text": {
+              "en": "We cooked dinner yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cocinasteis la cena ayer."
+            },
+            "text": {
+              "en": "You cooked dinner yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cocinaron la cena ayer."
+            },
+            "text": {
+              "en": "They cooked dinner yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cocinaron la cena ayer."
+            },
+            "text": {
+              "en": "You cooked dinner yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo cocinaré la cena mañana."
+            },
+            "text": {
+              "en": "I will cook dinner tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú cocinarás la cena mañana."
+            },
+            "text": {
+              "en": "You will cook dinner tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él cocinará la cena mañana."
+            },
+            "text": {
+              "en": "He will cook dinner tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella cocinará la cena mañana."
+            },
+            "text": {
+              "en": "She will cook dinner tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted cocinará la cena mañana."
+            },
+            "text": {
+              "en": "You will cook dinner tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros cocinaremos la cena mañana."
+            },
+            "text": {
+              "en": "We will cook dinner tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros cocinaréis la cena mañana."
+            },
+            "text": {
+              "en": "You will cook dinner tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos cocinarán la cena mañana."
+            },
+            "text": {
+              "en": "They will cook dinner tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes cocinarán la cena mañana."
+            },
+            "text": {
+              "en": "You will cook dinner tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

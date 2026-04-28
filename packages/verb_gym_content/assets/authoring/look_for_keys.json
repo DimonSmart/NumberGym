@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "look_for_keys",
+    "meaning": {
+      "en": {
+        "short": "to look for keys",
+        "description": "Practice to look for keys in present, past, and future sentences."
+      },
+      "es": {
+        "short": "buscar las llaves",
+        "description": "Practicar buscar las llaves en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo busco las llaves."
+            },
+            "text": {
+              "en": "I look for keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú buscas las llaves."
+            },
+            "text": {
+              "en": "You look for keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él busca las llaves."
+            },
+            "text": {
+              "en": "He looks for keys."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella busca las llaves."
+            },
+            "text": {
+              "en": "She looks for keys."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted busca las llaves."
+            },
+            "text": {
+              "en": "You look for keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros buscamos las llaves."
+            },
+            "text": {
+              "en": "We look for keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros buscáis las llaves."
+            },
+            "text": {
+              "en": "You look for keys."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos buscan las llaves."
+            },
+            "text": {
+              "en": "They look for keys."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes buscan las llaves."
+            },
+            "text": {
+              "en": "You look for keys."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo buscé las llaves ayer."
+            },
+            "text": {
+              "en": "I looked for keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú buscaste las llaves ayer."
+            },
+            "text": {
+              "en": "You looked for keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él buscó las llaves ayer."
+            },
+            "text": {
+              "en": "He looked for keys yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella buscó las llaves ayer."
+            },
+            "text": {
+              "en": "She looked for keys yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted buscó las llaves ayer."
+            },
+            "text": {
+              "en": "You looked for keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros buscamos las llaves ayer."
+            },
+            "text": {
+              "en": "We looked for keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros buscasteis las llaves ayer."
+            },
+            "text": {
+              "en": "You looked for keys yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos buscaron las llaves ayer."
+            },
+            "text": {
+              "en": "They looked for keys yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes buscaron las llaves ayer."
+            },
+            "text": {
+              "en": "You looked for keys yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo buscaré las llaves mañana."
+            },
+            "text": {
+              "en": "I will look for keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú buscarás las llaves mañana."
+            },
+            "text": {
+              "en": "You will look for keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él buscará las llaves mañana."
+            },
+            "text": {
+              "en": "He will look for keys tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella buscará las llaves mañana."
+            },
+            "text": {
+              "en": "She will look for keys tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted buscará las llaves mañana."
+            },
+            "text": {
+              "en": "You will look for keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros buscaremos las llaves mañana."
+            },
+            "text": {
+              "en": "We will look for keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros buscaréis las llaves mañana."
+            },
+            "text": {
+              "en": "You will look for keys tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos buscarán las llaves mañana."
+            },
+            "text": {
+              "en": "They will look for keys tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes buscarán las llaves mañana."
+            },
+            "text": {
+              "en": "You will look for keys tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

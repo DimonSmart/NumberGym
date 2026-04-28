@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "help_person",
+    "meaning": {
+      "en": {
+        "short": "to help a person",
+        "description": "Practice to help a person in present, past, and future sentences."
+      },
+      "es": {
+        "short": "ayudar a una persona",
+        "description": "Practicar ayudar a una persona en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo ayudo a una persona."
+            },
+            "text": {
+              "en": "I help a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú ayudas a una persona."
+            },
+            "text": {
+              "en": "You help a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él ayuda a una persona."
+            },
+            "text": {
+              "en": "He helps a person."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella ayuda a una persona."
+            },
+            "text": {
+              "en": "She helps a person."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted ayuda a una persona."
+            },
+            "text": {
+              "en": "You help a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros ayudamos a una persona."
+            },
+            "text": {
+              "en": "We help a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros ayudáis a una persona."
+            },
+            "text": {
+              "en": "You help a person."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos ayudan a una persona."
+            },
+            "text": {
+              "en": "They help a person."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes ayudan a una persona."
+            },
+            "text": {
+              "en": "You help a person."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo ayudé a una persona ayer."
+            },
+            "text": {
+              "en": "I helped a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú ayudaste a una persona ayer."
+            },
+            "text": {
+              "en": "You helped a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él ayudó a una persona ayer."
+            },
+            "text": {
+              "en": "He helped a person yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella ayudó a una persona ayer."
+            },
+            "text": {
+              "en": "She helped a person yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted ayudó a una persona ayer."
+            },
+            "text": {
+              "en": "You helped a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros ayudamos a una persona ayer."
+            },
+            "text": {
+              "en": "We helped a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros ayudasteis a una persona ayer."
+            },
+            "text": {
+              "en": "You helped a person yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos ayudaron a una persona ayer."
+            },
+            "text": {
+              "en": "They helped a person yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes ayudaron a una persona ayer."
+            },
+            "text": {
+              "en": "You helped a person yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo ayudaré a una persona mañana."
+            },
+            "text": {
+              "en": "I will help a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú ayudarás a una persona mañana."
+            },
+            "text": {
+              "en": "You will help a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él ayudará a una persona mañana."
+            },
+            "text": {
+              "en": "He will help a person tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella ayudará a una persona mañana."
+            },
+            "text": {
+              "en": "She will help a person tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted ayudará a una persona mañana."
+            },
+            "text": {
+              "en": "You will help a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros ayudaremos a una persona mañana."
+            },
+            "text": {
+              "en": "We will help a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros ayudaréis a una persona mañana."
+            },
+            "text": {
+              "en": "You will help a person tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos ayudarán a una persona mañana."
+            },
+            "text": {
+              "en": "They will help a person tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes ayudarán a una persona mañana."
+            },
+            "text": {
+              "en": "You will help a person tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

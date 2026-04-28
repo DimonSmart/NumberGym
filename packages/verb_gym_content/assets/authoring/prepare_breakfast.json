@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "prepare_breakfast",
+    "meaning": {
+      "en": {
+        "short": "to prepare breakfast",
+        "description": "Practice to prepare breakfast in present, past, and future sentences."
+      },
+      "es": {
+        "short": "preparar el desayuno",
+        "description": "Practicar preparar el desayuno en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo preparo el desayuno."
+            },
+            "text": {
+              "en": "I prepare breakfast."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preparas el desayuno."
+            },
+            "text": {
+              "en": "You prepare breakfast."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él prepara el desayuno."
+            },
+            "text": {
+              "en": "He prepares breakfast."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella prepara el desayuno."
+            },
+            "text": {
+              "en": "She prepares breakfast."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted prepara el desayuno."
+            },
+            "text": {
+              "en": "You prepare breakfast."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preparamos el desayuno."
+            },
+            "text": {
+              "en": "We prepare breakfast."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preparáis el desayuno."
+            },
+            "text": {
+              "en": "You prepare breakfast."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos preparan el desayuno."
+            },
+            "text": {
+              "en": "They prepare breakfast."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes preparan el desayuno."
+            },
+            "text": {
+              "en": "You prepare breakfast."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo preparé el desayuno ayer."
+            },
+            "text": {
+              "en": "I prepared breakfast yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú preparaste el desayuno ayer."
+            },
+            "text": {
+              "en": "You prepared breakfast yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él preparó el desayuno ayer."
+            },
+            "text": {
+              "en": "He prepared breakfast yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella preparó el desayuno ayer."
+            },
+            "text": {
+              "en": "She prepared breakfast yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted preparó el desayuno ayer."
+            },
+            "text": {
+              "en": "You prepared breakfast yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros preparamos el desayuno ayer."
+            },
+            "text": {
+              "en": "We prepared breakfast yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros preparasteis el desayuno ayer."
+            },
+            "text": {
+              "en": "You prepared breakfast yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos prepararon el desayuno ayer."
+            },
+            "text": {
+              "en": "They prepared breakfast yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes prepararon el desayuno ayer."
+            },
+            "text": {
+              "en": "You prepared breakfast yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo prepararé el desayuno mañana."
+            },
+            "text": {
+              "en": "I will prepare breakfast tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú prepararás el desayuno mañana."
+            },
+            "text": {
+              "en": "You will prepare breakfast tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él preparará el desayuno mañana."
+            },
+            "text": {
+              "en": "He will prepare breakfast tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella preparará el desayuno mañana."
+            },
+            "text": {
+              "en": "She will prepare breakfast tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted preparará el desayuno mañana."
+            },
+            "text": {
+              "en": "You will prepare breakfast tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros prepararemos el desayuno mañana."
+            },
+            "text": {
+              "en": "We will prepare breakfast tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros prepararéis el desayuno mañana."
+            },
+            "text": {
+              "en": "You will prepare breakfast tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos prepararán el desayuno mañana."
+            },
+            "text": {
+              "en": "They will prepare breakfast tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes prepararán el desayuno mañana."
+            },
+            "text": {
+              "en": "You will prepare breakfast tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

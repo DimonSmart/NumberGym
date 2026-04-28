@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "enter_room",
+    "meaning": {
+      "en": {
+        "short": "to enter the room",
+        "description": "Practice to enter the room in present, past, and future sentences."
+      },
+      "es": {
+        "short": "entrar en la habitación",
+        "description": "Practicar entrar en la habitación en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entro en la habitación."
+            },
+            "text": {
+              "en": "I enter the room."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entras en la habitación."
+            },
+            "text": {
+              "en": "You enter the room."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entra en la habitación."
+            },
+            "text": {
+              "en": "He enters the room."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entra en la habitación."
+            },
+            "text": {
+              "en": "She enters the room."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entra en la habitación."
+            },
+            "text": {
+              "en": "You enter the room."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entramos en la habitación."
+            },
+            "text": {
+              "en": "We enter the room."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entráis en la habitación."
+            },
+            "text": {
+              "en": "You enter the room."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entran en la habitación."
+            },
+            "text": {
+              "en": "They enter the room."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entran en la habitación."
+            },
+            "text": {
+              "en": "You enter the room."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entré en la habitación ayer."
+            },
+            "text": {
+              "en": "I entered the room yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entraste en la habitación ayer."
+            },
+            "text": {
+              "en": "You entered the room yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entró en la habitación ayer."
+            },
+            "text": {
+              "en": "He entered the room yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entró en la habitación ayer."
+            },
+            "text": {
+              "en": "She entered the room yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entró en la habitación ayer."
+            },
+            "text": {
+              "en": "You entered the room yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entramos en la habitación ayer."
+            },
+            "text": {
+              "en": "We entered the room yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entrasteis en la habitación ayer."
+            },
+            "text": {
+              "en": "You entered the room yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entraron en la habitación ayer."
+            },
+            "text": {
+              "en": "They entered the room yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entraron en la habitación ayer."
+            },
+            "text": {
+              "en": "You entered the room yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo entraré en la habitación mañana."
+            },
+            "text": {
+              "en": "I will enter the room tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú entrarás en la habitación mañana."
+            },
+            "text": {
+              "en": "You will enter the room tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él entrará en la habitación mañana."
+            },
+            "text": {
+              "en": "He will enter the room tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella entrará en la habitación mañana."
+            },
+            "text": {
+              "en": "She will enter the room tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted entrará en la habitación mañana."
+            },
+            "text": {
+              "en": "You will enter the room tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros entraremos en la habitación mañana."
+            },
+            "text": {
+              "en": "We will enter the room tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros entraréis en la habitación mañana."
+            },
+            "text": {
+              "en": "You will enter the room tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos entrarán en la habitación mañana."
+            },
+            "text": {
+              "en": "They will enter the room tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes entrarán en la habitación mañana."
+            },
+            "text": {
+              "en": "You will enter the room tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}

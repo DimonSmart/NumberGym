@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    "en",
+    "es"
+  ],
+  "entry": {
+    "id": "be_busy",
+    "meaning": {
+      "en": {
+        "short": "to be busy",
+        "description": "Practice to be busy in present, past, and future sentences."
+      },
+      "es": {
+        "short": "tener mucho trabajo",
+        "description": "Practicar tener mucho trabajo en frases de presente, pasado y futuro."
+      }
+    }
+  },
+  "examples": {
+    "presentIndicative": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tengo mucho trabajo."
+            },
+            "text": {
+              "en": "I am busy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tienes mucho trabajo."
+            },
+            "text": {
+              "en": "You are busy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tiene mucho trabajo."
+            },
+            "text": {
+              "en": "He is busy."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tiene mucho trabajo."
+            },
+            "text": {
+              "en": "She is busy."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tiene mucho trabajo."
+            },
+            "text": {
+              "en": "You are busy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tenemos mucho trabajo."
+            },
+            "text": {
+              "en": "We are busy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tenéis mucho trabajo."
+            },
+            "text": {
+              "en": "You are busy."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tienen mucho trabajo."
+            },
+            "text": {
+              "en": "They are busy."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tienen mucho trabajo."
+            },
+            "text": {
+              "en": "You are busy."
+            }
+          }
+        }
+      }
+    ],
+    "preterite": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tuve mucho trabajo ayer."
+            },
+            "text": {
+              "en": "I was busy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tuviste mucho trabajo ayer."
+            },
+            "text": {
+              "en": "You were busy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tuvo mucho trabajo ayer."
+            },
+            "text": {
+              "en": "He was busy yesterday."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tuvo mucho trabajo ayer."
+            },
+            "text": {
+              "en": "She was busy yesterday."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tuvo mucho trabajo ayer."
+            },
+            "text": {
+              "en": "You were busy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tuvimos mucho trabajo ayer."
+            },
+            "text": {
+              "en": "We were busy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tuvisteis mucho trabajo ayer."
+            },
+            "text": {
+              "en": "You were busy yesterday."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tuvieron mucho trabajo ayer."
+            },
+            "text": {
+              "en": "They were busy yesterday."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tuvieron mucho trabajo ayer."
+            },
+            "text": {
+              "en": "You were busy yesterday."
+            }
+          }
+        }
+      }
+    ],
+    "futureSimple": [
+      {
+        "formGroup": {
+          "es": "firstSingular"
+        },
+        "roles": [
+          "I"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "I": {
+            "sentence": {
+              "es": "Yo tendré mucho trabajo mañana."
+            },
+            "text": {
+              "en": "I will be busy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondSingular"
+        },
+        "roles": [
+          "You"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "You": {
+            "sentence": {
+              "es": "Tú tendrás mucho trabajo mañana."
+            },
+            "text": {
+              "en": "You will be busy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdSingular"
+        },
+        "roles": [
+          "He",
+          "She",
+          "YouFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "He": {
+            "sentence": {
+              "es": "Él tendrá mucho trabajo mañana."
+            },
+            "text": {
+              "en": "He will be busy tomorrow."
+            }
+          },
+          "She": {
+            "sentence": {
+              "es": "Ella tendrá mucho trabajo mañana."
+            },
+            "text": {
+              "en": "She will be busy tomorrow."
+            }
+          },
+          "YouFormal": {
+            "sentence": {
+              "es": "Usted tendrá mucho trabajo mañana."
+            },
+            "text": {
+              "en": "You will be busy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "firstPlural"
+        },
+        "roles": [
+          "We"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "We": {
+            "sentence": {
+              "es": "Nosotros tendremos mucho trabajo mañana."
+            },
+            "text": {
+              "en": "We will be busy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "secondPlural"
+        },
+        "roles": [
+          "YouPlural"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "YouPlural": {
+            "sentence": {
+              "es": "Vosotros tendréis mucho trabajo mañana."
+            },
+            "text": {
+              "en": "You will be busy tomorrow."
+            }
+          }
+        }
+      },
+      {
+        "formGroup": {
+          "es": "thirdPlural"
+        },
+        "roles": [
+          "They",
+          "YouPluralFormal"
+        ],
+        "pattern": {
+          "es": "{sentence}"
+        },
+        "variants": {
+          "They": {
+            "sentence": {
+              "es": "Ellos tendrán mucho trabajo mañana."
+            },
+            "text": {
+              "en": "They will be busy tomorrow."
+            }
+          },
+          "YouPluralFormal": {
+            "sentence": {
+              "es": "Ustedes tendrán mucho trabajo mañana."
+            },
+            "text": {
+              "en": "You will be busy tomorrow."
+            }
+          }
+        }
+      }
+    ]
+  }
+}
