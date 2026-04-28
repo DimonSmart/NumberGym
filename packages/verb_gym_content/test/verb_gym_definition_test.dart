@@ -223,6 +223,50 @@ void main() {
     expect(matcher.isAcceptedAnswer('Yo como una comida.'), isTrue);
     expect(matcher.isAcceptedAnswer('Yo como una comida'), isTrue);
   });
+
+  test('matcher accepts Spanish speech without accent marks or tilde', () {
+    final card = _findCard(
+      definition: definition,
+      baseLanguage: LearningLanguage.english,
+      language: LearningLanguage.spanish,
+      familyId: VerbTenseIds.futureSimple,
+      variantId: 'travel_to_city::I',
+    );
+    final matcher =
+        AnswerMatcher(
+          normalizer: definition.profileOf(LearningLanguage.spanish).normalizer,
+          tokenizer: definition.tokenizerOf(LearningLanguage.spanish),
+        )..reset(
+          prompt: card.promptText,
+          answers: card.acceptedAnswers,
+          promptAliases: card.matcherConfig.promptAliases,
+        );
+
+    final result = matcher.applyRecognition('Yo viajare a la ciudad manana');
+
+    expect(result.acceptedAnswer, isTrue);
+    expect(matcher.isComplete, isTrue);
+  });
+
+  test('matcher compares decomposed Spanish diacritics as plain letters', () {
+    final matcher =
+        AnswerMatcher(
+          normalizer: definition.profileOf(LearningLanguage.spanish).normalizer,
+          tokenizer: definition.tokenizerOf(LearningLanguage.spanish),
+        )..reset(
+          prompt: 'Yo viajare\u0301 a la ciudad man\u0303ana',
+          answers: const <String>[],
+          promptAliases: const <String>[],
+        );
+
+    final result = matcher.applyRecognition(
+      'please yo viajare a la ciudad manana thanks',
+    );
+
+    expect(result.acceptedAnswer, isFalse);
+    expect(result.matchedSegmentIndices, equals(const <int>[0, 1, 2, 3, 4, 5]));
+    expect(matcher.isComplete, isTrue);
+  });
 }
 
 Directory _authoringAssetDirectory() {

@@ -635,30 +635,46 @@ String _normalizeLatin(String text) {
   if (lower.isEmpty) {
     return '';
   }
-  var normalized = lower
-      .replaceAll('á', 'a')
-      .replaceAll('à', 'a')
-      .replaceAll('â', 'a')
-      .replaceAll('ä', 'a')
-      .replaceAll('ã', 'a')
-      .replaceAll('é', 'e')
-      .replaceAll('è', 'e')
-      .replaceAll('ê', 'e')
-      .replaceAll('ë', 'e')
-      .replaceAll('í', 'i')
-      .replaceAll('ì', 'i')
-      .replaceAll('î', 'i')
-      .replaceAll('ï', 'i')
-      .replaceAll('ñ', 'n')
-      .replaceAll('ó', 'o')
-      .replaceAll('ò', 'o')
-      .replaceAll('ô', 'o')
-      .replaceAll('ö', 'o')
-      .replaceAll('õ', 'o')
-      .replaceAll('ú', 'u')
-      .replaceAll('ù', 'u')
-      .replaceAll('û', 'u')
-      .replaceAll('ü', 'u');
+  var normalized = lower.replaceAll(_combiningMarksRegex, '');
+  for (final entry in _latinReplacements.entries) {
+    normalized = normalized.replaceAll(entry.key, entry.value);
+  }
   normalized = normalized.replaceAll(RegExp(r"[^a-z0-9\s'+:.-]"), ' ');
   return normalized.replaceAll(RegExp(r'\s+'), ' ').trim();
 }
+
+final _combiningMarksRegex = RegExp(r'\p{M}+', unicode: true);
+
+const Map<String, String> _latinReplacements = <String, String>{
+  'á': 'a',
+  'à': 'a',
+  'â': 'a',
+  'ä': 'a',
+  'ã': 'a',
+  'å': 'a',
+  'æ': 'ae',
+  'ç': 'c',
+  'é': 'e',
+  'è': 'e',
+  'ê': 'e',
+  'ë': 'e',
+  'í': 'i',
+  'ì': 'i',
+  'î': 'i',
+  'ï': 'i',
+  'ñ': 'n',
+  'ó': 'o',
+  'ò': 'o',
+  'ô': 'o',
+  'ö': 'o',
+  'õ': 'o',
+  'ø': 'o',
+  'œ': 'oe',
+  'ß': 'ss',
+  'ú': 'u',
+  'ù': 'u',
+  'û': 'u',
+  'ü': 'u',
+  'ý': 'y',
+  'ÿ': 'y',
+};

@@ -5,7 +5,10 @@ class GenericMatcherTokenizer implements MatcherTokenizer {
 
   final String Function(String text) _normalizer;
 
-  static final RegExp _tokenRegex = RegExp(r"[\p{L}\p{N}'+:.-]+", unicode: true);
+  static final RegExp _tokenRegex = RegExp(
+    r"[\p{L}\p{M}\p{N}'+:.-]+",
+    unicode: true,
+  );
 
   @override
   List<MatchingToken> tokenize(String text) {
