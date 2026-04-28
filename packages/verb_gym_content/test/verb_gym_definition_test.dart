@@ -163,20 +163,37 @@ void main() {
     expect(variantIds, contains('eat_meal::YouPluralFormal'));
   });
 
-  test('answer options prefer the same tense and role', () {
-    final card = _findCard(
-      definition: definition,
+  test('answer options include the same concept in other tenses', () {
+    final catalog = definition.catalog.build(
+      LearningLanguage.spanish,
       baseLanguage: LearningLanguage.english,
-      language: LearningLanguage.spanish,
-      familyId: VerbTenseIds.presentIndicative,
-      variantId: 'eat_meal::I',
+    );
+    final card = catalog.cards.firstWhere(
+      (card) =>
+          card.id.familyId == VerbTenseIds.presentIndicative &&
+          card.id.variantId == 'eat_meal::I',
     );
 
     final options = card.chooseFromPrompt!.options;
+    final sameConceptOtherTenseOptions = catalog.cards
+        .where(
+          (candidate) =>
+              candidate.concept!.id == card.concept!.id &&
+              candidate.id.familyId != card.id.familyId,
+        )
+        .map((candidate) => candidate.promptText)
+        .where(options.contains)
+        .toSet();
+    final otherConceptOptions = catalog.cards
+        .where((candidate) => candidate.concept!.id != card.concept!.id)
+        .map((candidate) => candidate.promptText)
+        .where(options.contains)
+        .toSet();
+
     expect(options, hasLength(4));
-    for (final option in options) {
-      expect(option.startsWith('Yo '), isTrue);
-    }
+    expect(options, contains(card.chooseFromPrompt!.correctOption));
+    expect(sameConceptOtherTenseOptions, hasLength(greaterThanOrEqualTo(2)));
+    expect(otherConceptOptions, hasLength(1));
   });
 
   test('matcher accepts generated sentence with and without final period', () {

@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:trainer_core/trainer_core.dart';
 
 import 'verb_authoring_models.dart';
 
 const String _verbGymModuleId = 'verb_gym';
+const int _verbChoiceOptionCount = 4;
+const int _minimumSameConceptOtherTenseDistractors = 2;
 
 const List<ExerciseMode> _verbExerciseModes = <ExerciseMode>[
   ExerciseMode.speak,
@@ -15,6 +19,7 @@ const List<ExerciseMode> _verbExerciseModes = <ExerciseMode>[
 TrainingAppDefinition buildVerbGymAppDefinition({
   required AppConfig config,
   required VerbRuntimeCatalog runtimeCatalog,
+  Random? random,
 }) {
   final resourcesByLanguage = <LearningLanguage, _VerbLanguageResources>{
     LearningLanguage.english: _VerbLanguageResources(
@@ -60,6 +65,7 @@ TrainingAppDefinition buildVerbGymAppDefinition({
           runtimeCatalog: runtimeCatalog,
           resourcesByLanguage: resourcesByLanguage,
           defaultBaseLanguage: config.defaultBaseLanguage,
+          random: random,
         ),
       ],
     ),
@@ -71,14 +77,17 @@ class _VerbGymModule implements ContextualTrainingModule {
     required this.runtimeCatalog,
     required Map<LearningLanguage, _VerbLanguageResources> resourcesByLanguage,
     required this.defaultBaseLanguage,
+    Random? random,
   }) : resourcesByLanguage =
            Map<LearningLanguage, _VerbLanguageResources>.unmodifiable(
              resourcesByLanguage,
-           );
+           ),
+       _random = random ?? Random();
 
   final VerbRuntimeCatalog runtimeCatalog;
   final Map<LearningLanguage, _VerbLanguageResources> resourcesByLanguage;
   final LearningLanguage defaultBaseLanguage;
+  final Random _random;
 
   @override
   String get moduleId => _verbGymModuleId;
@@ -319,37 +328,138 @@ class _VerbGymModule implements ContextualTrainingModule {
     required String Function(_VerbCardSeed candidate) valueOf,
   }) {
     final options = <String>[valueOf(seed)];
+    final seen = <String>{_optionKey(valueOf(seed))};
+    var sameConceptOtherTenseCount = 0;
 
-    void addFrom(Iterable<_VerbCardSeed> candidates) {
-      for (final candidate in candidates) {
-        if (candidate.id == seed.id) {
-          continue;
-        }
-        final value = valueOf(candidate);
-        if (options.contains(value)) {
-          continue;
-        }
-        options.add(value);
-        if (options.length == 4) {
-          return;
-        }
-      }
-    }
-
-    addFrom(
-      allSeeds.where(
-        (candidate) =>
-            candidate.tenseId == seed.tenseId && candidate.role == seed.role,
+    sameConceptOtherTenseCount += _addRandomOptions(
+      options: options,
+      seen: seen,
+      candidates: _sameConceptOtherTenseSeeds(
+        seed: seed,
+        allSeeds: allSeeds,
+        sameRoleOnly: true,
       ),
+      valueOf: valueOf,
+      maxToAdd: _minimumSameConceptOtherTenseDistractors,
     );
-    if (options.length < 4) {
-      addFrom(allSeeds.where((candidate) => candidate.tenseId == seed.tenseId));
+
+    if (sameConceptOtherTenseCount < _minimumSameConceptOtherTenseDistractors) {
+      sameConceptOtherTenseCount += _addRandomOptions(
+        options: options,
+        seen: seen,
+        candidates: _sameConceptOtherTenseSeeds(
+          seed: seed,
+          allSeeds: allSeeds,
+          sameRoleOnly: false,
+        ),
+        valueOf: valueOf,
+        maxToAdd:
+            _minimumSameConceptOtherTenseDistractors -
+            sameConceptOtherTenseCount,
+      );
     }
-    if (options.length < 4) {
-      addFrom(allSeeds);
+
+    if (options.length < _verbChoiceOptionCount) {
+      _addRandomOptions(
+        options: options,
+        seen: seen,
+        candidates: _otherConceptSeeds(
+          seed: seed,
+          allSeeds: allSeeds,
+          sameTenseOnly: true,
+          sameRoleOnly: true,
+        ),
+        valueOf: valueOf,
+        maxToAdd: _verbChoiceOptionCount - options.length,
+      );
+    }
+
+    if (options.length < _verbChoiceOptionCount) {
+      _addRandomOptions(
+        options: options,
+        seen: seen,
+        candidates: _otherConceptSeeds(
+          seed: seed,
+          allSeeds: allSeeds,
+          sameTenseOnly: true,
+          sameRoleOnly: false,
+        ),
+        valueOf: valueOf,
+        maxToAdd: _verbChoiceOptionCount - options.length,
+      );
+    }
+
+    if (options.length < _verbChoiceOptionCount) {
+      _addRandomOptions(
+        options: options,
+        seen: seen,
+        candidates: _otherConceptSeeds(
+          seed: seed,
+          allSeeds: allSeeds,
+          sameTenseOnly: false,
+          sameRoleOnly: false,
+        ),
+        valueOf: valueOf,
+        maxToAdd: _verbChoiceOptionCount - options.length,
+      );
     }
 
     return options;
+  }
+
+  Iterable<_VerbCardSeed> _sameConceptOtherTenseSeeds({
+    required _VerbCardSeed seed,
+    required List<_VerbCardSeed> allSeeds,
+    required bool sameRoleOnly,
+  }) {
+    return allSeeds.where(
+      (candidate) =>
+          candidate.id != seed.id &&
+          candidate.conceptId == seed.conceptId &&
+          candidate.tenseId != seed.tenseId &&
+          (!sameRoleOnly || candidate.role == seed.role),
+    );
+  }
+
+  Iterable<_VerbCardSeed> _otherConceptSeeds({
+    required _VerbCardSeed seed,
+    required List<_VerbCardSeed> allSeeds,
+    required bool sameTenseOnly,
+    required bool sameRoleOnly,
+  }) {
+    return allSeeds.where(
+      (candidate) =>
+          candidate.conceptId != seed.conceptId &&
+          (!sameTenseOnly || candidate.tenseId == seed.tenseId) &&
+          (!sameRoleOnly || candidate.role == seed.role),
+    );
+  }
+
+  int _addRandomOptions({
+    required List<String> options,
+    required Set<String> seen,
+    required Iterable<_VerbCardSeed> candidates,
+    required String Function(_VerbCardSeed candidate) valueOf,
+    required int maxToAdd,
+  }) {
+    var added = 0;
+    final shuffled = candidates.toList(growable: false)..shuffle(_random);
+    for (final candidate in shuffled) {
+      final value = valueOf(candidate).trim();
+      if (value.isEmpty || !seen.add(_optionKey(value))) {
+        continue;
+      }
+      options.add(value);
+      added += 1;
+      if (added == maxToAdd) {
+        break;
+      }
+    }
+    return added;
+  }
+
+  String _optionKey(String value) {
+    return value.trim().toLowerCase();
   }
 }
 
