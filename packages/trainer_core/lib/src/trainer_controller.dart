@@ -6,6 +6,7 @@ import 'exercise_models.dart';
 import 'task_runtime.dart';
 import 'trainer_repositories.dart';
 import 'trainer_services.dart';
+import 'trainer_session_phase.dart';
 import 'trainer_session.dart';
 import 'trainer_state.dart';
 
@@ -38,6 +39,8 @@ class TrainerController extends ChangeNotifier {
   TaskState? get currentTask => _session.state.currentTask;
   TrainingCelebration? get celebration => _session.state.celebration;
   ExerciseMode? get currentMode => _session.state.currentTask?.mode;
+  TrainerSessionPhase get phase => _session.phase;
+  bool get interactionEnabled => _session.state.interactionEnabled;
 
   SpeakState? get speakState {
     final task = _session.state.currentTask;
@@ -86,8 +89,18 @@ class TrainerController extends ChangeNotifier {
     simulatedUserInteraction: simulatedUserInteraction,
   );
 
+  Future<void> disposeAsync() async {
+    if (_disposed) return;
+    _disposed = true;
+    await _session.disposeAsync();
+  }
+
   @override
   void dispose() {
+    if (_disposed) {
+      super.dispose();
+      return;
+    }
     _disposed = true;
     _session.dispose();
     super.dispose();

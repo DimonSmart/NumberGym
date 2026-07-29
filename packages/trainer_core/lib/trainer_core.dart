@@ -19,6 +19,8 @@ export 'src/session_stats_recorder.dart';
 export 'src/settings_repository.dart';
 export 'src/study_streak_service.dart';
 export 'src/trainer_controller.dart';
+export 'src/trainer_session_phase.dart';
+export 'src/serialized_operation_queue.dart';
 export 'src/trainer_repositories.dart';
 export 'src/trainer_services.dart';
 export 'src/trainer_state.dart';

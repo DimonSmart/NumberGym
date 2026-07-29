@@ -3,91 +3,157 @@ import 'dart:async';
 import 'task_runtime.dart';
 import 'trainer_state.dart';
 
-class RuntimeCoordinator {
+final class RuntimeHandle {
+  const RuntimeHandle({required this.generation, required this.runtime});
+
+  final int generation;
+  final TaskRuntime runtime;
+}
+
+final class RuntimeEventEnvelope {
+  const RuntimeEventEnvelope({required this.generation, required this.event});
+
+  final int generation;
+  final TaskEvent event;
+}
+
+final class RuntimeCompletion {
+  const RuntimeCompletion({required this.handle, required this.taskState});
+
+  final RuntimeHandle handle;
+  final TaskState taskState;
+}
+
+/// Owns the active runtime. A generation is invalidated before any async
+/// teardown, so a callback from an old runtime can never mutate current state.
+final class RuntimeCoordinator {
   RuntimeCoordinator({
     required void Function() onChanged,
-    required void Function(TaskEvent event) onEvent,
+    required void Function(RuntimeEventEnvelope event) onEvent,
   }) : _onChanged = onChanged,
        _onEvent = onEvent;
 
   final void Function() _onChanged;
-  final void Function(TaskEvent event) _onEvent;
+  final void Function(RuntimeEventEnvelope event) _onEvent;
 
-  TaskRuntime? _runtime;
+  RuntimeHandle? _currentHandle;
   StreamSubscription<TaskEvent>? _runtimeEvents;
   StreamSubscription<TaskState>? _runtimeStates;
   TaskState? _currentTaskState;
   bool _speechReady = false;
   bool _taskHadUserInteraction = false;
+  int _generation = 0;
+  bool _closed = false;
 
-  TaskRuntime? get runtime => _runtime;
+  RuntimeHandle? get currentHandle => _currentHandle;
+  TaskRuntime? get runtime => _currentHandle?.runtime;
   TaskState? get currentTask => _currentTaskState;
   bool get speechReady => _speechReady;
   bool get taskHadUserInteraction => _taskHadUserInteraction;
+  bool get hasRuntime => _currentHandle != null;
 
-  void resetInteraction() {
-    _taskHadUserInteraction = false;
-  }
+  bool isCurrent(RuntimeHandle handle) =>
+      identical(_currentHandle, handle) && handle.generation == _generation;
+
+  void resetInteraction() => _taskHadUserInteraction = false;
 
   void updateSpeechReady(bool ready) {
-    if (_speechReady == ready) {
-      return;
-    }
+    if (_speechReady == ready) return;
     _speechReady = ready;
     _onChanged();
   }
 
-  Future<void> attach(TaskRuntime runtime) async {
-    await disposeRuntime(clearState: false);
-    _runtime = runtime;
+  Future<RuntimeHandle> attach(TaskRuntime runtime) async {
+    if (_closed) throw StateError('RuntimeCoordinator is closed.');
+    await disposeCurrent(clearState: true);
+    final handle = RuntimeHandle(generation: ++_generation, runtime: runtime);
+    _currentHandle = handle;
     _taskHadUserInteraction = false;
-    _runtimeEvents = runtime.events.listen(_handleTaskEvent);
-    _runtimeStates = runtime.states.listen(_handleTaskState);
+    _runtimeEvents = runtime.events.listen(
+      (event) => _handleTaskEvent(handle, event),
+    );
+    _runtimeStates = runtime.states.listen(
+      (state) => _handleTaskState(handle, state),
+    );
     _currentTaskState = runtime.state;
     if (_currentTaskState is SpeakState) {
       _speechReady = (_currentTaskState as SpeakState).speechReady;
     }
     _onChanged();
-    await runtime.start();
+    try {
+      await runtime.start();
+    } catch (_) {
+      if (isCurrent(handle)) await detach(handle: handle, clearState: true);
+      rethrow;
+    }
+    return handle;
   }
 
-  Future<void> disposeRuntime({required bool clearState}) async {
+  RuntimeCompletion? takeCurrentForCompletion() {
+    final handle = _currentHandle;
+    final state = _currentTaskState;
+    if (handle == null || state == null) return null;
+    _currentTaskState = null;
+    _onChanged();
+    return RuntimeCompletion(handle: handle, taskState: state);
+  }
+
+  Future<void> detach({
+    required RuntimeHandle handle,
+    required bool clearState,
+  }) async {
+    if (!isCurrent(handle)) return;
+    ++_generation;
+    _currentHandle = null;
     await _runtimeEvents?.cancel();
     await _runtimeStates?.cancel();
     _runtimeEvents = null;
     _runtimeStates = null;
-    final runtime = _runtime;
-    _runtime = null;
-    if (runtime != null) {
-      await runtime.dispose();
-    }
-    if (clearState) {
-      _currentTaskState = null;
-      _onChanged();
-    }
+    if (clearState) _currentTaskState = null;
+    _onChanged();
+    await handle.runtime.dispose();
   }
 
-  Future<void> handleAction(TaskAction action) async {
-    final runtime = _runtime;
-    if (runtime == null) {
+  Future<void> disposeCurrent({required bool clearState}) async {
+    final handle = _currentHandle;
+    if (handle == null) {
+      if (clearState && _currentTaskState != null) {
+        _currentTaskState = null;
+        _onChanged();
+      }
       return;
     }
-    await runtime.handleAction(action);
+    await detach(handle: handle, clearState: clearState);
   }
 
-  void _handleTaskEvent(TaskEvent event) {
+  Future<void> disposeRuntime({required bool clearState}) =>
+      disposeCurrent(clearState: clearState);
+
+  Future<void> handleAction(TaskAction action) async {
+    final handle = _currentHandle;
+    if (handle == null) return;
+    await handle.runtime.handleAction(action);
+  }
+
+  Future<void> close() async {
+    if (_closed) return;
+    _closed = true;
+    await disposeCurrent(clearState: true);
+  }
+
+  void _handleTaskEvent(RuntimeHandle handle, TaskEvent event) {
+    if (!isCurrent(handle)) return;
     if (event is TaskUserInteracted) {
       _taskHadUserInteraction = true;
       return;
     }
-    _onEvent(event);
+    _onEvent(RuntimeEventEnvelope(generation: handle.generation, event: event));
   }
 
-  void _handleTaskState(TaskState state) {
+  void _handleTaskState(RuntimeHandle handle, TaskState state) {
+    if (!isCurrent(handle)) return;
     _currentTaskState = state;
-    if (state is SpeakState) {
-      _speechReady = state.speechReady;
-    }
+    if (state is SpeakState) _speechReady = state.speechReady;
     _onChanged();
   }
 }

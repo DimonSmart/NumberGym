@@ -372,6 +372,9 @@ class _TrainingScreenState extends State<TrainingScreen>
       }
 
       if (state.celebration != null) {
+        if (state.phase != TrainerSessionPhase.transitioning) {
+          return;
+        }
         _sessionSummaryVisibleSince = null;
         _celebrationVisibleSince ??= now;
         if (now.difference(_celebrationVisibleSince!) <
@@ -385,6 +388,9 @@ class _TrainingScreenState extends State<TrainingScreen>
       _celebrationVisibleSince = null;
 
       if (state.sessionStats != null) {
+        if (state.phase != TrainerSessionPhase.sessionCompleted) {
+          return;
+        }
         _sessionSummaryVisibleSince ??= now;
         if (now.difference(_sessionSummaryVisibleSince!) <
             _autoSimulationSessionSummaryDelay) {
@@ -624,10 +630,12 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   Future<void> _handleContinueSession() async {
+    if (_controller.phase != TrainerSessionPhase.sessionCompleted) return;
     await _controller.continueSession();
   }
 
   Future<void> _handleContinueAfterCelebration() async {
+    if (_controller.phase != TrainerSessionPhase.transitioning) return;
     await _controller.continueAfterCelebration();
   }
 }

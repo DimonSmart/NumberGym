@@ -8,6 +8,7 @@ import 'exercise_models.dart';
 import 'feedback_coordinator.dart';
 import 'progress_manager.dart';
 import 'runtime_coordinator.dart';
+import 'serialized_operation_queue.dart';
 import 'runtimes/choice_runtime.dart';
 import 'runtimes/listen_and_choose_runtime.dart';
 import 'runtimes/review_pronunciation_runtime.dart';
@@ -23,6 +24,7 @@ import 'task_runtime.dart';
 import 'task_scheduler.dart';
 import 'trainer_repositories.dart';
 import 'trainer_services.dart';
+import 'trainer_session_phase.dart';
 import 'trainer_state.dart';
 import 'training/domain/learning_language.dart';
 import 'training/domain/silent_detector.dart';
@@ -87,6 +89,9 @@ class TrainerSession {
   final math.Random _random = math.Random();
   final SessionLifecycleTracker _sessionTracker = SessionLifecycleTracker();
   final TaskCardFlow _taskCardFlow = const TaskCardFlow();
+  static const Duration _fastSpeechCorrectFeedbackDuration = Duration(
+    milliseconds: 250,
+  );
   late final ExerciseOptionShuffler _optionShuffler;
   late ProgressManager _progressManager;
   late TaskProgressRecorder _taskProgressRecorder;
@@ -100,6 +105,10 @@ class TrainerSession {
   String? _debugForcedFamilyKey;
   bool _trainingActive = false;
   bool _disposed = false;
+  bool _disposeRequested = false;
+  Future<void>? _disposeFuture;
+  final SerializedOperationQueue _operations = SerializedOperationQueue();
+  TrainerSessionPhase _phase = TrainerSessionPhase.idle;
   String? _errorMessage;
   SessionStats? _sessionStats;
   TrainingCelebration? _pendingCelebration;
@@ -111,17 +120,22 @@ class TrainerSession {
   int get dailyGoalCards => _progressManager.dailySummary().targetToday;
   int get sessionCardsCompleted => _sessionTracker.cardsCompleted;
   int get sessionTargetCards => _sessionTracker.targetCards;
+  TrainerSessionPhase get phase => _phase;
 
   set onStateChanged(void Function() callback) {
     _onStateChanged = callback;
   }
 
-  Future<void> initialize() async {
+  Future<void> initialize() => _operations.enqueue(_initializeCore);
+
+  Future<void> _initializeCore() async {
     await _loadProgress();
     _syncState();
   }
 
-  Future<void> retryInitSpeech() async {
+  Future<void> retryInitSpeech() => _operations.enqueue(_retryInitSpeechCore);
+
+  Future<void> _retryInitSpeechCore() async {
     final runtime = _runtimeCoordinator.runtime;
     if (runtime is SpeakRuntime) {
       await runtime.handleAction(const RetrySpeechInitAction());
@@ -130,10 +144,16 @@ class TrainerSession {
     await _syncSpeechAvailability();
   }
 
-  Future<void> startTraining() async {
-    if (_trainingActive) {
+  Future<void> startTraining() => _operations.enqueue(_startTrainingCore);
+
+  Future<void> _startTrainingCore() async {
+    if (_phase == TrainerSessionPhase.starting ||
+        _phase == TrainerSessionPhase.active ||
+        _phase == TrainerSessionPhase.transitioning ||
+        _disposeRequested) {
       return;
     }
+    _setPhase(TrainerSessionPhase.starting);
     _sessionStats = null;
     _pendingCelebration = null;
     _premiumPronunciationEnabled = _settingsRepository
@@ -156,6 +176,7 @@ class TrainerSession {
     );
     if (!_progressManager.hasRemainingCards) {
       _trainingActive = false;
+      _setPhase(TrainerSessionPhase.idle);
       _syncState();
       return;
     }
@@ -166,18 +187,28 @@ class TrainerSession {
     _resetSessionCounters(targetCards: _initialSessionTargetCards());
     _syncState();
     await _services.keepAwake.setEnabled(true);
-    await _startNextCard();
+    await _startNextCardCore();
   }
 
-  Future<void> continueSession() async {
+  Future<void> continueSession() => _operations.enqueue(_continueSessionCore);
+
+  Future<void> _continueSessionCore() async {
+    if (_phase != TrainerSessionPhase.sessionCompleted || _disposeRequested) {
+      return;
+    }
+    _setPhase(TrainerSessionPhase.starting);
+    _trainingActive = true;
     _silentDetector.reset();
     _resetSessionCounters(targetCards: dailyGoalCards);
     _sessionStats = null;
     _syncState();
-    await _startNextCard();
+    await _startNextCardCore();
   }
 
-  Future<void> continueAfterCelebration() async {
+  Future<void> continueAfterCelebration() =>
+      _operations.enqueue(_continueAfterCelebrationCore);
+
+  Future<void> _continueAfterCelebrationCore() async {
     if (_pendingCelebration == null) {
       return;
     }
@@ -186,10 +217,18 @@ class TrainerSession {
     if (!_trainingActive || _disposed) {
       return;
     }
-    await _startNextCard();
+    await _startNextCardCore();
   }
 
-  Future<void> stopTraining() async {
+  Future<void> stopTraining() => _operations.enqueue(_stopTrainingCore);
+
+  Future<void> _stopTrainingCore() async {
+    if (_phase == TrainerSessionPhase.stopping ||
+        _phase == TrainerSessionPhase.idle ||
+        _phase == TrainerSessionPhase.disposed) {
+      return;
+    }
+    _setPhase(TrainerSessionPhase.stopping);
     await _persistCurrentSessionIfNeeded();
     _feedbackCoordinator.clear();
     await _runtimeCoordinator.disposeRuntime(clearState: true);
@@ -199,46 +238,61 @@ class TrainerSession {
     _runtimeCoordinator.resetInteraction();
     _sessionStats = null;
     _pendingCelebration = null;
+    _setPhase(TrainerSessionPhase.idle);
     _syncState();
     await _services.keepAwake.setEnabled(false);
   }
 
-  Future<void> pauseTaskTimer() async {
+  Future<void> pauseTaskTimer() => _operations.enqueue(_pauseTaskTimerCore);
+  Future<void> _pauseTaskTimerCore() async {
     await _runtimeCoordinator.handleAction(const PauseTaskAction());
   }
 
-  Future<void> resumeTaskTimer() async {
+  Future<void> resumeTaskTimer() => _operations.enqueue(_resumeTaskTimerCore);
+  Future<void> _resumeTaskTimerCore() async {
     await _runtimeCoordinator.handleAction(const ResumeTaskAction());
   }
 
-  Future<void> handleAction(TaskAction action) async {
+  Future<void> handleAction(TaskAction action) =>
+      _operations.enqueue(() => _handleActionCore(action));
+  Future<void> _handleActionCore(TaskAction action) async {
+    if (_phase != TrainerSessionPhase.active) {
+      return;
+    }
     await _runtimeCoordinator.handleAction(action);
   }
 
   Future<void> completeCurrentTaskWithOutcome(
     TrainingOutcome outcome, {
     bool simulatedUserInteraction = false,
-  }) async {
-    if (_runtimeCoordinator.currentTask == null) {
-      return;
-    }
-    await _handleTaskCompleted(
+  }) => _operations.enqueue(
+    () => _completeCurrentTaskCore(
       outcome,
       simulatedUserInteraction: simulatedUserInteraction,
-    );
-  }
+    ),
+  );
 
   void dispose() {
-    if (_disposed) {
-      return;
-    }
-    _disposed = true;
+    unawaited(disposeAsync());
+  }
+
+  Future<void> disposeAsync() {
+    _disposeRequested = true;
+    return _disposeFuture ??= _operations
+        .enqueue(_disposeCore)
+        .whenComplete(_operations.close);
+  }
+
+  Future<void> _disposeCore() async {
+    if (_disposed) return;
+    _setPhase(TrainerSessionPhase.stopping);
     _feedbackCoordinator.dispose();
-    unawaited(
-      _runtimeCoordinator
-          .disposeRuntime(clearState: true)
-          .whenComplete(_services.dispose),
-    );
+    await _runtimeCoordinator.close();
+    await _services.keepAwake.setEnabled(false);
+    _services.dispose();
+    _trainingActive = false;
+    _disposed = true;
+    _setPhase(TrainerSessionPhase.disposed);
   }
 
   Future<void> _loadProgress() async {
@@ -315,6 +369,7 @@ class TrainerSession {
       currentTask: _runtimeCoordinator.currentTask,
       sessionStats: _sessionStats,
       celebration: _pendingCelebration,
+      phase: _phase,
     );
     _onStateChanged();
   }
@@ -356,6 +411,7 @@ class TrainerSession {
       currentTask: null,
       sessionStats: _sessionStats,
       celebration: _pendingCelebration,
+      phase: _phase,
     );
     _onStateChanged();
   }
@@ -376,8 +432,10 @@ class TrainerSession {
     _sessionTracker.markStatsPersisted();
   }
 
-  Future<void> _startNextCard() async {
-    if (!_trainingActive) {
+  Future<void> _startNextCardCore() async {
+    if (!_trainingActive ||
+        _disposeRequested ||
+        _phase == TrainerSessionPhase.stopping) {
       return;
     }
     if (_sessionTracker.reachedLimit) {
@@ -386,6 +444,7 @@ class TrainerSession {
     }
     if (!_progressManager.hasRemainingCards) {
       _trainingActive = false;
+      _setPhase(TrainerSessionPhase.sessionCompleted);
       await _services.keepAwake.setEnabled(false);
       _syncState();
       return;
@@ -405,13 +464,14 @@ class TrainerSession {
     );
     if (scheduleResult is TaskScheduleFinished) {
       _trainingActive = false;
+      _setPhase(TrainerSessionPhase.sessionCompleted);
       await _services.keepAwake.setEnabled(false);
       _syncState();
       return;
     }
     if (scheduleResult is TaskSchedulePaused) {
       _errorMessage = scheduleResult.errorMessage;
-      await _pauseTraining();
+      await _pauseTrainingCore();
       return;
     }
     if (scheduleResult is! TaskScheduleReady) {
@@ -431,12 +491,22 @@ class TrainerSession {
 
     _services.soundWave.reset();
     _errorMessage = null;
+    _setPhase(TrainerSessionPhase.transitioning);
     final runtime = _createRuntime(
       card: card,
       mode: scheduleResult.mode,
       hintText: hintText,
     );
-    await _runtimeCoordinator.attach(runtime);
+    try {
+      final handle = await _runtimeCoordinator.attach(runtime);
+      if (!_runtimeCoordinator.isCurrent(handle) || _disposeRequested) return;
+      _setPhase(TrainerSessionPhase.active);
+      _syncState();
+    } catch (error) {
+      _errorMessage = 'Unable to start the exercise: $error';
+      _setPhase(TrainerSessionPhase.paused);
+      _syncState();
+    }
   }
 
   TaskRuntime _createRuntime({
@@ -498,6 +568,18 @@ class TrainerSession {
   }
 
   void _handleSpeechReady(bool ready, String? errorMessage) {
+    if (_disposed || _disposeRequested) return;
+    unawaited(
+      _operations
+          .enqueue(() async {
+            if (_disposed || _disposeRequested) return;
+            _applySpeechReady(ready, errorMessage);
+          })
+          .catchError((_) {}),
+    );
+  }
+
+  void _applySpeechReady(bool ready, String? errorMessage) {
     _runtimeCoordinator.updateSpeechReady(ready);
     if (ready) {
       _errorMessage = null;
@@ -507,33 +589,57 @@ class TrainerSession {
     _syncState();
   }
 
-  void _handleRuntimeEvent(TaskEvent event) {
-    if (_disposed) {
+  void _handleRuntimeEvent(RuntimeEventEnvelope envelope) {
+    if (_disposed || _disposeRequested) {
       return;
     }
+    unawaited(
+      _operations
+          .enqueue(() => _handleRuntimeEventCore(envelope))
+          .catchError((_) {}),
+    );
+  }
+
+  Future<void> _handleRuntimeEventCore(RuntimeEventEnvelope envelope) async {
+    final handle = _runtimeCoordinator.currentHandle;
+    if (handle == null || handle.generation != envelope.generation) return;
+    final event = envelope.event;
     if (event is TaskError) {
       _errorMessage = event.message;
       if (event.shouldPause) {
-        unawaited(_pauseTraining());
+        await _pauseTrainingCore();
       } else {
         _syncState();
       }
       return;
     }
     if (event is TaskCompleted) {
-      unawaited(_handleTaskCompleted(event.outcome));
+      await _completeCurrentTaskCore(
+        event.outcome,
+        generation: envelope.generation,
+      );
     }
   }
 
-  Future<void> _handleTaskCompleted(
+  Future<void> _completeCurrentTaskCore(
     TrainingOutcome outcome, {
     bool simulatedUserInteraction = false,
+    int? generation,
   }) async {
-    final taskState = _runtimeCoordinator.currentTask;
-    if (taskState == null) {
+    if (_phase != TrainerSessionPhase.active) return;
+    final handle = _runtimeCoordinator.currentHandle;
+    if (handle == null ||
+        (generation != null && handle.generation != generation)) {
       return;
     }
-    await _runtimeCoordinator.disposeRuntime(clearState: false);
+    final completion = _runtimeCoordinator.takeCurrentForCompletion();
+    if (completion == null) return;
+    _setPhase(TrainerSessionPhase.transitioning);
+    final taskState = completion.taskState;
+    await _runtimeCoordinator.detach(
+      handle: completion.handle,
+      clearState: true,
+    );
     final progressUpdate = await _taskProgressRecorder.record(
       taskState: taskState,
       outcome: outcome,
@@ -543,7 +649,10 @@ class TrainerSession {
       await _queueCelebration(taskState);
     }
 
-    final feedbackHold = _feedbackCoordinator.show(outcome);
+    final feedbackHold = _feedbackCoordinator.show(
+      outcome,
+      holdDuration: _feedbackHoldDuration(taskState, outcome),
+    );
 
     _silentDetector.record(
       interacted:
@@ -552,16 +661,29 @@ class TrainerSession {
       affectsProgress: progressUpdate.affectsProgress,
     );
     if (_silentDetector.shouldStop) {
-      await stopTraining();
+      await _stopTrainingCore();
       _onAutoStop();
       return;
     }
 
     await feedbackHold;
-    if (_disposed || _pendingCelebration != null || !_trainingActive) {
+    if (_disposed ||
+        _disposeRequested ||
+        _pendingCelebration != null ||
+        !_trainingActive) {
       return;
     }
-    await _startNextCard();
+    await _startNextCardCore();
+  }
+
+  Duration? _feedbackHoldDuration(
+    TaskState taskState,
+    TrainingOutcome outcome,
+  ) {
+    if (taskState is SpeakState && outcome == TrainingOutcome.correct) {
+      return _fastSpeechCorrectFeedbackDuration;
+    }
+    return null;
   }
 
   Future<void> _queueCelebration(TaskState taskState) async {
@@ -578,11 +700,16 @@ class TrainerSession {
     _syncState();
   }
 
-  Future<void> _pauseTraining() async {
-    await _runtimeCoordinator.disposeRuntime(clearState: false);
+  Future<void> _pauseTrainingCore() async {
+    await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
+    _setPhase(TrainerSessionPhase.paused);
     _syncState();
     await _services.keepAwake.setEnabled(false);
+  }
+
+  void _setPhase(TrainerSessionPhase phase) {
+    _phase = phase;
   }
 
   ExerciseMode? _parseMode(String? raw) {

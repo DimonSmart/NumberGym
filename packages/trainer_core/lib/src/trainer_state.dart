@@ -1,5 +1,6 @@
 import 'exercise_models.dart';
 import 'training/domain/pronunciation_models.dart';
+import 'trainer_session_phase.dart';
 
 enum TrainingOutcome { correct, wrong, timeout, skipped }
 
@@ -205,6 +206,7 @@ class TrainingState {
     required this.currentTask,
     this.sessionStats,
     this.celebration,
+    this.phase = TrainerSessionPhase.idle,
   });
 
   final String? errorMessage;
@@ -212,6 +214,9 @@ class TrainingState {
   final TaskState? currentTask;
   final SessionStats? sessionStats;
   final TrainingCelebration? celebration;
+  final TrainerSessionPhase phase;
+
+  bool get interactionEnabled => phase == TrainerSessionPhase.active;
 
   factory TrainingState.initial() {
     return const TrainingState(
@@ -220,6 +225,7 @@ class TrainingState {
       currentTask: null,
       sessionStats: null,
       celebration: null,
+      phase: TrainerSessionPhase.idle,
     );
   }
 }

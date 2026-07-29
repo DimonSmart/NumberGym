@@ -93,6 +93,9 @@ abstract class TaskRuntimeBase implements TaskRuntime {
       StreamController<TaskState>.broadcast();
 
   TaskState _state;
+  bool _disposed = false;
+
+  bool get isDisposed => _disposed;
 
   @override
   TaskState get state => _state;
@@ -120,6 +123,7 @@ abstract class TaskRuntimeBase implements TaskRuntime {
 
   @override
   Future<void> dispose() async {
+    _disposed = true;
     await _eventController.close();
     await _stateController.close();
   }
