@@ -67,6 +67,10 @@ class _ControllableSpeechService implements SpeechServiceBase {
   bool _isListening = false;
 
   int listenCallCount = 0;
+  int stopCallCount = 0;
+  int cancelCallCount = 0;
+  bool clearListeningWhenCancelStarts = true;
+  Completer<void>? cancelCompleter;
 
   @override
   List<stt.LocaleName> get locales => const <stt.LocaleName>[];
@@ -100,6 +104,20 @@ class _ControllableSpeechService implements SpeechServiceBase {
 
   @override
   Future<void> stop() async {
+    stopCallCount += 1;
+    _isListening = false;
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCallCount += 1;
+    if (clearListeningWhenCancelStarts) {
+      _isListening = false;
+    }
+    final completer = cancelCompleter;
+    if (completer != null) {
+      await completer.future;
+    }
     _isListening = false;
   }
 
@@ -204,6 +222,132 @@ void main() {
     final event = await completion.future.timeout(const Duration(seconds: 1));
     expect(event.outcome, TrainingOutcome.correct);
     expect(speech.listenCallCount, 1);
+
+    await subscription.cancel();
+    await runtime.dispose();
+  });
+
+  test('partial correct completes before cancel finishes', () async {
+    final cancelCompleter = Completer<void>();
+    final speech = _ControllableSpeechService()
+      ..cancelCompleter = cancelCompleter
+      ..clearListeningWhenCancelStarts = false;
+    final runtime = SpeakRuntime(
+      card: _buildCard(
+        promptText: 'half past ten',
+        acceptedAnswers: const <String>['half past ten', '10:30'],
+      ),
+      profile: _buildProfile(),
+      tokenizer: _SimpleTokenizer(),
+      speechService: speech,
+      soundWaveService: FakeSoundWaveService(),
+      cardTimer: FakeCardTimer(),
+      cardDuration: const Duration(seconds: 15),
+      hintText: null,
+      onSpeechReady: (ready, errorMessage) {},
+    );
+
+    final completion = Completer<TaskCompleted>();
+    final subscription = runtime.events.listen((event) {
+      if (event is TaskCompleted && !completion.isCompleted) {
+        completion.complete(event);
+      }
+    });
+
+    await runtime.start();
+    await speech.emitPartial('half past ten');
+
+    final event = await completion.future.timeout(const Duration(seconds: 1));
+    expect(event.outcome, TrainingOutcome.correct);
+    expect(speech.cancelCallCount, 1);
+    expect(speech.stopCallCount, 0);
+    expect(speech.isListening, isTrue);
+
+    await subscription.cancel();
+    await runtime.dispose().timeout(const Duration(milliseconds: 100));
+    expect(speech.isListening, isTrue);
+
+    cancelCompleter.complete();
+    await Future<void>.delayed(Duration.zero);
+    expect(speech.isListening, isFalse);
+  });
+
+  test('late final after accepted partial is ignored', () async {
+    final cancelCompleter = Completer<void>();
+    final speech = _ControllableSpeechService()
+      ..cancelCompleter = cancelCompleter;
+    final runtime = SpeakRuntime(
+      card: _buildCard(),
+      profile: _buildProfile(),
+      tokenizer: _SimpleTokenizer(),
+      speechService: speech,
+      soundWaveService: FakeSoundWaveService(),
+      cardTimer: FakeCardTimer(),
+      cardDuration: const Duration(seconds: 15),
+      hintText: null,
+      onSpeechReady: (ready, errorMessage) {},
+    );
+
+    final events = <TaskCompleted>[];
+    final completion = Completer<void>();
+    final subscription = runtime.events.listen((event) {
+      if (event is TaskCompleted) {
+        events.add(event);
+        if (!completion.isCompleted) {
+          completion.complete();
+        }
+      }
+    });
+
+    await runtime.start();
+    await speech.emitPartial('seven');
+    await completion.future.timeout(const Duration(seconds: 1));
+    await speech.emitFinal('7');
+    await Future<void>.delayed(Duration.zero);
+
+    expect(events, hasLength(1));
+    expect(events.single.outcome, TrainingOutcome.correct);
+
+    cancelCompleter.complete();
+    await subscription.cancel();
+    await runtime.dispose();
+  });
+
+  test('final correct completes before cancel finishes', () async {
+    final cancelCompleter = Completer<void>();
+    final speech = _ControllableSpeechService()
+      ..cancelCompleter = cancelCompleter
+      ..clearListeningWhenCancelStarts = false;
+    final runtime = SpeakRuntime(
+      card: _buildCard(),
+      profile: _buildProfile(),
+      tokenizer: _SimpleTokenizer(),
+      speechService: speech,
+      soundWaveService: FakeSoundWaveService(),
+      cardTimer: FakeCardTimer(),
+      cardDuration: const Duration(seconds: 15),
+      hintText: null,
+      onSpeechReady: (ready, errorMessage) {},
+    );
+
+    final completion = Completer<TaskCompleted>();
+    final subscription = runtime.events.listen((event) {
+      if (event is TaskCompleted && !completion.isCompleted) {
+        completion.complete(event);
+      }
+    });
+
+    await runtime.start();
+    await speech.emitFinal('seven');
+
+    final event = await completion.future.timeout(const Duration(seconds: 1));
+    expect(event.outcome, TrainingOutcome.correct);
+    expect(speech.cancelCallCount, 1);
+    expect(speech.stopCallCount, 0);
+    expect(speech.isListening, isTrue);
+
+    cancelCompleter.complete();
+    await Future<void>.delayed(Duration.zero);
 
     await subscription.cancel();
     await runtime.dispose();

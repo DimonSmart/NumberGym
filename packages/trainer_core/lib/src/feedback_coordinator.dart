@@ -18,7 +18,7 @@ class FeedbackCoordinator {
 
   TrainingFeedback? get feedback => _feedback;
 
-  Future<void> show(TrainingOutcome outcome) {
+  Future<void> show(TrainingOutcome outcome, {Duration? holdDuration}) {
     _feedbackTimer?.cancel();
     _feedbackCompleter?.complete();
     _feedbackCompleter = null;
@@ -28,7 +28,7 @@ class FeedbackCoordinator {
 
     final completer = Completer<void>();
     _feedbackCompleter = completer;
-    _feedbackTimer = Timer(_feedbackDuration, clear);
+    _feedbackTimer = Timer(holdDuration ?? _feedbackDuration, clear);
 
     final shouldHold =
         outcome == TrainingOutcome.correct ||

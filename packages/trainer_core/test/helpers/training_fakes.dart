@@ -79,6 +79,11 @@ class FakeSpeechService implements SpeechServiceBase {
   }
 
   @override
+  Future<void> cancel() async {
+    _isListening = false;
+  }
+
+  @override
   void dispose() {
     _isListening = false;
   }

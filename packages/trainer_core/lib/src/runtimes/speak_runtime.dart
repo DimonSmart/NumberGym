@@ -13,6 +13,14 @@ import '../task_runtime.dart';
 import '../trainer_services.dart';
 import '../trainer_state.dart';
 
+enum _SpeechResultSource {
+  partialCompletion,
+  partialAcceptedAnswer,
+  finalResult,
+  clientError,
+  errorSalvage,
+}
+
 class SpeakRuntime extends TaskRuntimeBase {
   SpeakRuntime({
     required ExerciseCard card,
@@ -103,6 +111,7 @@ class SpeakRuntime extends TaskRuntimeBase {
   bool _reportedInteraction = false;
   bool _deadlinePassed = false;
   int _emptyResultStreak = 0;
+  bool _speechCancelInFlight = false;
   bool _disposed = false;
   DateTime? _listenRequestedAt;
   Timer? _listenStartTimer;
@@ -125,6 +134,7 @@ class SpeakRuntime extends TaskRuntimeBase {
     _isListeningPending = false;
     _listenRequestedAt = null;
     _emptyResultStreak = 0;
+    _speechCancelInFlight = false;
     _listenStartTimer?.cancel();
     _timeoutGraceTimer?.cancel();
     _logSpeech(
@@ -133,7 +143,7 @@ class SpeakRuntime extends TaskRuntimeBase {
     );
 
     final ready = await _initSpeech();
-    if (!ready) {
+    if (_disposed || !_cardActive || !ready) {
       return;
     }
     await _startListening();
@@ -166,6 +176,9 @@ class SpeakRuntime extends TaskRuntimeBase {
   @override
   Future<void> dispose() async {
     _disposed = true;
+    _cardActive = false;
+    _listenStartTimer?.cancel();
+    _timeoutGraceTimer?.cancel();
     await _stopAttempt(stopTimer: true);
     await super.dispose();
   }
@@ -224,6 +237,7 @@ class SpeakRuntime extends TaskRuntimeBase {
       onError: _onSpeechError,
       onStatus: _onSpeechStatus,
     );
+    if (_disposed || !_cardActive) return false;
     _speechReady = result.ready;
     _onSpeechReady(result.ready, result.errorMessage);
     emitState(_buildState());
@@ -387,8 +401,11 @@ class SpeakRuntime extends TaskRuntimeBase {
           'matched=${_formatBools(_answerMatcher.matchedTokens)}',
         );
         if (wouldComplete) {
-          _logSpeech('partial completes answer attempt=$attemptId');
-          await _handleAttemptResult(recognizedText: recognizedWords);
+          _logSpeech('partial accepted attempt=$attemptId reason=complete');
+          await _handleAttemptResult(
+            recognizedText: recognizedWords,
+            source: _SpeechResultSource.partialCompletion,
+          );
           return;
         }
         await _schedulePartialFastAcceptIfEligible(recognizedWords, attemptId);
@@ -408,10 +425,17 @@ class SpeakRuntime extends TaskRuntimeBase {
       'usedLastPartial=${recognizedWords.trim().isEmpty && _lastPartialResult.isNotEmpty}',
     );
     _lastPartialResult = '';
-    await _handleAttemptResult(recognizedText: resolvedWords);
+    await _handleAttemptResult(
+      recognizedText: resolvedWords,
+      source: _SpeechResultSource.finalResult,
+    );
   }
 
-  Future<void> _handleAttemptResult({required String recognizedText}) async {
+  Future<void> _handleAttemptResult({
+    required String recognizedText,
+    required _SpeechResultSource source,
+  }) async {
+    final resultHandlingStartedAt = DateTime.now();
     if (_paused) {
       _logSpeech('attempt result ignored while paused raw="$recognizedText"');
       return;
@@ -433,18 +457,14 @@ class SpeakRuntime extends TaskRuntimeBase {
       );
       return;
     }
-    final attemptId = _activeAttemptId;
+    final attemptId = _activeAttemptId!;
     _logSpeech(
-      'attempt result apply attempt=$attemptId raw="$recognizedText" '
+      'attempt result apply attempt=$attemptId source=${source.name} '
+      'raw="$recognizedText" '
       'resolved="$resolvedText" deadlinePassed=$_deadlinePassed '
       'remaining=${_formatDuration(_remainingCardDuration())}',
     );
     _activeAttemptId = null;
-
-    if (_speechService.isListening) {
-      await _speechService.stop();
-    }
-    _markListeningStopped();
 
     _clearPreview(emit: false);
     final matchResult = _answerMatcher.applyRecognition(
@@ -466,10 +486,25 @@ class SpeakRuntime extends TaskRuntimeBase {
     );
 
     if (_answerMatcher.isComplete) {
-      _logSpeech('attempt complete correct attempt=$attemptId');
-      await _complete(TrainingOutcome.correct);
+      _logSpeech(
+        'attempt complete correct attempt=$attemptId source=${source.name} '
+        'matchLatency=${_formatDuration(DateTime.now().difference(resultHandlingStartedAt))}',
+      );
+      _cancelListeningAfterAcceptedAnswer(attemptId);
+      _markListeningStopped();
+      await _complete(TrainingOutcome.correct, stopSpeech: false);
       return;
     }
+
+    if (_speechService.isListening) {
+      final stopStartedAt = DateTime.now();
+      await _speechService.stop();
+      _logSpeech(
+        'attempt stop finished attempt=$attemptId '
+        'duration=${_formatDuration(DateTime.now().difference(stopStartedAt))}',
+      );
+    }
+    _markListeningStopped();
 
     if (resolvedText.trim().isEmpty) {
       _emptyResultStreak += 1;
@@ -551,10 +586,50 @@ class SpeakRuntime extends TaskRuntimeBase {
     await _complete(TrainingOutcome.timeout);
   }
 
-  Future<void> _complete(TrainingOutcome outcome) async {
+  void _cancelListeningAfterAcceptedAnswer(int attemptId) {
+    if (!_speechService.isListening) {
+      _logSpeech(
+        'accepted cleanup skipped attempt=$attemptId reason=not_listening',
+      );
+      return;
+    }
+    final startedAt = DateTime.now();
+    _speechCancelInFlight = true;
+    _logSpeech(
+      'accepted cleanup cancel start attempt=$attemptId '
+      'startedAt="${startedAt.toIso8601String()}"',
+    );
+    unawaited(
+      _speechService
+          .cancel()
+          .then((_) {
+            _logSpeech(
+              'accepted cleanup cancel finished attempt=$attemptId '
+              'duration=${_formatDuration(DateTime.now().difference(startedAt))}',
+            );
+          })
+          .catchError((Object error, StackTrace stackTrace) {
+            appLogW(
+              'speech',
+              'speak id=${_card.id} accepted cleanup cancel failed',
+              error: error,
+              st: stackTrace,
+            );
+          })
+          .whenComplete(() {
+            _speechCancelInFlight = false;
+          }),
+    );
+  }
+
+  Future<void> _complete(
+    TrainingOutcome outcome, {
+    bool stopSpeech = true,
+  }) async {
     if (!_cardActive) {
       return;
     }
+    final completionStartedAt = DateTime.now();
     _cardActive = false;
     _activeAttemptId = null;
     _pendingListenAttemptId = null;
@@ -567,7 +642,7 @@ class SpeakRuntime extends TaskRuntimeBase {
     _listenRequestedAt = null;
     _clearPreview(emit: false);
     _soundWaveService.stop();
-    if (_speechService.isListening) {
+    if (stopSpeech && _speechService.isListening) {
       await _speechService.stop();
     }
     _isListening = false;
@@ -578,6 +653,10 @@ class SpeakRuntime extends TaskRuntimeBase {
     );
     emitState(_buildState());
     emitEvent(TaskCompleted(outcome));
+    _logSpeech(
+      'completion emitted outcome=${outcome.name} stopSpeech=$stopSpeech '
+      'duration=${_formatDuration(DateTime.now().difference(completionStartedAt))}',
+    );
   }
 
   Future<void> _stopAttempt({bool stopTimer = false}) async {
@@ -594,8 +673,12 @@ class SpeakRuntime extends TaskRuntimeBase {
     if (stopTimer) {
       _cardTimer.stop();
     }
-    if (_speechService.isListening) {
+    if (_speechService.isListening && !_speechCancelInFlight) {
       await _speechService.stop();
+    } else if (_speechCancelInFlight) {
+      _logSpeech(
+        'stopAttempt skipped service stop because cancel is in flight',
+      );
     }
     emitState(_buildState());
   }
@@ -758,7 +841,10 @@ class SpeakRuntime extends TaskRuntimeBase {
         return;
       }
       if (_activeAttemptId != null) {
-        await _handleAttemptResult(recognizedText: '');
+        await _handleAttemptResult(
+          recognizedText: '',
+          source: _SpeechResultSource.clientError,
+        );
       }
       return;
     }
@@ -770,7 +856,10 @@ class SpeakRuntime extends TaskRuntimeBase {
       final salvage = _lastPartialResult.trim();
       if (salvage.isNotEmpty) {
         _logSpeech('attempt error salvaging partial="$salvage"');
-        await _handleAttemptResult(recognizedText: salvage);
+        await _handleAttemptResult(
+          recognizedText: salvage,
+          source: _SpeechResultSource.errorSalvage,
+        );
         return;
       }
       _logSpeech('attempt error without salvage, restarting');
@@ -869,7 +958,10 @@ class SpeakRuntime extends TaskRuntimeBase {
       return;
     }
     _logSpeech('partial fast accept attempt=$attemptId candidate="$candidate"');
-    await _handleAttemptResult(recognizedText: candidate);
+    await _handleAttemptResult(
+      recognizedText: candidate,
+      source: _SpeechResultSource.partialAcceptedAnswer,
+    );
   }
 
   bool _isNoMatchError(SpeechRecognitionError error) {
