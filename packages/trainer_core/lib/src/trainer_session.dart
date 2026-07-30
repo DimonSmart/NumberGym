@@ -341,8 +341,10 @@ class TrainerSession {
       }
     }
 
-    _feedbackCoordinator.clear();
-    _runtimeCoordinator.requestCancellation();
+    await attempt('feedback clear', () async => _feedbackCoordinator.clear());
+    await attempt('runtime cancellation', () async {
+      _runtimeCoordinator.requestCancellation();
+    });
     if (persistSession) {
       await attempt('session persistence', _persistCurrentSessionIfNeeded);
     }
@@ -427,18 +429,22 @@ class TrainerSession {
   }
 
   Future<void> disposeAsync() {
+    final existing = _disposeFuture;
+    if (existing != null) return existing;
     _disposeRequested = true;
     _stopRequested = true;
     _lifecycleCancellationEpoch += 1;
     _feedbackCoordinator.clear();
     _runtimeCoordinator.requestCancellation();
-    return _disposeFuture ??= _enqueueCommand(
+    final queued = _enqueueCommand(
       name: 'dispose',
       operation: _disposeCore,
       failurePolicy: TrainerCommandFailurePolicy.finalDispose,
       allowWhenStopRequested: true,
       allowWhenDisposeRequested: true,
     ).whenComplete(_operations.close);
+    _disposeFuture = queued;
+    return queued;
   }
 
   Future<void> _disposeCore() async {

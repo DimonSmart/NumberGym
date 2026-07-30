@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'app_definition.dart';
+import 'core/logging/app_logger.dart';
 import 'exercise_models.dart';
 import 'task_runtime.dart';
 import 'trainer_repositories.dart';
@@ -105,8 +108,18 @@ class TrainerController extends ChangeNotifier {
       return;
     }
     _cleanupRequested = true;
-    _disposeFuture ??= _session.disposeAsync();
+    final cleanup = _disposeFuture ??= _session.disposeAsync();
     _notifierDisposed = true;
+    unawaited(
+      cleanup.catchError((Object error, StackTrace stackTrace) {
+        appLogE(
+          'trainer',
+          'asynchronous controller disposal failed',
+          error: error,
+          st: stackTrace,
+        );
+      }),
+    );
     super.dispose();
   }
 

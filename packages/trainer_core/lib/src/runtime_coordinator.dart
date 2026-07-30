@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'core/logging/app_logger.dart';
 import 'task_runtime.dart';
 import 'trainer_state.dart';
+import 'serialized_operation_queue.dart';
 
 final class RuntimeHandle {
   const RuntimeHandle({required this.generation, required this.runtime});
@@ -22,6 +24,18 @@ final class RuntimeCompletion {
 
   final RuntimeHandle handle;
   final TaskState taskState;
+}
+
+final class RuntimeCancellationFailure {
+  const RuntimeCancellationFailure({
+    required this.generation,
+    required this.error,
+    required this.stackTrace,
+  });
+
+  final int generation;
+  final Object error;
+  final StackTrace stackTrace;
 }
 
 /// Owns the active runtime. A generation is invalidated before any async
@@ -45,6 +59,9 @@ final class RuntimeCoordinator {
   int _generation = 0;
   bool _closeRequested = false;
   Future<void>? _closeFuture;
+  final SerializedOperationQueue _lifecycleOperations =
+      SerializedOperationQueue();
+  RuntimeCancellationFailure? _cancellationFailure;
 
   RuntimeHandle? get currentHandle => _currentHandle;
   TaskRuntime? get runtime => _currentHandle?.runtime;
@@ -64,9 +81,13 @@ final class RuntimeCoordinator {
     _onChanged();
   }
 
-  Future<RuntimeHandle> attach(TaskRuntime runtime) async {
+  Future<RuntimeHandle> attach(TaskRuntime runtime) =>
+      _lifecycleOperations.enqueue(() => _attachCore(runtime));
+
+  Future<RuntimeHandle> _attachCore(TaskRuntime runtime) async {
     if (_closeRequested) throw StateError('RuntimeCoordinator is closed.');
-    await disposeCurrent(clearState: true);
+    await _disposeCurrentCore(clearState: true);
+    if (_closeRequested) throw StateError('RuntimeCoordinator is closed.');
     final handle = RuntimeHandle(generation: ++_generation, runtime: runtime);
     _currentHandle = handle;
     _taskHadUserInteraction = false;
@@ -83,9 +104,25 @@ final class RuntimeCoordinator {
     _onChanged();
     try {
       await runtime.start();
-    } catch (_) {
-      if (isCurrent(handle)) await detach(handle: handle, clearState: true);
-      rethrow;
+    } catch (error, stackTrace) {
+      if (isCurrent(handle)) {
+        try {
+          await _detachCore(handle: handle, clearState: true);
+        } catch (cleanupError, cleanupStackTrace) {
+          appLogE(
+            'trainer',
+            'Secondary cleanup failure after runtime start: '
+                'generation=${handle.generation} step=dispose',
+            error: cleanupError,
+            st: cleanupStackTrace,
+          );
+        }
+      }
+      Error.throwWithStackTrace(error, stackTrace);
+    }
+    if (_closeRequested) {
+      await _detachCore(handle: handle, clearState: true);
+      throw StateError('RuntimeCoordinator is closed.');
     }
     return handle;
   }
@@ -102,14 +139,23 @@ final class RuntimeCoordinator {
   Future<void> detach({
     required RuntimeHandle handle,
     required bool clearState,
+  }) => _lifecycleOperations.enqueue(
+    () => _detachCore(handle: handle, clearState: clearState),
+  );
+
+  Future<void> _detachCore({
+    required RuntimeHandle handle,
+    required bool clearState,
   }) async {
     if (!isCurrent(handle)) return;
+    requestCancellation();
     ++_generation;
     _currentHandle = null;
     final events = _runtimeEvents;
     final states = _runtimeStates;
     _runtimeEvents = null;
     _runtimeStates = null;
+    final cancellationFailure = _takeCancellationFailure(handle.generation);
     if (clearState) _currentTaskState = null;
     _onChanged();
     Object? firstError;
@@ -123,9 +169,10 @@ final class RuntimeCoordinator {
       }
     }
 
-    await attempt(() async {
-      handle.runtime.requestCancellation();
-    });
+    if (cancellationFailure != null) {
+      firstError = cancellationFailure.error;
+      firstStackTrace = cancellationFailure.stackTrace;
+    }
     await attempt(() => events?.cancel() ?? Future<void>.value());
     await attempt(() => states?.cancel() ?? Future<void>.value());
     await attempt(handle.runtime.dispose);
@@ -134,7 +181,12 @@ final class RuntimeCoordinator {
     }
   }
 
-  Future<void> disposeCurrent({required bool clearState}) async {
+  Future<void> disposeCurrent({required bool clearState}) =>
+      _lifecycleOperations.enqueue(
+        () => _disposeCurrentCore(clearState: clearState),
+      );
+
+  Future<void> _disposeCurrentCore({required bool clearState}) async {
     final handle = _currentHandle;
     if (handle == null) {
       if (clearState && _currentTaskState != null) {
@@ -143,7 +195,7 @@ final class RuntimeCoordinator {
       }
       return;
     }
-    await detach(handle: handle, clearState: clearState);
+    await _detachCore(handle: handle, clearState: clearState);
   }
 
   Future<void> disposeRuntime({required bool clearState}) =>
@@ -158,12 +210,40 @@ final class RuntimeCoordinator {
   }
 
   void requestCancellation() {
-    _currentHandle?.runtime.requestCancellation();
+    final handle = _currentHandle;
+    if (handle == null) return;
+    try {
+      handle.runtime.requestCancellation();
+    } catch (error, stackTrace) {
+      final failure = RuntimeCancellationFailure(
+        generation: handle.generation,
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (_cancellationFailure?.generation != handle.generation) {
+        _cancellationFailure = failure;
+      }
+      appLogE(
+        'trainer',
+        'Runtime cancellation signal failed: generation=${handle.generation}',
+        error: error,
+        st: stackTrace,
+      );
+    }
   }
 
   Future<void> close() {
     _closeRequested = true;
-    return _closeFuture ??= disposeCurrent(clearState: true);
+    return _closeFuture ??= _lifecycleOperations
+        .enqueue(() => _disposeCurrentCore(clearState: true))
+        .whenComplete(_lifecycleOperations.close);
+  }
+
+  RuntimeCancellationFailure? _takeCancellationFailure(int generation) {
+    final failure = _cancellationFailure;
+    if (failure?.generation != generation) return null;
+    _cancellationFailure = null;
+    return failure;
   }
 
   void _handleTaskEvent(RuntimeHandle handle, TaskEvent event) {
