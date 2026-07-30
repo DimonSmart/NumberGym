@@ -48,6 +48,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
   PronunciationAnalysisResult? _result;
   ReviewFlow _flow = ReviewFlow.waiting;
   bool _disposed = false;
+  Future<void>? _cancellationFuture;
 
   @override
   Future<void> start() async {
@@ -80,12 +81,10 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> dispose() async {
-    _disposed = true;
+    requestCancellation();
+    await _cancellationFuture;
     await _recordingLevelSubscription?.cancel();
     _recordingLevelSubscription = null;
-    if (_audioRecorder.isRecording) {
-      await _audioRecorder.cancel();
-    }
     _soundWaveService.stop();
     await super.dispose();
   }
@@ -96,7 +95,9 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     _disposed = true;
     _soundWaveService.stop();
     if (_audioRecorder.isRecording) {
-      unawaited(_audioRecorder.cancel());
+      _cancellationFuture ??= _audioRecorder.cancel();
+    } else {
+      _cancellationFuture ??= Future<void>.value();
     }
   }
 

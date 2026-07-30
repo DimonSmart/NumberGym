@@ -58,6 +58,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
   bool _paused = false;
   bool _resumePromptAfterPause = false;
   Future<void>? _voicePreparation;
+  Future<void>? _cancellationFuture;
 
   @override
   Future<void> start() async {
@@ -124,7 +125,8 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> dispose() async {
-    _cardTimer.stop();
+    requestCancellation();
+    await _cancellationFuture;
     await super.dispose();
   }
 
@@ -133,7 +135,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
     super.requestCancellation();
     _completed = true;
     _cardTimer.stop();
-    unawaited(_ttsService.stop());
+    _cancellationFuture ??= _ttsService.stop();
   }
 
   ListenAndChooseState _buildState() {

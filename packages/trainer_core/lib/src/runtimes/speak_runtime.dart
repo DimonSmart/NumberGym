@@ -86,6 +86,7 @@ class SpeakRuntime extends TaskRuntimeBase {
   final AnswerMatcher _answerMatcher;
 
   Future<void> _serialOperation = Future<void>.value();
+  Future<void>? _cancellationFuture;
 
   int _attemptCounter = 0;
   int? _activeAttemptId;
@@ -172,10 +173,12 @@ class SpeakRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> dispose() async {
+    requestCancellation();
     _disposed = true;
     _cardActive = false;
     _listenStartTimer?.cancel();
     _timeoutGraceTimer?.cancel();
+    await _cancellationFuture;
     await _stopAttempt(stopTimer: true);
     await super.dispose();
   }
@@ -188,7 +191,9 @@ class SpeakRuntime extends TaskRuntimeBase {
     _timeoutGraceTimer?.cancel();
     _cardTimer.stop();
     _soundWaveService.stop();
-    unawaited(_speechService.stop());
+    if (!_speechCancelInFlight) {
+      _cancellationFuture ??= _speechService.stop();
+    }
   }
 
   void _resetMatcher() {
@@ -606,27 +611,26 @@ class SpeakRuntime extends TaskRuntimeBase {
       'accepted cleanup cancel start attempt=$attemptId '
       'startedAt="${startedAt.toIso8601String()}"',
     );
-    unawaited(
-      _speechService
-          .cancel()
-          .then((_) {
-            _logSpeech(
-              'accepted cleanup cancel finished attempt=$attemptId '
-              'duration=${_formatDuration(DateTime.now().difference(startedAt))}',
-            );
-          })
-          .catchError((Object error, StackTrace stackTrace) {
-            appLogW(
-              'speech',
-              'speak id=${_card.id} accepted cleanup cancel failed',
-              error: error,
-              st: stackTrace,
-            );
-          })
-          .whenComplete(() {
-            _speechCancelInFlight = false;
-          }),
-    );
+    _cancellationFuture ??= _speechService
+        .cancel()
+        .then((_) {
+          _logSpeech(
+            'accepted cleanup cancel finished attempt=$attemptId '
+            'duration=${_formatDuration(DateTime.now().difference(startedAt))}',
+          );
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          appLogW(
+            'speech',
+            'speak id=${_card.id} accepted cleanup cancel failed',
+            error: error,
+            st: stackTrace,
+          );
+        })
+        .whenComplete(() {
+          _speechCancelInFlight = false;
+        });
+    unawaited(_cancellationFuture!);
   }
 
   Future<void> _complete(

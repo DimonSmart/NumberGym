@@ -261,11 +261,13 @@ void main() {
     expect(speech.isListening, isTrue);
 
     await subscription.cancel();
-    await runtime.dispose().timeout(const Duration(milliseconds: 100));
-    expect(speech.isListening, isTrue);
-
-    cancelCompleter.complete();
+    final disposal = runtime.dispose();
+    var disposed = false;
+    unawaited(disposal.then((_) => disposed = true));
     await Future<void>.delayed(Duration.zero);
+    expect(disposed, isFalse);
+    cancelCompleter.complete();
+    await disposal;
     expect(speech.isListening, isFalse);
   });
 

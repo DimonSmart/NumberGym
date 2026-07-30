@@ -90,10 +90,11 @@ final class RuntimeCoordinator {
     return handle;
   }
 
-  RuntimeCompletion? takeCurrentForCompletion() {
-    final handle = _currentHandle;
+  RuntimeCompletion? takeCurrentForCompletion({required RuntimeHandle target}) {
+    if (!isCurrent(target)) return null;
+    final handle = target;
     final state = _currentTaskState;
-    if (handle == null || state == null) return null;
+    if (state == null) return null;
     _currentTaskState = null;
     return RuntimeCompletion(handle: handle, taskState: state);
   }
@@ -122,6 +123,7 @@ final class RuntimeCoordinator {
       }
     }
 
+    handle.runtime.requestCancellation();
     await attempt(() => events?.cancel() ?? Future<void>.value());
     await attempt(() => states?.cancel() ?? Future<void>.value());
     await attempt(handle.runtime.dispose);
@@ -145,10 +147,12 @@ final class RuntimeCoordinator {
   Future<void> disposeRuntime({required bool clearState}) =>
       disposeCurrent(clearState: clearState);
 
-  Future<void> handleAction(TaskAction action) async {
-    final handle = _currentHandle;
-    if (handle == null) return;
-    await handle.runtime.handleAction(action);
+  Future<void> handleAction({
+    required RuntimeHandle target,
+    required TaskAction action,
+  }) async {
+    if (!isCurrent(target)) return;
+    await target.runtime.handleAction(action);
   }
 
   void requestCancellation() {

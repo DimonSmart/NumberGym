@@ -30,17 +30,26 @@ import 'trainer_state.dart';
 import 'training/domain/learning_language.dart';
 import 'training/domain/silent_detector.dart';
 
+typedef TaskRuntimeFactory =
+    TaskRuntime Function(
+      ExerciseCard card,
+      ExerciseMode mode,
+      String? hintText,
+    );
+
 class TrainerSession {
   TrainerSession({
     required TrainingAppDefinition appDefinition,
     required SettingsRepositoryBase settingsRepository,
     required ProgressRepositoryBase progressRepository,
     TrainingServices? services,
+    TaskRuntimeFactory? runtimeFactory,
     void Function()? onStateChanged,
     void Function()? onAutoStop,
   }) : _appDefinition = appDefinition,
        _settingsRepository = settingsRepository,
        _services = services ?? TrainingServices.defaults(),
+       _runtimeFactory = runtimeFactory,
        _onStateChanged = onStateChanged ?? _noop,
        _onAutoStop = onAutoStop ?? _noop {
     _optionShuffler = ExerciseOptionShuffler(_random);
@@ -83,6 +92,7 @@ class TrainerSession {
   final TrainingAppDefinition _appDefinition;
   final SettingsRepositoryBase _settingsRepository;
   final TrainingServices _services;
+  final TaskRuntimeFactory? _runtimeFactory;
   void Function() _onStateChanged;
   final void Function() _onAutoStop;
   final SilentDetector _silentDetector = SilentDetector();
@@ -105,6 +115,8 @@ class TrainerSession {
   String? _debugForcedMode;
   String? _debugForcedFamilyKey;
   bool _stopRequested = false;
+  int _lifecycleCancellationEpoch = 0;
+  int _stopRequestId = 0;
   bool _disposed = false;
   bool _disposeRequested = false;
   Future<void>? _disposeFuture;
@@ -117,6 +129,8 @@ class TrainerSession {
   TrainingState _state = TrainingState.initial();
 
   bool get _shouldStop => _stopRequested || _disposeRequested || _disposed;
+  bool _isLifecycleOperationCancelled(int epoch) =>
+      _shouldStop || epoch != _lifecycleCancellationEpoch;
   bool get _isTrainingLifecycleActive =>
       _phase == TrainerSessionPhase.starting ||
       _phase == TrainerSessionPhase.active ||
@@ -166,13 +180,14 @@ class TrainerSession {
   );
 
   Future<void> _startTrainingCore() async {
+    final epoch = _lifecycleCancellationEpoch;
+    if (_isLifecycleOperationCancelled(epoch)) return;
     if (_phase == TrainerSessionPhase.starting ||
         _phase == TrainerSessionPhase.active ||
         _phase == TrainerSessionPhase.transitioning ||
         _disposeRequested) {
       return;
     }
-    _stopRequested = false;
     _transitionTo(TrainerSessionPhase.starting, reason: 'start requested');
     _sessionStats = null;
     _pendingCelebration = null;
@@ -216,10 +231,11 @@ class TrainerSession {
   );
 
   Future<void> _continueSessionCore() async {
+    final epoch = _lifecycleCancellationEpoch;
+    if (_isLifecycleOperationCancelled(epoch)) return;
     if (_phase != TrainerSessionPhase.sessionCompleted || _disposeRequested) {
       return;
     }
-    _stopRequested = false;
     _transitionTo(TrainerSessionPhase.starting, reason: 'continue requested');
     _silentDetector.reset();
     _resetSessionCounters(targetCards: dailyGoalCards);
@@ -252,22 +268,25 @@ class TrainerSession {
   Future<void> stopTraining() {
     if (_disposed || _disposeRequested) return Future<void>.value();
     _stopRequested = true;
+    _lifecycleCancellationEpoch += 1;
+    final requestId = ++_stopRequestId;
     _feedbackCoordinator.clear();
     _runtimeCoordinator.requestCancellation();
     return _enqueueCommand(
       name: 'stopTraining',
-      operation: _stopTrainingCore,
+      operation: () => _stopTrainingCore(requestId),
       failurePolicy: TrainerCommandFailurePolicy.normalizeToIdle,
       allowWhenStopRequested: true,
     );
   }
 
-  Future<void> _stopTrainingCore() async {
+  Future<void> _stopTrainingCore(int requestId) async {
     if (_disposed || _phase == TrainerSessionPhase.disposed) {
       return;
     }
     if (_phase == TrainerSessionPhase.idle) {
-      if (!_disposeRequested) _stopRequested = false;
+      if (!_disposeRequested && requestId == _stopRequestId)
+        _stopRequested = false;
       return;
     }
     Object? failure;
@@ -291,7 +310,8 @@ class TrainerSession {
       } else if (_phase == TrainerSessionPhase.stopping) {
         _transitionTo(TrainerSessionPhase.idle, reason: 'stop normalized');
       }
-      if (!_disposeRequested) _stopRequested = false;
+      if (!_disposeRequested && requestId == _stopRequestId)
+        _stopRequested = false;
     }
     if (failure != null) {
       Error.throwWithStackTrace(failure, failureStackTrace!);
@@ -337,45 +357,68 @@ class TrainerSession {
     }
   }
 
-  Future<void> pauseTaskTimer() => _enqueueCommand(
-    name: 'pauseTaskTimer', operation: _pauseTaskTimerCore,
-    failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
-  );
-  Future<void> _pauseTaskTimerCore() async {
-    await _runtimeCoordinator.handleAction(const PauseTaskAction());
+  Future<void> pauseTaskTimer() {
+    final target = _runtimeCoordinator.currentHandle;
+    if (target == null) return Future<void>.value();
+    return _enqueueCommand(
+      name: 'pauseTaskTimer',
+      operation: () => _runtimeCoordinator.handleAction(
+        target: target,
+        action: const PauseTaskAction(),
+      ),
+      failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
+    );
   }
 
-  Future<void> resumeTaskTimer() => _enqueueCommand(
-    name: 'resumeTaskTimer', operation: _resumeTaskTimerCore,
-    failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
-  );
-  Future<void> _resumeTaskTimerCore() async {
-    await _runtimeCoordinator.handleAction(const ResumeTaskAction());
+  Future<void> resumeTaskTimer() {
+    final target = _runtimeCoordinator.currentHandle;
+    if (target == null) return Future<void>.value();
+    return _enqueueCommand(
+      name: 'resumeTaskTimer',
+      operation: () => _runtimeCoordinator.handleAction(
+        target: target,
+        action: const ResumeTaskAction(),
+      ),
+      failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
+    );
   }
 
-  Future<void> handleAction(TaskAction action) => _enqueueCommand(
-    name: 'handleAction',
-    operation: () => _handleActionCore(action),
-    failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
-  );
-  Future<void> _handleActionCore(TaskAction action) async {
+  Future<void> handleAction(TaskAction action) {
+    final target = _runtimeCoordinator.currentHandle;
+    if (target == null) return Future<void>.value();
+    return _enqueueCommand(
+      name: 'handleAction',
+      operation: () => _handleActionCore(target, action),
+      failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
+    );
+  }
+
+  Future<void> _handleActionCore(
+    RuntimeHandle target,
+    TaskAction action,
+  ) async {
     if (_phase != TrainerSessionPhase.active) {
       return;
     }
-    await _runtimeCoordinator.handleAction(action);
+    await _runtimeCoordinator.handleAction(target: target, action: action);
   }
 
   Future<void> completeCurrentTaskWithOutcome(
     TrainingOutcome outcome, {
     bool simulatedUserInteraction = false,
-  }) => _enqueueCommand(
-    name: 'completeCurrentTask',
-    operation: () => _completeCurrentTaskCore(
-      outcome,
-      simulatedUserInteraction: simulatedUserInteraction,
-    ),
-    failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
-  );
+  }) {
+    final target = _runtimeCoordinator.currentHandle;
+    if (target == null) return Future<void>.value();
+    return _enqueueCommand(
+      name: 'completeCurrentTask',
+      operation: () => _completeCurrentTaskCore(
+        target: target,
+        outcome: outcome,
+        simulatedUserInteraction: simulatedUserInteraction,
+      ),
+      failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
+    );
+  }
 
   void dispose() {
     unawaited(disposeAsync());
@@ -384,6 +427,7 @@ class TrainerSession {
   Future<void> disposeAsync() {
     _disposeRequested = true;
     _stopRequested = true;
+    _lifecycleCancellationEpoch += 1;
     _feedbackCoordinator.clear();
     _runtimeCoordinator.requestCancellation();
     return _disposeFuture ??= _enqueueCommand(
@@ -399,31 +443,41 @@ class TrainerSession {
     if (_disposed) return;
     Object? failure;
     StackTrace? failureStackTrace;
-    Future<void> attempt(String component, FutureOr<void> Function() operation) async {
+    Future<void> attempt(
+      String component,
+      FutureOr<void> Function() operation,
+    ) async {
       try {
         await operation();
       } catch (error, stackTrace) {
-        appLogE('trainer', '$component failed during final disposal', error: error, st: stackTrace);
+        appLogE(
+          'trainer',
+          '$component failed during final disposal',
+          error: error,
+          st: stackTrace,
+        );
         failure ??= error;
         failureStackTrace ??= stackTrace;
       }
     }
+
     if (_phase != TrainerSessionPhase.stopping &&
         _phase != TrainerSessionPhase.idle) {
       _transitionTo(TrainerSessionPhase.stopping, reason: 'dispose requested');
     }
     await attempt('feedback disposal', _feedbackCoordinator.dispose);
-    await attempt('resource cleanup', () => _stopResourcesCore(
-      persistSession: true,
-      finalDispose: true,
-    ));
+    await attempt(
+      'resource cleanup',
+      () => _stopResourcesCore(persistSession: true, finalDispose: true),
+    );
     await attempt('runtime coordinator close', _runtimeCoordinator.close);
     await attempt('services disposal', _services.dispose);
-    _disposed = true;
     if (_phase != TrainerSessionPhase.disposed) {
       _transitionTo(TrainerSessionPhase.disposed, reason: 'dispose completed');
     }
-    if (failure != null) Error.throwWithStackTrace(failure!, failureStackTrace!);
+    _disposed = true;
+    if (failure != null)
+      Error.throwWithStackTrace(failure!, failureStackTrace!);
   }
 
   Future<void> _loadProgress() async {
@@ -580,9 +634,7 @@ class TrainerSession {
   }
 
   Future<void> _startNextCardCore() async {
-    if (_stopRequested ||
-        _disposeRequested ||
-        !_isTrainingLifecycleActive) {
+    if (_stopRequested || _disposeRequested || !_isTrainingLifecycleActive) {
       return;
     }
     if (_sessionTracker.reachedLimit) {
@@ -663,6 +715,8 @@ class TrainerSession {
     required ExerciseMode mode,
     required String? hintText,
   }) {
+    final runtimeFactory = _runtimeFactory;
+    if (runtimeFactory != null) return runtimeFactory(card, mode, hintText);
     final cardDuration = card.family.defaultDuration;
     final profile = _appDefinition.profileOf(card.language);
     switch (mode) {
@@ -742,30 +796,27 @@ class TrainerSession {
       return;
     }
     if (event is TaskCompleted) {
-      await _completeCurrentTaskCore(
-        event.outcome,
-        generation: envelope.generation,
-      );
+      final target = _runtimeCoordinator.currentHandle;
+      if (target == null || target.generation != envelope.generation) return;
+      await _completeCurrentTaskCore(target: target, outcome: event.outcome);
     }
   }
 
-  Future<void> _completeCurrentTaskCore(
-    TrainingOutcome outcome, {
+  Future<void> _completeCurrentTaskCore({
+    required RuntimeHandle target,
+    required TrainingOutcome outcome,
     bool simulatedUserInteraction = false,
-    int? generation,
   }) async {
     if (_phase != TrainerSessionPhase.active) return;
-    final handle = _runtimeCoordinator.currentHandle;
-    if (handle == null ||
-        (generation != null && handle.generation != generation)) {
-      return;
-    }
+    if (!_runtimeCoordinator.isCurrent(target)) return;
+    final completion = _runtimeCoordinator.takeCurrentForCompletion(
+      target: target,
+    );
+    if (completion == null) return;
     _transitionTo(
       TrainerSessionPhase.transitioning,
       reason: 'task completion claimed',
     );
-    final completion = _runtimeCoordinator.takeCurrentForCompletion();
-    if (completion == null) return;
     final taskState = completion.taskState;
     await _runtimeCoordinator.detach(
       handle: completion.handle,
@@ -795,7 +846,7 @@ class TrainerSession {
       affectsProgress: progressUpdate.affectsProgress,
     );
     if (_silentDetector.shouldStop) {
-      await _stopTrainingCore();
+      await _stopTrainingCore(++_stopRequestId);
       _onAutoStop();
       return;
     }
@@ -838,7 +889,10 @@ class TrainerSession {
 
   Future<void> _pauseTrainingCore() async {
     if (_phase == TrainerSessionPhase.active) {
-      _transitionTo(TrainerSessionPhase.transitioning, reason: 'pause requested');
+      _transitionTo(
+        TrainerSessionPhase.transitioning,
+        reason: 'pause requested',
+      );
     }
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _transitionTo(TrainerSessionPhase.paused, reason: 'training paused');
@@ -945,13 +999,19 @@ class TrainerSession {
     if (policy == TrainerCommandFailurePolicy.finalDispose) {
       if (_phase != TrainerSessionPhase.disposed) {
         _disposed = true;
-        _transitionTo(TrainerSessionPhase.disposed, reason: 'failed final disposal');
+        _transitionTo(
+          TrainerSessionPhase.disposed,
+          reason: 'failed final disposal',
+        );
       }
       return;
     }
     if (policy == TrainerCommandFailurePolicy.normalizeToIdle) {
       if (_phase == TrainerSessionPhase.stopping) {
-        _transitionTo(TrainerSessionPhase.idle, reason: 'failed stop normalized');
+        _transitionTo(
+          TrainerSessionPhase.idle,
+          reason: 'failed stop normalized',
+        );
       }
       if (!_disposeRequested) _stopRequested = false;
       return;
@@ -979,7 +1039,10 @@ class TrainerSession {
     }
     _errorMessage = 'Unable to continue training: $error';
     if (_phase == TrainerSessionPhase.active) {
-      _transitionTo(TrainerSessionPhase.transitioning, reason: 'command failed: $name');
+      _transitionTo(
+        TrainerSessionPhase.transitioning,
+        reason: 'command failed: $name',
+      );
     }
     if (_phase != TrainerSessionPhase.paused &&
         _phase != TrainerSessionPhase.idle &&
