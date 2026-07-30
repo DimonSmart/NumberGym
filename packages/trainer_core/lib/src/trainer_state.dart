@@ -216,7 +216,30 @@ class TrainingState {
   final TrainingCelebration? celebration;
   final TrainerSessionPhase phase;
 
-  bool get interactionEnabled => phase == TrainerSessionPhase.active;
+  bool get interactionEnabled =>
+      phase == TrainerSessionPhase.active && currentTask != null;
+
+  void debugAssertInvariants() {
+    assert(() {
+      final interactionIsValid =
+          !interactionEnabled ||
+          (phase == TrainerSessionPhase.active && currentTask != null);
+      final completionIsValid =
+          phase != TrainerSessionPhase.sessionCompleted || sessionStats != null;
+      final inactiveStateIsValid =
+          !const {
+            TrainerSessionPhase.idle,
+            TrainerSessionPhase.paused,
+            TrainerSessionPhase.sessionCompleted,
+            TrainerSessionPhase.disposed,
+          }.contains(phase) ||
+          (currentTask == null && !interactionEnabled);
+      if (!interactionIsValid || !completionIsValid || !inactiveStateIsValid) {
+        throw StateError('Invalid published training state for phase $phase.');
+      }
+      return true;
+    }());
+  }
 
   factory TrainingState.initial() {
     return const TrainingState(

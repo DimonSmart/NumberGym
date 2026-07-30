@@ -5,6 +5,7 @@ import 'dart:async';
 final class SerializedOperationQueue {
   Future<void> _tail = Future<void>.value();
   bool _closed = false;
+  Future<void>? _closeFuture;
 
   Future<T> enqueue<T>(Future<T> Function() operation) {
     if (_closed) {
@@ -17,6 +18,6 @@ final class SerializedOperationQueue {
 
   Future<void> close() {
     _closed = true;
-    return _tail;
+    return _closeFuture ??= _tail;
   }
 }

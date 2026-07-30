@@ -34,4 +34,37 @@ void main() {
     await queue.close();
     await expectLater(queue.enqueue(() async {}), throwsStateError);
   });
+
+  test('close waits for queued work and is idempotent', () async {
+    final queue = SerializedOperationQueue();
+    final gate = Completer<void>();
+    final calls = <String>[];
+    final first = queue.enqueue(() async {
+      calls.add('first');
+      await gate.future;
+    });
+    final second = queue.enqueue(() async => calls.add('second'));
+
+    final close = queue.close();
+    var closeCompleted = false;
+    close.whenComplete(() => closeCompleted = true);
+    expect(identical(close, queue.close()), isTrue);
+    expect(closeCompleted, isFalse);
+    await expectLater(queue.enqueue(() async {}), throwsStateError);
+
+    gate.complete();
+    await Future.wait([first, second, close]);
+    expect(calls, ['first', 'second']);
+  });
+
+  test('preserves generic results and independent consecutive errors', () async {
+    final queue = SerializedOperationQueue();
+    final first = queue.enqueue<int>(() async => throw StateError('first'));
+    final second = queue.enqueue<int>(() async => throw ArgumentError('second'));
+    final third = queue.enqueue(() async => 42);
+
+    await expectLater(first, throwsStateError);
+    await expectLater(second, throwsArgumentError);
+    expect(await third, 42);
+  });
 }

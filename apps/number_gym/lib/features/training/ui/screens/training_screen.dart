@@ -579,7 +579,16 @@ class _TrainingScreenState extends State<TrainingScreen>
     _stoppingTraining = true;
     try {
       await _controller.stopTraining();
-      await _controller.disposeAsync();
+    } catch (error, stackTrace) {
+      debugPrint('Training stop cleanup failed: $error\n$stackTrace');
+    } finally {
+      try {
+        await _controller.disposeAsync();
+      } catch (error, stackTrace) {
+        debugPrint('Training final disposal failed: $error\n$stackTrace');
+      }
+    }
+    try {
       if (!mounted) return;
       if (!_allowSystemPop) {
         setState(() {

@@ -196,6 +196,34 @@ void main() {
     },
   );
 
+  test('idle stop does not block a subsequent start', () async {
+    final controller = _buildController();
+    await controller.initialize();
+
+    await controller.stopTraining();
+    await controller.startTraining();
+
+    expect(controller.phase, TrainerSessionPhase.active);
+    expect(controller.currentTask, isNotNull);
+    expect(controller.interactionEnabled, isTrue);
+    await controller.disposeAsync();
+  });
+
+  test('repeated stops normalize and permit another start', () async {
+    final controller = _buildController();
+    await controller.initialize();
+    await controller.startTraining();
+
+    await Future.wait([controller.stopTraining(), controller.stopTraining()]);
+    expect(controller.phase, TrainerSessionPhase.idle);
+    expect(controller.currentTask, isNull);
+
+    await controller.startTraining();
+    expect(controller.phase, TrainerSessionPhase.active);
+    expect(controller.currentTask, isNotNull);
+    await controller.disposeAsync();
+  });
+
   test(
     'session reaches card limit after completing sessionTargetCards',
     () async {
