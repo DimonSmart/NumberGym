@@ -10,6 +10,7 @@ import 'package:trainer_core/src/task_runtime.dart';
 
 class InMemoryProgressRepository implements ProgressRepositoryBase {
   final Map<String, CardProgress> _storage = <String, CardProgress>{};
+  int saveCalls = 0;
 
   @override
   Future<Map<String, CardProgress>> loadAll(
@@ -29,6 +30,7 @@ class InMemoryProgressRepository implements ProgressRepositoryBase {
     CardProgress progress, {
     required LearningLanguage language,
   }) async {
+    saveCalls += 1;
     _storage[storageKey] = progress;
   }
 
@@ -43,6 +45,7 @@ class FakeSpeechService implements SpeechServiceBase {
 
   final bool ready;
   bool _isListening = false;
+  int initializeCalls = 0;
   final List<bool> requestPermissionValues = <bool>[];
 
   @override
@@ -57,6 +60,7 @@ class FakeSpeechService implements SpeechServiceBase {
     required void Function(String) onStatus,
     bool requestPermission = true,
   }) async {
+    initializeCalls += 1;
     requestPermissionValues.add(requestPermission);
     return SpeechInitResult(ready: ready);
   }
@@ -316,9 +320,11 @@ final class ControllableTaskRuntime extends TaskRuntimeBase {
   int disposeCalls = 0;
   int cancellationCalls = 0;
   int actionCalls = 0;
+  final List<TaskAction> actions = <TaskAction>[];
   bool throwOnStart = false;
   bool throwOnDispose = false;
   bool throwOnCancellation = false;
+  Completer<void>? handleActionGate;
 
   @override
   Future<void> start() async {
@@ -345,6 +351,9 @@ final class ControllableTaskRuntime extends TaskRuntimeBase {
   @override
   Future<void> handleAction(TaskAction action) async {
     actionCalls += 1;
+    actions.add(action);
+    final gate = handleActionGate;
+    if (gate != null) await gate.future;
   }
 
   @override

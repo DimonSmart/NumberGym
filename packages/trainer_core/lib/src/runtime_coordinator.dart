@@ -107,7 +107,23 @@ final class RuntimeCoordinator {
   Future<RuntimeHandle> attach(
     TaskRuntime runtime, {
     required RuntimeAttachTicket ticket,
-  }) => _lifecycleOperations.enqueue(() => _attachCore(runtime, ticket));
+  }) async {
+    if (_closeRequested) {
+      await _disposeRejectedRuntime(runtime);
+      throw const RuntimeAttachCancelled();
+    }
+    try {
+      return await _lifecycleOperations.enqueue(
+        () => _attachCore(runtime, ticket),
+      );
+    } on StateError catch (error, stackTrace) {
+      if (_closeRequested) {
+        await _disposeRejectedRuntime(runtime);
+        Error.throwWithStackTrace(const RuntimeAttachCancelled(), stackTrace);
+      }
+      Error.throwWithStackTrace(error, stackTrace);
+    }
+  }
 
   bool _isAttachCancelled(RuntimeAttachTicket ticket) =>
       _closeRequested ||
@@ -160,7 +176,11 @@ final class RuntimeCoordinator {
     } catch (error, stackTrace) {
       if (handle != null && isCurrent(handle)) {
         try {
-          await _detachCore(handle: handle, clearState: true);
+          await _detachCore(
+            handle: handle,
+            clearState: true,
+            requestCancellation: true,
+          );
         } catch (cleanupError, cleanupStackTrace) {
           appLogE(
             'trainer',
@@ -170,22 +190,16 @@ final class RuntimeCoordinator {
           );
         }
       } else {
-        try {
-          await runtime.dispose();
-        } catch (cleanupError, cleanupStackTrace) {
-          appLogE(
-            'trainer',
-            'Secondary cleanup failure for rejected runtime attach',
-            error: cleanupError,
-            st: cleanupStackTrace,
-          );
-        }
+        await _disposeRejectedRuntime(runtime);
       }
       Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
-  RuntimeClaim? claimCurrentForCompletion({required RuntimeHandle target}) {
+  RuntimeClaim? claimCurrentForCompletion({
+    required RuntimeHandle target,
+    bool notify = true,
+  }) {
     if (!isCurrent(target)) return null;
     final state = _currentTaskState;
     if (state == null) return null;
@@ -200,7 +214,7 @@ final class RuntimeCoordinator {
     );
     _runtimeEvents = null;
     _runtimeStates = null;
-    _onChanged();
+    if (notify) _onChanged();
     appLogD(
       'trainer',
       'runtime claim committed: generation=${target.generation}',
@@ -227,15 +241,20 @@ final class RuntimeCoordinator {
     required RuntimeHandle handle,
     required bool clearState,
   }) => _lifecycleOperations.enqueue(
-    () => _detachCore(handle: handle, clearState: clearState),
+    () => _detachCore(
+      handle: handle,
+      clearState: clearState,
+      requestCancellation: true,
+    ),
   );
 
   Future<void> _detachCore({
     required RuntimeHandle handle,
     required bool clearState,
+    required bool requestCancellation,
   }) async {
     if (!isCurrent(handle)) return;
-    _requestCancellationCurrent();
+    if (requestCancellation) _requestCancellationCurrent();
     ++_generation;
     _currentHandle = null;
     final events = _runtimeEvents;
@@ -272,6 +291,29 @@ final class RuntimeCoordinator {
     }
   }
 
+  Future<void> _disposeRejectedRuntime(TaskRuntime runtime) async {
+    try {
+      runtime.requestCancellation();
+    } catch (error, stackTrace) {
+      appLogE(
+        'trainer',
+        'Rejected runtime cancellation failed',
+        error: error,
+        st: stackTrace,
+      );
+    }
+    try {
+      await runtime.dispose();
+    } catch (error, stackTrace) {
+      appLogE(
+        'trainer',
+        'Rejected runtime disposal failed',
+        error: error,
+        st: stackTrace,
+      );
+    }
+  }
+
   Future<void> disposeCurrent({required bool clearState}) =>
       _lifecycleOperations.enqueue(
         () => _disposeCurrentCore(clearState: clearState),
@@ -286,7 +328,11 @@ final class RuntimeCoordinator {
       }
       return;
     }
-    await _detachCore(handle: handle, clearState: clearState);
+    await _detachCore(
+      handle: handle,
+      clearState: clearState,
+      requestCancellation: true,
+    );
   }
 
   Future<void> disposeRuntime({required bool clearState}) =>
@@ -328,12 +374,30 @@ final class RuntimeCoordinator {
   }
 
   Future<void> close() {
+    final existing = _closeFuture;
+    if (existing != null) return existing;
     _closeRequested = true;
     _attachmentCancellationEpoch += 1;
     _requestCancellationCurrent();
-    return _closeFuture ??= _lifecycleOperations
-        .enqueue(() => _disposeCurrentCore(clearState: true))
+    return _closeFuture = _lifecycleOperations
+        .enqueue(() => _disposeCurrentAfterCloseCore(clearState: true))
         .whenComplete(_lifecycleOperations.close);
+  }
+
+  Future<void> _disposeCurrentAfterCloseCore({required bool clearState}) async {
+    final handle = _currentHandle;
+    if (handle == null) {
+      if (clearState && _currentTaskState != null) {
+        _currentTaskState = null;
+        _onChanged();
+      }
+      return;
+    }
+    await _detachCore(
+      handle: handle,
+      clearState: clearState,
+      requestCancellation: false,
+    );
   }
 
   RuntimeCancellationFailure? _takeCancellationFailure(int generation) {

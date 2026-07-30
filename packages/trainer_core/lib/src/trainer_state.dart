@@ -221,21 +221,29 @@ class TrainingState {
 
   void debugAssertInvariants() {
     assert(() {
-      final interactionIsValid =
-          !interactionEnabled ||
-          (phase == TrainerSessionPhase.active && currentTask != null);
-      final completionIsValid =
-          phase != TrainerSessionPhase.sessionCompleted || sessionStats != null;
-      final inactiveStateIsValid =
-          !const {
+      if (phase == TrainerSessionPhase.active && currentTask == null) {
+        throw StateError('Active training state must contain a current task.');
+      }
+      if (interactionEnabled !=
+          (phase == TrainerSessionPhase.active && currentTask != null)) {
+        throw StateError(
+          'interactionEnabled is inconsistent with phase/currentTask.',
+        );
+      }
+      if (phase == TrainerSessionPhase.sessionCompleted &&
+          sessionStats == null) {
+        throw StateError('Completed session must contain session stats.');
+      }
+      if (const {
             TrainerSessionPhase.idle,
             TrainerSessionPhase.paused,
             TrainerSessionPhase.sessionCompleted,
             TrainerSessionPhase.disposed,
-          }.contains(phase) ||
-          (currentTask == null && !interactionEnabled);
-      if (!interactionIsValid || !completionIsValid || !inactiveStateIsValid) {
-        throw StateError('Invalid published training state for phase $phase.');
+          }.contains(phase) &&
+          currentTask != null) {
+        throw StateError(
+          'Inactive training phase cannot contain a current task.',
+        );
       }
       return true;
     }());

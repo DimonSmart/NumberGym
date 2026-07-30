@@ -163,11 +163,17 @@ class TrainerSession {
   );
 
   Future<void> _retryInitSpeechCore() async {
-    final runtime = _runtimeCoordinator.runtime;
-    if (runtime is SpeakRuntime) {
-      await runtime.handleAction(const RetrySpeechInitAction());
+    if (_shouldStop) return;
+    final handle = _runtimeCoordinator.currentHandle;
+    if (handle != null && handle.runtime is SpeakRuntime) {
+      if (!_canExecuteRuntimeCommand(handle)) return;
+      await _runtimeCoordinator.handleAction(
+        target: handle,
+        action: const RetrySpeechInitAction(),
+      );
       return;
     }
+    if (_shouldStop) return;
     await _syncSpeechAvailability();
   }
 
@@ -368,10 +374,7 @@ class TrainerSession {
     if (target == null) return Future<void>.value();
     return _enqueueCommand(
       name: 'pauseTaskTimer',
-      operation: () => _runtimeCoordinator.handleAction(
-        target: target,
-        action: const PauseTaskAction(),
-      ),
+      operation: () => _handleActionCore(target, const PauseTaskAction()),
       failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
     );
   }
@@ -381,10 +384,7 @@ class TrainerSession {
     if (target == null) return Future<void>.value();
     return _enqueueCommand(
       name: 'resumeTaskTimer',
-      operation: () => _runtimeCoordinator.handleAction(
-        target: target,
-        action: const ResumeTaskAction(),
-      ),
+      operation: () => _handleActionCore(target, const ResumeTaskAction()),
       failurePolicy: TrainerCommandFailurePolicy.pauseTraining,
     );
   }
@@ -403,11 +403,14 @@ class TrainerSession {
     RuntimeHandle target,
     TaskAction action,
   ) async {
-    if (_phase != TrainerSessionPhase.active) {
-      return;
-    }
+    if (!_canExecuteRuntimeCommand(target)) return;
     await _runtimeCoordinator.handleAction(target: target, action: action);
   }
+
+  bool _canExecuteRuntimeCommand(RuntimeHandle target) =>
+      !_shouldStop &&
+      _phase == TrainerSessionPhase.active &&
+      _runtimeCoordinator.isCurrent(target);
 
   Future<void> completeCurrentTaskWithOutcome(
     TrainingOutcome outcome, {
@@ -832,9 +835,12 @@ class TrainerSession {
     required TrainingOutcome outcome,
     bool simulatedUserInteraction = false,
   }) async {
-    if (_phase != TrainerSessionPhase.active) return;
+    if (_phase != TrainerSessionPhase.active || _shouldStop) return;
     if (!_runtimeCoordinator.isCurrent(target)) return;
-    final claim = _runtimeCoordinator.claimCurrentForCompletion(target: target);
+    final claim = _runtimeCoordinator.claimCurrentForCompletion(
+      target: target,
+      notify: false,
+    );
     if (claim == null) return;
     _transitionTo(
       TrainerSessionPhase.transitioning,

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trainer_core/trainer_core.dart';
+import 'package:trainer_core/src/task_runtime.dart';
+import 'package:trainer_core/src/trainer_session.dart';
 
 import 'helpers/training_fakes.dart';
 
@@ -173,6 +177,23 @@ TrainerController _buildController({
   );
 }
 
+TrainerSession _buildSession({
+  TrainingModule? module,
+  InMemoryProgressRepository? progressRepository,
+  TrainingServices? services,
+  TaskRuntimeFactory? runtimeFactory,
+  VoidCallback? onStateChanged,
+}) {
+  return TrainerSession(
+    appDefinition: _buildAppDefinition(module: module),
+    settingsRepository: FakeSettingsRepository(),
+    progressRepository: progressRepository ?? InMemoryProgressRepository(),
+    services: services ?? buildFakeTrainingServices(),
+    runtimeFactory: runtimeFactory,
+    onStateChanged: onStateChanged,
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -319,4 +340,200 @@ void main() {
     expect(controller.celebration!.categoryLabel, isNotEmpty);
     controller.dispose();
   });
+
+  test('queued action is skipped after stop request', () async {
+    late ControllableTaskRuntime runtime;
+    final session = _buildSession(
+      runtimeFactory: (card, mode, hintText) {
+        runtime = ControllableTaskRuntime(
+          initialState: _choiceStateForCard(card, mode),
+        );
+        return runtime;
+      },
+    );
+    await session.initialize();
+    await session.startTraining();
+    runtime.handleActionGate = Completer<void>();
+
+    final firstAction = session.handleAction(const SelectOptionAction('one'));
+    await Future<void>.delayed(Duration.zero);
+    final secondAction = session.handleAction(const SelectOptionAction('two'));
+    final stop = session.stopTraining();
+    runtime.handleActionGate!.complete();
+
+    await Future.wait([firstAction, secondAction, stop]);
+    expect(runtime.actions, hasLength(1));
+    expect(runtime.actions.single, isA<SelectOptionAction>());
+    expect(session.phase, TrainerSessionPhase.idle);
+    expect(session.state.currentTask, isNull);
+    await session.disposeAsync();
+  });
+
+  test(
+    'queued pause and resume timer actions are skipped after stop request',
+    () async {
+      for (final command in <Future<void> Function(TrainerSession)>[
+        (session) => session.pauseTaskTimer(),
+        (session) => session.resumeTaskTimer(),
+      ]) {
+        late ControllableTaskRuntime runtime;
+        final session = _buildSession(
+          runtimeFactory: (card, mode, hintText) {
+            runtime = ControllableTaskRuntime(
+              initialState: _choiceStateForCard(card, mode),
+            );
+            return runtime;
+          },
+        );
+        await session.initialize();
+        await session.startTraining();
+        runtime.handleActionGate = Completer<void>();
+
+        final firstAction = session.handleAction(
+          const SelectOptionAction('one'),
+        );
+        await Future<void>.delayed(Duration.zero);
+        final timerAction = command(session);
+        final stop = session.stopTraining();
+        runtime.handleActionGate!.complete();
+
+        await Future.wait([firstAction, timerAction, stop]);
+        expect(runtime.actions.whereType<PauseTaskAction>(), isEmpty);
+        expect(runtime.actions.whereType<ResumeTaskAction>(), isEmpty);
+        expect(runtime.actions, hasLength(1));
+        await session.disposeAsync();
+      }
+    },
+  );
+
+  test(
+    'queued retry speech initialization is skipped after stop request',
+    () async {
+      late ControllableTaskRuntime runtime;
+      final speech = FakeSpeechService();
+      final session = _buildSession(
+        services: buildFakeTrainingServices(speech: speech),
+        runtimeFactory: (card, mode, hintText) {
+          runtime = ControllableTaskRuntime(
+            initialState: _choiceStateForCard(card, mode),
+          );
+          return runtime;
+        },
+      );
+      await session.initialize();
+      await session.startTraining();
+      final initializeCallsAfterStart = speech.initializeCalls;
+      runtime.handleActionGate = Completer<void>();
+
+      final firstAction = session.handleAction(const SelectOptionAction('one'));
+      await Future<void>.delayed(Duration.zero);
+      final retry = session.retryInitSpeech();
+      final stop = session.stopTraining();
+      runtime.handleActionGate!.complete();
+
+      await Future.wait([firstAction, retry, stop]);
+      expect(speech.initializeCalls, initializeCallsAfterStart);
+      expect(runtime.actions.whereType<RetrySpeechInitAction>(), isEmpty);
+      await session.disposeAsync();
+    },
+  );
+
+  test('completion publishes one coherent transition', () async {
+    final states = <TrainingState>[];
+    final session = _buildSession(onStateChanged: () {});
+    session.onStateChanged = () => states.add(session.state);
+    await session.initialize();
+    await session.startTraining();
+
+    await session.completeCurrentTaskWithOutcome(
+      TrainingOutcome.skipped,
+      simulatedUserInteraction: true,
+    );
+
+    expect(
+      states,
+      isNot(
+        contains(
+          isA<TrainingState>()
+              .having(
+                (state) => state.phase,
+                'phase',
+                TrainerSessionPhase.active,
+              )
+              .having((state) => state.currentTask, 'currentTask', isNull),
+        ),
+      ),
+    );
+    expect(
+      states,
+      contains(
+        isA<TrainingState>()
+            .having(
+              (state) => state.phase,
+              'phase',
+              TrainerSessionPhase.transitioning,
+            )
+            .having((state) => state.currentTask, 'currentTask', isNull),
+      ),
+    );
+    await session.disposeAsync();
+  });
+
+  test('debug invariant rejects active without task', () {
+    final state = const TrainingState(
+      errorMessage: null,
+      feedback: null,
+      currentTask: null,
+      phase: TrainerSessionPhase.active,
+    );
+
+    expect(state.debugAssertInvariants, throwsA(isA<StateError>()));
+  });
+
+  test(
+    'double completion records progress and starts next runtime once',
+    () async {
+      final progressRepository = InMemoryProgressRepository();
+      final runtimes = <ControllableTaskRuntime>[];
+      final session = _buildSession(
+        progressRepository: progressRepository,
+        runtimeFactory: (card, mode, hintText) {
+          final runtime = ControllableTaskRuntime(
+            initialState: _choiceStateForCard(card, mode),
+          );
+          runtimes.add(runtime);
+          return runtime;
+        },
+      );
+      await session.initialize();
+      await session.startTraining();
+      final firstRuntime = runtimes.single;
+
+      final debugCompletion = session.completeCurrentTaskWithOutcome(
+        TrainingOutcome.correct,
+        simulatedUserInteraction: true,
+      );
+      firstRuntime.emitTestEvent(const TaskCompleted(TrainingOutcome.correct));
+      await debugCompletion;
+      await Future<void>.delayed(Duration.zero);
+
+      expect(progressRepository.saveCalls, 1);
+      expect(session.sessionCardsCompleted, 1);
+      expect(runtimes, hasLength(2));
+      await session.disposeAsync();
+    },
+  );
 }
+
+ChoiceState _choiceStateForCard(ExerciseCard card, ExerciseMode mode) =>
+    ChoiceState(
+      mode: mode,
+      exerciseId: card.id,
+      family: card.family,
+      displayText: card.displayText,
+      promptText: card.promptText,
+      acceptedAnswers: card.acceptedAnswers,
+      celebrationText: card.celebrationText,
+      timer: TimerState.zero,
+      options: card.chooseFromPrompt?.options ?? const <String>[],
+    );

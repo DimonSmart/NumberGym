@@ -163,4 +163,37 @@ void main() {
       expect(runtime.disposeCalls, 1);
     },
   );
+
+  test(
+    'attach after close disposes runtime and reports cancellation',
+    () async {
+      final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
+      await coordinator.close();
+      final runtime = ControllableTaskRuntime(initialState: _state());
+
+      await expectLater(
+        coordinator.attach(runtime, ticket: coordinator.createAttachTicket()),
+        throwsA(isA<RuntimeAttachCancelled>()),
+      );
+
+      expect(runtime.startCalls, 0);
+      expect(runtime.disposeCalls, 1);
+      expect(coordinator.currentHandle, isNull);
+    },
+  );
+
+  test('repeated close is side-effect idempotent', () async {
+    final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
+    final runtime = ControllableTaskRuntime(initialState: _state());
+    await coordinator.attach(runtime, ticket: coordinator.createAttachTicket());
+
+    final firstClose = coordinator.close();
+    final secondClose = coordinator.close();
+    expect(identical(firstClose, secondClose), isTrue);
+    await Future.wait([firstClose, secondClose]);
+
+    expect(runtime.cancellationCalls, 1);
+    expect(runtime.disposeCalls, 1);
+    expect(coordinator.currentHandle, isNull);
+  });
 }
