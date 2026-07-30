@@ -1,15 +1,25 @@
 import 'dart:async';
 
 import 'core/logging/app_logger.dart';
+import 'serialized_operation_queue.dart';
 import 'task_runtime.dart';
 import 'trainer_state.dart';
-import 'serialized_operation_queue.dart';
 
 final class RuntimeHandle {
   const RuntimeHandle({required this.generation, required this.runtime});
 
   final int generation;
   final TaskRuntime runtime;
+}
+
+final class RuntimeAttachTicket {
+  const RuntimeAttachTicket(this.cancellationEpoch);
+
+  final int cancellationEpoch;
+}
+
+final class RuntimeAttachCancelled implements Exception {
+  const RuntimeAttachCancelled();
 }
 
 final class RuntimeEventEnvelope {
@@ -19,11 +29,20 @@ final class RuntimeEventEnvelope {
   final TaskEvent event;
 }
 
-final class RuntimeCompletion {
-  const RuntimeCompletion({required this.handle, required this.taskState});
+final class RuntimeClaim {
+  RuntimeClaim._({
+    required this.handle,
+    required this.taskState,
+    required StreamSubscription<TaskEvent>? events,
+    required StreamSubscription<TaskState>? states,
+  }) : _events = events,
+       _states = states;
 
   final RuntimeHandle handle;
   final TaskState taskState;
+  StreamSubscription<TaskEvent>? _events;
+  StreamSubscription<TaskState>? _states;
+  bool _disposed = false;
 }
 
 final class RuntimeCancellationFailure {
@@ -38,8 +57,8 @@ final class RuntimeCancellationFailure {
   final StackTrace stackTrace;
 }
 
-/// Owns the active runtime. A generation is invalidated before any async
-/// teardown, so a callback from an old runtime can never mutate current state.
+/// Owns the active runtime. Generation invalidation happens synchronously before
+/// asynchronous cleanup, so stale callbacks cannot affect current state.
 final class RuntimeCoordinator {
   RuntimeCoordinator({
     required void Function() onChanged,
@@ -49,6 +68,8 @@ final class RuntimeCoordinator {
 
   final void Function() _onChanged;
   final void Function(RuntimeEventEnvelope event) _onEvent;
+  final SerializedOperationQueue _lifecycleOperations =
+      SerializedOperationQueue();
 
   RuntimeHandle? _currentHandle;
   StreamSubscription<TaskEvent>? _runtimeEvents;
@@ -57,10 +78,9 @@ final class RuntimeCoordinator {
   bool _speechReady = false;
   bool _taskHadUserInteraction = false;
   int _generation = 0;
+  int _attachmentCancellationEpoch = 0;
   bool _closeRequested = false;
   Future<void>? _closeFuture;
-  final SerializedOperationQueue _lifecycleOperations =
-      SerializedOperationQueue();
   RuntimeCancellationFailure? _cancellationFailure;
 
   RuntimeHandle? get currentHandle => _currentHandle;
@@ -73,6 +93,9 @@ final class RuntimeCoordinator {
   bool isCurrent(RuntimeHandle handle) =>
       identical(_currentHandle, handle) && handle.generation == _generation;
 
+  RuntimeAttachTicket createAttachTicket() =>
+      RuntimeAttachTicket(_attachmentCancellationEpoch);
+
   void resetInteraction() => _taskHadUserInteraction = false;
 
   void updateSpeechReady(bool ready) {
@@ -81,38 +104,78 @@ final class RuntimeCoordinator {
     _onChanged();
   }
 
-  Future<RuntimeHandle> attach(TaskRuntime runtime) =>
-      _lifecycleOperations.enqueue(() => _attachCore(runtime));
+  Future<RuntimeHandle> attach(
+    TaskRuntime runtime, {
+    required RuntimeAttachTicket ticket,
+  }) => _lifecycleOperations.enqueue(() => _attachCore(runtime, ticket));
 
-  Future<RuntimeHandle> _attachCore(TaskRuntime runtime) async {
-    if (_closeRequested) throw StateError('RuntimeCoordinator is closed.');
-    await _disposeCurrentCore(clearState: true);
-    if (_closeRequested) throw StateError('RuntimeCoordinator is closed.');
-    final handle = RuntimeHandle(generation: ++_generation, runtime: runtime);
-    _currentHandle = handle;
-    _taskHadUserInteraction = false;
-    _runtimeEvents = runtime.events.listen(
-      (event) => _handleTaskEvent(handle, event),
-    );
-    _runtimeStates = runtime.states.listen(
-      (state) => _handleTaskState(handle, state),
-    );
-    _currentTaskState = runtime.state;
-    if (_currentTaskState is SpeakState) {
-      _speechReady = (_currentTaskState as SpeakState).speechReady;
-    }
-    _onChanged();
+  bool _isAttachCancelled(RuntimeAttachTicket ticket) =>
+      _closeRequested ||
+      ticket.cancellationEpoch != _attachmentCancellationEpoch;
+
+  Future<RuntimeHandle> _attachCore(
+    TaskRuntime runtime,
+    RuntimeAttachTicket ticket,
+  ) async {
+    RuntimeHandle? handle;
     try {
+      if (_isAttachCancelled(ticket)) {
+        appLogD(
+          'trainer',
+          'runtime attach cancelled before ownership: ticket=${ticket.cancellationEpoch}',
+        );
+        throw const RuntimeAttachCancelled();
+      }
+      await _disposeCurrentCore(clearState: true);
+      if (_isAttachCancelled(ticket)) {
+        appLogD(
+          'trainer',
+          'runtime attach cancelled after previous disposal: ticket=${ticket.cancellationEpoch}',
+        );
+        throw const RuntimeAttachCancelled();
+      }
+      // No await occurs between this check and ownership assignment.
+      if (_isAttachCancelled(ticket)) throw const RuntimeAttachCancelled();
+      final attachedHandle = RuntimeHandle(
+        generation: ++_generation,
+        runtime: runtime,
+      );
+      handle = attachedHandle;
+      _currentHandle = attachedHandle;
+      _taskHadUserInteraction = false;
+      _runtimeEvents = runtime.events.listen(
+        (event) => _handleTaskEvent(attachedHandle, event),
+      );
+      _runtimeStates = runtime.states.listen(
+        (state) => _handleTaskState(attachedHandle, state),
+      );
+      _currentTaskState = runtime.state;
+      if (_currentTaskState is SpeakState) {
+        _speechReady = (_currentTaskState as SpeakState).speechReady;
+      }
+      _onChanged();
       await runtime.start();
+      if (_isAttachCancelled(ticket)) throw const RuntimeAttachCancelled();
+      return attachedHandle;
     } catch (error, stackTrace) {
-      if (isCurrent(handle)) {
+      if (handle != null && isCurrent(handle)) {
         try {
           await _detachCore(handle: handle, clearState: true);
         } catch (cleanupError, cleanupStackTrace) {
           appLogE(
             'trainer',
-            'Secondary cleanup failure after runtime start: '
-                'generation=${handle.generation} step=dispose',
+            'Secondary cleanup failure after runtime attach: generation=${handle.generation}',
+            error: cleanupError,
+            st: cleanupStackTrace,
+          );
+        }
+      } else {
+        try {
+          await runtime.dispose();
+        } catch (cleanupError, cleanupStackTrace) {
+          appLogE(
+            'trainer',
+            'Secondary cleanup failure for rejected runtime attach',
             error: cleanupError,
             st: cleanupStackTrace,
           );
@@ -120,20 +183,44 @@ final class RuntimeCoordinator {
       }
       Error.throwWithStackTrace(error, stackTrace);
     }
-    if (_closeRequested) {
-      await _detachCore(handle: handle, clearState: true);
-      throw StateError('RuntimeCoordinator is closed.');
-    }
-    return handle;
   }
 
-  RuntimeCompletion? takeCurrentForCompletion({required RuntimeHandle target}) {
+  RuntimeClaim? claimCurrentForCompletion({required RuntimeHandle target}) {
     if (!isCurrent(target)) return null;
-    final handle = target;
     final state = _currentTaskState;
     if (state == null) return null;
+    ++_generation;
+    _currentHandle = null;
     _currentTaskState = null;
-    return RuntimeCompletion(handle: handle, taskState: state);
+    final claim = RuntimeClaim._(
+      handle: target,
+      taskState: state,
+      events: _runtimeEvents,
+      states: _runtimeStates,
+    );
+    _runtimeEvents = null;
+    _runtimeStates = null;
+    _onChanged();
+    appLogD(
+      'trainer',
+      'runtime claim committed: generation=${target.generation}',
+    );
+    return claim;
+  }
+
+  Future<void> disposeClaim(RuntimeClaim claim) =>
+      _lifecycleOperations.enqueue(() => _disposeClaimCore(claim));
+
+  Future<void> _disposeClaimCore(RuntimeClaim claim) async {
+    if (claim._disposed) return;
+    claim._disposed = true;
+    await _disposeOwnedRuntime(
+      handle: claim.handle,
+      events: claim._events,
+      states: claim._states,
+    );
+    claim._events = null;
+    claim._states = null;
   }
 
   Future<void> detach({
@@ -148,18 +235,26 @@ final class RuntimeCoordinator {
     required bool clearState,
   }) async {
     if (!isCurrent(handle)) return;
-    requestCancellation();
+    _requestCancellationCurrent();
     ++_generation;
     _currentHandle = null;
     final events = _runtimeEvents;
     final states = _runtimeStates;
     _runtimeEvents = null;
     _runtimeStates = null;
-    final cancellationFailure = _takeCancellationFailure(handle.generation);
     if (clearState) _currentTaskState = null;
     _onChanged();
-    Object? firstError;
-    StackTrace? firstStackTrace;
+    await _disposeOwnedRuntime(handle: handle, events: events, states: states);
+  }
+
+  Future<void> _disposeOwnedRuntime({
+    required RuntimeHandle handle,
+    required StreamSubscription<TaskEvent>? events,
+    required StreamSubscription<TaskState>? states,
+  }) async {
+    final cancellationFailure = _takeCancellationFailure(handle.generation);
+    Object? firstError = cancellationFailure?.error;
+    StackTrace? firstStackTrace = cancellationFailure?.stackTrace;
     Future<void> attempt(Future<void> Function() operation) async {
       try {
         await operation();
@@ -169,10 +264,6 @@ final class RuntimeCoordinator {
       }
     }
 
-    if (cancellationFailure != null) {
-      firstError = cancellationFailure.error;
-      firstStackTrace = cancellationFailure.stackTrace;
-    }
     await attempt(() => events?.cancel() ?? Future<void>.value());
     await attempt(() => states?.cancel() ?? Future<void>.value());
     await attempt(handle.runtime.dispose);
@@ -210,18 +301,22 @@ final class RuntimeCoordinator {
   }
 
   void requestCancellation() {
+    _attachmentCancellationEpoch += 1;
+    _requestCancellationCurrent();
+  }
+
+  void _requestCancellationCurrent() {
     final handle = _currentHandle;
     if (handle == null) return;
     try {
       handle.runtime.requestCancellation();
     } catch (error, stackTrace) {
-      final failure = RuntimeCancellationFailure(
-        generation: handle.generation,
-        error: error,
-        stackTrace: stackTrace,
-      );
       if (_cancellationFailure?.generation != handle.generation) {
-        _cancellationFailure = failure;
+        _cancellationFailure = RuntimeCancellationFailure(
+          generation: handle.generation,
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
       appLogE(
         'trainer',
@@ -234,6 +329,8 @@ final class RuntimeCoordinator {
 
   Future<void> close() {
     _closeRequested = true;
+    _attachmentCancellationEpoch += 1;
+    _requestCancellationCurrent();
     return _closeFuture ??= _lifecycleOperations
         .enqueue(() => _disposeCurrentCore(clearState: true))
         .whenComplete(_lifecycleOperations.close);
@@ -256,7 +353,13 @@ final class RuntimeCoordinator {
   }
 
   void _handleTaskState(RuntimeHandle handle, TaskState state) {
-    if (!isCurrent(handle)) return;
+    if (!isCurrent(handle)) {
+      appLogD(
+        'trainer',
+        'late runtime state ignored: generation=${handle.generation}',
+      );
+      return;
+    }
     _currentTaskState = state;
     if (state is SpeakState) _speechReady = state.speechReady;
     _onChanged();

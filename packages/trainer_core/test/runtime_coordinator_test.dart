@@ -41,7 +41,10 @@ void main() {
       );
       final runtime = ControllableTaskRuntime(initialState: _state())
         ..throwOnCancellation = true;
-      final handle = await coordinator.attach(runtime);
+      final handle = await coordinator.attach(
+        runtime,
+        ticket: coordinator.createAttachTicket(),
+      );
 
       await expectLater(
         coordinator.detach(handle: handle, clearState: true),
@@ -56,35 +59,46 @@ void main() {
     },
   );
 
-  test('close prevents an attach waiting for prior disposal from becoming active',
-      () async {
-    final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
-    final first = ControllableTaskRuntime(
-      initialState: _state(),
-      blockDispose: true,
-    );
-    await coordinator.attach(first);
-    final second = ControllableTaskRuntime(initialState: _state());
+  test(
+    'close prevents an attach waiting for prior disposal from becoming active',
+    () async {
+      final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
+      final first = ControllableTaskRuntime(
+        initialState: _state(),
+        blockDispose: true,
+      );
+      await coordinator.attach(first, ticket: coordinator.createAttachTicket());
+      final second = ControllableTaskRuntime(initialState: _state());
 
-    final attaching = coordinator.attach(second);
-    await Future<void>.delayed(Duration.zero);
-    final closing = coordinator.close();
-    first.disposeGate.complete();
+      final attaching = coordinator.attach(
+        second,
+        ticket: coordinator.createAttachTicket(),
+      );
+      await Future<void>.delayed(Duration.zero);
+      final closing = coordinator.close();
+      first.disposeGate.complete();
 
-    await expectLater(attaching, throwsA(isA<StateError>()));
-    await closing;
-    expect(coordinator.currentHandle, isNull);
-    expect(second.disposeCalls, 0);
-    await coordinator.close();
-  });
+      await expectLater(attaching, throwsA(isA<RuntimeAttachCancelled>()));
+      await closing;
+      expect(coordinator.currentHandle, isNull);
+      expect(second.disposeCalls, 1);
+      await coordinator.close();
+    },
+  );
 
   test('concurrent attaches retain only the latest runtime', () async {
     final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
     final first = ControllableTaskRuntime(initialState: _state());
     final second = ControllableTaskRuntime(initialState: _state());
 
-    final firstHandle = coordinator.attach(first);
-    final secondHandle = coordinator.attach(second);
+    final firstHandle = coordinator.attach(
+      first,
+      ticket: coordinator.createAttachTicket(),
+    );
+    final secondHandle = coordinator.attach(
+      second,
+      ticket: coordinator.createAttachTicket(),
+    );
     await firstHandle;
     final handle = await secondHandle;
 
@@ -92,4 +106,61 @@ void main() {
     expect(coordinator.currentHandle, same(handle));
     expect(coordinator.runtime, same(second));
   });
+
+  test(
+    'cancellation rejects a pending attach and disposes its runtime once',
+    () async {
+      final coordinator = RuntimeCoordinator(onChanged: () {}, onEvent: (_) {});
+      final first = ControllableTaskRuntime(
+        initialState: _state(),
+        blockDispose: true,
+      );
+      await coordinator.attach(first, ticket: coordinator.createAttachTicket());
+      final second = ControllableTaskRuntime(initialState: _state());
+      final attaching = coordinator.attach(
+        second,
+        ticket: coordinator.createAttachTicket(),
+      );
+      await Future<void>.delayed(Duration.zero);
+      coordinator.requestCancellation();
+      first.disposeGate.complete();
+
+      await expectLater(attaching, throwsA(isA<RuntimeAttachCancelled>()));
+      expect(second.startCalls, 0);
+      expect(second.disposeCalls, 1);
+      expect(coordinator.currentHandle, isNull);
+    },
+  );
+
+  test(
+    'completion claim immediately ignores late state before disposal',
+    () async {
+      var changes = 0;
+      final coordinator = RuntimeCoordinator(
+        onChanged: () => changes += 1,
+        onEvent: (_) {},
+      );
+      final runtime = ControllableTaskRuntime(
+        initialState: _state(),
+        blockDispose: true,
+      );
+      final handle = await coordinator.attach(
+        runtime,
+        ticket: coordinator.createAttachTicket(),
+      );
+      final claim = coordinator.claimCurrentForCompletion(target: handle);
+      expect(claim, isNotNull);
+      final changesAfterClaim = changes;
+      final disposing = coordinator.disposeClaim(claim!);
+      runtime.emitTestState(_state());
+      await Future<void>.delayed(Duration.zero);
+
+      expect(coordinator.isCurrent(handle), isFalse);
+      expect(coordinator.currentTask, isNull);
+      expect(changes, changesAfterClaim);
+      runtime.disposeGate.complete();
+      await disposing;
+      expect(runtime.disposeCalls, 1);
+    },
+  );
 }
