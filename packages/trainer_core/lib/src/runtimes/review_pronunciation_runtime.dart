@@ -48,7 +48,11 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
   PronunciationAnalysisResult? _result;
   ReviewFlow _flow = ReviewFlow.waiting;
   bool _disposed = false;
+  Future<void> _recordingOperation = Future<void>.value();
   Future<void>? _cancellationFuture;
+  Future<void>? _disposeFuture;
+  Object? _recordingCleanupError;
+  StackTrace? _recordingCleanupStackTrace;
 
   @override
   Future<void> start() async {
@@ -64,11 +68,11 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
       return;
     }
     if (action is StartRecordingAction) {
-      await _startRecording();
+      await _enqueueRecordingOperation(_startRecording);
     } else if (action is StopRecordingAction) {
-      await _stopRecording();
+      await _enqueueRecordingOperation(_stopRecording);
     } else if (action is CancelRecordingAction) {
-      await _cancelRecording();
+      await _enqueueRecordingOperation(_cancelRecording);
     } else if (action is SendRecordingAction) {
       await _sendRecording();
     } else if (action is CompleteReviewAction) {
@@ -80,13 +84,29 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
   Future<void> onTimerTimeout() async {}
 
   @override
-  Future<void> dispose() async {
+  Future<void> dispose() => _disposeFuture ??= _disposeCore();
+
+  Future<void> _disposeCore() async {
     requestCancellation();
-    await _cancellationFuture;
-    await _recordingLevelSubscription?.cancel();
+    Object? firstError;
+    StackTrace? firstStackTrace;
+    Future<void> attempt(FutureOr<void> Function() operation) async {
+      try {
+        await operation();
+      } catch (error, stackTrace) {
+        firstError ??= error;
+        firstStackTrace ??= stackTrace;
+      }
+    }
+
+    await attempt(() async => await _cancellationFuture);
+    await attempt(() async => await _recordingLevelSubscription?.cancel());
     _recordingLevelSubscription = null;
-    _soundWaveService.stop();
-    await super.dispose();
+    await attempt(() => _soundWaveService.stop());
+    await attempt(super.dispose);
+    if (firstError != null) {
+      Error.throwWithStackTrace(firstError!, firstStackTrace!);
+    }
   }
 
   @override
@@ -94,11 +114,23 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     super.requestCancellation();
     _disposed = true;
     _soundWaveService.stop();
-    if (_audioRecorder.isRecording) {
-      _cancellationFuture ??= _audioRecorder.cancel();
-    } else {
-      _cancellationFuture ??= Future<void>.value();
-    }
+    _cancellationFuture ??= _enqueueRecordingOperation(() async {
+      if (_audioRecorder.isRecording) {
+        await _audioRecorder.cancel();
+      }
+      if (_recordingCleanupError != null) {
+        Error.throwWithStackTrace(
+          _recordingCleanupError!,
+          _recordingCleanupStackTrace!,
+        );
+      }
+    });
+  }
+
+  Future<T> _enqueueRecordingOperation<T>(Future<T> Function() operation) {
+    final result = _recordingOperation.then((_) => operation());
+    _recordingOperation = result.then<void>((_) {}, onError: (_, _) {});
+    return result;
   }
 
   ReviewPronunciationState _buildState() {
@@ -126,18 +158,28 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     _result = null;
     try {
       await _audioRecorder.start();
-      if (isCancellationRequested) return;
+      if (isCancellationRequested) {
+        if (_audioRecorder.isRecording) {
+          await _audioRecorder.cancel();
+        }
+        return;
+      }
       _flow = ReviewFlow.recording;
       emitEvent(const TaskUserInteracted());
       await _startRecordingSoundWave();
       emitState(_buildState());
       _log('Pronunciation recording started.');
-    } catch (error) {
+    } catch (error, stackTrace) {
       _flow = ReviewFlow.waiting;
       emitState(_buildState());
       emitEvent(
         TaskError('Cannot start recording: $error', shouldPause: false),
       );
+      if (isCancellationRequested) {
+        _recordingCleanupError ??= error;
+        _recordingCleanupStackTrace ??= stackTrace;
+        rethrow;
+      }
     }
   }
 
@@ -152,11 +194,16 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
       _flow = file == null ? ReviewFlow.waiting : ReviewFlow.recorded;
       await _stopRecordingSoundWave();
       emitState(_buildState());
-    } catch (error) {
+    } catch (error, stackTrace) {
       _flow = ReviewFlow.waiting;
       await _stopRecordingSoundWave();
       emitState(_buildState());
       emitEvent(TaskError('Recording failed: $error', shouldPause: false));
+      if (isCancellationRequested) {
+        _recordingCleanupError ??= error;
+        _recordingCleanupStackTrace ??= stackTrace;
+        rethrow;
+      }
     }
   }
 

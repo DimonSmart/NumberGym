@@ -6,6 +6,7 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:trainer_core/trainer_core.dart';
+import 'package:trainer_core/src/task_runtime.dart';
 
 class InMemoryProgressRepository implements ProgressRepositoryBase {
   final Map<String, CardProgress> _storage = <String, CardProgress>{};
@@ -232,6 +233,126 @@ class FakeAudioRecorderService implements AudioRecorderServiceBase {
   void dispose() {
     unawaited(_amplitudeController.close());
   }
+}
+
+class ControllableAudioRecorder implements AudioRecorderServiceBase {
+  ControllableAudioRecorder({
+    Completer<void>? startGate,
+    Completer<File?>? stopGate,
+  }) : startGate = startGate ?? Completer<void>(),
+       stopGate = stopGate ?? Completer<File?>();
+
+  final Completer<void> startGate;
+  final Completer<File?> stopGate;
+  final StreamController<double> _amplitudeController =
+      StreamController<double>.broadcast();
+  int startCalls = 0;
+  int stopCalls = 0;
+  int cancelCalls = 0;
+  bool _isRecording = false;
+  bool cancelWhileStopPending = false;
+  bool throwOnCancel = false;
+  bool _stopPending = false;
+
+  @override
+  bool get isRecording => _isRecording;
+
+  @override
+  Stream<double> get amplitudeStream => _amplitudeController.stream;
+
+  @override
+  Future<void> start() async {
+    startCalls += 1;
+    await startGate.future;
+    _isRecording = true;
+  }
+
+  @override
+  Future<File?> stop() async {
+    stopCalls += 1;
+    _stopPending = true;
+    try {
+      final file = await stopGate.future;
+      _isRecording = false;
+      return file;
+    } finally {
+      _stopPending = false;
+    }
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCalls += 1;
+    cancelWhileStopPending |= _stopPending;
+    if (throwOnCancel) throw StateError('cancel failed');
+    _isRecording = false;
+  }
+
+  @override
+  void dispose() {
+    unawaited(_amplitudeController.close());
+  }
+}
+
+final class ControllableTaskRuntime extends TaskRuntimeBase {
+  ControllableTaskRuntime({
+    required TaskState initialState,
+    bool blockStart = false,
+    bool blockDispose = false,
+  }) : startGate = Completer<void>(),
+       disposeGate = Completer<void>(),
+       _blockStart = blockStart,
+       _blockDispose = blockDispose,
+       super(initialState) {
+    if (!blockStart) startGate.complete();
+    if (!blockDispose) disposeGate.complete();
+  }
+
+  final Completer<void> startGate;
+  final Completer<void> disposeGate;
+  final bool _blockStart;
+  final bool _blockDispose;
+  int startCalls = 0;
+  int disposeCalls = 0;
+  int cancellationCalls = 0;
+  int actionCalls = 0;
+  bool throwOnStart = false;
+  bool throwOnDispose = false;
+  bool throwOnCancellation = false;
+
+  @override
+  Future<void> start() async {
+    startCalls += 1;
+    if (_blockStart) await startGate.future;
+    if (throwOnStart) throw StateError('start failed');
+  }
+
+  @override
+  void requestCancellation() {
+    cancellationCalls += 1;
+    super.requestCancellation();
+    if (throwOnCancellation) throw StateError('cancellation failed');
+  }
+
+  @override
+  Future<void> dispose() async {
+    disposeCalls += 1;
+    if (_blockDispose) await disposeGate.future;
+    if (throwOnDispose) throw StateError('dispose failed');
+    await super.dispose();
+  }
+
+  @override
+  Future<void> handleAction(TaskAction action) async {
+    actionCalls += 1;
+  }
+
+  @override
+  Future<void> onTimerTimeout() async {}
+
+  void emitTestState(TaskState state) => emitState(state);
+
+  void emitTestEvent(TaskEvent event) => emitEvent(event);
 }
 
 TrainingServices buildFakeTrainingServices({

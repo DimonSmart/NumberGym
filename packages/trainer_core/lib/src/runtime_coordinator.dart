@@ -123,7 +123,9 @@ final class RuntimeCoordinator {
       }
     }
 
-    handle.runtime.requestCancellation();
+    await attempt(() async {
+      handle.runtime.requestCancellation();
+    });
     await attempt(() => events?.cancel() ?? Future<void>.value());
     await attempt(() => states?.cancel() ?? Future<void>.value());
     await attempt(handle.runtime.dispose);

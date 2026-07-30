@@ -285,8 +285,9 @@ class TrainerSession {
       return;
     }
     if (_phase == TrainerSessionPhase.idle) {
-      if (!_disposeRequested && requestId == _stopRequestId)
+      if (!_disposeRequested && requestId == _stopRequestId) {
         _stopRequested = false;
+      }
       return;
     }
     Object? failure;
@@ -310,8 +311,9 @@ class TrainerSession {
       } else if (_phase == TrainerSessionPhase.stopping) {
         _transitionTo(TrainerSessionPhase.idle, reason: 'stop normalized');
       }
-      if (!_disposeRequested && requestId == _stopRequestId)
+      if (!_disposeRequested && requestId == _stopRequestId) {
         _stopRequested = false;
+      }
     }
     if (failure != null) {
       Error.throwWithStackTrace(failure, failureStackTrace!);
@@ -472,12 +474,23 @@ class TrainerSession {
     );
     await attempt('runtime coordinator close', _runtimeCoordinator.close);
     await attempt('services disposal', _services.dispose);
+    _commitDisposedState(reason: 'dispose completed');
+    if (failure != null) {
+      Error.throwWithStackTrace(failure!, failureStackTrace!);
+    }
+  }
+
+  void _commitDisposedState({required String reason}) {
+    _sessionStats = null;
+    _pendingCelebration = null;
+    _errorMessage = null;
+    _feedbackCoordinator.clear();
     if (_phase != TrainerSessionPhase.disposed) {
-      _transitionTo(TrainerSessionPhase.disposed, reason: 'dispose completed');
+      _transitionTo(TrainerSessionPhase.disposed, reason: reason);
+    } else {
+      _syncState();
     }
     _disposed = true;
-    if (failure != null)
-      Error.throwWithStackTrace(failure!, failureStackTrace!);
   }
 
   Future<void> _loadProgress() async {
@@ -997,13 +1010,7 @@ class TrainerSession {
     appLogD('trainer', 'command recovery policy=${policy.name}: $name');
     if (_disposed || policy == TrainerCommandFailurePolicy.reportOnly) return;
     if (policy == TrainerCommandFailurePolicy.finalDispose) {
-      if (_phase != TrainerSessionPhase.disposed) {
-        _disposed = true;
-        _transitionTo(
-          TrainerSessionPhase.disposed,
-          reason: 'failed final disposal',
-        );
-      }
+      _commitDisposedState(reason: 'failed final disposal');
       return;
     }
     if (policy == TrainerCommandFailurePolicy.normalizeToIdle) {
