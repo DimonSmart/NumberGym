@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'app_definition.dart';
 import 'base_language_profile.dart';
+import 'core/logging/app_logger.dart';
 import 'exercise_option_shuffler.dart';
 import 'exercise_models.dart';
 import 'feedback_coordinator.dart';
@@ -104,6 +105,7 @@ class TrainerSession {
   String? _debugForcedMode;
   String? _debugForcedFamilyKey;
   bool _trainingActive = false;
+  bool _stopRequested = false;
   bool _disposed = false;
   bool _disposeRequested = false;
   Future<void>? _disposeFuture;
@@ -114,6 +116,8 @@ class TrainerSession {
   TrainingCelebration? _pendingCelebration;
   int _celebrationEventId = 0;
   TrainingState _state = TrainingState.initial();
+
+  bool get _shouldStop => _stopRequested || _disposeRequested || _disposed;
 
   TrainingState get state => _state;
   Stream<List<double>> get soundStream => _services.soundWave.stream;
@@ -126,14 +130,16 @@ class TrainerSession {
     _onStateChanged = callback;
   }
 
-  Future<void> initialize() => _operations.enqueue(_initializeCore);
+  Future<void> initialize() =>
+      _enqueueCommand(name: 'initialize', operation: _initializeCore);
 
   Future<void> _initializeCore() async {
     await _loadProgress();
     _syncState();
   }
 
-  Future<void> retryInitSpeech() => _operations.enqueue(_retryInitSpeechCore);
+  Future<void> retryInitSpeech() =>
+      _enqueueCommand(name: 'retryInitSpeech', operation: _retryInitSpeechCore);
 
   Future<void> _retryInitSpeechCore() async {
     final runtime = _runtimeCoordinator.runtime;
@@ -144,7 +150,8 @@ class TrainerSession {
     await _syncSpeechAvailability();
   }
 
-  Future<void> startTraining() => _operations.enqueue(_startTrainingCore);
+  Future<void> startTraining() =>
+      _enqueueCommand(name: 'startTraining', operation: _startTrainingCore);
 
   Future<void> _startTrainingCore() async {
     if (_phase == TrainerSessionPhase.starting ||
@@ -153,7 +160,8 @@ class TrainerSession {
         _disposeRequested) {
       return;
     }
-    _setPhase(TrainerSessionPhase.starting);
+    _stopRequested = false;
+    _transitionTo(TrainerSessionPhase.starting, reason: 'start requested');
     _sessionStats = null;
     _pendingCelebration = null;
     _premiumPronunciationEnabled = _settingsRepository
@@ -164,6 +172,7 @@ class TrainerSession {
     final context = _currentLanguageContext();
     if (_progressManager.cardsContext != context) {
       await _loadProgress();
+      if (_shouldStop) return;
     }
     await _taskScheduler.warmUpAvailability(
       language: context.learningLanguage,
@@ -174,10 +183,9 @@ class TrainerSession {
         ExerciseMode.speak,
       ),
     );
+    if (_shouldStop) return;
     if (!_progressManager.hasRemainingCards) {
-      _trainingActive = false;
-      _setPhase(TrainerSessionPhase.idle);
-      _syncState();
+      await _completeSessionCore(reason: SessionCompletionReason.noCards);
       return;
     }
     _trainingActive = true;
@@ -185,28 +193,31 @@ class TrainerSession {
     _silentDetector.reset();
     _errorMessage = null;
     _resetSessionCounters(targetCards: _initialSessionTargetCards());
-    _syncState();
     await _services.keepAwake.setEnabled(true);
+    if (_shouldStop) return;
     await _startNextCardCore();
   }
 
-  Future<void> continueSession() => _operations.enqueue(_continueSessionCore);
+  Future<void> continueSession() =>
+      _enqueueCommand(name: 'continueSession', operation: _continueSessionCore);
 
   Future<void> _continueSessionCore() async {
     if (_phase != TrainerSessionPhase.sessionCompleted || _disposeRequested) {
       return;
     }
-    _setPhase(TrainerSessionPhase.starting);
+    _stopRequested = false;
+    _transitionTo(TrainerSessionPhase.starting, reason: 'continue requested');
     _trainingActive = true;
     _silentDetector.reset();
     _resetSessionCounters(targetCards: dailyGoalCards);
     _sessionStats = null;
-    _syncState();
     await _startNextCardCore();
   }
 
-  Future<void> continueAfterCelebration() =>
-      _operations.enqueue(_continueAfterCelebrationCore);
+  Future<void> continueAfterCelebration() => _enqueueCommand(
+    name: 'continueAfterCelebration',
+    operation: _continueAfterCelebrationCore,
+  );
 
   Future<void> _continueAfterCelebrationCore() async {
     if (_pendingCelebration == null) {
@@ -220,7 +231,17 @@ class TrainerSession {
     await _startNextCardCore();
   }
 
-  Future<void> stopTraining() => _operations.enqueue(_stopTrainingCore);
+  Future<void> stopTraining() {
+    if (_disposed || _disposeRequested) return Future<void>.value();
+    _stopRequested = true;
+    _feedbackCoordinator.clear();
+    _runtimeCoordinator.requestCancellation();
+    return _enqueueCommand(
+      name: 'stopTraining',
+      operation: _stopTrainingCore,
+      allowWhenStopRequested: true,
+    );
+  }
 
   Future<void> _stopTrainingCore() async {
     if (_phase == TrainerSessionPhase.stopping ||
@@ -228,33 +249,73 @@ class TrainerSession {
         _phase == TrainerSessionPhase.disposed) {
       return;
     }
-    _setPhase(TrainerSessionPhase.stopping);
-    await _persistCurrentSessionIfNeeded();
-    _feedbackCoordinator.clear();
-    await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
-    _errorMessage = null;
+    _transitionTo(TrainerSessionPhase.stopping, reason: 'stop requested');
+    await _stopResourcesCore(persistSession: true, finalDispose: false);
     _progressManager.resetSelection();
     _runtimeCoordinator.resetInteraction();
     _sessionStats = null;
     _pendingCelebration = null;
-    _setPhase(TrainerSessionPhase.idle);
-    _syncState();
-    await _services.keepAwake.setEnabled(false);
+    _errorMessage = null;
+    _transitionTo(TrainerSessionPhase.idle, reason: 'stop completed');
   }
 
-  Future<void> pauseTaskTimer() => _operations.enqueue(_pauseTaskTimerCore);
+  Future<void> _stopResourcesCore({
+    required bool persistSession,
+    required bool finalDispose,
+  }) async {
+    Object? firstError;
+    StackTrace? firstStackTrace;
+    Future<void> attempt(String name, Future<void> Function() operation) async {
+      try {
+        await operation();
+      } catch (error, stackTrace) {
+        appLogE(
+          'trainer',
+          '$name failed during lifecycle cleanup',
+          error: error,
+          st: stackTrace,
+        );
+        firstError ??= error;
+        firstStackTrace ??= stackTrace;
+      }
+    }
+
+    _feedbackCoordinator.clear();
+    _runtimeCoordinator.requestCancellation();
+    if (persistSession) {
+      await attempt('session persistence', _persistCurrentSessionIfNeeded);
+    }
+    await attempt(
+      'runtime disposal',
+      () => _runtimeCoordinator.disposeRuntime(clearState: true),
+    );
+    await attempt(
+      'keep-awake disable',
+      () => _services.keepAwake.setEnabled(false),
+    );
+    _trainingActive = false;
+    if (firstError != null && !finalDispose) {
+      Error.throwWithStackTrace(firstError!, firstStackTrace!);
+    }
+  }
+
+  Future<void> pauseTaskTimer() =>
+      _enqueueCommand(name: 'pauseTaskTimer', operation: _pauseTaskTimerCore);
   Future<void> _pauseTaskTimerCore() async {
     await _runtimeCoordinator.handleAction(const PauseTaskAction());
   }
 
-  Future<void> resumeTaskTimer() => _operations.enqueue(_resumeTaskTimerCore);
+  Future<void> resumeTaskTimer() =>
+      _enqueueCommand(name: 'resumeTaskTimer', operation: _resumeTaskTimerCore);
   Future<void> _resumeTaskTimerCore() async {
     await _runtimeCoordinator.handleAction(const ResumeTaskAction());
   }
 
-  Future<void> handleAction(TaskAction action) =>
-      _operations.enqueue(() => _handleActionCore(action));
+  Future<void> handleAction(TaskAction action) => _enqueueCommand(
+    name: 'handleAction',
+    operation: () => _handleActionCore(action),
+  );
   Future<void> _handleActionCore(TaskAction action) async {
     if (_phase != TrainerSessionPhase.active) {
       return;
@@ -265,8 +326,9 @@ class TrainerSession {
   Future<void> completeCurrentTaskWithOutcome(
     TrainingOutcome outcome, {
     bool simulatedUserInteraction = false,
-  }) => _operations.enqueue(
-    () => _completeCurrentTaskCore(
+  }) => _enqueueCommand(
+    name: 'completeCurrentTask',
+    operation: () => _completeCurrentTaskCore(
       outcome,
       simulatedUserInteraction: simulatedUserInteraction,
     ),
@@ -278,21 +340,31 @@ class TrainerSession {
 
   Future<void> disposeAsync() {
     _disposeRequested = true;
-    return _disposeFuture ??= _operations
-        .enqueue(_disposeCore)
-        .whenComplete(_operations.close);
+    _stopRequested = true;
+    _feedbackCoordinator.clear();
+    _runtimeCoordinator.requestCancellation();
+    return _disposeFuture ??= _enqueueCommand(
+      name: 'dispose',
+      operation: _disposeCore,
+      allowWhenStopRequested: true,
+      allowWhenDisposeRequested: true,
+    ).whenComplete(_operations.close);
   }
 
   Future<void> _disposeCore() async {
     if (_disposed) return;
-    _setPhase(TrainerSessionPhase.stopping);
+    if (_phase != TrainerSessionPhase.stopping &&
+        _phase != TrainerSessionPhase.idle) {
+      _trainingActive = false;
+      _transitionTo(TrainerSessionPhase.stopping, reason: 'dispose requested');
+    }
     _feedbackCoordinator.dispose();
+    await _stopResourcesCore(persistSession: true, finalDispose: true);
     await _runtimeCoordinator.close();
-    await _services.keepAwake.setEnabled(false);
     _services.dispose();
     _trainingActive = false;
     _disposed = true;
-    _setPhase(TrainerSessionPhase.disposed);
+    _transitionTo(TrainerSessionPhase.disposed, reason: 'dispose completed');
   }
 
   Future<void> _loadProgress() async {
@@ -379,12 +451,24 @@ class TrainerSession {
       onError: (_) {},
       onStatus: (_) {},
     );
+    if (_shouldStop) return;
     _runtimeCoordinator.updateSpeechReady(result.ready);
     _errorMessage = result.ready ? null : result.errorMessage;
     _syncState();
   }
 
-  Future<void> _handleSessionLimitReached() async {
+  Future<void> _handleSessionLimitReached() =>
+      _completeSessionCore(reason: SessionCompletionReason.limitReached);
+
+  Future<void> _completeSessionCore({
+    required SessionCompletionReason reason,
+  }) async {
+    if (_shouldStop || _phase == TrainerSessionPhase.sessionCompleted) return;
+    _trainingActive = false;
+    _transitionTo(
+      TrainerSessionPhase.sessionCompleted,
+      reason: 'session completed: ${reason.name}',
+    );
     final now = DateTime.now();
     final elapsed = _sessionTracker.elapsed(now: now);
     final todayStats = await _sessionStatsRecorder.record(
@@ -396,8 +480,11 @@ class TrainerSession {
       _sessionTracker.markStatsPersisted();
     }
     final dailySummary = _progressManager.dailySummary(now: now);
+    if (_shouldStop) return;
     await _runtimeCoordinator.disposeRuntime(clearState: true);
+    if (_shouldStop) return;
     await _services.keepAwake.setEnabled(false);
+    if (_shouldStop) return;
     _sessionStats = SessionStats(
       cardsCompleted: _sessionTracker.cardsCompleted,
       duration: elapsed,
@@ -405,15 +492,9 @@ class TrainerSession {
       cardsCompletedToday: dailySummary.completedToday,
       durationToday: todayStats.duration,
     );
-    _state = TrainingState(
-      errorMessage: null,
-      feedback: null,
-      currentTask: null,
-      sessionStats: _sessionStats,
-      celebration: _pendingCelebration,
-      phase: _phase,
-    );
-    _onStateChanged();
+    _errorMessage = null;
+    _feedbackCoordinator.clear();
+    _syncState();
   }
 
   Future<void> _persistCurrentSessionIfNeeded() async {
@@ -433,8 +514,9 @@ class TrainerSession {
   }
 
   Future<void> _startNextCardCore() async {
-    if (!_trainingActive ||
+    if (_stopRequested ||
         _disposeRequested ||
+        !_trainingActive ||
         _phase == TrainerSessionPhase.stopping) {
       return;
     }
@@ -443,10 +525,7 @@ class TrainerSession {
       return;
     }
     if (!_progressManager.hasRemainingCards) {
-      _trainingActive = false;
-      _setPhase(TrainerSessionPhase.sessionCompleted);
-      await _services.keepAwake.setEnabled(false);
-      _syncState();
+      await _completeSessionCore(reason: SessionCompletionReason.noCards);
       return;
     }
 
@@ -462,11 +541,11 @@ class TrainerSession {
       forcedMode: forcedMode,
       forcedFamilyKey: forcedFamilyKey,
     );
+    if (_shouldStop) return;
     if (scheduleResult is TaskScheduleFinished) {
-      _trainingActive = false;
-      _setPhase(TrainerSessionPhase.sessionCompleted);
-      await _services.keepAwake.setEnabled(false);
-      _syncState();
+      await _completeSessionCore(
+        reason: SessionCompletionReason.schedulerFinished,
+      );
       return;
     }
     if (scheduleResult is TaskSchedulePaused) {
@@ -491,7 +570,12 @@ class TrainerSession {
 
     _services.soundWave.reset();
     _errorMessage = null;
-    _setPhase(TrainerSessionPhase.transitioning);
+    if (_phase != TrainerSessionPhase.starting) {
+      _transitionTo(
+        TrainerSessionPhase.transitioning,
+        reason: 'starting next card',
+      );
+    }
     final runtime = _createRuntime(
       card: card,
       mode: scheduleResult.mode,
@@ -499,13 +583,14 @@ class TrainerSession {
     );
     try {
       final handle = await _runtimeCoordinator.attach(runtime);
-      if (!_runtimeCoordinator.isCurrent(handle) || _disposeRequested) return;
-      _setPhase(TrainerSessionPhase.active);
-      _syncState();
-    } catch (error) {
+      if (!_runtimeCoordinator.isCurrent(handle) || _shouldStop) return;
+      _transitionTo(TrainerSessionPhase.active, reason: 'runtime started');
+    } catch (error, stackTrace) {
+      appLogE('trainer', 'runtime start failed', error: error, st: stackTrace);
+      await _runtimeCoordinator.disposeRuntime(clearState: true);
+      _trainingActive = false;
       _errorMessage = 'Unable to start the exercise: $error';
-      _setPhase(TrainerSessionPhase.paused);
-      _syncState();
+      _transitionTo(TrainerSessionPhase.paused, reason: 'runtime start failed');
     }
   }
 
@@ -527,7 +612,6 @@ class TrainerSession {
           cardTimer: _services.timer,
           cardDuration: cardDuration,
           hintText: hintText,
-          onSpeechReady: _handleSpeechReady,
         );
       case ExerciseMode.chooseFromPrompt:
         return ChoiceRuntime(
@@ -567,36 +651,16 @@ class TrainerSession {
     }
   }
 
-  void _handleSpeechReady(bool ready, String? errorMessage) {
-    if (_disposed || _disposeRequested) return;
-    unawaited(
-      _operations
-          .enqueue(() async {
-            if (_disposed || _disposeRequested) return;
-            _applySpeechReady(ready, errorMessage);
-          })
-          .catchError((_) {}),
-    );
-  }
-
-  void _applySpeechReady(bool ready, String? errorMessage) {
-    _runtimeCoordinator.updateSpeechReady(ready);
-    if (ready) {
-      _errorMessage = null;
-    } else if (errorMessage != null) {
-      _errorMessage = errorMessage;
-    }
-    _syncState();
-  }
-
   void _handleRuntimeEvent(RuntimeEventEnvelope envelope) {
     if (_disposed || _disposeRequested) {
       return;
     }
     unawaited(
-      _operations
-          .enqueue(() => _handleRuntimeEventCore(envelope))
-          .catchError((_) {}),
+      _enqueueRuntimeCallback(
+        name: 'runtime event',
+        generation: envelope.generation,
+        operation: () => _handleRuntimeEventCore(envelope),
+      ),
     );
   }
 
@@ -634,19 +698,25 @@ class TrainerSession {
     }
     final completion = _runtimeCoordinator.takeCurrentForCompletion();
     if (completion == null) return;
-    _setPhase(TrainerSessionPhase.transitioning);
+    _transitionTo(
+      TrainerSessionPhase.transitioning,
+      reason: 'task completion claimed',
+    );
     final taskState = completion.taskState;
     await _runtimeCoordinator.detach(
       handle: completion.handle,
       clearState: true,
     );
+    if (_shouldStop) return;
     final progressUpdate = await _taskProgressRecorder.record(
       taskState: taskState,
       outcome: outcome,
       language: _currentLanguage(),
     );
+    if (_shouldStop) return;
     if (progressUpdate.affectsProgress && progressUpdate.learned) {
       await _queueCelebration(taskState);
+      if (_shouldStop) return;
     }
 
     final feedbackHold = _feedbackCoordinator.show(
@@ -667,7 +737,8 @@ class TrainerSession {
     }
 
     await feedbackHold;
-    if (_disposed ||
+    if (_stopRequested ||
+        _disposed ||
         _disposeRequested ||
         _pendingCelebration != null ||
         !_trainingActive) {
@@ -689,6 +760,7 @@ class TrainerSession {
   Future<void> _queueCelebration(TaskState taskState) async {
     final nextCounter = _settingsRepository.readCelebrationCounter() + 1;
     await _settingsRepository.setCelebrationCounter(nextCounter);
+    if (_shouldStop) return;
     _celebrationEventId += 1;
     _pendingCelebration = TrainingCelebration(
       eventId: _celebrationEventId,
@@ -703,13 +775,162 @@ class TrainerSession {
   Future<void> _pauseTrainingCore() async {
     await _runtimeCoordinator.disposeRuntime(clearState: true);
     _trainingActive = false;
-    _setPhase(TrainerSessionPhase.paused);
-    _syncState();
+    _transitionTo(TrainerSessionPhase.paused, reason: 'training paused');
     await _services.keepAwake.setEnabled(false);
   }
 
-  void _setPhase(TrainerSessionPhase phase) {
-    _phase = phase;
+  void _transitionTo(
+    TrainerSessionPhase next, {
+    required String reason,
+    bool publish = true,
+  }) {
+    final previous = _phase;
+    if (previous == next) return;
+    if (!_isAllowedTransition(previous, next)) {
+      final error = StateError(
+        'Invalid trainer phase transition: $previous -> $next ($reason)',
+      );
+      appLogE('trainer', error.message.toString(), error: error);
+      assert(() {
+        throw error;
+      }());
+      throw error;
+    }
+    _phase = next;
+    assert(
+      !_trainingActive ||
+          next == TrainerSessionPhase.starting ||
+          next == TrainerSessionPhase.active ||
+          next == TrainerSessionPhase.transitioning,
+    );
+    appLogD('trainer', 'phase ${previous.name} -> ${next.name}: $reason');
+    if (publish) _syncState();
+  }
+
+  bool _isAllowedTransition(TrainerSessionPhase from, TrainerSessionPhase to) =>
+      switch (from) {
+        TrainerSessionPhase.idle =>
+          to == TrainerSessionPhase.starting ||
+              to == TrainerSessionPhase.disposed,
+        TrainerSessionPhase.starting =>
+          to == TrainerSessionPhase.active ||
+              to == TrainerSessionPhase.paused ||
+              to == TrainerSessionPhase.stopping ||
+              to == TrainerSessionPhase.sessionCompleted,
+        TrainerSessionPhase.active =>
+          to == TrainerSessionPhase.transitioning ||
+              to == TrainerSessionPhase.paused ||
+              to == TrainerSessionPhase.stopping,
+        TrainerSessionPhase.transitioning =>
+          to == TrainerSessionPhase.active ||
+              to == TrainerSessionPhase.sessionCompleted ||
+              to == TrainerSessionPhase.paused ||
+              to == TrainerSessionPhase.stopping,
+        TrainerSessionPhase.paused =>
+          to == TrainerSessionPhase.starting ||
+              to == TrainerSessionPhase.stopping ||
+              to == TrainerSessionPhase.disposed,
+        TrainerSessionPhase.sessionCompleted =>
+          to == TrainerSessionPhase.starting ||
+              to == TrainerSessionPhase.stopping ||
+              to == TrainerSessionPhase.disposed,
+        TrainerSessionPhase.stopping =>
+          to == TrainerSessionPhase.idle || to == TrainerSessionPhase.disposed,
+        TrainerSessionPhase.disposed => false,
+      };
+
+  Future<T> _enqueueCommand<T>({
+    required String name,
+    required Future<T> Function() operation,
+    bool allowWhenStopRequested = false,
+    bool allowWhenDisposeRequested = false,
+  }) {
+    if (_disposeRequested && !allowWhenDisposeRequested) {
+      return Future<T>.value();
+    }
+    if (_stopRequested && !allowWhenStopRequested) {
+      return Future<T>.value();
+    }
+    return _operations.enqueue(() async {
+      appLogD('trainer', 'command started: $name');
+      try {
+        final result = await operation();
+        appLogD('trainer', 'command completed: $name');
+        return result;
+      } catch (error, stackTrace) {
+        appLogE(
+          'trainer',
+          'command failed: $name',
+          error: error,
+          st: stackTrace,
+        );
+        await _recoverFromCommandFailure(name, error);
+        Error.throwWithStackTrace(error, stackTrace);
+      }
+    });
+  }
+
+  Future<void> _recoverFromCommandFailure(String name, Object error) async {
+    if (_disposed ||
+        _phase == TrainerSessionPhase.stopping ||
+        _phase == TrainerSessionPhase.idle) {
+      return;
+    }
+    _runtimeCoordinator.requestCancellation();
+    try {
+      await _runtimeCoordinator.disposeRuntime(clearState: true);
+    } catch (cleanupError, cleanupStackTrace) {
+      appLogE(
+        'trainer',
+        'runtime cleanup failed after $name',
+        error: cleanupError,
+        st: cleanupStackTrace,
+      );
+    }
+    try {
+      await _services.keepAwake.setEnabled(false);
+    } catch (cleanupError, cleanupStackTrace) {
+      appLogE(
+        'trainer',
+        'keep-awake cleanup failed after $name',
+        error: cleanupError,
+        st: cleanupStackTrace,
+      );
+    }
+    _trainingActive = false;
+    _errorMessage = 'Unable to continue training: $error';
+    if (_phase != TrainerSessionPhase.paused) {
+      _transitionTo(
+        TrainerSessionPhase.paused,
+        reason: 'command failed: $name',
+      );
+    } else {
+      _syncState();
+    }
+  }
+
+  Future<void> _enqueueRuntimeCallback({
+    required String name,
+    required int generation,
+    required Future<void> Function() operation,
+  }) async {
+    await _operations.enqueue(() async {
+      final handle = _runtimeCoordinator.currentHandle;
+      if (_shouldStop || handle == null || handle.generation != generation) {
+        return;
+      }
+      try {
+        await operation();
+      } catch (error, stackTrace) {
+        appLogE(
+          'trainer',
+          'runtime callback failed: $name',
+          error: error,
+          st: stackTrace,
+        );
+        await _recoverFromCommandFailure('runtime callback $name', error);
+      }
+    });
   }
 
   ExerciseMode? _parseMode(String? raw) {
@@ -735,3 +956,5 @@ class TrainerSession {
     return exists ? key : null;
   }
 }
+
+enum SessionCompletionReason { limitReached, noCards, schedulerFinished }

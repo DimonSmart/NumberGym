@@ -79,6 +79,7 @@ abstract interface class TaskRuntime {
   Stream<TaskEvent> get events;
 
   Future<void> start();
+  void requestCancellation();
   Future<void> dispose();
   Future<void> handleAction(TaskAction action);
   Future<void> onTimerTimeout();
@@ -94,8 +95,15 @@ abstract class TaskRuntimeBase implements TaskRuntime {
 
   TaskState _state;
   bool _disposed = false;
+  bool _cancellationRequested = false;
 
   bool get isDisposed => _disposed;
+  bool get isCancellationRequested => _cancellationRequested;
+
+  @override
+  void requestCancellation() {
+    _cancellationRequested = true;
+  }
 
   @override
   TaskState get state => _state;

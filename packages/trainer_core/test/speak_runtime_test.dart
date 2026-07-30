@@ -166,7 +166,6 @@ void main() {
       cardTimer: timer,
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     await runtime.start();
@@ -205,7 +204,6 @@ void main() {
       cardTimer: FakeCardTimer(),
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     final completion = Completer<TaskCompleted>();
@@ -244,7 +242,6 @@ void main() {
       cardTimer: FakeCardTimer(),
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     final completion = Completer<TaskCompleted>();
@@ -285,7 +282,6 @@ void main() {
       cardTimer: FakeCardTimer(),
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     final events = <TaskCompleted>[];
@@ -327,7 +323,6 @@ void main() {
       cardTimer: FakeCardTimer(),
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     final completion = Completer<TaskCompleted>();
@@ -367,7 +362,6 @@ void main() {
       cardTimer: FakeCardTimer(),
       cardDuration: const Duration(seconds: 15),
       hintText: null,
-      onSpeechReady: (ready, errorMessage) {},
     );
 
     final completion = Completer<TaskCompleted>();

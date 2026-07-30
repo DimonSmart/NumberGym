@@ -51,7 +51,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> start() async {
-    if (_disposed) {
+    if (_disposed || isCancellationRequested) {
       return;
     }
     emitState(_buildState());
@@ -59,7 +59,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> handleAction(TaskAction action) async {
-    if (_disposed) {
+    if (_disposed || isCancellationRequested) {
       return;
     }
     if (action is StartRecordingAction) {
@@ -90,6 +90,16 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     await super.dispose();
   }
 
+  @override
+  void requestCancellation() {
+    super.requestCancellation();
+    _disposed = true;
+    _soundWaveService.stop();
+    if (_audioRecorder.isRecording) {
+      unawaited(_audioRecorder.cancel());
+    }
+  }
+
   ReviewPronunciationState _buildState() {
     return ReviewPronunciationState(
       exerciseId: _card.id,
@@ -106,13 +116,16 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _startRecording() async {
-    if (_flow == ReviewFlow.recording || _flow == ReviewFlow.sending) {
+    if (isCancellationRequested ||
+        _flow == ReviewFlow.recording ||
+        _flow == ReviewFlow.sending) {
       return;
     }
     _recordingFile = null;
     _result = null;
     try {
       await _audioRecorder.start();
+      if (isCancellationRequested) return;
       _flow = ReviewFlow.recording;
       emitEvent(const TaskUserInteracted());
       await _startRecordingSoundWave();
@@ -121,7 +134,9 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     } catch (error) {
       _flow = ReviewFlow.waiting;
       emitState(_buildState());
-      emitEvent(TaskError('Cannot start recording: $error', shouldPause: false));
+      emitEvent(
+        TaskError('Cannot start recording: $error', shouldPause: false),
+      );
     }
   }
 
@@ -131,6 +146,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
     }
     try {
       final file = await _audioRecorder.stop();
+      if (isCancellationRequested) return;
       _recordingFile = file;
       _flow = file == null ? ReviewFlow.waiting : ReviewFlow.recorded;
       await _stopRecordingSoundWave();
@@ -170,6 +186,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
         expectedText: _spec.expectedText,
         language: _locale,
       );
+      if (isCancellationRequested) return;
       _result = result;
       _flow = ReviewFlow.reviewing;
       emitState(_buildState());
@@ -186,7 +203,7 @@ class ReviewPronunciationRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _completeReview() async {
-    if (_flow != ReviewFlow.reviewing) {
+    if (isCancellationRequested || _flow != ReviewFlow.reviewing) {
       return;
     }
     emitEvent(const TaskCompleted(TrainingOutcome.skipped));

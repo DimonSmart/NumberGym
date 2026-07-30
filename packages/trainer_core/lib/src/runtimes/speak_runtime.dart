@@ -31,7 +31,6 @@ class SpeakRuntime extends TaskRuntimeBase {
     required CardTimerBase cardTimer,
     required Duration cardDuration,
     required String? hintText,
-    required void Function(bool ready, String? errorMessage) onSpeechReady,
   }) : _card = card,
        _profile = profile,
        _speechService = speechService,
@@ -39,7 +38,6 @@ class SpeakRuntime extends TaskRuntimeBase {
        _cardTimer = cardTimer,
        _cardDuration = cardDuration,
        _hintText = hintText,
-       _onSpeechReady = onSpeechReady,
        _answerMatcher = AnswerMatcher(
          normalizer: profile.normalizer,
          tokenizer: tokenizer,
@@ -85,7 +83,6 @@ class SpeakRuntime extends TaskRuntimeBase {
   final CardTimerBase _cardTimer;
   final Duration _cardDuration;
   final String? _hintText;
-  final void Function(bool ready, String? errorMessage) _onSpeechReady;
   final AnswerMatcher _answerMatcher;
 
   Future<void> _serialOperation = Future<void>.value();
@@ -119,7 +116,7 @@ class SpeakRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> start() async {
-    if (_disposed) {
+    if (_disposed || isCancellationRequested) {
       return;
     }
     _resetMatcher();
@@ -143,7 +140,7 @@ class SpeakRuntime extends TaskRuntimeBase {
     );
 
     final ready = await _initSpeech();
-    if (_disposed || !_cardActive || !ready) {
+    if (_disposed || isCancellationRequested || !_cardActive || !ready) {
       return;
     }
     await _startListening();
@@ -181,6 +178,17 @@ class SpeakRuntime extends TaskRuntimeBase {
     _timeoutGraceTimer?.cancel();
     await _stopAttempt(stopTimer: true);
     await super.dispose();
+  }
+
+  @override
+  void requestCancellation() {
+    super.requestCancellation();
+    _cardActive = false;
+    _listenStartTimer?.cancel();
+    _timeoutGraceTimer?.cancel();
+    _cardTimer.stop();
+    _soundWaveService.stop();
+    unawaited(_speechService.stop());
   }
 
   void _resetMatcher() {
@@ -237,9 +245,8 @@ class SpeakRuntime extends TaskRuntimeBase {
       onError: _onSpeechError,
       onStatus: _onSpeechStatus,
     );
-    if (_disposed || !_cardActive) return false;
+    if (_disposed || isCancellationRequested || !_cardActive) return false;
     _speechReady = result.ready;
-    _onSpeechReady(result.ready, result.errorMessage);
     emitState(_buildState());
     _logSpeech(
       'initSpeech result ready=${result.ready} error="${result.errorMessage ?? ''}" '
@@ -1006,7 +1013,17 @@ class SpeakRuntime extends TaskRuntimeBase {
       }
       await action();
     });
-    _serialOperation = next.catchError((_) {});
+    _serialOperation = next.then<void>(
+      (_) {},
+      onError: (Object error, StackTrace stackTrace) {
+        appLogE(
+          'speech',
+          'serialized runtime operation failed',
+          error: error,
+          st: stackTrace,
+        );
+      },
+    );
     return next;
   }
 

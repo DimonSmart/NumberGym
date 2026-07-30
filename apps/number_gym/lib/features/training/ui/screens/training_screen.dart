@@ -436,7 +436,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   ) {
     final taskView = _buildTaskViewContent(theme, feedbackViewModel);
     return IgnorePointer(
-      ignoring: _sliderPeekRunning,
+      ignoring: _sliderPeekRunning || !_controller.interactionEnabled,
       child: TickerMode(enabled: !_sliderPeekRunning, child: taskView),
     );
   }
@@ -579,6 +579,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     _stoppingTraining = true;
     try {
       await _controller.stopTraining();
+      await _controller.disposeAsync();
       if (!mounted) return;
       if (!_allowSystemPop) {
         setState(() {

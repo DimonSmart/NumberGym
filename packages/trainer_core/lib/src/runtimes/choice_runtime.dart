@@ -101,6 +101,13 @@ class ChoiceRuntime extends TaskRuntimeBase {
     await super.dispose();
   }
 
+  @override
+  void requestCancellation() {
+    super.requestCancellation();
+    _completed = true;
+    _cardTimer.stop();
+  }
+
   ChoiceState _buildState() {
     return ChoiceState(
       mode: _mode,

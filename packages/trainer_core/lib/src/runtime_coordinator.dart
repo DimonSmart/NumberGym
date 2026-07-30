@@ -43,7 +43,8 @@ final class RuntimeCoordinator {
   bool _speechReady = false;
   bool _taskHadUserInteraction = false;
   int _generation = 0;
-  bool _closed = false;
+  bool _closeRequested = false;
+  Future<void>? _closeFuture;
 
   RuntimeHandle? get currentHandle => _currentHandle;
   TaskRuntime? get runtime => _currentHandle?.runtime;
@@ -64,7 +65,7 @@ final class RuntimeCoordinator {
   }
 
   Future<RuntimeHandle> attach(TaskRuntime runtime) async {
-    if (_closed) throw StateError('RuntimeCoordinator is closed.');
+    if (_closeRequested) throw StateError('RuntimeCoordinator is closed.');
     await disposeCurrent(clearState: true);
     final handle = RuntimeHandle(generation: ++_generation, runtime: runtime);
     _currentHandle = handle;
@@ -94,7 +95,6 @@ final class RuntimeCoordinator {
     final state = _currentTaskState;
     if (handle == null || state == null) return null;
     _currentTaskState = null;
-    _onChanged();
     return RuntimeCompletion(handle: handle, taskState: state);
   }
 
@@ -105,13 +105,29 @@ final class RuntimeCoordinator {
     if (!isCurrent(handle)) return;
     ++_generation;
     _currentHandle = null;
-    await _runtimeEvents?.cancel();
-    await _runtimeStates?.cancel();
+    final events = _runtimeEvents;
+    final states = _runtimeStates;
     _runtimeEvents = null;
     _runtimeStates = null;
     if (clearState) _currentTaskState = null;
     _onChanged();
-    await handle.runtime.dispose();
+    Object? firstError;
+    StackTrace? firstStackTrace;
+    Future<void> attempt(Future<void> Function() operation) async {
+      try {
+        await operation();
+      } catch (error, stackTrace) {
+        firstError ??= error;
+        firstStackTrace ??= stackTrace;
+      }
+    }
+
+    await attempt(() => events?.cancel() ?? Future<void>.value());
+    await attempt(() => states?.cancel() ?? Future<void>.value());
+    await attempt(handle.runtime.dispose);
+    if (firstError != null) {
+      Error.throwWithStackTrace(firstError!, firstStackTrace!);
+    }
   }
 
   Future<void> disposeCurrent({required bool clearState}) async {
@@ -135,10 +151,13 @@ final class RuntimeCoordinator {
     await handle.runtime.handleAction(action);
   }
 
-  Future<void> close() async {
-    if (_closed) return;
-    _closed = true;
-    await disposeCurrent(clearState: true);
+  void requestCancellation() {
+    _currentHandle?.runtime.requestCancellation();
+  }
+
+  Future<void> close() {
+    _closeRequested = true;
+    return _closeFuture ??= disposeCurrent(clearState: true);
   }
 
   void _handleTaskEvent(RuntimeHandle handle, TaskEvent event) {

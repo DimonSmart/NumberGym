@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../core/logging/app_logger.dart';
 import '../exercise_models.dart';
 import '../task_runtime.dart';
@@ -59,7 +61,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> start() async {
-    if (_completed) {
+    if (_completed || isCancellationRequested) {
       return;
     }
     _cardTimer.start(_cardDuration, _onTimerTimeout);
@@ -69,7 +71,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> handleAction(TaskAction action) async {
-    if (_completed) {
+    if (_completed || isCancellationRequested) {
       return;
     }
     if (action is RefreshTimerAction) {
@@ -114,7 +116,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
 
   @override
   Future<void> onTimerTimeout() async {
-    if (_completed) {
+    if (_completed || isCancellationRequested) {
       return;
     }
     await _complete(TrainingOutcome.timeout);
@@ -124,6 +126,14 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
   Future<void> dispose() async {
     _cardTimer.stop();
     await super.dispose();
+  }
+
+  @override
+  void requestCancellation() {
+    super.requestCancellation();
+    _completed = true;
+    _cardTimer.stop();
+    unawaited(_ttsService.stop());
   }
 
   ListenAndChooseState _buildState() {
@@ -194,11 +204,11 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
   }
 
   Future<void> _speak() async {
-    if (_completed || _paused) {
+    if (_completed || _paused || isCancellationRequested) {
       return;
     }
     await _prepareVoice();
-    if (_completed || _paused) {
+    if (_completed || _paused || isCancellationRequested) {
       return;
     }
     _isPromptPlaying = true;
@@ -207,7 +217,7 @@ class ListenAndChooseRuntime extends TaskRuntimeBase {
       await _ttsService.speak(_spec.speechText);
     } finally {
       _isPromptPlaying = false;
-      if (!_completed) {
+      if (!_completed && !isCancellationRequested) {
         emitState(_buildState());
       }
     }

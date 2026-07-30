@@ -32,8 +32,9 @@ class _TestModule implements TrainingModule {
       language == LearningLanguage.english;
 
   @override
-  List<ExerciseFamily> buildFamilies(LearningLanguage language) =>
-      [_testFamily];
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _testFamily,
+  ];
 
   @override
   List<ExerciseCard> buildCards(LearningLanguage language) {
@@ -83,8 +84,9 @@ class _SingleCardModule implements TrainingModule {
       language == LearningLanguage.english;
 
   @override
-  List<ExerciseFamily> buildFamilies(LearningLanguage language) =>
-      [_singleFamily];
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _singleFamily,
+  ];
 
   @override
   List<ExerciseCard> buildCards(LearningLanguage language) {
@@ -121,13 +123,11 @@ String _identityNormalizer(String text) => text.toLowerCase();
 class _SimpleTokenizer implements MatcherTokenizer {
   @override
   List<MatchingToken> tokenize(String text) => [
-        MatchingToken(display: text, normalized: text.toLowerCase()),
-      ];
+    MatchingToken(display: text, normalized: text.toLowerCase()),
+  ];
 }
 
-TrainingAppDefinition _buildAppDefinition({
-  TrainingModule? module,
-}) {
+TrainingAppDefinition _buildAppDefinition({TrainingModule? module}) {
   const profile = BaseLanguageProfile(
     language: LearningLanguage.english,
     code: 'en',
@@ -218,80 +218,77 @@ void main() {
       expect(controller.state.sessionStats, isNotNull);
       expect(controller.state.sessionStats!.cardsCompleted, target);
       expect(controller.currentTask, isNull);
+      expect(controller.phase, TrainerSessionPhase.sessionCompleted);
+      expect(controller.interactionEnabled, isFalse);
       controller.dispose();
     },
   );
 
-  test(
-    'continueSession clears sessionStats and resumes training',
-    () async {
-      final controller = _buildController();
+  test('continueSession clears sessionStats and resumes training', () async {
+    final controller = _buildController();
 
-      await controller.initialize();
-      await controller.startTraining();
+    await controller.initialize();
+    await controller.startTraining();
 
-      final target = controller.sessionTargetCards;
-      for (var i = 0; i < target; i++) {
-        await controller.completeCurrentTaskWithOutcome(
-          TrainingOutcome.skipped,
-          simulatedUserInteraction: true,
-        );
-      }
-      expect(controller.state.sessionStats, isNotNull);
-
-      await controller.continueSession();
-
-      expect(controller.state.sessionStats, isNull);
-      expect(controller.currentTask, isNotNull);
-      controller.dispose();
-    },
-  );
-
-  test(
-    'celebration fires when card transitions to learned',
-    () async {
-      // Seed card with 19 correct attempts so one more correct triggers learning
-      const cardId = ExerciseId(
-        moduleId: _moduleId,
-        familyId: 'single_family',
-        variantId: '0',
+    final target = controller.sessionTargetCards;
+    for (var i = 0; i < target; i++) {
+      await controller.completeCurrentTaskWithOutcome(
+        TrainingOutcome.skipped,
+        simulatedUserInteraction: true,
       );
-      final progressRepository = InMemoryProgressRepository();
-      await progressRepository.save(
-        cardId.storageKey,
-        const CardProgress(
-          learned: false,
-          clusters: <CardCluster>[
-            CardCluster(
-              lastAnswerAt: 1000, // 1970 — far enough back for a new cluster
-              correctCount: 19,
-              wrongCount: 0,
-              skippedCount: 0,
-            ),
-          ],
-          learnedAt: 0,
-          firstAttemptAt: 1000,
-          consecutiveCorrect: 19,
-        ),
-        language: LearningLanguage.english,
-      );
+    }
+    expect(controller.state.sessionStats, isNotNull);
 
-      final controller = _buildController(
-        module: _SingleCardModule(),
-        progressRepository: progressRepository,
-      );
+    await controller.continueSession();
 
-      await controller.initialize();
-      await controller.startTraining();
+    expect(controller.state.sessionStats, isNull);
+    expect(controller.currentTask, isNotNull);
+    expect(controller.phase, TrainerSessionPhase.active);
+    controller.dispose();
+  });
 
-      expect(controller.currentTask, isNotNull);
+  test('celebration fires when card transitions to learned', () async {
+    // Seed card with 19 correct attempts so one more correct triggers learning
+    const cardId = ExerciseId(
+      moduleId: _moduleId,
+      familyId: 'single_family',
+      variantId: '0',
+    );
+    final progressRepository = InMemoryProgressRepository();
+    await progressRepository.save(
+      cardId.storageKey,
+      const CardProgress(
+        learned: false,
+        clusters: <CardCluster>[
+          CardCluster(
+            lastAnswerAt: 1000, // 1970 — far enough back for a new cluster
+            correctCount: 19,
+            wrongCount: 0,
+            skippedCount: 0,
+          ),
+        ],
+        learnedAt: 0,
+        firstAttemptAt: 1000,
+        consecutiveCorrect: 19,
+      ),
+      language: LearningLanguage.english,
+    );
 
-      // One correct answer → total 20, accuracy 1.0 → learned!
-      await controller.completeCurrentTaskWithOutcome(TrainingOutcome.correct);
+    final controller = _buildController(
+      module: _SingleCardModule(),
+      progressRepository: progressRepository,
+    );
 
-      expect(controller.celebration, isNotNull);
-      expect(controller.celebration!.categoryLabel, isNotEmpty);
-      controller.dispose();
-    },
-  );
+    await controller.initialize();
+    await controller.startTraining();
+
+    expect(controller.currentTask, isNotNull);
+
+    // One correct answer → total 20, accuracy 1.0 → learned!
+    await controller.completeCurrentTaskWithOutcome(TrainingOutcome.correct);
+
+    expect(controller.celebration, isNotNull);
+    expect(controller.celebration!.categoryLabel, isNotEmpty);
+    controller.dispose();
+  });
 }

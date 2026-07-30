@@ -175,7 +175,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
     if (task == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    final taskBody = _buildTaskBody(task);
+    final taskBody = IgnorePointer(
+      ignoring: !_controller.interactionEnabled,
+      child: _buildTaskBody(task),
+    );
     final taskHeader = widget.taskHeaderBuilder?.call(context, task);
     if (taskHeader == null) {
       return taskBody;
@@ -237,6 +240,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     _stoppingTraining = true;
     try {
       await _controller.stopTraining();
+      await _controller.disposeAsync();
       if (!mounted) {
         return;
       }

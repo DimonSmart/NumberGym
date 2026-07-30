@@ -32,7 +32,9 @@ class TrainerController extends ChangeNotifier {
   static void _noop() {}
 
   final TrainerSession _session;
-  bool _disposed = false;
+  Future<void>? _disposeFuture;
+  bool _cleanupRequested = false;
+  bool _notifierDisposed = false;
 
   TrainingState get state => _session.state;
   TrainingFeedback? get feedback => _session.state.feedback;
@@ -89,25 +91,27 @@ class TrainerController extends ChangeNotifier {
     simulatedUserInteraction: simulatedUserInteraction,
   );
 
-  Future<void> disposeAsync() async {
-    if (_disposed) return;
-    _disposed = true;
-    await _session.disposeAsync();
+  Future<void> disposeAsync() {
+    if (_cleanupRequested) {
+      return _disposeFuture ??= _session.disposeAsync();
+    }
+    _cleanupRequested = true;
+    return _disposeFuture ??= _session.disposeAsync();
   }
 
   @override
   void dispose() {
-    if (_disposed) {
-      super.dispose();
+    if (_notifierDisposed) {
       return;
     }
-    _disposed = true;
-    _session.dispose();
+    _cleanupRequested = true;
+    _disposeFuture ??= _session.disposeAsync();
+    _notifierDisposed = true;
     super.dispose();
   }
 
   void _notify() {
-    if (_disposed) {
+    if (_notifierDisposed) {
       return;
     }
     notifyListeners();
