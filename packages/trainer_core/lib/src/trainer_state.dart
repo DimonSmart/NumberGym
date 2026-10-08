@@ -1,5 +1,4 @@
 import 'exercise_models.dart';
-import 'training/domain/pronunciation_models.dart';
 import 'trainer_session_phase.dart';
 
 enum TrainingOutcome { correct, wrong, timeout, skipped }
@@ -170,33 +169,6 @@ final class ListenAndChooseState extends TaskState {
   final String correctAnswer;
   final bool isAnswerRevealed;
   final bool isPromptPlaying;
-}
-
-enum ReviewFlow { waiting, recording, recorded, sending, reviewing }
-
-final class ReviewPronunciationState extends TaskState {
-  ReviewPronunciationState({
-    required super.exerciseId,
-    required super.family,
-    required super.displayText,
-    required super.promptText,
-    required super.acceptedAnswers,
-    required super.celebrationText,
-    required this.flow,
-    required this.hasRecording,
-    required this.result,
-    required this.isWaveVisible,
-  }) : super(
-         mode: ExerciseMode.reviewPronunciation,
-         affectsProgress: false,
-         usesTimer: false,
-         timer: TimerState.zero,
-       );
-
-  final ReviewFlow flow;
-  final bool hasRecording;
-  final PronunciationAnalysisResult? result;
-  final bool isWaveVisible;
 }
 
 class TrainingState {

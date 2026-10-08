@@ -52,12 +52,6 @@ class TrainerController extends ChangeNotifier {
     return task is SpeakState ? task : null;
   }
 
-  ReviewPronunciationState? get reviewState {
-    final task = _session.state.currentTask;
-    return task is ReviewPronunciationState ? task : null;
-  }
-
-  bool get hasRecording => reviewState?.hasRecording ?? false;
   Stream<List<double>> get soundStream => _session.soundStream;
   int get dailyGoalCards => _session.dailyGoalCards;
   int get sessionCardsCompleted => _session.sessionCardsCompleted;
@@ -76,16 +70,6 @@ class TrainerController extends ChangeNotifier {
       _session.handleAction(SelectOptionAction(option));
   Future<void> repeatListeningPrompt() =>
       _session.handleAction(const RepeatPromptAction());
-  Future<void> startPronunciationRecording() =>
-      _session.handleAction(const StartRecordingAction());
-  Future<void> stopPronunciationRecording() =>
-      _session.handleAction(const StopRecordingAction());
-  Future<void> cancelPronunciationRecording() =>
-      _session.handleAction(const CancelRecordingAction());
-  Future<void> sendPronunciationRecording() =>
-      _session.handleAction(const SendRecordingAction());
-  Future<void> completePronunciationReview() =>
-      _session.handleAction(const CompleteReviewAction());
   Future<void> completeCurrentTaskWithOutcome(
     TrainingOutcome outcome, {
     bool simulatedUserInteraction = false,

@@ -11,7 +11,6 @@ enum ExerciseMode {
   chooseFromPrompt,
   chooseFromAnswer,
   listenAndChoose,
-  reviewPronunciation,
 }
 
 extension ExerciseModeX on ExerciseMode {
@@ -25,13 +24,11 @@ extension ExerciseModeX on ExerciseMode {
         return 'Choose from answer';
       case ExerciseMode.listenAndChoose:
         return 'Listen and choose';
-      case ExerciseMode.reviewPronunciation:
-        return 'Pronunciation review';
     }
   }
 
   bool get usesTimer {
-    return this != ExerciseMode.reviewPronunciation;
+    return true;
   }
 }
 
@@ -152,12 +149,6 @@ class ListeningExerciseSpec {
   final List<String> options;
 }
 
-class ReviewPronunciationSpec {
-  const ReviewPronunciationSpec({required this.expectedText});
-
-  final String expectedText;
-}
-
 class ExerciseMatcherConfig {
   const ExerciseMatcherConfig({this.promptAliases = const <String>[]});
 
@@ -181,7 +172,6 @@ class ExerciseCard {
     this.chooseFromPrompt,
     this.chooseFromAnswer,
     this.listenAndChoose,
-    this.reviewPronunciation,
     this.dynamicResolver,
   }) : progressId = progressId ?? id,
        acceptedAnswers = List<String>.unmodifiable(acceptedAnswers);
@@ -199,7 +189,6 @@ class ExerciseCard {
   final ChoiceExerciseSpec? chooseFromPrompt;
   final ChoiceExerciseSpec? chooseFromAnswer;
   final ListeningExerciseSpec? listenAndChoose;
-  final ReviewPronunciationSpec? reviewPronunciation;
   final DynamicExerciseResolver? dynamicResolver;
 
   ExerciseCard resolveDynamic() {

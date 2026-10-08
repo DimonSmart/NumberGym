@@ -53,26 +53,6 @@ final class ResumeTaskAction extends TaskAction {
   const ResumeTaskAction();
 }
 
-final class StartRecordingAction extends TaskAction {
-  const StartRecordingAction();
-}
-
-final class StopRecordingAction extends TaskAction {
-  const StopRecordingAction();
-}
-
-final class CancelRecordingAction extends TaskAction {
-  const CancelRecordingAction();
-}
-
-final class SendRecordingAction extends TaskAction {
-  const SendRecordingAction();
-}
-
-final class CompleteReviewAction extends TaskAction {
-  const CompleteReviewAction();
-}
-
 abstract interface class TaskRuntime {
   TaskState get state;
   Stream<TaskState> get states;
