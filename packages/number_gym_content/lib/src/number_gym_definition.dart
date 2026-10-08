@@ -21,7 +21,6 @@ const List<ExerciseMode> _numberModes = <ExerciseMode>[
   ExerciseMode.chooseFromPrompt,
   ExerciseMode.chooseFromAnswer,
   ExerciseMode.listenAndChoose,
-  ExerciseMode.reviewPronunciation,
 ];
 
 const List<ExerciseMode> _timeModes = <ExerciseMode>[
@@ -465,10 +464,6 @@ class NumberGymModule implements TrainingModule {
     final value = seed.numberValue!;
     final displayText = value.toString();
     final spoken = pack.numberWordsConverter(value);
-    final reviewSpec = ReviewPronunciationSpec(
-      expectedText: _phraseForValue(value, pack, dynamic: dynamic),
-    );
-
     return ExerciseCard(
       id: seed.id,
       progressId: seed.id,
@@ -506,7 +501,6 @@ class NumberGymModule implements TrainingModule {
           familySeeds: familySeeds,
         ),
       ),
-      reviewPronunciation: reviewSpec,
       dynamicResolver: dynamicResolver,
     );
   }
@@ -727,23 +721,6 @@ class NumberGymModule implements TrainingModule {
       return const <String>[];
     }
     return <String>['${value.hour} o clock'];
-  }
-
-  String _phraseForValue(
-    int value,
-    LanguagePack pack, {
-    required bool dynamic,
-  }) {
-    final matching = pack.phraseTemplates
-        .where((template) => template.supports(value))
-        .toList(growable: false);
-    if (matching.isEmpty) {
-      return pack.numberWordsConverter(value);
-    }
-    final template = dynamic
-        ? matching[_random.nextInt(matching.length)]
-        : matching.first;
-    return template.materialize(value);
   }
 
   TimeValue _nextRandomTime(LearningLanguage language) {

@@ -3,7 +3,6 @@ import 'package:trainer_core/trainer_core.dart';
 
 import '../domain/time_value.dart';
 import 'number_lexicon.dart';
-import 'phrase_template.dart';
 import 'time_lexicon.dart';
 
 typedef NumberWordsConverter = String Function(int);
@@ -18,7 +17,6 @@ class LanguagePack {
   final TextDirection textDirection;
   final NumberWordsConverter numberWordsConverter;
   final TimeWordsConverter timeWordsConverter;
-  final List<PhraseTemplate> phraseTemplates;
   final NumberLexicon numberLexicon;
   final TimeLexicon timeLexicon;
   final Map<String, String> operatorWords;
@@ -35,7 +33,6 @@ class LanguagePack {
     required this.textDirection,
     required this.numberWordsConverter,
     required this.timeWordsConverter,
-    required this.phraseTemplates,
     required this.numberLexicon,
     required this.timeLexicon,
     required this.operatorWords,

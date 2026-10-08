@@ -5,7 +5,6 @@ import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
-import '../phrase_template.dart';
 import '../time_lexicon.dart';
 
 LanguagePack buildHebrewPack() {
@@ -17,7 +16,6 @@ LanguagePack buildHebrewPack() {
     textDirection: TextDirection.rtl,
     numberWordsConverter: _numberToHebrew,
     timeWordsConverter: _timeToHebrew,
-    phraseTemplates: _hebrewPhrases,
     numberLexicon: _hebrewLexicon,
     timeLexicon: _hebrewTimeLexicon,
     operatorWords: _hebrewOperatorWords,
@@ -208,36 +206,3 @@ const _hebrewOperatorWords = {
 };
 
 const _hebrewIgnoredWords = {'בבקשה'};
-
-const _hebrewPhrases = <PhraseTemplate>[
-  PhraseTemplate(
-    id: 401,
-    templateText: 'סבא שלי בן {X} שנים.',
-    minValue: 40,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 402,
-    templateText: 'הסוללה של הטלפון שלי על {X} אחוז.',
-    minValue: 0,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 403,
-    templateText: 'קניתי {X} קילו תפוחים.',
-    minValue: 1,
-    maxValue: 10,
-  ),
-  PhraseTemplate(
-    id: 404,
-    templateText: 'הכרטיס עולה {X} יורו.',
-    minValue: 0,
-    maxValue: 1000,
-  ),
-  PhraseTemplate(
-    id: 405,
-    templateText: 'בהופעה יש {X} אנשים.',
-    minValue: 0,
-    maxValue: 10000,
-  ),
-];

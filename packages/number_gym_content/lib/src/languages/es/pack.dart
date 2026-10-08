@@ -5,7 +5,6 @@ import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
-import '../phrase_template.dart';
 import '../time_lexicon.dart';
 
 LanguagePack buildSpanishPack() {
@@ -17,7 +16,6 @@ LanguagePack buildSpanishPack() {
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToSpanish,
     timeWordsConverter: _timeToSpanish,
-    phraseTemplates: _spanishPhrases,
     numberLexicon: _spanishLexicon,
     timeLexicon: _spanishTimeLexicon,
     operatorWords: _spanishOperatorWords,
@@ -238,36 +236,3 @@ const _spanishOperatorWords = {
 };
 
 const _spanishIgnoredWords = {'porfavor', 'favor'};
-
-const _spanishPhrases = <PhraseTemplate>[
-  PhraseTemplate(
-    id: 101,
-    templateText: 'Mi abuelo tiene {X} años.',
-    minValue: 40,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 102,
-    templateText: 'La batería del móvil está al {X} por ciento.',
-    minValue: 0,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 103,
-    templateText: 'Compré {X} kilos de manzanas.',
-    minValue: 1,
-    maxValue: 10,
-  ),
-  PhraseTemplate(
-    id: 104,
-    templateText: 'La entrada cuesta {X} euros.',
-    minValue: 0,
-    maxValue: 1000,
-  ),
-  PhraseTemplate(
-    id: 105,
-    templateText: 'En el concierto hay {X} personas.',
-    minValue: 0,
-    maxValue: 10000,
-  ),
-];
