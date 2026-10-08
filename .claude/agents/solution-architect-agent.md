@@ -92,7 +92,6 @@ Every spec MUST follow this structure:
 Future<TaskScheduleResult> scheduleNext({
   required ProgressManager progressManager,
   required LearningLanguage language,
-  bool premiumPronunciationEnabled = false,
   LearningMethod? forcedLearningMethod,
 });
 ```
