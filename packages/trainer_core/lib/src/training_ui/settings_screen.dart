@@ -35,7 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final SpeechServiceBase _speechService;
   late LearningLanguage _baseLanguage;
   late LearningLanguage _learningLanguage;
-  late bool _premiumPronunciation;
   bool _ttsAvailable = true;
   bool _speechAvailable = true;
   List<TtsVoice> _ttsVoices = const [];
@@ -59,8 +58,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _settingsRepository.readLearningLanguage(),
       widget.appDefinition.config.defaultLearningLanguage,
     );
-    _premiumPronunciation = _settingsRepository
-        .readPremiumPronunciationEnabled();
     _loadAvailability();
   }
 
@@ -181,18 +178,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               ..._buildLanguageFields(),
               const SizedBox(height: 16),
-              SwitchListTile(
-                value: _premiumPronunciation,
-                onChanged: (value) async {
-                  setState(() {
-                    _premiumPronunciation = value;
-                  });
-                  await _settingsRepository.setPremiumPronunciationEnabled(
-                    value,
-                  );
-                },
-                title: const Text('Premium pronunciation review'),
-              ),
               ListTile(
                 title: const Text('TTS'),
                 subtitle: Text(

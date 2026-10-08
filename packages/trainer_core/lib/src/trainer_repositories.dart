@@ -26,8 +26,6 @@ abstract class SettingsRepositoryBase {
   Future<void> setBaseLanguage(LearningLanguage language);
   LearningLanguage readLearningLanguage();
   Future<void> setLearningLanguage(LearningLanguage language);
-  bool readPremiumPronunciationEnabled();
-  Future<void> setPremiumPronunciationEnabled(bool enabled);
   bool readAutoSimulationEnabled();
   Future<void> setAutoSimulationEnabled(bool enabled);
   int readAutoSimulationContinueCount();
