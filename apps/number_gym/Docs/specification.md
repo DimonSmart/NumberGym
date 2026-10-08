@@ -6,7 +6,6 @@ Number Gym trains spoken and recognition skills with short cards:
 - speaking from prompts;
 - multiple-choice transformations;
 - listening drills;
-- premium pronunciation review for number phrases.
 
 ## 2. Supported languages
 
@@ -54,19 +53,16 @@ All progress and settings are scoped by selected language.
 - `chooseFromPrompt`
 - `chooseFromAnswer`
 - `listenAndChoose`
-- `reviewPronunciation`
 
 Compatibility matrix: `Docs/itemtype_learning_method.md`.
 
-- Number families support all modes.
-- Time families support all modes except `reviewPronunciation`.
+- Number and time families support speaking, both choice directions, and listening.
 - Phone families support only `speak`.
 
 ## 6. Dynamic content rules
 
 - `timeRandom` materializes a fresh displayed time when the card opens, but keeps a stable `progressId`.
 - Phone families materialize fresh numbers and optional `+34` prefix while keeping a stable `progressId`.
-- Number review phrases are materialized from language-owned templates.
 - Accepted variants, prompt aliases, grouped phone hints, and language edge cases are owned by `number_gym_content`.
 
 ## 7. Session and scheduling rules
@@ -87,7 +83,6 @@ Compatibility matrix: `Docs/itemtype_learning_method.md`.
 
 Stored values include:
 - language;
-- premium pronunciation enabled;
 - forced debug mode (debug only);
 - forced debug family (debug only);
 - selected TTS voice per language;
@@ -98,7 +93,8 @@ Stored values include:
 Availability rules:
 - speaking requires speech recognition;
 - listening requires TTS for the selected language;
-- pronunciation review requires internet plus the premium toggle.
+- choice exercises do not require internet. Speech and TTS depend on the
+  corresponding device services and locally available voice/language data.
 
 ## 10. Statistics
 

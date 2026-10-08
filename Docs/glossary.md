@@ -16,4 +16,3 @@
 - Session target cards: number of cards planned for current session block.
 - Session stats: cards and duration persisted for daily aggregate.
 - Streak: count of consecutive days with completed sessions.
-- Phrase pronunciation: premium runtime that analyzes recording and does not affect card progress.
