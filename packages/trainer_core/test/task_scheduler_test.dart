@@ -58,7 +58,7 @@ class _ChoiceOnlyModule implements TrainingModule {
   }
 }
 
-// Module that supports all modes (for internet/speech availability tests)
+// Module that supports both speaking and choice modes
 final _allModesFamily = ExerciseFamily(
   moduleId: _moduleId,
   id: 'all_modes_family',
@@ -113,7 +113,6 @@ class _AllModesModule implements TrainingModule {
   }
 }
 
-
 final _speechOnlyFamily = ExerciseFamily(
   moduleId: _moduleId,
   id: 'speech_only',
@@ -153,6 +152,17 @@ class _MixedModeModule implements TrainingModule {
       ),
     ),
   ];
+}
+
+class _ThrowingSpeechProvider implements TaskAvailabilityProvider {
+  @override
+  ExerciseMode get mode => ExerciseMode.speak;
+
+  @override
+  Future<TaskAvailability> check(
+    TaskAvailabilityContext context, {
+    bool force = false,
+  }) async => throw StateError('Recognizer plugin unavailable');
 }
 
 BaseLanguageProfile _buildProfile() {
@@ -278,7 +288,6 @@ void main() {
     },
   );
 
-
   test('keeps scheduling choices when speech recognition is unavailable', () async {
     final progressManager = await _buildProgressManager(module: _MixedModeModule());
     final scheduler = TaskScheduler(
@@ -295,6 +304,23 @@ void main() {
     final ready = result as TaskScheduleReady;
     expect(ready.card.family.id, 'choice_family');
     expect(ready.mode, ExerciseMode.chooseFromPrompt);
+  });
+
+
+  test('provider errors do not block offline choices', () async {
+    final progressManager = await _buildProgressManager(module: _MixedModeModule());
+    final scheduler = TaskScheduler(
+      availabilityRegistry: TaskAvailabilityRegistry(
+        providers: [_ThrowingSpeechProvider()],
+      ),
+    );
+    final result = await scheduler.scheduleNext(
+      progressManager: progressManager,
+      language: LearningLanguage.english,
+      profile: _buildProfile(),
+    );
+    expect(result, isA<TaskScheduleReady>());
+    expect((result as TaskScheduleReady).mode, ExerciseMode.chooseFromPrompt);
   });
 
   test('forced speech availability requests microphone permission', () async {

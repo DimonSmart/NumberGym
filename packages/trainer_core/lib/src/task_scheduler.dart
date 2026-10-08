@@ -219,5 +219,4 @@ class TaskScheduler {
     }
     return weighted.last.key;
   }
-
 }

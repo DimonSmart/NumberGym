@@ -1,3 +1,4 @@
+import 'core/logging/app_logger.dart';
 import 'exercise_models.dart';
 import 'trainer_services.dart';
 import 'training/domain/learning_language.dart';
@@ -49,7 +50,19 @@ class TaskAvailabilityRegistry {
     if (provider == null) {
       return TaskAvailability.available;
     }
-    return provider.check(context, force: force);
+    try {
+      return await provider.check(context, force: force);
+    } catch (error, stackTrace) {
+      appLogW(
+        'trainer',
+        'Availability check failed for ${mode.name}',
+        error: error,
+        st: stackTrace,
+      );
+      return TaskAvailability.unavailable(
+        '${mode.label} is not available on this device.',
+      );
+    }
   }
 }
 

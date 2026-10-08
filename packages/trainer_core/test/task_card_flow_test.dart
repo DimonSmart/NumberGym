@@ -107,7 +107,6 @@ void main() {
       );
       expect(hint, isNull);
     });
-
   });
 
   group('LearningParams', () {
