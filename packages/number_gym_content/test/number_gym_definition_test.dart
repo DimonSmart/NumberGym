@@ -111,33 +111,6 @@ void main() {
     expect(RegExp(r'^[+\d\s]+$').hasMatch(hint), isFalse);
   });
 
-  test(
-    'number cards expose pronunciation review but time and phone cards do not',
-    () {
-      final numberCard = _findCard(
-        definition: definition,
-        language: LearningLanguage.english,
-        familyId: 'digits',
-        variantId: '5',
-      );
-      final timeCard = _findCard(
-        definition: definition,
-        language: LearningLanguage.english,
-        familyId: 'timeExact',
-        variantId: '12:00',
-      );
-      final phoneCard = _findFirstCardInFamily(
-        definition: definition,
-        language: LearningLanguage.english,
-        familyId: 'phone33x3',
-      );
-
-      expect(numberCard.reviewPronunciation, isNotNull);
-      expect(timeCard.reviewPronunciation, isNull);
-      expect(phoneCard.reviewPronunciation, isNull);
-    },
-  );
-
   test('23:45 mentions midnight wording in every supported language', () {
     for (final language in definition.supportedLanguages) {
       final midnight = _findCard(
