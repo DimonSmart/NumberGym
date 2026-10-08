@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -206,98 +204,6 @@ class FakeSoundWaveService implements SoundWaveServiceBase {
   }
 }
 
-class FakeAudioRecorderService implements AudioRecorderServiceBase {
-  final StreamController<double> _amplitudeController =
-      StreamController<double>.broadcast();
-  bool _isRecording = false;
-
-  @override
-  bool get isRecording => _isRecording;
-
-  @override
-  Stream<double> get amplitudeStream => _amplitudeController.stream;
-
-  @override
-  Future<void> start() async {
-    _isRecording = true;
-  }
-
-  @override
-  Future<File?> stop() async {
-    _isRecording = false;
-    return null;
-  }
-
-  @override
-  Future<void> cancel() async {
-    _isRecording = false;
-  }
-
-  @override
-  void dispose() {
-    unawaited(_amplitudeController.close());
-  }
-}
-
-class ControllableAudioRecorder implements AudioRecorderServiceBase {
-  ControllableAudioRecorder({
-    Completer<void>? startGate,
-    Completer<File?>? stopGate,
-  }) : startGate = startGate ?? Completer<void>(),
-       stopGate = stopGate ?? Completer<File?>();
-
-  final Completer<void> startGate;
-  final Completer<File?> stopGate;
-  final StreamController<double> _amplitudeController =
-      StreamController<double>.broadcast();
-  int startCalls = 0;
-  int stopCalls = 0;
-  int cancelCalls = 0;
-  bool _isRecording = false;
-  bool cancelWhileStopPending = false;
-  bool throwOnCancel = false;
-  bool _stopPending = false;
-
-  @override
-  bool get isRecording => _isRecording;
-
-  @override
-  Stream<double> get amplitudeStream => _amplitudeController.stream;
-
-  @override
-  Future<void> start() async {
-    startCalls += 1;
-    await startGate.future;
-    _isRecording = true;
-  }
-
-  @override
-  Future<File?> stop() async {
-    stopCalls += 1;
-    _stopPending = true;
-    try {
-      final file = await stopGate.future;
-      _isRecording = false;
-      return file;
-    } finally {
-      _stopPending = false;
-    }
-  }
-
-  @override
-  Future<void> cancel() async {
-    cancelCalls += 1;
-    cancelWhileStopPending |= _stopPending;
-    if (throwOnCancel) throw StateError('cancel failed');
-    _isRecording = false;
-  }
-
-  @override
-  void dispose() {
-    unawaited(_amplitudeController.close());
-  }
-}
-
 final class ControllableTaskRuntime extends TaskRuntimeBase {
   ControllableTaskRuntime({
     required TaskState initialState,
@@ -369,25 +275,14 @@ TrainingServices buildFakeTrainingServices({
   SoundWaveServiceBase? soundWave,
   CardTimerBase? timer,
   KeepAwakeServiceBase? keepAwake,
-  AudioRecorderServiceBase? audioRecorder,
-  AzureSpeechService? azure,
   TtsServiceBase? tts,
-  InternetChecker? internet,
 }) {
   return TrainingServices(
     speech: speech ?? FakeSpeechService(),
     soundWave: soundWave ?? FakeSoundWaveService(),
     timer: timer ?? FakeCardTimer(),
     keepAwake: keepAwake ?? FakeKeepAwakeService(),
-    audioRecorder: audioRecorder ?? FakeAudioRecorderService(),
-    azure:
-        azure ??
-        AzureSpeechService(
-          client: http.Client(),
-          endpoint: Uri.parse('http://localhost:1/pronunciation/analyze'),
-        ),
     tts: tts ?? FakeTtsService(),
-    internet: internet ?? () async => false,
   );
 }
 
@@ -450,12 +345,6 @@ class FakeSettingsRepository implements SettingsRepositoryBase {
   Future<void> setStudyStreak(StudyStreak streak) async {
     _streakByLanguage[_language] = streak;
   }
-
-  @override
-  bool readPremiumPronunciationEnabled() => false;
-
-  @override
-  Future<void> setPremiumPronunciationEnabled(bool enabled) async {}
 
   @override
   bool readAutoSimulationEnabled() => false;

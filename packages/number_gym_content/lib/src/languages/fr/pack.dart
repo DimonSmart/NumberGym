@@ -5,7 +5,6 @@ import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
-import '../phrase_template.dart';
 import '../time_lexicon.dart';
 
 LanguagePack buildFrenchPack() {
@@ -17,7 +16,6 @@ LanguagePack buildFrenchPack() {
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToFrench,
     timeWordsConverter: _timeToFrench,
-    phraseTemplates: _frenchPhrases,
     numberLexicon: _frenchLexicon,
     timeLexicon: _frenchTimeLexicon,
     operatorWords: _frenchOperatorWords,
@@ -189,36 +187,3 @@ const _frenchOperatorWords = {
 };
 
 const _frenchIgnoredWords = {'svp'};
-
-const _frenchPhrases = <PhraseTemplate>[
-  PhraseTemplate(
-    id: 201,
-    templateText: 'Mon grand-pere a {X} ans.',
-    minValue: 40,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 202,
-    templateText: 'La batterie de mon telephone est a {X} pour cent.',
-    minValue: 0,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 203,
-    templateText: "J'ai achete {X} kilos de pommes.",
-    minValue: 1,
-    maxValue: 10,
-  ),
-  PhraseTemplate(
-    id: 204,
-    templateText: 'Le billet coute {X} euros.',
-    minValue: 0,
-    maxValue: 1000,
-  ),
-  PhraseTemplate(
-    id: 205,
-    templateText: 'Il y a {X} personnes au concert.',
-    minValue: 0,
-    maxValue: 10000,
-  ),
-];

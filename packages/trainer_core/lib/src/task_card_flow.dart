@@ -13,8 +13,7 @@ class TaskCardFlow {
     required int consecutiveCorrect,
     required int hintVisibleUntilCorrectStreak,
   }) {
-    if (mode != ExerciseMode.speak &&
-        mode != ExerciseMode.reviewPronunciation) {
+    if (mode != ExerciseMode.speak) {
       return null;
     }
     if (hintVisibleUntilCorrectStreak <= 0 ||

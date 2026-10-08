@@ -5,7 +5,6 @@ import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
-import '../phrase_template.dart';
 import '../time_lexicon.dart';
 
 LanguagePack buildGermanPack() {
@@ -17,7 +16,6 @@ LanguagePack buildGermanPack() {
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToGerman,
     timeWordsConverter: _timeToGerman,
-    phraseTemplates: _germanPhrases,
     numberLexicon: _germanLexicon,
     timeLexicon: _germanTimeLexicon,
     operatorWords: _germanOperatorWords,
@@ -192,36 +190,3 @@ const _germanOperatorWords = {
 };
 
 const _germanIgnoredWords = {'bitte'};
-
-const _germanPhrases = <PhraseTemplate>[
-  PhraseTemplate(
-    id: 301,
-    templateText: 'Mein Opa ist {X} Jahre alt.',
-    minValue: 40,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 302,
-    templateText: 'Der Akkustand meines Handys liegt bei {X} Prozent.',
-    minValue: 0,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 303,
-    templateText: 'Ich habe {X} Kilo Äpfel gekauft.',
-    minValue: 1,
-    maxValue: 10,
-  ),
-  PhraseTemplate(
-    id: 304,
-    templateText: 'Das Ticket kostet {X} Euro.',
-    minValue: 0,
-    maxValue: 1000,
-  ),
-  PhraseTemplate(
-    id: 305,
-    templateText: 'Auf dem Konzert sind {X} Leute.',
-    minValue: 0,
-    maxValue: 10000,
-  ),
-];

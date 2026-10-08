@@ -1,8 +1,7 @@
+import 'core/logging/app_logger.dart';
 import 'exercise_models.dart';
 import 'trainer_services.dart';
 import 'training/domain/learning_language.dart';
-
-typedef InternetCheck = Future<bool> Function({bool force});
 
 class TaskAvailability {
   const TaskAvailability({required this.isAvailable, this.message});
@@ -21,14 +20,10 @@ class TaskAvailabilityContext {
   const TaskAvailabilityContext({
     required this.language,
     required this.locale,
-    required this.premiumPronunciationEnabled,
-    this.internetCheck,
   });
 
   final LearningLanguage language;
   final String locale;
-  final bool premiumPronunciationEnabled;
-  final InternetCheck? internetCheck;
 }
 
 abstract interface class TaskAvailabilityProvider {
@@ -55,7 +50,19 @@ class TaskAvailabilityRegistry {
     if (provider == null) {
       return TaskAvailability.available;
     }
-    return provider.check(context, force: force);
+    try {
+      return await provider.check(context, force: force);
+    } catch (error, stackTrace) {
+      appLogW(
+        'trainer',
+        'Availability check failed for ${mode.name}',
+        error: error,
+        st: stackTrace,
+      );
+      return TaskAvailability.unavailable(
+        '${mode.label} is not available on this device.',
+      );
+    }
   }
 }
 
@@ -118,32 +125,5 @@ class TtsTaskAvailabilityProvider implements TaskAvailabilityProvider {
     return TaskAvailability.unavailable(
       'Text-to-speech is not available for the selected language.',
     );
-  }
-}
-
-class ReviewPronunciationAvailabilityProvider
-    implements TaskAvailabilityProvider {
-  @override
-  ExerciseMode get mode => ExerciseMode.reviewPronunciation;
-
-  @override
-  Future<TaskAvailability> check(
-    TaskAvailabilityContext context, {
-    bool force = false,
-  }) async {
-    if (!context.premiumPronunciationEnabled && !force) {
-      return TaskAvailability.unavailable('Premium pronunciation is disabled.');
-    }
-    final internetCheck = context.internetCheck;
-    if (internetCheck == null) {
-      return TaskAvailability.available;
-    }
-    final hasInternet = await internetCheck(force: force);
-    if (!hasInternet) {
-      return TaskAvailability.unavailable(
-        'Premium pronunciation requires an internet connection.',
-      );
-    }
-    return TaskAvailability.available;
   }
 }

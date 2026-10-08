@@ -9,7 +9,6 @@ import 'package:trainer_core/trainer_core.dart';
 import '../view_models/listening_view_model.dart';
 import '../view_models/multiple_choice_view_model.dart';
 import '../view_models/number_pronunciation_view_model.dart';
-import '../view_models/phrase_pronunciation_view_model.dart';
 import '../view_models/training_feedback_view_model.dart';
 import '../view_models/training_status_view_model.dart';
 import '../widgets/celebration_overlay.dart';
@@ -17,7 +16,6 @@ import '../widgets/feedback_overlay.dart';
 import '../widgets/listening_view.dart';
 import '../widgets/multiple_choice_view.dart';
 import '../widgets/number_pronunciation_view.dart';
-import '../widgets/phrase_pronunciation_view.dart';
 import '../widgets/slider_peek.dart';
 import '../widgets/training_status_view.dart';
 
@@ -472,19 +470,6 @@ class _TrainingScreenState extends State<TrainingScreen>
         onReplay: _controller.repeatListeningPrompt,
       );
     }
-    if (task is ReviewPronunciationState) {
-      final viewModel = PhrasePronunciationViewModel.fromState(task: task);
-      return PhrasePronunciationView(
-        viewModel: viewModel,
-        soundStream: _controller.soundStream,
-        onStartRecording: _controller.startPronunciationRecording,
-        onStopRecording: _controller.stopPronunciationRecording,
-        onRecordAgain: _handleRecordAgain,
-        onSendRecording: _handleSendPronunciation,
-        onCompleteReview: _controller.completePronunciationReview,
-      );
-    }
-
     final viewModel = NumberPronunciationViewModel.fromState(
       task: _controller.speakState,
       feedback: feedbackViewModel,
@@ -610,23 +595,6 @@ class _TrainingScreenState extends State<TrainingScreen>
     await _controller.retryInitSpeech();
     if (!mounted) return;
     await _ensureTrainingStarted();
-  }
-
-  Future<void> _handleRecordAgain() async {
-    await _controller.cancelPronunciationRecording();
-    await _controller.startPronunciationRecording();
-  }
-
-  Future<void> _handleSendPronunciation() async {
-    if (!_controller.hasRecording) return;
-    try {
-      await _controller.sendPronunciationRecording();
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pronunciation scoring failed: $error')),
-      );
-    }
   }
 
   void _handleAutoStop() {

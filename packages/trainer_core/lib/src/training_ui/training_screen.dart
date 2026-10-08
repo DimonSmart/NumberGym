@@ -211,17 +211,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
         onSelect: _controller.selectOption,
       );
     }
-    if (task is ReviewPronunciationState) {
-      return _ReviewTaskView(
-        state: task,
-        soundStream: _controller.soundStream,
-        onStartRecording: _controller.startPronunciationRecording,
-        onStopRecording: _controller.stopPronunciationRecording,
-        onCancelRecording: _controller.cancelPronunciationRecording,
-        onSendRecording: _controller.sendPronunciationRecording,
-        onCompleteReview: _controller.completePronunciationReview,
-      );
-    }
     return const SizedBox.shrink();
   }
 
@@ -617,91 +606,6 @@ class _ListenTaskView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ReviewTaskView extends StatelessWidget {
-  const _ReviewTaskView({
-    required this.state,
-    required this.soundStream,
-    required this.onStartRecording,
-    required this.onStopRecording,
-    required this.onCancelRecording,
-    required this.onSendRecording,
-    required this.onCompleteReview,
-  });
-
-  final ReviewPronunciationState state;
-  final Stream<List<double>> soundStream;
-  final Future<void> Function() onStartRecording;
-  final Future<void> Function() onStopRecording;
-  final Future<void> Function() onCancelRecording;
-  final Future<void> Function() onSendRecording;
-  final Future<void> Function() onCompleteReview;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              state.displayText,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 16),
-            switch (state.flow) {
-              ReviewFlow.waiting => FilledButton(
-                onPressed: onStartRecording,
-                child: const Text('Start recording'),
-              ),
-              ReviewFlow.recording => FilledButton(
-                onPressed: onStopRecording,
-                child: const Text('Stop recording'),
-              ),
-              ReviewFlow.recorded => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FilledButton(
-                    onPressed: onSendRecording,
-                    child: const Text('Send for review'),
-                  ),
-                  const SizedBox(height: 8),
-                  FilledButton.tonal(
-                    onPressed: onCancelRecording,
-                    child: const Text('Record again'),
-                  ),
-                ],
-              ),
-              ReviewFlow.sending => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              ReviewFlow.reviewing => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text('Heard: ${state.result?.displayText ?? '-'}'),
-                  Text(
-                    'Score: ${state.result?.best?.pronScore.toStringAsFixed(1) ?? '-'}',
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: onCompleteReview,
-                    child: const Text('Continue'),
-                  ),
-                ],
-              ),
-            },
-            const SizedBox(height: 16),
-            SoundWaveIndicator(
-              stream: soundStream,
-              visible: state.isWaveVisible,
-            ),
           ],
         ),
       ),

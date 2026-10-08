@@ -12,7 +12,6 @@ import 'runtime_coordinator.dart';
 import 'serialized_operation_queue.dart';
 import 'runtimes/choice_runtime.dart';
 import 'runtimes/listen_and_choose_runtime.dart';
-import 'runtimes/review_pronunciation_runtime.dart';
 import 'runtimes/speak_runtime.dart';
 import 'session_lifecycle_tracker.dart';
 import 'session_progress_plan.dart';
@@ -71,10 +70,8 @@ class TrainerSession {
         providers: [
           SpeechTaskAvailabilityProvider(_services.speech),
           TtsTaskAvailabilityProvider(_services.tts),
-          ReviewPronunciationAvailabilityProvider(),
         ],
       ),
-      internetChecker: _services.internet,
       random: _random,
     );
     _sessionStatsRecorder = SessionStatsRecorder(
@@ -83,8 +80,6 @@ class TrainerSession {
         settingsRepository: settingsRepository,
       ),
     );
-    _premiumPronunciationEnabled = _settingsRepository
-        .readPremiumPronunciationEnabled();
     _syncState();
   }
 
@@ -111,7 +106,6 @@ class TrainerSession {
   late TaskScheduler _taskScheduler;
   late SessionStatsRecorder _sessionStatsRecorder;
 
-  bool _premiumPronunciationEnabled = false;
   String? _debugForcedMode;
   String? _debugForcedFamilyKey;
   bool _stopRequested = false;
@@ -195,8 +189,6 @@ class TrainerSession {
     _autoStopCommitted = false;
     _sessionStats = null;
     _pendingCelebration = null;
-    _premiumPronunciationEnabled = _settingsRepository
-        .readPremiumPronunciationEnabled();
     _debugForcedMode = _settingsRepository.readDebugForcedMode();
     _debugForcedFamilyKey = _settingsRepository.readDebugForcedFamilyKey();
 
@@ -208,7 +200,6 @@ class TrainerSession {
     await _taskScheduler.warmUpAvailability(
       language: context.learningLanguage,
       profile: _appDefinition.profileOf(context.learningLanguage),
-      premiumPronunciationEnabled: _premiumPronunciationEnabled,
       requestSpeechPermission: _catalogSupportsMode(
         context,
         ExerciseMode.speak,
@@ -675,7 +666,6 @@ class TrainerSession {
       progressManager: _progressManager,
       language: _currentLanguage(),
       profile: _currentProfile(),
-      premiumPronunciationEnabled: _premiumPronunciationEnabled,
       forcedMode: forcedMode,
       forcedFamilyKey: forcedFamilyKey,
     );
@@ -784,15 +774,6 @@ class TrainerSession {
           ttsService: _services.tts,
           locale: profile.locale,
           voiceId: _settingsRepository.readTtsVoiceId(card.language),
-        );
-      case ExerciseMode.reviewPronunciation:
-        return ReviewPronunciationRuntime(
-          card: card,
-          spec: card.reviewPronunciation!,
-          locale: profile.locale,
-          audioRecorder: _services.audioRecorder,
-          soundWaveService: _services.soundWave,
-          azureSpeechService: _services.azure,
         );
     }
   }

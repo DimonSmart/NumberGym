@@ -1,6 +1,6 @@
 # NumberGym Workspace
 
-Monorepo for focused trainer apps that share one training engine and app-specific content packages.
+Monorepo for focused trainer apps that share one training engine and app-specific content packages. Offline-first choice exercises do not call any backend. Speech recognition and TTS depend on local platform capabilities and installed language resources.
 
 ## Source Of Truth
 

@@ -5,7 +5,6 @@ import '../../domain/time_value.dart';
 import '../language_pack.dart';
 import '../normalization.dart';
 import '../number_lexicon.dart';
-import '../phrase_template.dart';
 import '../time_lexicon.dart';
 
 LanguagePack buildEnglishPack() {
@@ -17,7 +16,6 @@ LanguagePack buildEnglishPack() {
     textDirection: TextDirection.ltr,
     numberWordsConverter: _numberToEnglish,
     timeWordsConverter: _timeToEnglish,
-    phraseTemplates: _englishPhrases,
     numberLexicon: _englishLexicon,
     timeLexicon: _englishTimeLexicon,
     operatorWords: _englishOperatorWords,
@@ -191,36 +189,3 @@ const _englishOperatorWords = {
 };
 
 const _englishIgnoredWords = {'um', 'uh', 'erm', 'ah', 'eh', 'please'};
-
-const _englishPhrases = <PhraseTemplate>[
-  PhraseTemplate(
-    id: 1,
-    templateText: 'My grandpa is {X} years old.',
-    minValue: 40,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 2,
-    templateText: 'My phone battery is at {X} percent.',
-    minValue: 0,
-    maxValue: 100,
-  ),
-  PhraseTemplate(
-    id: 3,
-    templateText: 'I bought {X} kilos of apples.',
-    minValue: 1,
-    maxValue: 10,
-  ),
-  PhraseTemplate(
-    id: 4,
-    templateText: 'The ticket costs {X} euros.',
-    minValue: 0,
-    maxValue: 1000,
-  ),
-  PhraseTemplate(
-    id: 5,
-    templateText: 'There are {X} people at the concert.',
-    minValue: 0,
-    maxValue: 10000,
-  ),
-];

@@ -30,37 +30,27 @@ final class TaskScheduleFinished extends TaskScheduleResult {
 class TaskScheduler {
   TaskScheduler({
     required TaskAvailabilityRegistry availabilityRegistry,
-    required Future<bool> Function() internetChecker,
     Random? random,
   }) : _availabilityRegistry = availabilityRegistry,
-       _internetChecker = internetChecker,
        _random = random ?? Random();
 
   static const int _speakWeight = 70;
   static const int _chooseFromPromptWeight = 15;
   static const int _chooseFromAnswerWeight = 15;
   static const int _listenAndChooseWeight = 15;
-  static const int _reviewWeight = 5;
 
   final TaskAvailabilityRegistry _availabilityRegistry;
-  final Future<bool> Function() _internetChecker;
   final Random _random;
-
-  bool _hasInternet = true;
-  DateTime? _lastInternetCheck;
 
   Future<void> warmUpAvailability({
     required LearningLanguage language,
     required BaseLanguageProfile profile,
-    required bool premiumPronunciationEnabled,
     required bool requestSpeechPermission,
   }) async {
     final context = _availabilityContext(
       language: language,
       profile: profile,
-      premiumPronunciationEnabled: premiumPronunciationEnabled,
     );
-    await _refreshInternet(force: true);
     if (requestSpeechPermission) {
       await _availabilityRegistry.check(
         ExerciseMode.speak,
@@ -79,7 +69,6 @@ class TaskScheduler {
     required ProgressManager progressManager,
     required LearningLanguage language,
     required BaseLanguageProfile profile,
-    required bool premiumPronunciationEnabled,
     ExerciseMode? forcedMode,
     String? forcedFamilyKey,
   }) async {
@@ -90,12 +79,6 @@ class TaskScheduler {
     final context = _availabilityContext(
       language: language,
       profile: profile,
-      premiumPronunciationEnabled: premiumPronunciationEnabled,
-    );
-    final reviewAvailability = await _availabilityRegistry.check(
-      ExerciseMode.reviewPronunciation,
-      context,
-      force: forcedMode == ExerciseMode.reviewPronunciation,
     );
     final listeningAvailability = await _availabilityRegistry.check(
       ExerciseMode.listenAndChoose,
@@ -118,13 +101,24 @@ class TaskScheduler {
             !card.family.supportedModes.contains(forcedMode)) {
           return false;
         }
+        if (forcedMode == null) {
+          return card.family.supportedModes.any(
+            (mode) => _isModeAvailable(
+              mode,
+              speechAvailability: speechAvailability,
+              listeningAvailability: listeningAvailability,
+            ),
+          );
+        }
         return true;
       },
     );
     if (picked == null) {
       return forcedMode != null || forcedFamilyKey != null
           ? const TaskSchedulePaused('No cards available for selected filters.')
-          : const TaskScheduleFinished();
+          : const TaskSchedulePaused(
+              'No exercises can run with the available device capabilities.',
+            );
     }
 
     final allowedModes = <ExerciseMode>[
@@ -133,7 +127,6 @@ class TaskScheduler {
           mode,
           speechAvailability: speechAvailability,
           listeningAvailability: listeningAvailability,
-          reviewAvailability: reviewAvailability,
         ))
           mode,
     ];
@@ -145,7 +138,6 @@ class TaskScheduler {
             forcedMode,
             speechAvailability: speechAvailability,
             listeningAvailability: listeningAvailability,
-            reviewAvailability: reviewAvailability,
           ),
         );
       }
@@ -164,16 +156,10 @@ class TaskScheduler {
   TaskAvailabilityContext _availabilityContext({
     required LearningLanguage language,
     required BaseLanguageProfile profile,
-    required bool premiumPronunciationEnabled,
   }) {
     return TaskAvailabilityContext(
       language: language,
       locale: profile.locale,
-      premiumPronunciationEnabled: premiumPronunciationEnabled,
-      internetCheck: ({bool force = false}) async {
-        await _refreshInternet(force: force);
-        return _hasInternet;
-      },
     );
   }
 
@@ -181,15 +167,12 @@ class TaskScheduler {
     ExerciseMode mode, {
     required TaskAvailability speechAvailability,
     required TaskAvailability listeningAvailability,
-    required TaskAvailability reviewAvailability,
   }) {
     switch (mode) {
       case ExerciseMode.speak:
         return speechAvailability.isAvailable;
       case ExerciseMode.listenAndChoose:
         return listeningAvailability.isAvailable;
-      case ExerciseMode.reviewPronunciation:
-        return reviewAvailability.isAvailable;
       case ExerciseMode.chooseFromPrompt:
       case ExerciseMode.chooseFromAnswer:
         return true;
@@ -200,7 +183,6 @@ class TaskScheduler {
     ExerciseMode mode, {
     required TaskAvailability speechAvailability,
     required TaskAvailability listeningAvailability,
-    required TaskAvailability reviewAvailability,
   }) {
     switch (mode) {
       case ExerciseMode.speak:
@@ -209,9 +191,6 @@ class TaskScheduler {
       case ExerciseMode.listenAndChoose:
         return listeningAvailability.message ??
             'Text-to-speech is not available for the selected language.';
-      case ExerciseMode.reviewPronunciation:
-        return reviewAvailability.message ??
-            'Pronunciation review is not available.';
       case ExerciseMode.chooseFromPrompt:
       case ExerciseMode.chooseFromAnswer:
         return 'Selected mode is not available.';
@@ -228,8 +207,6 @@ class TaskScheduler {
         const MapEntry(ExerciseMode.chooseFromAnswer, _chooseFromAnswerWeight),
       if (modes.contains(ExerciseMode.listenAndChoose))
         const MapEntry(ExerciseMode.listenAndChoose, _listenAndChooseWeight),
-      if (modes.contains(ExerciseMode.reviewPronunciation))
-        const MapEntry(ExerciseMode.reviewPronunciation, _reviewWeight),
     ];
     final total = weighted.fold(0, (sum, entry) => sum + entry.value);
     final roll = _random.nextInt(total);
@@ -241,16 +218,5 @@ class TaskScheduler {
       }
     }
     return weighted.last.key;
-  }
-
-  Future<void> _refreshInternet({required bool force}) async {
-    if (!force && _lastInternetCheck != null) {
-      final elapsed = DateTime.now().difference(_lastInternetCheck!);
-      if (elapsed < const Duration(seconds: 10)) {
-        return;
-      }
-    }
-    _lastInternetCheck = DateTime.now();
-    _hasInternet = await _internetChecker();
   }
 }

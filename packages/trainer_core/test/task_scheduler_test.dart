@@ -58,7 +58,7 @@ class _ChoiceOnlyModule implements TrainingModule {
   }
 }
 
-// Module that supports all modes (for internet/speech availability tests)
+// Module that supports both speaking and choice modes
 final _allModesFamily = ExerciseFamily(
   moduleId: _moduleId,
   id: 'all_modes_family',
@@ -69,7 +69,6 @@ final _allModesFamily = ExerciseFamily(
   supportedModes: [
     ExerciseMode.speak,
     ExerciseMode.chooseFromPrompt,
-    ExerciseMode.reviewPronunciation,
   ],
 );
 
@@ -114,6 +113,58 @@ class _AllModesModule implements TrainingModule {
   }
 }
 
+final _speechOnlyFamily = ExerciseFamily(
+  moduleId: _moduleId,
+  id: 'speech_only',
+  label: 'Speech only',
+  shortLabel: 'Speech',
+  difficultyTier: ExerciseDifficultyTier.easy,
+  defaultDuration: Duration(seconds: 15),
+  supportedModes: [ExerciseMode.speak],
+);
+
+class _MixedModeModule implements TrainingModule {
+  @override
+  String get moduleId => _moduleId;
+  @override
+  String get displayName => 'Mixed';
+  @override
+  bool supportsLanguage(LearningLanguage language) => true;
+  @override
+  List<ExerciseFamily> buildFamilies(LearningLanguage language) => [
+    _choiceOnlyFamily, _speechOnlyFamily,
+  ];
+  @override
+  List<ExerciseCard> buildCards(LearningLanguage language) => [
+    ExerciseCard(
+      id: const ExerciseId(moduleId: _moduleId, familyId: 'speech_only', variantId: '0'),
+      family: _speechOnlyFamily, language: language,
+      displayText: '1', promptText: 'one',
+      acceptedAnswers: const ['one'], celebrationText: 'one',
+    ),
+    ExerciseCard(
+      id: const ExerciseId(moduleId: _moduleId, familyId: 'choice_family', variantId: '0'),
+      family: _choiceOnlyFamily, language: language,
+      displayText: '2', promptText: 'two',
+      acceptedAnswers: const ['two'], celebrationText: 'two',
+      chooseFromPrompt: ChoiceExerciseSpec(
+        prompt: '2', correctOption: 'two', options: const ['two', 'three'],
+      ),
+    ),
+  ];
+}
+
+class _ThrowingSpeechProvider implements TaskAvailabilityProvider {
+  @override
+  ExerciseMode get mode => ExerciseMode.speak;
+
+  @override
+  Future<TaskAvailability> check(
+    TaskAvailabilityContext context, {
+    bool force = false,
+  }) async => throw StateError('Recognizer plugin unavailable');
+}
+
 BaseLanguageProfile _buildProfile() {
   return const BaseLanguageProfile(
     language: LearningLanguage.english,
@@ -156,47 +207,18 @@ void main() {
       );
       final scheduler = TaskScheduler(
         availabilityRegistry: TaskAvailabilityRegistry(providers: []),
-        internetChecker: () async => true,
       );
 
       final result = await scheduler.scheduleNext(
         progressManager: progressManager,
         language: LearningLanguage.english,
         profile: _buildProfile(),
-        premiumPronunciationEnabled: false,
         forcedMode: ExerciseMode.speak,
       );
 
       expect(result, isA<TaskSchedulePaused>());
       final paused = result as TaskSchedulePaused;
       expect(paused.errorMessage, contains('No cards available'));
-    },
-  );
-
-  test(
-    'no internet + forced reviewPronunciation returns paused with internet message',
-    () async {
-      final progressManager = await _buildProgressManager(
-        module: _AllModesModule(),
-      );
-      final scheduler = TaskScheduler(
-        availabilityRegistry: TaskAvailabilityRegistry(
-          providers: [ReviewPronunciationAvailabilityProvider()],
-        ),
-        internetChecker: () async => false,
-      );
-
-      final result = await scheduler.scheduleNext(
-        progressManager: progressManager,
-        language: LearningLanguage.english,
-        profile: _buildProfile(),
-        premiumPronunciationEnabled: true,
-        forcedMode: ExerciseMode.reviewPronunciation,
-      );
-
-      expect(result, isA<TaskSchedulePaused>());
-      final paused = result as TaskSchedulePaused;
-      expect(paused.errorMessage.toLowerCase(), contains('internet'));
     },
   );
 
@@ -228,14 +250,12 @@ void main() {
     );
     final scheduler = TaskScheduler(
       availabilityRegistry: TaskAvailabilityRegistry(providers: []),
-      internetChecker: () async => true,
     );
 
     final result = await scheduler.scheduleNext(
       progressManager: progressManager,
       language: LearningLanguage.english,
       profile: _buildProfile(),
-      premiumPronunciationEnabled: false,
     );
 
     expect(result, isA<TaskScheduleFinished>());
@@ -253,14 +273,12 @@ void main() {
             SpeechTaskAvailabilityProvider(FakeSpeechService(ready: false)),
           ],
         ),
-        internetChecker: () async => true,
       );
 
       final result = await scheduler.scheduleNext(
         progressManager: progressManager,
         language: LearningLanguage.english,
         profile: _buildProfile(),
-        premiumPronunciationEnabled: false,
         forcedMode: ExerciseMode.speak,
       );
 
@@ -269,6 +287,41 @@ void main() {
       expect(paused.errorMessage.toLowerCase(), contains('speech'));
     },
   );
+
+  test('keeps scheduling choices when speech recognition is unavailable', () async {
+    final progressManager = await _buildProgressManager(module: _MixedModeModule());
+    final scheduler = TaskScheduler(
+      availabilityRegistry: TaskAvailabilityRegistry(
+        providers: [SpeechTaskAvailabilityProvider(FakeSpeechService(ready: false))],
+      ),
+    );
+    final result = await scheduler.scheduleNext(
+      progressManager: progressManager,
+      language: LearningLanguage.english,
+      profile: _buildProfile(),
+    );
+    expect(result, isA<TaskScheduleReady>());
+    final ready = result as TaskScheduleReady;
+    expect(ready.card.family.id, 'choice_family');
+    expect(ready.mode, ExerciseMode.chooseFromPrompt);
+  });
+
+
+  test('provider errors do not block offline choices', () async {
+    final progressManager = await _buildProgressManager(module: _MixedModeModule());
+    final scheduler = TaskScheduler(
+      availabilityRegistry: TaskAvailabilityRegistry(
+        providers: [_ThrowingSpeechProvider()],
+      ),
+    );
+    final result = await scheduler.scheduleNext(
+      progressManager: progressManager,
+      language: LearningLanguage.english,
+      profile: _buildProfile(),
+    );
+    expect(result, isA<TaskScheduleReady>());
+    expect((result as TaskScheduleReady).mode, ExerciseMode.chooseFromPrompt);
+  });
 
   test('forced speech availability requests microphone permission', () async {
     final speech = FakeSpeechService(ready: true);
@@ -285,6 +338,5 @@ TaskAvailabilityContext _availabilityContext() {
   return const TaskAvailabilityContext(
     language: LearningLanguage.english,
     locale: 'en-US',
-    premiumPronunciationEnabled: false,
   );
 }

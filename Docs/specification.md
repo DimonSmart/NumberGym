@@ -6,7 +6,6 @@ Numbers Gym trains spoken and recognition skills with short cards:
 - pronunciation;
 - listening;
 - multiple-choice transformations (value <-> text);
-- premium phrase pronunciation analysis.
 
 ## 2. Supported languages
 
@@ -46,7 +45,6 @@ All progress and settings are scoped by selected language.
 - `valueToText`
 - `textToValue`
 - `listening`
-- `phrasePronunciation` (premium)
 
 Compatibility matrix: `Docs/itemtype_learning_method.md`.
 
@@ -82,7 +80,8 @@ Mastery requires:
 
 - Speech tasks require speech recognition availability.
 - Listening tasks require TTS availability for selected language.
-- Phrase pronunciation requires internet and premium toggle.
+- Multiple-choice modes remain usable without internet. Voice-dependent modes
+  depend on locally available speech recognition or TTS services.
 
 If forced debug method/type is incompatible or unavailable, session is paused
 with explicit error text.
@@ -93,7 +92,6 @@ Stored values include:
 - language;
 - answer duration;
 - hint streak threshold;
-- premium pronunciation enabled;
 - forced debug learning method (debug only);
 - forced debug item type (debug only);
 - selected TTS voice per language;

@@ -1,6 +1,6 @@
 # Numbers Gym
 
-Speech-driven training app for numbers, time, and phone formats.
+Offline-first training app for numbers, time, and phone formats. Multiple-choice drills run without internet; spoken answers and playback depend on available system speech services and offline language packs.
 
 ## Purpose
 
@@ -38,12 +38,11 @@ Build fast and confident spoken responses with short sessions:
   - `chooseFromPrompt`
   - `chooseFromAnswer`
   - `listenAndChoose`
-  - `reviewPronunciation` for number families
 
 Target ownership:
 
 - `number_gym_content`: accepted variants, prompt aliases, phone spoken variants, random-time and phone generation, phrase materialization.
-- `trainer_core`: reusable session engine, persistence abstractions, generic training flows, shared services.
+- `trainer_core`: reusable session engine, persistence abstractions, generic training flows, and local services.
 - `apps/number_gym`: branding, launch flow, about screen, assets, app-level integration glue.
 
 ## Documentation

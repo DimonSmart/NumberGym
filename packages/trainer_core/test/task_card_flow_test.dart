@@ -107,17 +107,6 @@ void main() {
       );
       expect(hint, isNull);
     });
-
-    test('returns hint for reviewPronunciation mode', () {
-      final card = _card(family: _easyFamily);
-      final hint = flow.resolveHintText(
-        card: card,
-        mode: ExerciseMode.reviewPronunciation,
-        consecutiveCorrect: 0,
-        hintVisibleUntilCorrectStreak: 10,
-      );
-      expect(hint, 'fai-v');
-    });
   });
 
   group('LearningParams', () {

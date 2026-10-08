@@ -6,7 +6,6 @@ import 'training/domain/learning_language.dart';
 
 const String baseLanguageKey = 'baseLanguage';
 const String learningLanguageKey = 'learningLanguage';
-const String premiumPronunciationKey = 'premiumPronunciationEnabled';
 const String autoSimulationEnabledKey = 'autoSimulationEnabled';
 const String autoSimulationContinueCountKey = 'autoSimulationContinueCount';
 const String celebrationCounterKey = 'celebrationCounter';
@@ -16,7 +15,6 @@ const String debugForcedModeKey = 'debugForcedMode';
 const String debugForcedFamilyKey = 'debugForcedFamilyKey';
 const String ttsVoiceIdPrefix = 'ttsVoiceId';
 
-const bool premiumPronunciationDefault = false;
 const bool autoSimulationEnabledDefault = false;
 const int autoSimulationContinueCountMin = 0;
 const int autoSimulationContinueCountMax = 500;
@@ -59,19 +57,6 @@ class SettingsRepository implements SettingsRepositoryBase {
   @override
   Future<void> setLearningLanguage(LearningLanguage language) async {
     await settingsBox.put(learningLanguageKey, language.code);
-  }
-
-  @override
-  bool readPremiumPronunciationEnabled() {
-    return _readBool(
-      premiumPronunciationKey,
-      defaultValue: premiumPronunciationDefault,
-    );
-  }
-
-  @override
-  Future<void> setPremiumPronunciationEnabled(bool enabled) async {
-    await settingsBox.put(premiumPronunciationKey, enabled.toString());
   }
 
   @override
